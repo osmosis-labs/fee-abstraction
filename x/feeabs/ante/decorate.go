@@ -6,18 +6,17 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	feeabskeeper "github.com/notional-labs/feeabstraction/v1/x/feeabs/keeper"
 )
 
 type FeeAbstractionDeductFeeDecorate struct {
 	accountKeeper  AccountKeeper
-	bankKeeper     bankkeeper.BaseKeeper
+	bankKeeper     BankKeeper
 	feeabsKeeper   feeabskeeper.Keeper
 	feegrantKeeper FeegrantKeeper
 }
 
-func NewFeeAbstractionDecorate(ak AccountKeeper, bk bankkeeper.BaseKeeper, feeabsKeeper feeabskeeper.Keeper, fk FeegrantKeeper) FeeAbstractionDeductFeeDecorate {
+func NewFeeAbstractionDeductFeeDecorate(ak AccountKeeper, bk BankKeeper, feeabsKeeper feeabskeeper.Keeper, fk FeegrantKeeper) FeeAbstractionDeductFeeDecorate {
 	return FeeAbstractionDeductFeeDecorate{
 		accountKeeper:  ak,
 		bankKeeper:     bk,
@@ -135,4 +134,66 @@ func DeductFees(bankKeeper types.BankKeeper, ctx sdk.Context, acc types.AccountI
 	}
 
 	return nil
+}
+
+// MempoolFeeDecorator will check if the transaction's fee is at least as large
+// as the local validator's minimum gasFee (defined in validator config).
+// If fee is too low, decorator returns error and tx is rejected from mempool.
+// Note this only applies when ctx.CheckTx = true
+// If fee is high enough or not CheckTx, then call next AnteHandler
+// CONTRACT: Tx must implement FeeTx to use MempoolFeeDecorator
+type FeeAbstrationMempoolFeeDecorator struct {
+	feeabsKeeper feeabskeeper.Keeper
+}
+
+func NewFeeAbstrationMempoolFeeDecorator(feeabsKeeper feeabskeeper.Keeper) FeeAbstrationMempoolFeeDecorator {
+	return FeeAbstrationMempoolFeeDecorator{
+		feeabsKeeper: feeabsKeeper,
+	}
+}
+
+func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
+	feeTx, ok := tx.(sdk.FeeTx)
+	if !ok {
+		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
+	}
+
+	feeCoins := feeTx.GetFee()
+	gas := feeTx.GetGas()
+
+	// Ensure that the provided fees meet a minimum threshold for the validator,
+	// if this is a CheckTx. This is only for local mempool purposes, and thus
+	// is only ran on check tx.
+	if ctx.IsCheckTx() && !simulate {
+		minGasPrices := ctx.MinGasPrices()
+		if minGasPrices.IsZero() {
+			return next(ctx, tx, simulate)
+		}
+		if feeTx.FeePayer().Equals(famfd.feeabsKeeper.GetModuleAddress()) {
+			ibcFees := feeTx.GetFee()
+			nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoin(ibcFees)
+			if err != nil {
+				return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees")
+
+			}
+			feeCoins = nativeCoinsFees
+		}
+
+		requiredFees := make(sdk.Coins, len(minGasPrices))
+
+		// Determine the required fees by multiplying each required minimum gas
+		// price by the gas limit, where fee = ceil(minGasPrice * gasLimit).
+		glDec := sdk.NewDec(int64(gas))
+		for i, gp := range minGasPrices {
+			fee := gp.Amount.Mul(glDec)
+			requiredFees[i] = sdk.NewCoin(gp.Denom, fee.Ceil().RoundInt())
+		}
+
+		if !feeCoins.IsAnyGTE(requiredFees) {
+			return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, requiredFees)
+		}
+
+	}
+
+	return next(ctx, tx, simulate)
 }
