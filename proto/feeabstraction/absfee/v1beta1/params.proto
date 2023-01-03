@@ -4,19 +4,27 @@ package feeabstraction.absfee.v1beta1;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
+import "google/protobuf/duration.proto";
 
 option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
 
 
 // Params defines the parameters for the feeabs module.
 message Params {
-    // allowed 
-    string allowed_token = 1 
+    // only ibc osmosis is allowed to be used as fee token 
+    // this is the ibc denom of osmosis
+    string allowed_ibc_token = 1 
         [(gogoproto.moretags) = "yaml:\"allowed_token\"" ];
     // this is query period
     google.protobuf.Duration query_period = 2 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
     
     // this is swap period
     google.protobuf.Duration swap_period = 3 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
+
+    // this is connection to osmosis
+    string osmosis_connection = 4;
+
+    // counterparty ibc query contract
+    string counterparty_query_contract = 5;
 }
   
