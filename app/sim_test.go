@@ -6,9 +6,9 @@ import (
 	"os"
 	"testing"
 
-	feeapp "github.com/cosmos/feeabstraction/v1/app"
+	feeapp "github.com/notional-labs/feeabstraction/v1/app"
 
-	"github.com/cosmos/feeabstraction/v1/app/helpers"
+	"github.com/notional-labs/feeabstraction/v1/app/helpers"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	"github.com/tendermint/tendermint/libs/rand"

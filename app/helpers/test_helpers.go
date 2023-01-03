@@ -12,7 +12,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
-	feeapp "github.com/cosmos/feeabstraction/v1/app"
+	feeapp "github.com/notional-labs/feeabstraction/v1/app"
 )
 
 // SimAppChainID hardcoded chainID for simulation

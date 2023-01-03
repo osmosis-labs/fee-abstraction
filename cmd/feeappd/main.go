@@ -6,8 +6,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/server"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 
-	app "github.com/cosmos/feeabstraction/v1/app"
-	"github.com/cosmos/feeabstraction/v1/cmd/feeappd/cmd"
+	app "github.com/notional-labs/feeabstraction/v1/app"
+	"github.com/notional-labs/feeabstraction/v1/cmd/feeappd/cmd"
 )
 
 func main() {

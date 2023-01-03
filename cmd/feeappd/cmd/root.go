@@ -32,8 +32,8 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
 
-	feeapp "github.com/cosmos/feeabstraction/v1/app"
-	"github.com/cosmos/feeabstraction/v1/app/params"
+	feeapp "github.com/notional-labs/feeabstraction/v1/app"
+	"github.com/notional-labs/feeabstraction/v1/app/params"
 )
 
 // NewRootCmd creates a new root command for simd. It is called once in the

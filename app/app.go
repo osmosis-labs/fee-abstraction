@@ -108,8 +108,8 @@ import (
 	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v2/router/keeper"
 	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v2/router/types"
 
-	feeante "github.com/cosmos/feeabstraction/v1/ante"
-	appparams "github.com/cosmos/feeabstraction/v1/app/params"
+	feeante "github.com/notional-labs/feeabstraction/v1/ante"
+	appparams "github.com/notional-labs/feeabstraction/v1/app/params"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
