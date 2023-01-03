@@ -10,7 +10,13 @@ option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
 
 // Params defines the parameters for the feeabs module.
 message Params {
-    string allowed_token = 1
-        [ (gogoproto.moretags) = "yaml:\"allowed_token\"" ];
-  }
+    // allowed 
+    string allowed_token = 1 
+        [(gogoproto.moretags) = "yaml:\"allowed_token\"" ];
+    // this is query period
+    google.protobuf.Duration query_period = 2 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
+    
+    // this is swap period
+    google.protobuf.Duration swap_period = 3 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
+}
   
