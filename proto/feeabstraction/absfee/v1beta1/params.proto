@@ -13,6 +13,7 @@ message Params {
     // allowed 
     string allowed_token = 1 
         [(gogoproto.moretags) = "yaml:\"allowed_token\"" ];
+        
     // this is query period
     google.protobuf.Duration query_period = 2 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
     

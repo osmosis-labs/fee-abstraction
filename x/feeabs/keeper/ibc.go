@@ -27,3 +27,9 @@ func (k Keeper) AuthenticateCapability(ctx sdk.Context, capability *capabilityty
 func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Capability, name string) error {
 	return k.scopedKeeper.ClaimCapability(ctx, capability, name)
 }
+
+// Send request for query EstimateSwapExactAmountIn over IBC
+func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, tokenIn string, routes []types.SwapAmountInRoute) error {
+	packetData := types.NewOsmosisQueryRequestPacketData(poolId)
+
+}
