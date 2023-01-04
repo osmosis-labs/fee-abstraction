@@ -2,6 +2,7 @@ package types
 
 import (
 	"errors"
+	"time"
 )
 
 // KeyPrefixEpoch defines prefix key for storing epochs.
@@ -26,4 +27,16 @@ func (epoch EpochInfo) Validate() error {
 		return errors.New("epoch CurrentEpoch must be non-negative")
 	}
 	return nil
+}
+
+func NewGenesisEpochInfo(identifier string, duration time.Duration) EpochInfo {
+	return EpochInfo{
+		Identifier:              identifier,
+		StartTime:               time.Time{},
+		Duration:                duration,
+		CurrentEpoch:            0,
+		CurrentEpochStartHeight: 0,
+		CurrentEpochStartTime:   time.Time{},
+		EpochCountingStarted:    false,
+	}
 }
