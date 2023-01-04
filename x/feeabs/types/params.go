@@ -35,7 +35,7 @@ func ParamKeyTable() paramtypes.KeyTable {
 // Implements params.ParamSet.
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
-		paramtypes.NewParamSetPair(KeyAllowedToken, &p.AllowedToken, validateToken),
+		paramtypes.NewParamSetPair(KeyAllowedToken, &p.AllowedIbcToken, validateToken),
 		paramtypes.NewParamSetPair(KeySwapPeriod, &p.SwapPeriod, validatePeriod),
 		paramtypes.NewParamSetPair(KeyQueryPeriod, &p.SwapPeriod, validatePeriod),
 	}
