@@ -13,19 +13,19 @@ option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
 message Params {
     // only ibc osmosis is allowed to be used as fee token 
     // this is the ibc denom of osmosis
-    string allowed_ibc_token = 1 
+    string osmosis_ibc_denom = 1 
         [(gogoproto.moretags) = "yaml:\"allowed_token\"" ];
-        
-    // this is query period
-    google.protobuf.Duration query_period = 2 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
+
+    // connection id to osmosis chain
+    string osmosis_ibc_connection_id = 2;
+
+    // contract on osmosis with custom ibc logic for fetching spot price
+    string osmosis_query_contract = 3;
+
+    // we'll update the fee rate each `osmosis_exchange_rate_update_period`
+    google.protobuf.Duration osmosis_exchange_rate_update_period = 4 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
     
-    // this is swap period
-    google.protobuf.Duration swap_period = 3 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
-
-    // this is connection to osmosis
-    string osmosis_connection = 4;
-
-    // counterparty ibc query contract
-    string counterparty_query_contract = 5;
+    // we'll swap our accumulated osmosis fee to native token each `accumulated_osmosis_fee_swap_period` 
+    google.protobuf.Duration accumulated_osmosis_fee_swap_period = 5 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
 }
   

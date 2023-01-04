@@ -1,6 +1,8 @@
 package types
 
 import (
+	"fmt"
+	"strings"
 	time "time"
 
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -8,21 +10,20 @@ import (
 
 // Feeabs params default values .
 const (
-	// After pass, ISO 8601 format for when swap in end period
 	DefaultSwapPeriod time.Duration = time.Minute * 100
 
-	// After pass, ISO 8601 format for when they can no longer burn EXP
 	DefaultQueryPeriod time.Duration = time.Minute * 1
 
-	// Contract address in Osmosis .
 	DefaultContractAddress string = ""
 )
 
 // Parameter keys store keys.
 var (
-	KeyAllowedToken = []byte("allowed_token")
-	KeySwapPeriod   = []byte("swap_period")
-	KeyQueryPeriod  = []byte("query_period")
+	KeyOsmosisIbcDenom                 = []byte("osmosis_ibc_denom")
+	KeyOsmosisIbcConnectionId          = []byte("osmosis_ibc_connection_id")
+	KeyOsmosisQueryContract            = []byte("osmosis_query_contract")
+	KeyOsmosisExchangeRateUpdatePeriod = []byte("osmosis_exchange_rate_update_period")
+	KeyAccumulatedOsmosisFeeSwapPeriod = []byte("accumulated_osmosis_fee_swap_period")
 
 	_ paramtypes.ParamSet = &Params{}
 )
@@ -35,15 +36,49 @@ func ParamKeyTable() paramtypes.KeyTable {
 // Implements params.ParamSet.
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
-		paramtypes.NewParamSetPair(KeyAllowedToken, &p.AllowedIbcToken, validateToken),
-		paramtypes.NewParamSetPair(KeySwapPeriod, &p.SwapPeriod, validatePeriod),
-		paramtypes.NewParamSetPair(KeyQueryPeriod, &p.SwapPeriod, validatePeriod),
+		paramtypes.NewParamSetPair(KeyOsmosisIbcDenom, &p.OsmosisIbcDenom, validateOsmosisIbcDenom),
+		paramtypes.NewParamSetPair(KeyOsmosisIbcConnectionId, &p.OsmosisIbcConnectionId, validateIbcConnectionId),
+		paramtypes.NewParamSetPair(KeyOsmosisQueryContract, &p.OsmosisQueryContract, validateOsmosisQueryContract),
+		paramtypes.NewParamSetPair(KeyOsmosisExchangeRateUpdatePeriod, &p.OsmosisExchangeRateUpdatePeriod, noOp),
+		paramtypes.NewParamSetPair(KeyAccumulatedOsmosisFeeSwapPeriod, &p.AccumulatedOsmosisFeeSwapPeriod, noOp),
 	}
 }
 
-func validateToken(i interface{}) error {
+func noOp(i interface{}) error {
 	return nil
 }
-func validatePeriod(i interface{}) error {
+
+func validateOsmosisIbcDenom(i interface{}) error {
+	denom, ok := i.(string)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if strings.HasPrefix(denom, "ibc/") {
+		return fmt.Errorf("osmosis ibc denom doesn't have ibc prefix")
+	}
+
+	return nil
+}
+
+func validateIbcConnectionId(i interface{}) error {
+	connectionId, ok := i.(string)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	if !strings.HasPrefix(connectionId, "connection-") {
+		return fmt.Errorf("wrong connection id format")
+	}
+
+	return nil
+}
+
+func validateOsmosisQueryContract(i interface{}) error {
+	_, ok := i.(string)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
 	return nil
 }
