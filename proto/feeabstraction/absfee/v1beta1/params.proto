@@ -27,5 +27,6 @@ message Params {
     
     // we'll swap our accumulated osmosis fee to native token each `accumulated_osmosis_fee_swap_period` 
     google.protobuf.Duration accumulated_osmosis_fee_swap_period = 5 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
+
 }
   

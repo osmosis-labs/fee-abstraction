@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/osmosis-labs/osmosis/v13/x/epochs/types"
-
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
 )
 
 // BeginBlocker of epochs module.
@@ -38,7 +37,11 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 			logger.Info(fmt.Sprintf("Starting new epoch with identifier %s epoch number %d", epochInfo.Identifier, epochInfo.CurrentEpoch))
 		} else {
 			// We will handle swap to Osmosis pool here
-			
+
+			err := k.handleOsmosisIbcQuery(ctx)
+			if err != nil {
+				panic(err)
+			}
 			ctx.EventManager().EmitEvent(
 				sdk.NewEvent(
 					types.EventTypeEpochEnd,
@@ -62,4 +65,12 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 
 		return false
 	})
+}
+
+func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
+	channelID := k.GetChannelId(ctx)
+	poolId := uint64(1) // for testing
+	baseDenom := "uosmo"
+	quoteDenom := "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2"
+	return k.SendOsmosisQueryRequest(ctx, poolId, baseDenom, quoteDenom, types.IBCPortID, channelID)
 }

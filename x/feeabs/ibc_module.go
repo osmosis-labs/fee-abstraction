@@ -79,6 +79,7 @@ func (am IBCModule) OnChanOpenAck(
 	counterpartyChannelID string,
 	counterpartyVersion string,
 ) error {
+	// TODO : update spot price when receive ack from osmosis chain
 	return nil
 }
 
