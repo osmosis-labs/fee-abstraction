@@ -22,6 +22,31 @@ type Keeper struct {
 	scopedKeeper  types.ScopedKeeper
 }
 
+func NewKeeper(
+	cdc codec.BinaryCodec,
+	storeKey sdk.StoreKey,
+	memKey sdk.StoreKey,
+	ps paramtypes.Subspace,
+	transferKeeper ibctransferkeeper.Keeper,
+	channelKeeper types.ChannelKeeper,
+	portKeeper types.PortKeeper,
+	scopedKeeper types.ScopedKeeper,
+) Keeper {
+	// set KeyTable if it has not already been set
+	if !ps.HasKeyTable() {
+		ps = ps.WithKeyTable(types.ParamKeyTable())
+	}
+
+	return Keeper{
+		cdc:            cdc,
+		storeKey:       storeKey,
+		paramstore:     ps,
+		transferKeeper: transferKeeper,
+		channelKeeper:  channelKeeper,
+		scopedKeeper:   scopedKeeper,
+	}
+}
+
 // need to implement
 func (k Keeper) GetModuleAddress() sdk.AccAddress {
 	return sdk.AccAddress{}

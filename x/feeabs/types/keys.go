@@ -10,6 +10,12 @@ const (
 	// RouterKey is the msg router key for the feeabs module
 	RouterKey = ModuleName
 
+	// QuerierRoute defines the module's query routing key
+	QuerierRoute = ModuleName
+
+	// MemStoreKey defines the in-memory store key
+	MemStoreKey = "mem_feeabs"
+
 	// Contract: Coin denoms cannot contain this character
 	KeySeparator = "|"
 )
