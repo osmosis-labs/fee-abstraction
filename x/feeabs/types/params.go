@@ -44,6 +44,33 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	}
 }
 
+// Validate also validates params info.
+func (p Params) Validate() error {
+	err := validateOsmosisIbcDenom(p.OsmosisIbcDenom)
+	if err != nil {
+		return fmt.Errorf("invalid ibc denom", err)
+	}
+
+	err = validateIbcConnectionId(p.OsmosisIbcConnectionId)
+	if err != nil {
+		return fmt.Errorf("invalid connection id", err)
+	}
+
+	err = validateOsmosisQueryContract(p.OsmosisQueryContract)
+	if err != nil {
+		return fmt.Errorf("invalid query contract", err)
+	}
+
+	if p.OsmosisExchangeRateUpdatePeriod == 0 {
+		return fmt.Errorf("invalid zero period")
+	}
+	if p.AccumulatedOsmosisFeeSwapPeriod == 0 {
+		return fmt.Errorf("invalid zero period")
+	}
+
+	return nil
+}
+
 func noOp(i interface{}) error {
 	return nil
 }
