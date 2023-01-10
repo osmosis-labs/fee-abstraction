@@ -15,6 +15,9 @@ type Keeper struct {
 	cdc            codec.BinaryCodec
 	storeKey       sdk.StoreKey
 	paramstore     paramtypes.Subspace
+	sk             types.StakingKeeper
+	ak             types.AccountKeeper
+	bk             types.BankKeeper
 	transferKeeper ibctransferkeeper.Keeper
 
 	// ibc keeper
@@ -27,6 +30,9 @@ func NewKeeper(
 	storeKey sdk.StoreKey,
 	memKey sdk.StoreKey,
 	ps paramtypes.Subspace,
+	sk types.StakingKeeper,
+	ak types.AccountKeeper,
+	bk types.BankKeeper,
 	transferKeeper ibctransferkeeper.Keeper,
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
@@ -41,15 +47,17 @@ func NewKeeper(
 		cdc:            cdc,
 		storeKey:       storeKey,
 		paramstore:     ps,
+		sk:             sk,
+		ak:             ak,
+		bk:             bk,
 		transferKeeper: transferKeeper,
 		channelKeeper:  channelKeeper,
 		scopedKeeper:   scopedKeeper,
 	}
 }
 
-// need to implement
 func (k Keeper) GetModuleAddress() sdk.AccAddress {
-	return sdk.AccAddress{}
+	return k.ak.GetModuleAddress(types.ModuleName)
 }
 
 // need to implement
