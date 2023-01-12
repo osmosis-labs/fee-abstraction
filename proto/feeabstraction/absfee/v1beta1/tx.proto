@@ -9,14 +9,13 @@ import "feeabstraction/absfee/v1beta1/epoch.proto";
 
 option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
 
-
+// Msg is the cosmos.group.v1 Msg service.
+service Msg {
+    rpc SendQuerySpotPrice(MsgSendQuerySpotPrice) returns (MsgSendQuerySpotPriceResponse);
+}
 // Params defines the parameters for the feeabs module.
-message GenesisState {
-    Params params = 1
-        [ (gogoproto.moretags) = "yaml:\"params\"" ];
-
-    repeated EpochInfo epochs = 2 
-        [ (gogoproto.nullable) = false ];
-        string port_id = 3;
-  }
+message MsgSendQuerySpotPrice {
+    string from_address = 1;
+}
+message MsgSendQuerySpotPriceResponse{}
   

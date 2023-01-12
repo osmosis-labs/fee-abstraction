@@ -112,7 +112,6 @@ func (am IBCModule) OnChanOpenAck(
 	counterpartyChannelID string,
 	counterpartyVersion string,
 ) error {
-	// TODO : update spot price when receive ack from osmosis chain
 	return nil
 }
 
@@ -165,7 +164,17 @@ func (am IBCModule) OnAcknowledgementPacket(
 	relayer sdk.AccAddress,
 ) error {
 	var ack channeltypes.Acknowledgement
-	//TODO: Handler ack logic here
+	// TODO:  Handler ack logic here
+	// TODO : update spot price when receive ack from osmosis chain
+	bz := acknowledgement
+	spotPrice, err := am.keeper.UnmarshalPacketBytesToPrice(bz)
+
+	if err != nil {
+		return err
+	}
+
+	// set spot price here
+	am.keeper.SetOsmosisExchangeRate(ctx, spotPrice)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
@@ -205,6 +214,5 @@ func (am IBCModule) OnTimeoutPacket(
 ) error {
 	// TODO: Resend request if timeout
 	// TODO: emit event
-
 	return nil
 }

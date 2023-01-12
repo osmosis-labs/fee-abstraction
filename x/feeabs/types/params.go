@@ -2,7 +2,6 @@ package types
 
 import (
 	"fmt"
-	"strings"
 	time "time"
 
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -19,11 +18,11 @@ const (
 
 // Parameter keys store keys.
 var (
-	KeyOsmosisIbcDenom                 = []byte("osmosis_ibc_denom")
-	KeyOsmosisIbcConnectionId          = []byte("osmosis_ibc_connection_id")
-	KeyOsmosisQueryContract            = []byte("osmosis_query_contract")
-	KeyOsmosisExchangeRateUpdatePeriod = []byte("osmosis_exchange_rate_update_period")
-	KeyAccumulatedOsmosisFeeSwapPeriod = []byte("accumulated_osmosis_fee_swap_period")
+	KeyOsmosisIbcDenom                 = []byte("osmosisibcdenom")
+	KeyOsmosisIbcConnectionId          = []byte("osmosisibcconnectionid")
+	KeyOsmosisQueryContract            = []byte("osmosisquerycontract")
+	KeyOsmosisExchangeRateUpdatePeriod = []byte("osmosisexchangerateupdateperiod")
+	KeyAccumulatedOsmosisFeeSwapPeriod = []byte("accumulatedosmosisfeeswapperiod")
 
 	_ paramtypes.ParamSet = &Params{}
 )
@@ -48,17 +47,17 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 func (p Params) Validate() error {
 	err := validateOsmosisIbcDenom(p.OsmosisIbcDenom)
 	if err != nil {
-		return fmt.Errorf("invalid ibc denom", err)
+		return fmt.Errorf("invalid ibc denom %s", err)
 	}
 
 	err = validateIbcConnectionId(p.OsmosisIbcConnectionId)
 	if err != nil {
-		return fmt.Errorf("invalid connection id", err)
+		return fmt.Errorf("invalid connection id %s", err)
 	}
 
 	err = validateOsmosisQueryContract(p.OsmosisQueryContract)
 	if err != nil {
-		return fmt.Errorf("invalid query contract", err)
+		return fmt.Errorf("invalid query contract %s", err)
 	}
 
 	if p.OsmosisExchangeRateUpdatePeriod == 0 {
@@ -76,27 +75,27 @@ func noOp(i interface{}) error {
 }
 
 func validateOsmosisIbcDenom(i interface{}) error {
-	denom, ok := i.(string)
+	_, ok := i.(string)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
-	if strings.HasPrefix(denom, "ibc/") {
-		return fmt.Errorf("osmosis ibc denom doesn't have ibc prefix")
-	}
+	// if strings.HasPrefix(denom, "ibc/") {
+	// 	return fmt.Errorf("osmosis ibc denom doesn't have ibc prefix")
+	// }
 
 	return nil
 }
 
 func validateIbcConnectionId(i interface{}) error {
-	connectionId, ok := i.(string)
+	_, ok := i.(string)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
-	if !strings.HasPrefix(connectionId, "connection-") {
-		return fmt.Errorf("wrong connection id format")
-	}
+	// if !strings.HasPrefix(connectionId, "connection-") {
+	// 	return fmt.Errorf("wrong connection id format")
+	// }
 
 	return nil
 }

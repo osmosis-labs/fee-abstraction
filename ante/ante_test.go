@@ -23,11 +23,11 @@ import (
 type IntegrationTestSuite struct {
 	suite.Suite
 
-	app         *app.FeeAbs
-	anteHandler sdk.AnteHandler
-	ctx         sdk.Context
-	clientCtx   client.Context
-	txBuilder   client.TxBuilder
+	app *app.FeeAbs
+	// anteHandler sdk.AnteHandler
+	ctx       sdk.Context
+	clientCtx client.Context
+	txBuilder client.TxBuilder
 }
 
 func TestIntegrationTestSuite(t *testing.T) {

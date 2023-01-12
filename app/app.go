@@ -237,7 +237,7 @@ func init() {
 		stdlog.Println("Failed to get home dir %2", err)
 	}
 
-	DefaultNodeHome = filepath.Join(userHomeDir, ".fee")
+	DefaultNodeHome = filepath.Join(userHomeDir, ".feeappd")
 }
 
 // NewFeeAbs returns a reference to an initialized fee app.
@@ -452,6 +452,7 @@ func NewFeeAbs(
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedFeeabsKeeper,
+		app.GetSubspace(feeabstypes.ModuleName),
 	)
 	feeabsModule := feeabsmodule.NewAppModule(appCodec, app.FeeabsKeeper)
 	feeabsIBCModule := feeabsmodule.NewIBCModule(appCodec, app.FeeabsKeeper)

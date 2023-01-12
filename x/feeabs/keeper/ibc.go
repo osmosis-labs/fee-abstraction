@@ -1,6 +1,9 @@
 package keeper
 
 import (
+	"encoding/json"
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
@@ -14,6 +17,22 @@ import (
 func (k Keeper) GetPort(ctx sdk.Context) string {
 	store := ctx.KVStore(k.storeKey)
 	return string(store.Get(types.IBCPortKey))
+}
+
+// DONTCOVER
+// No need to cover this simple methods
+
+// IsBound checks if the module is already bound to the desired port.
+func (k Keeper) IsBound(ctx sdk.Context, portID string) bool {
+	_, ok := k.scopedKeeper.GetCapability(ctx, host.PortPath(portID))
+	return ok
+}
+
+// BindPort defines a wrapper function for the port Keeper's function in
+// order to expose it to module's InitGenesis function.
+func (k Keeper) BindPort(ctx sdk.Context, portID string) error {
+	capability := k.portKeeper.BindPort(ctx, portID)
+	return k.ClaimCapability(ctx, capability, host.PortPath(portID))
 }
 
 // SetPort sets the portID for the module. Used in InitGenesis.
@@ -80,4 +99,25 @@ func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDeno
 func (k Keeper) GetChannelId(ctx sdk.Context) string {
 	store := ctx.KVStore(k.storeKey)
 	return string(store.Get(types.KeyChannelID))
+}
+
+// TODO: need to test this function
+func (k Keeper) UnmarshalPacketBytesToPrice(bz []byte) (sdk.Dec, error) {
+	var spotPrice types.SpotPrice
+	fmt.Println(string(bz))
+	err := json.Unmarshal(bz, &spotPrice)
+	if err != nil {
+		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, "error when json.Unmarshal")
+	}
+	fmt.Println("=============================")
+	fmt.Println("=============================")
+	fmt.Println(spotPrice)
+	fmt.Println("=============================")
+	fmt.Println("=============================")
+
+	spotPriceDec, err := sdk.NewDecFromStr(spotPrice.SpotPrice)
+	if err != nil {
+		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, "error when NewDecFromStr")
+	}
+	return spotPriceDec, nil
 }

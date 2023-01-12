@@ -11,6 +11,10 @@ const (
 	IBCPortID = "feeabs"
 )
 
+type SpotPrice struct {
+	SpotPrice string `json:"spot_price"`
+}
+
 var ModuleCdc = codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
 
 // IBCPortKey defines the key to store the port ID in store.

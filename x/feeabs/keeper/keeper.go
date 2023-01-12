@@ -19,8 +19,10 @@ type Keeper struct {
 	ak             types.AccountKeeper
 	bk             types.BankKeeper
 	transferKeeper ibctransferkeeper.Keeper
+	paramSpace     paramtypes.Subspace
 
 	// ibc keeper
+	portKeeper    types.PortKeeper
 	channelKeeper types.ChannelKeeper
 	scopedKeeper  types.ScopedKeeper
 }
@@ -37,6 +39,8 @@ func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
+	paramSpace paramtypes.Subspace,
+
 ) Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -53,6 +57,8 @@ func NewKeeper(
 		transferKeeper: transferKeeper,
 		channelKeeper:  channelKeeper,
 		scopedKeeper:   scopedKeeper,
+		portKeeper:     portKeeper,
+		paramSpace:     paramSpace,
 	}
 }
 
@@ -77,4 +83,15 @@ func (k Keeper) verifyIBCCoin(ibcCoin sdk.Coins) error {
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+// GetParams gets the fee abstraction module's parameters.
+func (k Keeper) GetParams(ctx sdk.Context) (params types.Params) {
+	k.paramSpace.GetParamSet(ctx, &params)
+	return params
+}
+
+// SetParams sets all of the parameters in the abstraction module.
+func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
+	k.paramSpace.SetParamSet(ctx, &params)
 }
