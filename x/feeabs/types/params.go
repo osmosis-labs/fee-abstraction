@@ -19,6 +19,7 @@ const (
 // Parameter keys store keys.
 var (
 	KeyOsmosisIbcDenom                 = []byte("osmosisibcdenom")
+	KeyNativeIbcDenom                  = []byte("nativeibcdenom")
 	KeyOsmosisQueryChannel             = []byte("osmosisquerychannel")
 	KeyOsmosisTransferChannel          = []byte("osmosistransferchannel")
 	KeyOsmosisQueryContract            = []byte("osmosisquerycontract")
@@ -27,6 +28,7 @@ var (
 	KeyAccumulatedOsmosisFeeSwapPeriod = []byte("accumulatedosmosisfeeswapperiod")
 	KeyPoolId                          = []byte("poolid")
 	KeyActive                          = []byte("active")
+	KeyAddress                         = []byte("address")
 
 	_ paramtypes.ParamSet = &Params{}
 )
@@ -40,6 +42,7 @@ func ParamKeyTable() paramtypes.KeyTable {
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(KeyOsmosisIbcDenom, &p.OsmosisIbcDenom, validateOsmosisIbcDenom),
+		paramtypes.NewParamSetPair(KeyNativeIbcDenom, &p.NativeIbcDenom, validateOsmosisIbcDenom),
 		paramtypes.NewParamSetPair(KeyOsmosisQueryChannel, &p.OsmosisQueryChannel, validateChannelID),
 		paramtypes.NewParamSetPair(KeyOsmosisTransferChannel, &p.OsmosisTransferChannel, validateChannelID),
 		paramtypes.NewParamSetPair(KeyOsmosisQueryContract, &p.OsmosisQueryContract, validateOsmosisQueryContract),
@@ -47,7 +50,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyOsmosisExchangeRateUpdatePeriod, &p.OsmosisExchangeRateUpdatePeriod, noOp),
 		paramtypes.NewParamSetPair(KeyAccumulatedOsmosisFeeSwapPeriod, &p.AccumulatedOsmosisFeeSwapPeriod, noOp),
 		paramtypes.NewParamSetPair(KeyPoolId, &p.PoolId, validatePoolID),
-		paramtypes.NewParamSetPair(KeyActive, &p.Active, nil),
+		paramtypes.NewParamSetPair(KeyActive, &p.Active, validateActive),
 	}
 }
 
@@ -111,6 +114,15 @@ func validateOsmosisQueryContract(i interface{}) error {
 
 func validatePoolID(i interface{}) error {
 	_, ok := i.(uint64)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	return nil
+}
+
+func validateActive(i interface{}) error {
+	_, ok := i.(bool)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}

@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
@@ -50,6 +51,10 @@ func (q Querier) FeeabsModuleBalances(goCtx context.Context, req *types.QueryFee
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	moduleAddress := q.GetModuleAddress()
+	fmt.Println("==================")
+	fmt.Println(moduleAddress.String())
+	fmt.Println("==================")
+
 	moduleBalances := q.bk.GetAllBalances(ctx, moduleAddress)
 
 	return &types.QueryFeeabsModuleBalacesResponse{

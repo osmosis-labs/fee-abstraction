@@ -5,6 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
@@ -14,7 +15,6 @@ import (
 type Keeper struct {
 	cdc            codec.BinaryCodec
 	storeKey       sdk.StoreKey
-	paramstore     paramtypes.Subspace
 	sk             types.StakingKeeper
 	ak             types.AccountKeeper
 	bk             types.BankKeeper
@@ -41,7 +41,6 @@ func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
-	paramSpace paramtypes.Subspace,
 
 ) Keeper {
 	// set KeyTable if it has not already been set
@@ -52,7 +51,7 @@ func NewKeeper(
 	return Keeper{
 		cdc:            cdc,
 		storeKey:       storeKey,
-		paramstore:     ps,
+		paramSpace:     ps,
 		sk:             sk,
 		ak:             ak,
 		bk:             bk,
@@ -60,12 +59,11 @@ func NewKeeper(
 		channelKeeper:  channelKeeper,
 		scopedKeeper:   scopedKeeper,
 		portKeeper:     portKeeper,
-		paramSpace:     paramSpace,
 	}
 }
 
 func (k Keeper) GetModuleAddress() sdk.AccAddress {
-	return k.ak.GetModuleAddress(types.ModuleName)
+	return authtypes.NewModuleAddress(types.ModuleName)
 }
 
 // need to implement

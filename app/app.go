@@ -445,8 +445,8 @@ func NewFeeAbs(
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedFeeabsKeeper,
-		app.GetSubspace(feeabstypes.ModuleName),
 	)
+
 	feeabsModule := feeabsmodule.NewAppModule(appCodec, app.FeeabsKeeper)
 	feeabsIBCModule := feeabsmodule.NewIBCModule(appCodec, app.FeeabsKeeper)
 

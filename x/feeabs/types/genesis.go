@@ -16,7 +16,7 @@ func DefaultGenesis() *GenesisState {
 			PoolId:                          1,
 			Active:                          false,
 		},
-		Epochs: []EpochInfo{NewGenesisEpochInfo("swap", DefaultQueryPeriod), NewGenesisEpochInfo("swap", DefaultSwapPeriod)},
+		Epochs: []EpochInfo{NewGenesisEpochInfo("query", DefaultQueryPeriod), NewGenesisEpochInfo("swap", DefaultSwapPeriod)},
 		PortId: IBCPortID,
 	}
 }

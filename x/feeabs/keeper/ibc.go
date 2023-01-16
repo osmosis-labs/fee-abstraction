@@ -137,6 +137,7 @@ func ParseMsgToMemo(msg types.OsmosisSwapMsg, contractAddr string, receiver stri
 
 func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context) error {
 	params := k.GetParams(ctx)
+
 	moduleAccountAddress := k.GetModuleAddress()
 	token := k.bk.GetBalance(ctx, moduleAccountAddress, params.OsmosisIbcDenom)
 
@@ -145,7 +146,7 @@ func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context) error {
 		return nil
 	}
 
-	memo, err := buildMemo(token, params.NativeIbcDenom, params.OsmosisSwapContract, moduleAccountAddress.String())
+	memo, err := buildMemo(sdk.NewCoin("uosmo", token.Amount), params.NativeIbcDenom, params.OsmosisSwapContract, moduleAccountAddress.String())
 	if err != nil {
 		return err
 	}
@@ -200,8 +201,8 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 	params := k.GetParams(ctx)
 	channelID := params.OsmosisQueryChannel
-	poolId := uint64(1) // for testing
+	poolId := params.PoolId // for testing
 	baseDenom := params.NativeIbcDenom
-	quoteDenom := "uosmo"
-	return k.SendOsmosisQueryRequest(ctx, poolId, baseDenom, quoteDenom, types.IBCPortID, channelID)
+
+	return k.SendOsmosisQueryRequest(ctx, poolId, baseDenom, "uosmo", types.IBCPortID, channelID)
 }
