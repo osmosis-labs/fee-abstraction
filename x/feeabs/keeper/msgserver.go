@@ -22,6 +22,7 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 var _ types.MsgServer = msgServer{}
 
+// Need to remove this
 func (k Keeper) SendQuerySpotPrice(goCtx context.Context, msg *types.MsgSendQuerySpotPrice) (*types.MsgSendQuerySpotPriceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -37,6 +38,7 @@ func (k Keeper) SendQuerySpotPrice(goCtx context.Context, msg *types.MsgSendQuer
 	return &types.MsgSendQuerySpotPriceResponse{}, nil
 }
 
+// Need to remove this
 func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossChain) (*types.MsgSwapCrossChainResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -44,7 +46,7 @@ func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossCha
 	if err != nil {
 		return nil, err
 	}
-	err = k.transferIBCTokenToOsmosisContract(ctx, sdk.NewCoin("stake", sdk.NewInt(1000000)))
+	err = k.transferIBCTokenToOsmosisContract(ctx)
 	if err != nil {
 		return nil, err
 	}

@@ -18,7 +18,10 @@ type SpotPrice struct {
 var ModuleCdc = codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
 
 // IBCPortKey defines the key to store the port ID in store.
-var IBCPortKey = []byte{0x01}
+var (
+	IBCPortKey        = []byte{0x01}
+	FeePoolAddressKey = []byte{0x02}
+)
 
 // NewOsmosisQueryRequestPacketData create new packet for ibc.
 func NewOsmosisQueryRequestPacketData(poolId uint64, baseDenom string, quoteDenom string) OsmosisQuerySpotPriceRequestPacketData {

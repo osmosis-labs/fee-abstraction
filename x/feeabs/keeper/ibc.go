@@ -135,44 +135,38 @@ func ParseMsgToMemo(msg types.OsmosisSwapMsg, contractAddr string, receiver stri
 	return string(memo_marshalled), nil
 }
 
-// TODO: clean up
-func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context, token sdk.Coin) error {
-	moduleAddress, _ := sdk.AccAddressFromBech32("cosmos1hj5fveer5cjtn4wd6wstzugjfdxzl0xpxvjjvr")
-	sourcePort := transfertypes.PortID
-	// TODO: channel for IBC transfer should set in params
-	sourceChannel := "channel-0"
+func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context) error {
+	params := k.GetParams(ctx)
+	moduleAccountAddress := k.GetModuleAddress()
+	token := k.bk.GetBalance(ctx, moduleAccountAddress, params.OsmosisIbcDenom)
 
-	// TODO: contractAddress should be store in paramspace
-	crossChainSwapContractAddress := "osmo1j08452mqwadp8xu25kn9rleyl2gufgfjnv0sn8dvynynakkjukcqq33hql"
-	timeoutHeight := clienttypes.NewHeight(0, 100000000)
-	timeoutTimestamp := uint64(0)
-	token = sdk.NewCoin("ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518", sdk.NewInt(1000000))
-
-	tokenInOsmosisSwap := sdk.NewCoin("uosmo", sdk.NewInt(1000000))
-	memo, _ := buildMemo(tokenInOsmosisSwap, "ibc/4D74FBE09BED153381B75FF0D0B030A839E68AE17761F3945A8AF5671B915928", crossChainSwapContractAddress, moduleAddress.String())
-
-	fmt.Println("============memo===============")
-	fmt.Println(memo)
-	fmt.Println("============memo===============")
-
-	transferMsg := transfertypes.MsgTransfer{
-		SourcePort:       sourcePort,
-		SourceChannel:    sourceChannel,
-		Token:            token,
-		Sender:           moduleAddress.String(),
-		Receiver:         crossChainSwapContractAddress,
-		TimeoutHeight:    timeoutHeight,
-		TimeoutTimestamp: timeoutTimestamp,
-		Memo:             memo,
+	// if token
+	if sdk.NewInt(1).GTE(token.Amount) {
+		return nil
 	}
 
-	response, err := k.executeTransferMsg(ctx, &transferMsg)
+	memo, err := buildMemo(token, params.NativeIbcDenom, params.OsmosisSwapContract, moduleAccountAddress.String())
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(response)
-	return err
+	transferMsg := transfertypes.MsgTransfer{
+		SourcePort:       transfertypes.PortID,
+		SourceChannel:    params.OsmosisTransferChannel,
+		Token:            token,
+		Sender:           moduleAccountAddress.String(),
+		Receiver:         params.OsmosisSwapContract,
+		TimeoutHeight:    clienttypes.NewHeight(0, 100000000),
+		TimeoutTimestamp: uint64(0),
+		Memo:             memo,
+	}
+
+	_, err = k.executeTransferMsg(ctx, &transferMsg)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func buildMemo(inputToken sdk.Coin, outputDenom string, contractAddress, receiver string) (string, error) {
@@ -200,4 +194,14 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 	}
 	return k.transferKeeper.Transfer(sdk.WrapSDKContext(ctx), transferMsg)
 
+}
+
+// TODO: use TWAP instead of spotprice
+func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
+	params := k.GetParams(ctx)
+	channelID := params.OsmosisQueryChannel
+	poolId := uint64(1) // for testing
+	baseDenom := params.NativeIbcDenom
+	quoteDenom := "uosmo"
+	return k.SendOsmosisQueryRequest(ctx, poolId, baseDenom, quoteDenom, types.IBCPortID, channelID)
 }

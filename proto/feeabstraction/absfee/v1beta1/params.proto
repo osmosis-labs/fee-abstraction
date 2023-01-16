@@ -14,17 +14,33 @@ message Params {
     // only ibc osmosis is allowed to be used as fee token 
     // this is the ibc denom of osmosis
     string osmosis_ibc_denom = 1 
-        [(gogoproto.moretags) = "yaml:\"allowed_token\"" ];
+    [(gogoproto.moretags) = "yaml:\"allowed_token\"" ];
+
+    // IBC denom of native token in osmosis chain
+    string native_ibc_denom = 2 
+    [(gogoproto.moretags) = "yaml:\"allowed_token\"" ];
 
     // connection id to osmosis chain
-    string osmosis_ibc_connection_id = 2;
+    string osmosis_query_channel = 3;
+
+    // connection id to osmosis chain
+    string osmosis_transfer_channel = 4;
 
     // contract on osmosis with custom ibc logic for fetching spot price
-    string osmosis_query_contract = 3;
+    string osmosis_query_contract = 5;
+    
+    // contract on osmosis with custom ibc logic for fetching spot price
+    string osmosis_swap_contract = 6;
+
+    // pool id
+    uint64 pool_id = 7;
 
     // we'll update the fee rate each `osmosis_exchange_rate_update_period`
-    google.protobuf.Duration osmosis_exchange_rate_update_period = 4 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
+    google.protobuf.Duration osmosis_exchange_rate_update_period = 8 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
     
     // we'll swap our accumulated osmosis fee to native token each `accumulated_osmosis_fee_swap_period` 
-    google.protobuf.Duration accumulated_osmosis_fee_swap_period = 5 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
+    google.protobuf.Duration accumulated_osmosis_fee_swap_period = 9 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
+
+    // Active
+    bool active = 10;
 }

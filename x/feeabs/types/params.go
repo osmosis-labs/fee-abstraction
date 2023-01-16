@@ -19,10 +19,14 @@ const (
 // Parameter keys store keys.
 var (
 	KeyOsmosisIbcDenom                 = []byte("osmosisibcdenom")
-	KeyOsmosisIbcConnectionId          = []byte("osmosisibcconnectionid")
+	KeyOsmosisQueryChannel             = []byte("osmosisquerychannel")
+	KeyOsmosisTransferChannel          = []byte("osmosistransferchannel")
 	KeyOsmosisQueryContract            = []byte("osmosisquerycontract")
+	KeyOsmosisSwapContract             = []byte("osmosisswapcontract")
 	KeyOsmosisExchangeRateUpdatePeriod = []byte("osmosisexchangerateupdateperiod")
 	KeyAccumulatedOsmosisFeeSwapPeriod = []byte("accumulatedosmosisfeeswapperiod")
+	KeyPoolId                          = []byte("poolid")
+	KeyActive                          = []byte("active")
 
 	_ paramtypes.ParamSet = &Params{}
 )
@@ -36,10 +40,14 @@ func ParamKeyTable() paramtypes.KeyTable {
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(KeyOsmosisIbcDenom, &p.OsmosisIbcDenom, validateOsmosisIbcDenom),
-		paramtypes.NewParamSetPair(KeyOsmosisIbcConnectionId, &p.OsmosisIbcConnectionId, validateIbcConnectionId),
+		paramtypes.NewParamSetPair(KeyOsmosisQueryChannel, &p.OsmosisQueryChannel, validateChannelID),
+		paramtypes.NewParamSetPair(KeyOsmosisTransferChannel, &p.OsmosisTransferChannel, validateChannelID),
 		paramtypes.NewParamSetPair(KeyOsmosisQueryContract, &p.OsmosisQueryContract, validateOsmosisQueryContract),
+		paramtypes.NewParamSetPair(KeyOsmosisSwapContract, &p.OsmosisSwapContract, validateOsmosisQueryContract),
 		paramtypes.NewParamSetPair(KeyOsmosisExchangeRateUpdatePeriod, &p.OsmosisExchangeRateUpdatePeriod, noOp),
 		paramtypes.NewParamSetPair(KeyAccumulatedOsmosisFeeSwapPeriod, &p.AccumulatedOsmosisFeeSwapPeriod, noOp),
+		paramtypes.NewParamSetPair(KeyPoolId, &p.PoolId, validatePoolID),
+		paramtypes.NewParamSetPair(KeyActive, &p.Active, nil),
 	}
 }
 
@@ -50,7 +58,7 @@ func (p Params) Validate() error {
 		return fmt.Errorf("invalid ibc denom %s", err)
 	}
 
-	err = validateIbcConnectionId(p.OsmosisIbcConnectionId)
+	err = validateChannelID(p.OsmosisQueryChannel)
 	if err != nil {
 		return fmt.Errorf("invalid connection id %s", err)
 	}
@@ -80,28 +88,29 @@ func validateOsmosisIbcDenom(i interface{}) error {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 
-	// if strings.HasPrefix(denom, "ibc/") {
-	// 	return fmt.Errorf("osmosis ibc denom doesn't have ibc prefix")
-	// }
-
 	return nil
 }
 
-func validateIbcConnectionId(i interface{}) error {
+func validateChannelID(i interface{}) error {
 	_, ok := i.(string)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
-
-	// if !strings.HasPrefix(connectionId, "connection-") {
-	// 	return fmt.Errorf("wrong connection id format")
-	// }
 
 	return nil
 }
 
 func validateOsmosisQueryContract(i interface{}) error {
 	_, ok := i.(string)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	return nil
+}
+
+func validatePoolID(i interface{}) error {
+	_, ok := i.(uint64)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
