@@ -4,6 +4,7 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
 )
 
@@ -34,4 +35,19 @@ func (k Keeper) SendQuerySpotPrice(goCtx context.Context, msg *types.MsgSendQuer
 	}
 
 	return &types.MsgSendQuerySpotPriceResponse{}, nil
+}
+
+func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossChain) (*types.MsgSwapCrossChainResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
+	if err != nil {
+		return nil, err
+	}
+	err = k.transferIBCTokenToOsmosisContract(ctx, sdk.NewCoin("stake", sdk.NewInt(1000000)))
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgSwapCrossChainResponse{}, nil
 }

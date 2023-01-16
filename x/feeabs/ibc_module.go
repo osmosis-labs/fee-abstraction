@@ -7,10 +7,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
-	porttypes "github.com/cosmos/ibc-go/v3/modules/core/05-port/types"
-	host "github.com/cosmos/ibc-go/v3/modules/core/24-host"
-	ibcexported "github.com/cosmos/ibc-go/v3/modules/core/exported"
+	channeltypes "github.com/cosmos/ibc-go/v4/modules/core/04-channel/types"
+	porttypes "github.com/cosmos/ibc-go/v4/modules/core/05-port/types"
+	host "github.com/cosmos/ibc-go/v4/modules/core/24-host"
+	ibcexported "github.com/cosmos/ibc-go/v4/modules/core/exported"
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/keeper"
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
 )
@@ -41,17 +41,17 @@ func (am IBCModule) OnChanOpenInit(
 	channelCap *capabilitytypes.Capability,
 	counterparty channeltypes.Counterparty,
 	version string,
-) error {
+) (string, error) {
 	if err := ValidateChannelParams(ctx, am.keeper, order, portID, channelID); err != nil {
-		return err
+		return "", err
 	}
 
 	// Claim channel capability passed back by IBC module
 	if err := am.keeper.ClaimCapability(ctx, channelCap, host.ChannelCapabilityPath(portID, channelID)); err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return version, nil
 }
 
 func ValidateChannelParams(
@@ -164,7 +164,7 @@ func (am IBCModule) OnAcknowledgementPacket(
 	relayer sdk.AccAddress,
 ) error {
 	var ack channeltypes.Acknowledgement
-	// TODO:  Handler ack logic here
+	// TODO :  Handler ack logic here
 	// TODO : update spot price when receive ack from osmosis chain
 	bz := acknowledgement
 	spotPrice, err := am.keeper.UnmarshalPacketBytesToPrice(bz)
@@ -172,6 +172,9 @@ func (am IBCModule) OnAcknowledgementPacket(
 	if err != nil {
 		return err
 	}
+	fmt.Println("===================================")
+	fmt.Println(spotPrice)
+	fmt.Println("===================================")
 
 	// set spot price here
 	am.keeper.SetOsmosisExchangeRate(ctx, spotPrice)

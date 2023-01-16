@@ -12,10 +12,19 @@ option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
 // Msg is the cosmos.group.v1 Msg service.
 service Msg {
     rpc SendQuerySpotPrice(MsgSendQuerySpotPrice) returns (MsgSendQuerySpotPriceResponse);
+    rpc SwapCrossChain(MsgSwapCrossChain) returns (MsgSwapCrossChainResponse);
+
 }
 // Params defines the parameters for the feeabs module.
 message MsgSendQuerySpotPrice {
     string from_address = 1;
 }
 message MsgSendQuerySpotPriceResponse{}
+
+// Params defines the parameters for the feeabs module.
+message MsgSwapCrossChain {
+    string from_address = 1;
+}
+message MsgSwapCrossChainResponse{
+}
   

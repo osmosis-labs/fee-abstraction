@@ -19,8 +19,11 @@ func NewTxCmd() *cobra.Command {
 	}
 
 	txCmd.AddCommand(NewQueryOsmosisSpotPriceCmd())
+	txCmd.AddCommand(NewSwapOverChainCmd())
+
 	return txCmd
 }
+
 func NewQueryOsmosisSpotPriceCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:  "queryomosis",
@@ -31,6 +34,25 @@ func NewQueryOsmosisSpotPriceCmd() *cobra.Command {
 				return err
 			}
 			msg := types.NewMsgSendQuerySpotPrice(clientCtx.GetFromAddress())
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func NewSwapOverChainCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:  "swap",
+		Args: cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			msg := types.NewMsgSwapCrossChain(clientCtx.GetFromAddress())
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 
 		},

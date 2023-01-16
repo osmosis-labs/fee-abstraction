@@ -9,18 +9,16 @@ KEYALGO="secp256k1"
 KEYRING="test"
 LOGLfeeappdL="info"
 
-feeappd config keyring-backend $KEYRING
-feeappd config chain-id $CHAINID
-
 command -v feeappd > /dev/null 2>&1 || { echo >&2 "feeappd command not found. Ensure this is setup / properly installed in your GOPATH."; exit 1; }
 command -v jq > /dev/null 2>&1 || { echo >&2 "jq not installed. More info: https://stedolan.github.io/jq/download/"; exit 1; }
 
 from_scratch () {
 
-  make install
-
   # remove existing daemon.
   rm -rf ~/.feeappd/*
+
+  feeappd config keyring-backend test
+  feeappd config chain-id $CHAINID
 
   # juno1efd63aw40lxf3n4mhf7dzhjkr453axurv2zdzk
   echo "decorate bright ozone fork gallery riot bus exhaust worth way bone indoor calm squirrel merry zero scheme cotton until shop any excess stage laundry" | feeappd keys add $KEY --keyring-backend $KEYRING --algo $KEYALGO --recover
@@ -52,10 +50,10 @@ from_scratch () {
   update_test_genesis '.app_state["feeshare"]["params"]["allowed_denoms"]=["stake"]'
 
   # Allocate genesis accounts
-  feeappd add-genesis-account $KEY 10000000stake,1000utest --keyring-backend $KEYRING
-  feeappd add-genesis-account feeacc 1000000stake,1000utest --keyring-backend $KEYRING
+  feeappd add-genesis-account $KEY 10000000000000000stake,100000000000000utest --keyring-backend $KEYRING
+  feeappd add-genesis-account feeacc 1000000000000000stake,100000000000000utest --keyring-backend $KEYRING
 
-  feeappd gentx $KEY 1000000stake --keyring-backend $KEYRING --chain-id $CHAINID
+  feeappd gentx $KEY 100000000000000stake --keyring-backend $KEYRING --chain-id $CHAINID
 
   # Collect genesis tx
   feeappd collect-gentxs
@@ -80,3 +78,5 @@ sed -i '/address = "tcp:\/\/0.0.0.0:1317"/c\address = "tcp:\/\/0.0.0.0:1318"' ~/
 
 feeappd config node tcp://127.0.0.1:2241
 feeappd start --pruning=nothing  --minimum-gas-prices=0stake --p2p.laddr tcp://0.0.0.0:2240 --rpc.laddr tcp://127.0.0.1:2241 --grpc.address 127.0.0.1:2242 --grpc-web.address 127.0.0.1:2243
+cosmos1hq6049htg8dh9swl5cw6uqqqcasxttdvpl98p4
+feeappd tx ibc-transfer transfer transfer channel-0 osmo1ekqk6ms4fqf2mfeazju4pcu3jq93lcdsfl0tah 100000000stake --from feeacc --keyring-backend os --chain-id feeappd-t1
