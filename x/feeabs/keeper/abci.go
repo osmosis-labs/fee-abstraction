@@ -52,6 +52,7 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 					panic(err)
 				}
 			}
+
 			ctx.EventManager().EmitEvent(
 				sdk.NewEvent(
 					types.EventTypeEpochEnd,
@@ -76,3 +77,4 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 		return false
 	})
 }
+

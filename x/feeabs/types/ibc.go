@@ -34,7 +34,26 @@ func NewOsmosisQueryRequestPacketData(poolId uint64, baseDenom string, quoteDeno
 
 // GetBytes is a helper for serializing.
 func (p OsmosisQuerySpotPriceRequestPacketData) GetBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
+	var ibcPacket FeeabsIbcPacketData
+	ibcPacket.Packet = &FeeabsIbcPacketData_IbcOsmosisQuerySpotPriceRequestPacketData{&p}
+
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&ibcPacket))
+}
+
+// NewSwapAmountInRoutePacketData create new packet for swap token over ibc.
+func NewSwapAmountInRoutePacketData(poolId uint64, tokenOutDenom string) SwapAmountInRoute {
+	return SwapAmountInRoute{
+		PoolId:        poolId,
+		TokenOutDenom: tokenOutDenom,
+	}
+}
+
+// GetBytes is a helper for serializing.
+func (p SwapAmountInRoute) GetBytes() []byte {
+	var ibcPacket FeeabsIbcPacketData
+	ibcPacket.Packet = &FeeabsIbcPacketData_IbcSwapAmountInRoute{&p}
+
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&ibcPacket))
 }
 
 // TODO: Those types should be putted in types package

@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -81,9 +82,10 @@ func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDeno
 		return sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
 	}
 
+	packetBytes := packetData.GetBytes()
 	// Create the IBC packet
 	packet := channeltypes.NewPacket(
-		packetData.GetBytes(),
+		packetBytes,
 		sequence,
 		sourcePort,
 		sourceChannel,
@@ -95,6 +97,97 @@ func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDeno
 
 	// Send the IBC packet
 	return k.channelKeeper.SendPacket(ctx, channelCap, packet)
+}
+
+// OnAcknowledgementIbcSwapAmountInRoute handle Acknowledgement for SwapAmountInRoute packet
+func (k Keeper) OnAcknowledgementIbcOsmosisQueryRequest(ctx sdk.Context, ack channeltypes.Acknowledgement) error {
+	switch dispatchedAck := ack.Response.(type) {
+	case *channeltypes.Acknowledgement_Error:
+		_ = dispatchedAck.Error
+		return nil
+	case *channeltypes.Acknowledgement_Result:
+		// Unmarshal dispatchedAck result
+		spotPrice, err := k.UnmarshalPacketBytesToPrice(dispatchedAck.Result)
+		if err != nil {
+			return err
+		}
+		k.SetOsmosisExchangeRate(ctx, spotPrice)
+		return nil
+	default:
+		// The counter-party module doesn't implement the correct acknowledgment format
+		return errors.New("invalid acknowledgment format")
+	}
+}
+
+// Send request for swap SwapAmountInRoute over IBC
+func (k Keeper) SendIbcSwapAmountInRoute(
+	ctx sdk.Context,
+	poolId uint64,
+	tokenOutDenom string,
+	sourcePort string,
+	sourceChannel string,
+) error {
+	packetData := types.NewSwapAmountInRoutePacketData(poolId, tokenOutDenom)
+
+	// Get source channel endpoint
+	sourceChannelEnd, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
+	if !found {
+		return sdkerrors.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
+	}
+
+	// Get counter-party chain endpoint infor
+	destinationPort := sourceChannelEnd.GetCounterparty().GetPortID()
+	destinationChannel := sourceChannelEnd.GetCounterparty().GetChannelID()
+
+	// Get next sequence
+	sequence, found := k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
+	if !found {
+		return sdkerrors.Wrapf(
+			channeltypes.ErrSequenceSendNotFound,
+			"source port: %s, source channel: %s", sourcePort, sourceChannel,
+		)
+	}
+
+	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
+	if !ok {
+		return sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
+	}
+
+	packetBytes := packetData.GetBytes()
+	timeoutHeight := clienttypes.NewHeight(0, 100000000)
+	timeoutTimestamp := uint64(0)
+
+	// Create the IBC packet
+	packet := channeltypes.NewPacket(
+		packetBytes,
+		sequence,
+		sourcePort,
+		sourceChannel,
+		destinationPort,
+		destinationChannel,
+		timeoutHeight,
+		timeoutTimestamp,
+	)
+
+	// Send the IBC packet
+	return k.channelKeeper.SendPacket(ctx, channelCap, packet)
+}
+
+// OnAcknowledgementIbcSwapAmountInRoute handle Acknowledgement for SwapAmountInRoute packet
+func (k Keeper) OnAcknowledgementIbcSwapAmountInRoute(ctx sdk.Context, ack channeltypes.Acknowledgement) error {
+	switch dispatchedAck := ack.Response.(type) {
+	case *channeltypes.Acknowledgement_Error:
+		_ = dispatchedAck.Error
+		return nil
+	case *channeltypes.Acknowledgement_Result:
+		// Unmarshal dispatchedAck result
+
+		// TODO: implement logic swap success
+		return nil
+	default:
+		// The counter-party module doesn't implement the correct acknowledgment format
+		return errors.New("invalid acknowledgment format")
+	}
 }
 
 func (k Keeper) GetChannelId(ctx sdk.Context) string {
@@ -110,6 +203,7 @@ func (k Keeper) UnmarshalPacketBytesToPrice(bz []byte) (sdk.Dec, error) {
 	if err != nil {
 		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, "error when json.Unmarshal")
 	}
+
 	spotPriceDec, err := sdk.NewDecFromStr(spotPrice.SpotPrice)
 	if err != nil {
 		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, "error when NewDecFromStr")
@@ -191,7 +285,7 @@ func buildMemo(inputToken sdk.Coin, outputDenom string, contractAddress, receive
 
 func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.MsgTransfer) (*transfertypes.MsgTransferResponse, error) {
 	if err := transferMsg.ValidateBasic(); err != nil {
-		return nil, fmt.Errorf("bad msg", err.Error())
+		return nil, fmt.Errorf("bad msg %v", err.Error())
 	}
 	return k.transferKeeper.Transfer(sdk.WrapSDKContext(ctx), transferMsg)
 
