@@ -7,10 +7,12 @@ import (
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 
 	app "github.com/notional-labs/feeabstraction/v1/app"
+	"github.com/notional-labs/feeabstraction/v1/app/params"
 	"github.com/notional-labs/feeabstraction/v1/cmd/feeappd/cmd"
 )
 
 func main() {
+	params.SetAddressPrefixes()
 	rootCmd, _ := cmd.NewRootCmd()
 
 	if err := svrcmd.Execute(rootCmd, app.DefaultNodeHome); err != nil {
