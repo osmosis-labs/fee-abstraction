@@ -100,7 +100,7 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 		return ctx, sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, "invalid ibc token: %s", ibcFees)
 	}
 
-	nativeFees, err := fadfd.feeabsKeeper.CalculateNativeFromIBCCoin(ibcFees)
+	nativeFees, err := fadfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, ibcFees)
 	if err != nil {
 		return ctx, err
 	}
@@ -171,7 +171,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		}
 		if feeTx.FeePayer().Equals(famfd.feeabsKeeper.GetModuleAddress()) {
 			ibcFees := feeTx.GetFee()
-			nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoin(ibcFees)
+			nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, ibcFees)
 			if err != nil {
 				return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees")
 
