@@ -173,23 +173,6 @@ func (k Keeper) SendIbcSwapAmountInRoute(
 	return k.channelKeeper.SendPacket(ctx, channelCap, packet)
 }
 
-// OnAcknowledgementIbcSwapAmountInRoute handle Acknowledgement for SwapAmountInRoute packet
-func (k Keeper) OnAcknowledgementIbcSwapAmountInRoute(ctx sdk.Context, ack channeltypes.Acknowledgement) error {
-	switch dispatchedAck := ack.Response.(type) {
-	case *channeltypes.Acknowledgement_Error:
-		_ = dispatchedAck.Error
-		return nil
-	case *channeltypes.Acknowledgement_Result:
-		// Unmarshal dispatchedAck result
-
-		// TODO: implement logic swap success
-		return nil
-	default:
-		// The counter-party module doesn't implement the correct acknowledgment format
-		return errors.New("invalid acknowledgment format")
-	}
-}
-
 func (k Keeper) GetChannelId(ctx sdk.Context) string {
 	store := ctx.KVStore(k.storeKey)
 	return string(store.Get(types.KeyChannelID))
