@@ -7,6 +7,16 @@ import "google/api/annotations.proto";
 option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
 
 
+message FeeabsIbcPacketData {
+	oneof packet {
+		NoData noData = 1;
+		SwapAmountInRoute ibcSwapAmountInRoute = 2;
+		OsmosisQuerySpotPriceRequestPacketData ibcOsmosisQuerySpotPriceRequestPacketData = 3;
+	}
+}
+
+message NoData {}
+
 // TODO : add more details for this message
 message SwapAmountInRoute {
 	uint64 pool_id   = 1;
@@ -18,4 +28,10 @@ message OsmosisQueryRequestPacketData  {
 	uint64 pool_id = 1;
 	string token_in = 2;
 	repeated SwapAmountInRoute routes = 3 [(gogoproto.nullable) = false];
+}
+
+message OsmosisQuerySpotPriceRequestPacketData {
+	uint64 pool_id = 1;
+	string base_asset_denom = 2;
+	string quote_asset_denom = 3;
 }

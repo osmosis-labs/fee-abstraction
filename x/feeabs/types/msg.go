@@ -37,7 +37,9 @@ func (m MsgSendQuerySpotPrice) ValidateBasic() error {
 	return nil
 }
 
-func NewMsgSendQuerySpotPrice(fromAddr sdk.AccAddress) *MsgSendQuerySpotPrice {
+func NewMsgSendQuerySpotPrice(
+	fromAddr sdk.AccAddress,
+) *MsgSendQuerySpotPrice {
 	return &MsgSendQuerySpotPrice{
 		FromAddress: fromAddr.String(),
 	}

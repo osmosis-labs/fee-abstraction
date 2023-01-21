@@ -67,17 +67,22 @@ func (k Keeper) GetModuleAddress() sdk.AccAddress {
 }
 
 // need to implement
-func (k Keeper) CalculateNativeFromIBCCoin(ibcCoin sdk.Coins) (coins sdk.Coins, err error) {
-	err = k.verifyIBCCoin(ibcCoin)
+func (k Keeper) CalculateNativeFromIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins) (coins sdk.Coins, err error) {
+	err = k.verifyIBCCoins(ctx, ibcCoins)
 	if err != nil {
 		return sdk.Coins{}, nil
 	}
 	return coins, nil
 }
 
-// TODO : need to implement
 // return err if IBC token isn't in allowed_list
-func (k Keeper) verifyIBCCoin(ibcCoin sdk.Coins) error {
+func (k Keeper) verifyIBCCoins(ctx sdk.Context, ibcCoin sdk.Coins) error {
+	osmosisDenom := k.GetOsmosisIBCDenomParams(ctx)
+
+	if ibcCoin[0].Denom == osmosisDenom {
+		return fmt.Errorf("unallowed denom for tx fee")
+	}
+
 	return nil
 }
 
@@ -94,4 +99,10 @@ func (k Keeper) GetParams(ctx sdk.Context) (params types.Params) {
 // SetParams sets all of the parameters in the abstraction module.
 func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 	k.paramSpace.SetParamSet(ctx, &params)
+}
+
+// GetParams gets the fee abstraction module's parameters.
+func (k Keeper) GetOsmosisIBCDenomParams(ctx sdk.Context) (denom string) {
+	k.paramSpace.Get(ctx, types.KeyOsmosisIbcDenom, &denom)
+	return denom
 }

@@ -2,16 +2,19 @@ package helpers
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
+	tmrand "github.com/tendermint/tendermint/libs/rand"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	feeapp "github.com/notional-labs/feeabstraction/v1/app"
 )
 
@@ -42,6 +45,14 @@ var DefaultConsensusParams = &abci.ConsensusParams{
 type EmptyAppOptions struct{}
 
 func (EmptyAppOptions) Get(o string) interface{} { return nil }
+
+func NewContextForApp(app feeapp.FeeAbs) sdk.Context {
+	ctx := app.BaseApp.NewContext(false, tmproto.Header{
+		ChainID: fmt.Sprintf("test-chain-%s", tmrand.Str(4)),
+		Height:  1,
+	})
+	return ctx
+}
 
 func Setup(t *testing.T, isCheckTx bool, invCheckPeriod uint) *feeapp.FeeAbs {
 	t.Helper()

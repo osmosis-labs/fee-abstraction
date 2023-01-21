@@ -15,12 +15,15 @@ update_genesis () {
     cat $HOME/.osmosisd/config/genesis.json | jq "$1" > $HOME/.osmosisd/config/tmp_genesis.json && mv $HOME/.osmosisd/config/tmp_genesis.json $HOME/.osmosisd/config/genesis.json
 }
 echo "lyrics wild earn woman spot rich hen cement trade culture audit amount smoke arm use hollow aerobic correct spirit dolphin tragic all transfer enough" | osmosisd keys add alice --recover --keyring-backend=test --home=$HOME/.osmosisd
+echo "decorate bright ozone fork gallery riot bus exhaust worth way bone indoor calm squirrel merry zero scheme cotton until shop any excess stage laundry" | osmosisd keys add deployer --recover --keyring-backend=test --home=$HOME/.osmosisd
+
+
 # change staking denom to uosmo
 update_genesis '.app_state["staking"]["params"]["bond_denom"]="uosmo"'
 
 # osmo1ekqk6ms4fqf2mfeazju4pcu3jq93lcdsfl0tah
 osmosisd add-genesis-account $(osmosisd keys show alice -a --keyring-backend=test --home=$HOME/.osmosisd) 100000000000uosmo,100000000000stake,100000000000uatom,2000000uakt --home=$HOME/.osmosisd
-
+osmosisd add-genesis-account $(osmosisd keys show deployer -a --keyring-backend=test --home=$HOME/.osmosisd) 100000000000uosmo,100000000000stake,100000000000uatom,2000000uakt --home=$HOME/.osmosisd
 # create validator node with tokens to transfer to the three other nodes
 osmosisd add-genesis-account $(osmosisd keys show validator1 -a --keyring-backend=test --home=$HOME/.osmosisd) 100000000000uosmo,100000000000stake,100000000000uatom,2000000uakt --home=$HOME/.osmosisd
 osmosisd gentx validator1 500000000uosmo --keyring-backend=test --home=$HOME/.osmosisd --chain-id=testing
