@@ -168,17 +168,10 @@ func (am IBCModule) OnAcknowledgementPacket(
 	// TODO : update spot price when receive ack from osmosis chain
 	bz := acknowledgement
 	spotPrice, err := am.keeper.UnmarshalPacketBytesToPrice(bz)
-	fmt.Println("===================================")
-	fmt.Println(string(bz))
-	fmt.Println("===================================")
 
 	if err != nil {
 		return err
 	}
-
-	fmt.Println("===================================")
-	fmt.Println(spotPrice)
-	fmt.Println("===================================")
 
 	// set spot price here
 	am.keeper.SetOsmosisExchangeRate(ctx, spotPrice)
