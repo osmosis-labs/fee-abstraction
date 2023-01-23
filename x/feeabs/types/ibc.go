@@ -34,10 +34,7 @@ func NewOsmosisQueryRequestPacketData(poolId uint64, baseDenom string, quoteDeno
 
 // GetBytes is a helper for serializing.
 func (p OsmosisQuerySpotPriceRequestPacketData) GetBytes() []byte {
-	var ibcPacket FeeabsIbcPacketData
-	ibcPacket.Packet = &FeeabsIbcPacketData_IbcOsmosisQuerySpotPriceRequestPacketData{&p}
-
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&ibcPacket))
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
 }
 
 // NewSwapAmountInRoutePacketData create new packet for swap token over ibc.
