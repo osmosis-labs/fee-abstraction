@@ -119,60 +119,6 @@ func (k Keeper) OnAcknowledgementIbcOsmosisQueryRequest(ctx sdk.Context, ack cha
 	}
 }
 
-// Send request for swap SwapAmountInRoute over IBC
-func (k Keeper) SendIbcSwapAmountInRoute(
-	ctx sdk.Context,
-	poolId uint64,
-	tokenOutDenom string,
-	sourcePort string,
-	sourceChannel string,
-) error {
-	packetData := types.NewSwapAmountInRoutePacketData(poolId, tokenOutDenom)
-
-	// Get source channel endpoint
-	sourceChannelEnd, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
-	if !found {
-		return sdkerrors.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
-	}
-
-	// Get counter-party chain endpoint infor
-	destinationPort := sourceChannelEnd.GetCounterparty().GetPortID()
-	destinationChannel := sourceChannelEnd.GetCounterparty().GetChannelID()
-
-	// Get next sequence
-	sequence, found := k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
-	if !found {
-		return sdkerrors.Wrapf(
-			channeltypes.ErrSequenceSendNotFound,
-			"source port: %s, source channel: %s", sourcePort, sourceChannel,
-		)
-	}
-
-	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
-	if !ok {
-		return sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
-	}
-
-	packetBytes := packetData.GetBytes()
-	timeoutHeight := clienttypes.NewHeight(0, 100000000)
-	timeoutTimestamp := uint64(0)
-
-	// Create the IBC packet
-	packet := channeltypes.NewPacket(
-		packetBytes,
-		sequence,
-		sourcePort,
-		sourceChannel,
-		destinationPort,
-		destinationChannel,
-		timeoutHeight,
-		timeoutTimestamp,
-	)
-
-	// Send the IBC packet
-	return k.channelKeeper.SendPacket(ctx, channelCap, packet)
-}
-
 func (k Keeper) GetChannelId(ctx sdk.Context) string {
 	store := ctx.KVStore(k.storeKey)
 	return string(store.Get(types.KeyChannelID))
