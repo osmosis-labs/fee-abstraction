@@ -14,6 +14,7 @@ import (
 	"github.com/tendermint/tendermint/libs/rand"
 	dbm "github.com/tendermint/tm-db"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -41,7 +42,8 @@ func BenchmarkFullAppSimulation(b *testing.B) {
 		}
 	}()
 
-	app := feeapp.NewFeeAbs(logger, db, nil, true, map[int64]bool{}, feeapp.DefaultNodeHome, simapp.FlagPeriodValue, feeapp.MakeEncodingConfig(), simapp.EmptyAppOptions{}, interBlockCacheOpt())
+	var emptyWasmOpts []wasm.Option
+	app := feeapp.NewFeeAbs(logger, db, nil, true, map[int64]bool{}, feeapp.DefaultNodeHome, simapp.FlagPeriodValue, feeapp.MakeEncodingConfig(), simapp.EmptyAppOptions{}, emptyWasmOpts, interBlockCacheOpt())
 
 	// Run randomized simulation:w
 	_, simParams, simErr := simulation.SimulateFromSeed(
@@ -106,7 +108,8 @@ func TestAppStateDeterminism(t *testing.T) {
 			}
 
 			db := dbm.NewMemDB()
-			app := feeapp.NewFeeAbs(logger, db, nil, true, map[int64]bool{}, feeapp.DefaultNodeHome, simapp.FlagPeriodValue, feeapp.MakeEncodingConfig(), simapp.EmptyAppOptions{}, interBlockCacheOpt())
+			var emptyWasmOpts []wasm.Option
+			app := feeapp.NewFeeAbs(logger, db, nil, true, map[int64]bool{}, feeapp.DefaultNodeHome, simapp.FlagPeriodValue, feeapp.MakeEncodingConfig(), simapp.EmptyAppOptions{}, emptyWasmOpts, interBlockCacheOpt())
 
 			fmt.Printf(
 				"running non-determinism simulation; seed %d: %d/%d, attempt: %d/%d\n",
