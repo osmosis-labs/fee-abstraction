@@ -111,7 +111,6 @@ import (
 	feeabskeeper "github.com/notional-labs/feeabstraction/v1/x/feeabs/keeper"
 	feeabstypes "github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
 
-	feeante "github.com/notional-labs/feeabstraction/v1/ante"
 	appparams "github.com/notional-labs/feeabstraction/v1/app/params"
 
 	// unnamed import of statik for swagger UI support
@@ -312,6 +311,7 @@ func NewFeeAbs(
 	app.CapabilityKeeper.Seal()
 
 	// add keepers
+	// TODO: refactor this: don't use module account directly
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
 		appCodec,
 		keys[authtypes.StoreKey],
@@ -319,6 +319,7 @@ func NewFeeAbs(
 		authtypes.ProtoBaseAccount,
 		maccPerms,
 	)
+
 	app.BankKeeper = bankkeeper.NewBaseKeeper(
 		appCodec,
 		keys[banktypes.StoreKey],
@@ -696,8 +697,8 @@ func NewFeeAbs(
 	app.MountTransientStores(tkeys)
 	app.MountMemoryStores(memKeys)
 
-	anteHandler, err := feeante.NewAnteHandler(
-		feeante.HandlerOptions{
+	anteHandler, err := NewAnteHandler(
+		HandlerOptions{
 			HandlerOptions: ante.HandlerOptions{
 				AccountKeeper:   app.AccountKeeper,
 				BankKeeper:      app.BankKeeper,
@@ -705,7 +706,8 @@ func NewFeeAbs(
 				SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
 				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			},
-			IBCkeeper: app.IBCKeeper,
+			IBCKeeper:    app.IBCKeeper,
+			FeeAbskeeper: app.FeeabsKeeper,
 		},
 	)
 	if err != nil {

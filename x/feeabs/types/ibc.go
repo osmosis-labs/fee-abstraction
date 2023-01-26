@@ -11,6 +11,7 @@ const (
 	IBCPortID = "feeabs"
 )
 
+// it should be generated from protobuf
 type SpotPrice struct {
 	SpotPrice string `json:"spot_price"`
 }
@@ -34,10 +35,7 @@ func NewOsmosisQueryRequestPacketData(poolId uint64, baseDenom string, quoteDeno
 
 // GetBytes is a helper for serializing.
 func (p OsmosisQuerySpotPriceRequestPacketData) GetBytes() []byte {
-	var ibcPacket FeeabsIbcPacketData
-	ibcPacket.Packet = &FeeabsIbcPacketData_IbcOsmosisQuerySpotPriceRequestPacketData{&p}
-
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&ibcPacket))
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
 }
 
 // NewSwapAmountInRoutePacketData create new packet for swap token over ibc.
@@ -87,10 +85,11 @@ type OsmosisSwapMsg struct {
 	OsmosisSwap Swap `json:"osmosis_swap"`
 }
 type Swap struct {
-	InputCoin   sdk.Coin `json:"input_coin"`
-	OutPutDenom string   `json:"output_denom"`
-	Slippage    Twap     `json:"slippage"`
-	Receiver    string   `json:"receiver"`
+	InputCoin      sdk.Coin `json:"input_coin"`
+	OutPutDenom    string   `json:"output_denom"`
+	Slippage       Twap     `json:"slippage"`
+	Receiver       string   `json:"receiver"`
+	FailedDelivery string   `json:"on_failed_delivery"`
 }
 
 type Twap struct {

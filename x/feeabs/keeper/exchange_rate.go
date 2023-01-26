@@ -9,9 +9,17 @@ import (
 )
 
 // SetOsmosisExchangeRate set osmosis exchange rate (osmosis to native token)
-func (k Keeper) SetOsmosisExchangeRate(ctx sdk.Context, osmosisExchangeRate sdk.Dec) {
+func (k Keeper) SetOsmosisExchangeRate(ctx sdk.Context, osmosisExchangeRate string) {
 	store := ctx.KVStore(k.storeKey)
-	bz, _ := osmosisExchangeRate.Marshal()
+	spotPriceData := types.SpotPriceData{
+		SpotPrice: osmosisExchangeRate,
+	}
+	bz, err := k.cdc.Marshal(&spotPriceData)
+	// TODO: handler logic here, refactor that trash
+	fmt.Println("================")
+	fmt.Println(err)
+	fmt.Println("================")
+
 	store.Set(types.OsmosisExchangeRate, bz)
 }
 
@@ -24,10 +32,12 @@ func (k Keeper) GetOsmosisExchangeRate(ctx sdk.Context) (sdk.Dec, error) {
 	}
 
 	fmt.Println(string(bz))
-	var osmosisExchangeRate sdk.Dec
-	if err := osmosisExchangeRate.Unmarshal(bz); err != nil {
-		panic(err)
+	var spotPrice types.SpotPriceData
+	k.cdc.Unmarshal(bz, &spotPrice)
+	spotPriceDec, err := sdk.NewDecFromStr(spotPrice.SpotPrice)
+	if err != nil {
+		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, "error when NewDecFromStr")
 	}
 
-	return osmosisExchangeRate, nil
+	return spotPriceDec, nil
 }

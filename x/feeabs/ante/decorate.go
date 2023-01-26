@@ -30,8 +30,9 @@ func (fadfd FeeAbstractionDeductFeeDecorate) AnteHandle(ctx sdk.Context, tx sdk.
 	if !ok {
 		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
 	}
+	ibcFeeDenom := fadfd.feeabsKeeper.GetParams(ctx).OsmosisIbcDenom
 	// normal deduct logic
-	if !feeTx.FeePayer().Equals(fadfd.feeabsKeeper.GetModuleAddress()) {
+	if feeTx.GetFee()[0].Denom != ibcFeeDenom {
 		return fadfd.normalDeductFeeAnteHandle(ctx, tx, simulate, next, feeTx)
 	}
 
@@ -105,12 +106,14 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 		return ctx, err
 	}
 
-	// deduct the fees
+	// deduct fees
 	if !feeTx.GetFee().IsZero() {
 		err = DeductFees(fadfd.bankKeeper, ctx, deductFeesFromAcc, nativeFees)
 		if err != nil {
 			return ctx, err
 		}
+		IBCFeePayer := feeTx.FeePayer()
+		fadfd.feeabsKeeper.SendFeeFromFeePayerToModuleAccount(ctx, IBCFeePayer, ibcFees)
 	}
 
 	events := sdk.Events{sdk.NewEvent(sdk.EventTypeTx,
@@ -166,17 +169,26 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 	// is only ran on check tx.
 	if ctx.IsCheckTx() && !simulate {
 		minGasPrices := ctx.MinGasPrices()
+
 		if minGasPrices.IsZero() {
 			return next(ctx, tx, simulate)
 		}
-		if feeTx.FeePayer().Equals(famfd.feeabsKeeper.GetModuleAddress()) {
+		ibcFeeDenom := famfd.feeabsKeeper.GetParams(ctx).OsmosisIbcDenom
+		if feeTx.GetFee().Len() == 0 {
+			return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees")
+		}
+
+		if feeTx.GetFee()[0].Denom == ibcFeeDenom {
 			ibcFees := feeTx.GetFee()
 			nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, ibcFees)
 			if err != nil {
-				return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees")
-
+				return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, err.Error())
 			}
+
 			feeCoins = nativeCoinsFees
+			fmt.Println("=====================")
+			fmt.Println(feeCoins)
+			fmt.Println("=====================")
 		}
 
 		requiredFees := make(sdk.Coins, len(minGasPrices))

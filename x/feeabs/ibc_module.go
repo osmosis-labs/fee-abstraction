@@ -163,46 +163,63 @@ func (am IBCModule) OnAcknowledgementPacket(
 	acknowledgement []byte,
 	relayer sdk.AccAddress,
 ) error {
-	var ack channeltypes.Acknowledgement
-	if err := types.ModuleCdc.UnmarshalJSON(acknowledgement, &ack); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
-	}
+
+	fmt.Println("=============================")
+	fmt.Println("============acknowledgement=================")
+	fmt.Println(string(acknowledgement))
+	fmt.Println("=============================")
+	fmt.Println("=============================")
+
 	// TODO :  Handler ack logic here
 	// TODO : update spot price when receive ack from osmosis chain
+	spotPrice, err := am.keeper.UnmarshalPacketBytesToPrice(acknowledgement)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("=============================")
+	fmt.Println("===============spotPrice==============")
+	fmt.Println(spotPrice)
+	fmt.Println("=============================")
+	fmt.Println("=============================")
+
+	// set spot price here
+	am.keeper.SetOsmosisExchangeRate(ctx, spotPrice)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypePacket,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
-			sdk.NewAttribute(types.AttributeKeyAck, fmt.Sprintf("%v", ack)),
+			sdk.NewAttribute(types.AttributeKeyAck, fmt.Sprintf("%v", acknowledgement)),
 		),
 	)
 
-	switch resp := ack.Response.(type) {
-	case *channeltypes.Acknowledgement_Result:
-		spotPrice, err := am.keeper.UnmarshalPacketBytesToPrice(ack.GetResult())
+	// switch resp := ack.Response.(type) {
+	// case *channeltypes.Acknowledgement_Result:
+	// 	spotPrice, err := am.keeper.UnmarshalPacketBytesToPrice(ack.GetResult())
 
-		if err != nil {
-			return err
-		}
+	// 	if err != nil {
+	// 		return err
+	// 	}
 
-		// set spot price here
-		am.keeper.SetOsmosisExchangeRate(ctx, spotPrice)
+	// 	// set spot price here
+	// 	am.keeper.SetOsmosisExchangeRate(ctx, spotPrice)
 
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypePacket,
-				sdk.NewAttribute(types.AttributeKeyAckSuccess, string(resp.Result)),
-			),
-		)
-	case *channeltypes.Acknowledgement_Error:
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypePacket,
-				sdk.NewAttribute(types.AttributeKeyAckError, resp.Error),
-			),
-		)
-	}
+	// 	ctx.EventManager().EmitEvent(
+	// 		sdk.NewEvent(
+	// 			types.EventTypePacket,
+	// 			sdk.NewAttribute(types.AttributeKeyAckSuccess, string(resp.Result)),
+	// 		),
+	// 	)
+	// case *channeltypes.Acknowledgement_Error:
+	// 	ctx.EventManager().EmitEvent(
+	// 		sdk.NewEvent(
+	// 			types.EventTypePacket,
+	// 			sdk.NewAttribute(types.AttributeKeyAckError, resp.Error),
+	// 		),
+	// 	)
+	// }
 
 	return nil
 }

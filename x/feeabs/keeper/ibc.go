@@ -65,6 +65,11 @@ func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDeno
 			"source port: %s, source channel: %s", sourcePort, sourceChannel,
 		)
 	}
+
+	fmt.Println("==========packetdata==============")
+	fmt.Println(packetData)
+	fmt.Println("==========packetdata==============")
+
 	sourceChannelEnd, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
 	if !found {
 		return sdkerrors.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
@@ -179,19 +184,15 @@ func (k Keeper) GetChannelId(ctx sdk.Context) string {
 }
 
 // TODO: need to test this function
-func (k Keeper) UnmarshalPacketBytesToPrice(bz []byte) (sdk.Dec, error) {
+func (k Keeper) UnmarshalPacketBytesToPrice(bz []byte) (string, error) {
 	var spotPrice types.SpotPrice
 	fmt.Println(string(bz))
 	err := json.Unmarshal(bz, &spotPrice)
 	if err != nil {
-		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, "error when json.Unmarshal")
+		return "", sdkerrors.New("ibc ack data umarshal", 1, "error when json.Unmarshal")
 	}
 
-	spotPriceDec, err := sdk.NewDecFromStr(spotPrice.SpotPrice)
-	if err != nil {
-		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, "error when NewDecFromStr")
-	}
-	return spotPriceDec, nil
+	return spotPrice.SpotPrice, nil
 }
 
 // ParseMsgToMemo build a memo from msg, contractAddr, compatible with ValidateAndParseMemo in https://github.com/osmosis-labs/osmosis/blob/nicolas/crosschain-swaps-new/x/ibc-hooks/wasm_hook.go
@@ -257,7 +258,8 @@ func buildMemo(inputToken sdk.Coin, outputDenom string, contractAddress, receive
 				WindowSeconds:      10,
 			},
 		},
-		Receiver: receiver,
+		Receiver:       receiver,
+		FailedDelivery: "do_nothing",
 	}
 
 	msgSwap := types.OsmosisSwapMsg{
