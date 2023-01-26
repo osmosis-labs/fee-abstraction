@@ -117,7 +117,14 @@ func (k Keeper) GetOsmosisIBCDenomParams(ctx sdk.Context) (denom string) {
 }
 
 // need to refactor
-func (k Keeper) SendFeeFromFeePayerToModuleAccount(ctx sdk.Context, feePayer sdk.AccAddress, token sdk.Coins) {
-	k.bk.SendCoinsFromAccountToModule(ctx, feePayer, "fee_collector", token)
-	k.bk.SendCoinsFromModuleToAccount(ctx, "fee_collector", k.GetModuleAddress(), token)
+func (k Keeper) SendFeeFromFeePayerToModuleAccount(ctx sdk.Context, feePayer sdk.AccAddress, token sdk.Coins) error {
+	err := k.bk.SendCoinsFromAccountToModule(ctx, feePayer, "fee_collector", token)
+	if err != nil {
+		return err
+	}
+	err = k.bk.SendCoinsFromModuleToAccount(ctx, "fee_collector", k.GetModuleAddress(), token)
+	if err != nil {
+		return err
+	}
+	return nil
 }

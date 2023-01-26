@@ -113,7 +113,12 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 			return ctx, err
 		}
 		IBCFeePayer := feeTx.FeePayer()
-		fadfd.feeabsKeeper.SendFeeFromFeePayerToModuleAccount(ctx, IBCFeePayer, ibcFees)
+
+		err = fadfd.feeabsKeeper.SendFeeFromFeePayerToModuleAccount(ctx, IBCFeePayer, ibcFees)
+		if err != nil {
+			return ctx, err
+		}
+
 	}
 
 	events := sdk.Events{sdk.NewEvent(sdk.EventTypeTx,
