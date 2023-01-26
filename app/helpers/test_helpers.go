@@ -14,6 +14,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	feeapp "github.com/notional-labs/feeabstraction/v1/app"
 )
@@ -79,6 +80,7 @@ func Setup(t *testing.T, isCheckTx bool, invCheckPeriod uint) *feeapp.FeeAbs {
 func setup(withGenesis bool, invCheckPeriod uint) (*feeapp.FeeAbs, feeapp.GenesisState) {
 	db := dbm.NewMemDB()
 	encCdc := feeapp.MakeEncodingConfig()
+	var emptyWasmOpts []wasm.Option
 	app := feeapp.NewFeeAbs(
 		log.NewNopLogger(),
 		db,
@@ -89,6 +91,7 @@ func setup(withGenesis bool, invCheckPeriod uint) (*feeapp.FeeAbs, feeapp.Genesi
 		invCheckPeriod,
 		encCdc,
 		EmptyAppOptions{},
+		emptyWasmOpts,
 	)
 	if withGenesis {
 		return app, feeapp.NewDefaultGenesisState()
