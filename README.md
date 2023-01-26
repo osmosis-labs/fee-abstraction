@@ -1,6 +1,4 @@
-# Happy new year !!!!!!!
 # Fee Abstraction
- 
 ## Description 
 
 Fee-abs enable users on any cosmos-sdk chain with ibc connections to pay fee using ibc token.
