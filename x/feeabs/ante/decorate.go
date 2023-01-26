@@ -30,9 +30,9 @@ func (fadfd FeeAbstractionDeductFeeDecorate) AnteHandle(ctx sdk.Context, tx sdk.
 	if !ok {
 		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
 	}
-	ibcFeeDenom := fadfd.feeabsKeeper.GetParams(ctx).OsmosisIbcDenom
-	// normal deduct logic
-	if feeTx.GetFee()[0].Denom != ibcFeeDenom {
+
+	// need to refactor
+	if feeTx.GetFee() == nil || feeTx.GetFee()[0].Denom == "stake" {
 		return fadfd.normalDeductFeeAnteHandle(ctx, tx, simulate, next, feeTx)
 	}
 
@@ -186,9 +186,6 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 			}
 
 			feeCoins = nativeCoinsFees
-			fmt.Println("=====================")
-			fmt.Println(feeCoins)
-			fmt.Println("=====================")
 		}
 
 		requiredFees := make(sdk.Coins, len(minGasPrices))
