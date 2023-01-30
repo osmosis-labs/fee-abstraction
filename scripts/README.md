@@ -26,3 +26,11 @@ base_asset: osmo
 quote_asset: stake
 spot_price: "2.000000000000000000"
 ```
+
+## Gov proposal
+
+```
+feeappd tx gov submit-proposal param-change scripts/proposal.json --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes
+
+feeappd tx gov vote 1 yes --from feeapp1 --keyring-backend test --chain-id feeappd-t1 --yes
+```
