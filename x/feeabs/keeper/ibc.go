@@ -58,10 +58,10 @@ func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDeno
 	packetData := types.NewOsmosisQueryRequestPacketData(poolId, baseDenom, quoteDenom)
 
 	// Require channelID is the channelID profiles module is bound to
-	boundChannel := k.GetChannelId(ctx)
-	if boundChannel != sourceChannel {
-		return sdkerrors.Wrapf(channeltypes.ErrInvalidChannel, "invalid chanel: %s, expected %s", sourceChannel, boundChannel)
-	}
+	// boundChannel := k.GetChannelId(ctx)
+	// if boundChannel != sourceChannel {
+	// 	return sdkerrors.Wrapf(channeltypes.ErrInvalidChannel, "invalid chanel: %s, expected %s", sourceChannel, boundChannel)
+	// }
 
 	// Get the next sequence
 	sequence, found := k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
