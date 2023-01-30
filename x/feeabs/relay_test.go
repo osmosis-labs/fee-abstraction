@@ -6,6 +6,7 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/CosmWasm/wasmd/x/wasm/keeper/wasmtesting"
 	wasmibctesting "github.com/notional-labs/feeabstraction/v1/x/feeabs/ibctesting"
+	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
 
 	wasmvm "github.com/CosmWasm/wasmvm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
@@ -19,85 +20,85 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// func TestFeeAbsIBCToContract(t *testing.T) {
-// 	specs := map[string]struct {
-// 		contract      wasmtesting.IBCContractCallbacks
-// 		setupContract func(t *testing.T, contract wasmtesting.IBCContractCallbacks, chain *wasmibctesting.TestChain)
-// 	}{
-// 		"query": {
-// 			contract: &queryFeeabsContract{},
-// 			setupContract: func(t *testing.T, contract wasmtesting.IBCContractCallbacks, chain *wasmibctesting.TestChain) {
-// 				c := contract.(*queryFeeabsContract)
-// 				c.t = t
-// 				c.chain = chain
-// 			},
-// 		},
-// 	}
-// 	for name, spec := range specs {
-// 		t.Run(name, func(t *testing.T) {
-// 			var (
-// 				chainAOpts = []wasmkeeper.Option{wasmkeeper.WithWasmEngine(
-// 					wasmtesting.NewIBCContractMockWasmer(spec.contract),
-// 				)}
-// 				coordinator = wasmibctesting.NewCoordinator(t, 2, []wasmkeeper.Option{}, chainAOpts)
-// 				chainA      = coordinator.GetChain(wasmibctesting.GetChainID(0))
-// 				chainB      = coordinator.GetChain(wasmibctesting.GetChainID(1))
-// 			)
+func TestFeeAbsIBCToContract(t *testing.T) {
+	specs := map[string]struct {
+		contract      wasmtesting.IBCContractCallbacks
+		setupContract func(t *testing.T, contract wasmtesting.IBCContractCallbacks, chain *wasmibctesting.TestChain)
+	}{
+		"query": {
+			contract: &queryFeeabsContract{},
+			setupContract: func(t *testing.T, contract wasmtesting.IBCContractCallbacks, chain *wasmibctesting.TestChain) {
+				c := contract.(*queryFeeabsContract)
+				c.t = t
+				c.chain = chain
+			},
+		},
+	}
+	for name, spec := range specs {
+		t.Run(name, func(t *testing.T) {
+			var (
+				chainAOpts = []wasmkeeper.Option{wasmkeeper.WithWasmEngine(
+					wasmtesting.NewIBCContractMockWasmer(spec.contract),
+				)}
+				coordinator = wasmibctesting.NewCoordinator(t, 2, []wasmkeeper.Option{}, chainAOpts)
+				chainA      = coordinator.GetChain(wasmibctesting.GetChainID(0))
+				chainB      = coordinator.GetChain(wasmibctesting.GetChainID(1))
+			)
 
-// 			coordinator.CommitBlock(chainA, chainB)
-// 			myContractAddr := chainB.SeedNewContractInstance()
-// 			contractBPortID := chainB.ContractInfo(myContractAddr).IBCPortID
+			coordinator.CommitBlock(chainA, chainB)
+			myContractAddr := chainB.SeedNewContractInstance()
+			contractBPortID := chainB.ContractInfo(myContractAddr).IBCPortID
 
-// 			spec.setupContract(t, spec.contract, chainB)
+			spec.setupContract(t, spec.contract, chainB)
 
-// 			path := wasmibctesting.NewPath(chainA, chainB)
-// 			path.EndpointA.ChannelConfig = &ibctesting.ChannelConfig{
-// 				PortID:  "feeabs",
-// 				Version: "",
-// 				Order:   channeltypes.UNORDERED,
-// 			}
-// 			path.EndpointB.ChannelConfig = &ibctesting.ChannelConfig{
-// 				PortID:  contractBPortID,
-// 				Version: "",
-// 				Order:   channeltypes.UNORDERED,
-// 			}
+			path := wasmibctesting.NewPath(chainA, chainB)
+			path.EndpointA.ChannelConfig = &ibctesting.ChannelConfig{
+				PortID:  "feeabs",
+				Version: "",
+				Order:   channeltypes.UNORDERED,
+			}
+			path.EndpointB.ChannelConfig = &ibctesting.ChannelConfig{
+				PortID:  contractBPortID,
+				Version: "",
+				Order:   channeltypes.UNORDERED,
+			}
 
-// 			coordinator.SetupConnections(path)
-// 			coordinator.CreateChannels(path)
+			coordinator.SetupConnections(path)
+			coordinator.CreateChannels(path)
 
-// 			params := chainA.GetTestSupport().FeeAbsKeeper().GetParams(chainA.GetContext())
-// 			params.NativeIbcDenom = "denom"
-// 			params.OsmosisQueryChannel = path.EndpointA.ChannelID
-// 			params.PoolId = 1
-// 			chainA.GetTestSupport().FeeAbsKeeper().SetParams(chainA.GetContext(), params)
+			params := chainA.GetTestSupport().FeeAbsKeeper().GetParams(chainA.GetContext())
+			params.NativeIbcDenom = "denom"
+			params.OsmosisQueryChannel = path.EndpointA.ChannelID
+			params.PoolId = 1
+			chainA.GetTestSupport().FeeAbsKeeper().SetParams(chainA.GetContext(), params)
 
-// 			msg := types.NewMsgSendQuerySpotPrice(
-// 				chainA.SenderAccount.GetAddress(),
-// 			)
-// 			_, err := chainA.SendMsgs(msg)
-// 			require.NoError(t, err)
-// 			require.NoError(t, path.EndpointB.UpdateClient())
+			msg := types.NewMsgSendQuerySpotPrice(
+				chainA.SenderAccount.GetAddress(),
+			)
+			_, err := chainA.SendMsgs(msg)
+			require.NoError(t, err)
+			require.NoError(t, path.EndpointB.UpdateClient())
 
-// 			// then
-// 			require.Equal(t, 1, len(chainA.PendingSendPackets))
-// 			require.Equal(t, 0, len(chainB.PendingSendPackets))
+			// then
+			require.Equal(t, 1, len(chainA.PendingSendPackets))
+			require.Equal(t, 0, len(chainB.PendingSendPackets))
 
-// 			// and when relay to chain B and handle Ack on chain A
-// 			err = coordinator.RelayAndAckPendingPackets(path)
-// 			require.NoError(t, err)
+			// and when relay to chain B and handle Ack on chain A
+			err = coordinator.RelayAndAckPendingPackets(path)
+			require.NoError(t, err)
 
-// 			// then
-// 			require.Equal(t, 0, len(chainA.PendingSendPackets))
-// 			require.Equal(t, 0, len(chainB.PendingSendPackets))
+			// then
+			require.Equal(t, 0, len(chainA.PendingSendPackets))
+			require.Equal(t, 0, len(chainB.PendingSendPackets))
 
-// 			expectedSpotPrice, err := sdk.NewDecFromStr("1.5")
-// 			require.NoError(t, err)
-// 			spotPrice, err := chainA.GetTestSupport().FeeAbsKeeper().GetOsmosisExchangeRate(chainA.GetContext())
-// 			require.NoError(t, err)
-// 			require.Equal(t, expectedSpotPrice, spotPrice)
-// 		})
-// 	}
-// }
+			expectedSpotPrice, err := sdk.NewDecFromStr("1.5")
+			require.NoError(t, err)
+			spotPrice, err := chainA.GetTestSupport().FeeAbsKeeper().GetOsmosisExchangeRate(chainA.GetContext())
+			require.NoError(t, err)
+			require.Equal(t, expectedSpotPrice, spotPrice)
+		})
+	}
+}
 
 func TestFromIBCTransferToContract(t *testing.T) {
 	// scenario: given two chains,
