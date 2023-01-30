@@ -5,27 +5,27 @@
       {
         "subspace": "feeabs",
         "key": "osmosisibcdenom",
-        "value": "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518"
+        "value": "uosmo"
       },
       {
         "subspace": "feeabs",
         "key": "nativeibcdenom",
-        "value": "ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878"
+        "value": "uatom"
       },
       {
         "subspace": "feeabs",
         "key": "osmosisquerychannel",
-        "value": "channel-1"
-      },
-      {
-        "subspace": "feeabs",
-        "key": "osmosistransferchannel",
         "value": "channel-0"
       },
       {
         "subspace": "feeabs",
+        "key": "osmosistransferchannel",
+        "value": "channel-1"
+      },
+      {
+        "subspace": "feeabs",
         "key": "osmosisquerycontract",
-        "value": "osmo1suhgf5svhu4usrurvxzlgn54ksxmn8gljarjtxqnapv8kjnp4nrsll0sqv"
+        "value": "osmo14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sq2r9g9"
       },
       {
         "subspace": "feeabs",
