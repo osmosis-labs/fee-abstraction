@@ -35,3 +35,7 @@ message OsmosisQuerySpotPriceRequestPacketData {
 	string base_asset_denom = 2;
 	string quote_asset_denom = 3;
 }
+
+message SendInterchainQuery{
+	bytes data = 1;
+}

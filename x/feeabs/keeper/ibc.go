@@ -13,6 +13,7 @@ import (
 	channeltypes "github.com/cosmos/ibc-go/v4/modules/core/04-channel/types"
 	host "github.com/cosmos/ibc-go/v4/modules/core/24-host"
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
+	icqtypes "github.com/strangelove-ventures/async-icq/types"
 )
 
 // GetPort returns the portID for the module. Used in ExportGenesis.
@@ -123,6 +124,62 @@ func (k Keeper) OnAcknowledgementIbcOsmosisQueryRequest(ctx sdk.Context, ack cha
 		// The counter-party module doesn't implement the correct acknowledgment format
 		return errors.New("invalid acknowledgment format")
 	}
+}
+
+func (k Keeper) SendInterchainQuery(
+	ctx sdk.Context,
+	path string,
+	data []byte,
+	sourcePort string,
+	sourceChannel string,
+) (uint64, error) {
+	sequence, found := k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
+	if !found {
+		return 0, sdkerrors.Wrapf(
+			channeltypes.ErrSequenceSendNotFound,
+			"source port: %s, source channel: %s", sourcePort, sourceChannel,
+		)
+	}
+	sourceChannelEnd, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
+	if !found {
+		return 0, sdkerrors.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
+	}
+
+	destinationPort := sourceChannelEnd.GetCounterparty().GetPortID()
+	destinationChannel := sourceChannelEnd.GetCounterparty().GetChannelID()
+
+	timeoutHeight := clienttypes.NewHeight(0, 100000000)
+	timeoutTimestamp := uint64(0)
+
+	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
+	if !ok {
+		return 0, sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
+	}
+
+	packetData, err := types.NewInterchainQueryPacketData(path, data)
+	if err != nil {
+		return 0, sdkerrors.Wrap(err, "could not serialize reqs into cosmos query")
+	}
+	icqPacketData := icqtypes.InterchainQueryPacketData{
+		Data: packetData,
+	}
+
+	packet := channeltypes.NewPacket(
+		icqPacketData.GetBytes(),
+		sequence,
+		sourcePort,
+		sourceChannel,
+		destinationPort,
+		destinationChannel,
+		timeoutHeight,
+		timeoutTimestamp,
+	)
+
+	if err := k.channelKeeper.SendPacket(ctx, channelCap, packet); err != nil {
+		return 0, err
+	}
+
+	return sequence, nil
 }
 
 func (k Keeper) GetChannelId(ctx sdk.Context) string {
