@@ -37,15 +37,26 @@ func (p OsmosisQuerySpotPriceRequestPacketData) GetBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
 }
 
-func NewInterchainQueryPacketData(path string, data []byte) SendInterchainQuery {
-	return SendInterchainQuery{
+func NewInterchainQueryRequest(path string, data []byte) InterchainQueryRequest {
+	return InterchainQueryRequest{
 		Data: data,
 		Path: path,
 	}
 }
 
 // GetBytes is a helper for serializing.
-func (p SendInterchainQuery) GetBytes() []byte {
+func (p InterchainQueryRequest) GetBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
+}
+
+func NewInterchainQueryRequestPacket(req []InterchainQueryRequest) InterchainQueryRequestPacket {
+	return InterchainQueryRequestPacket{
+		Requests: req,
+	}
+}
+
+// GetBytes is a helper for serializing.
+func (p InterchainQueryRequestPacket) GetBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
 }
 

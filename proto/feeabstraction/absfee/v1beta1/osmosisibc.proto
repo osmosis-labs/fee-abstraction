@@ -36,7 +36,11 @@ message OsmosisQuerySpotPriceRequestPacketData {
 	string quote_asset_denom = 3;
 }
 
-message SendInterchainQuery{
+message InterchainQueryRequest{
 	bytes data = 1;
 	string path = 2;
+}
+
+message InterchainQueryRequestPacket{
+	repeated InterchainQueryRequest requests = 1 [(gogoproto.nullable) = false];
 }

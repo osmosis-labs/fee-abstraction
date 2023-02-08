@@ -160,7 +160,14 @@ func (k Keeper) SendInterchainQuery(
 	}
 
 	k.Logger(ctx).Error("IBC InterchainQueryBalances packetData")
-	packetData := types.NewInterchainQueryPacketData(path, data)
+	reqs := []types.InterchainQueryRequest{
+		{
+			Data: data,
+			Path: path,
+		},
+	}
+
+	packetData := types.NewInterchainQueryRequestPacket(reqs)
 
 	packet := channeltypes.NewPacket(
 		packetData.GetBytes(),
