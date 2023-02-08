@@ -64,3 +64,26 @@ func NewSwapOverChainCmd() *cobra.Command {
 
 	return cmd
 }
+
+func NewInterchainQueryCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:  "interchain-query",
+		Args: cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := &types.MsgInterchainQueryBalances{
+				FromAddress:  clientCtx.GetFromAddress().String(),
+				QueryAddress: args[0],
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}

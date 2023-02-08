@@ -192,11 +192,101 @@ func (m *MsgSwapCrossChainResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgSwapCrossChainResponse proto.InternalMessageInfo
 
+type MsgInterchainQueryBalances struct {
+	FromAddress  string `protobuf:"bytes,1,opt,name=from_address,json=fromAddress,proto3" json:"from_address,omitempty"`
+	QueryAddress string `protobuf:"bytes,2,opt,name=query_address,json=queryAddress,proto3" json:"query_address,omitempty"`
+}
+
+func (m *MsgInterchainQueryBalances) Reset()         { *m = MsgInterchainQueryBalances{} }
+func (m *MsgInterchainQueryBalances) String() string { return proto.CompactTextString(m) }
+func (*MsgInterchainQueryBalances) ProtoMessage()    {}
+func (*MsgInterchainQueryBalances) Descriptor() ([]byte, []int) {
+	return fileDescriptor_84c172c34645b936, []int{4}
+}
+func (m *MsgInterchainQueryBalances) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgInterchainQueryBalances) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgInterchainQueryBalances.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgInterchainQueryBalances) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgInterchainQueryBalances.Merge(m, src)
+}
+func (m *MsgInterchainQueryBalances) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgInterchainQueryBalances) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgInterchainQueryBalances.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgInterchainQueryBalances proto.InternalMessageInfo
+
+func (m *MsgInterchainQueryBalances) GetFromAddress() string {
+	if m != nil {
+		return m.FromAddress
+	}
+	return ""
+}
+
+func (m *MsgInterchainQueryBalances) GetQueryAddress() string {
+	if m != nil {
+		return m.QueryAddress
+	}
+	return ""
+}
+
+type MsgInterchainQueryBalancesRespone struct {
+}
+
+func (m *MsgInterchainQueryBalancesRespone) Reset()         { *m = MsgInterchainQueryBalancesRespone{} }
+func (m *MsgInterchainQueryBalancesRespone) String() string { return proto.CompactTextString(m) }
+func (*MsgInterchainQueryBalancesRespone) ProtoMessage()    {}
+func (*MsgInterchainQueryBalancesRespone) Descriptor() ([]byte, []int) {
+	return fileDescriptor_84c172c34645b936, []int{5}
+}
+func (m *MsgInterchainQueryBalancesRespone) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgInterchainQueryBalancesRespone) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgInterchainQueryBalancesRespone.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgInterchainQueryBalancesRespone) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgInterchainQueryBalancesRespone.Merge(m, src)
+}
+func (m *MsgInterchainQueryBalancesRespone) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgInterchainQueryBalancesRespone) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgInterchainQueryBalancesRespone.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgInterchainQueryBalancesRespone proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgSendQuerySpotPrice)(nil), "feeabstraction.absfee.v1beta1.MsgSendQuerySpotPrice")
 	proto.RegisterType((*MsgSendQuerySpotPriceResponse)(nil), "feeabstraction.absfee.v1beta1.MsgSendQuerySpotPriceResponse")
 	proto.RegisterType((*MsgSwapCrossChain)(nil), "feeabstraction.absfee.v1beta1.MsgSwapCrossChain")
 	proto.RegisterType((*MsgSwapCrossChainResponse)(nil), "feeabstraction.absfee.v1beta1.MsgSwapCrossChainResponse")
+	proto.RegisterType((*MsgInterchainQueryBalances)(nil), "feeabstraction.absfee.v1beta1.MsgInterchainQueryBalances")
+	proto.RegisterType((*MsgInterchainQueryBalancesRespone)(nil), "feeabstraction.absfee.v1beta1.MsgInterchainQueryBalancesRespone")
 }
 
 func init() {
@@ -204,30 +294,35 @@ func init() {
 }
 
 var fileDescriptor_84c172c34645b936 = []byte{
-	// 367 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x92, 0x41, 0x4b, 0xe3, 0x40,
-	0x14, 0xc7, 0x9b, 0x5d, 0x58, 0xd8, 0xd9, 0x65, 0x61, 0xc3, 0x2e, 0xec, 0x66, 0xb7, 0x51, 0x7b,
-	0x10, 0x15, 0xcc, 0x58, 0x15, 0x51, 0xf1, 0xa2, 0x3d, 0x17, 0xb4, 0xbd, 0x79, 0x91, 0x97, 0x74,
-	0x3a, 0x0d, 0x34, 0xf3, 0xc6, 0x79, 0xd3, 0xda, 0x82, 0x1f, 0xc0, 0x93, 0xf8, 0xb1, 0x3c, 0xf6,
-	0xe8, 0x51, 0xda, 0x2f, 0x22, 0x69, 0x1a, 0xa1, 0xb5, 0x94, 0xea, 0x2d, 0xbc, 0xfc, 0x7e, 0xff,
-	0xf7, 0x0f, 0x79, 0x6c, 0xbd, 0x29, 0x04, 0x84, 0x64, 0x0d, 0x44, 0x36, 0x46, 0xc5, 0x21, 0xa4,
-	0xa6, 0x10, 0xbc, 0x5b, 0x0e, 0x85, 0x85, 0x32, 0xb7, 0xbd, 0x40, 0x1b, 0xb4, 0xe8, 0x16, 0xa7,
-	0xb9, 0x20, 0xe3, 0x82, 0x09, 0xe7, 0xfd, 0x92, 0x28, 0x71, 0x4c, 0xf2, 0xf4, 0x29, 0x93, 0xbc,
-	0xff, 0x12, 0x51, 0xb6, 0x05, 0x07, 0x1d, 0x73, 0x50, 0x0a, 0x2d, 0xa4, 0x2e, 0x4d, 0xde, 0x6e,
-	0x45, 0x48, 0x09, 0x12, 0x0f, 0x81, 0x04, 0xbf, 0xee, 0x08, 0xd3, 0x7f, 0x5d, 0xab, 0x41, 0xc6,
-	0x6a, 0x0c, 0xe7, 0xec, 0xe2, 0x9a, 0x1a, 0x0c, 0x24, 0x79, 0xee, 0xe6, 0x62, 0x56, 0x68, 0x8c,
-	0x5a, 0x19, 0x5a, 0x3a, 0x66, 0xbf, 0xab, 0x24, 0xeb, 0x42, 0x35, 0x2e, 0xd2, 0xfd, 0x75, 0x8d,
-	0xf6, 0xdc, 0xc4, 0x91, 0x70, 0xd7, 0xd8, 0xf7, 0xa6, 0xc1, 0xe4, 0x0a, 0x1a, 0x0d, 0x23, 0x88,
-	0xfe, 0x38, 0xab, 0xce, 0xc6, 0xd7, 0xda, 0xb7, 0x74, 0x76, 0x9a, 0x8d, 0x4a, 0x2b, 0xac, 0x38,
-	0xd7, 0xad, 0x09, 0xd2, 0xa8, 0x48, 0x94, 0x0e, 0xd8, 0xcf, 0x14, 0xb8, 0x01, 0x5d, 0x31, 0x48,
-	0x54, 0x69, 0x41, 0xac, 0x96, 0x09, 0xfe, 0xc7, 0xfe, 0xbe, 0xf1, 0xf2, 0xd0, 0xdd, 0xfb, 0x4f,
-	0xec, 0x73, 0x95, 0xa4, 0x7b, 0xe7, 0x30, 0x77, 0x4e, 0xef, 0xfd, 0x60, 0xe1, 0x7f, 0x0a, 0xe6,
-	0x36, 0xf6, 0x4e, 0x3e, 0x62, 0xe5, 0x95, 0xdc, 0x5b, 0xf6, 0x63, 0xe6, 0x23, 0x77, 0x96, 0xc8,
-	0x9b, 0x32, 0xbc, 0xc3, 0xf7, 0x1a, 0xf9, 0xf6, 0xb3, 0xfa, 0xe3, 0xd0, 0x77, 0x06, 0x43, 0xdf,
-	0x79, 0x1e, 0xfa, 0xce, 0xc3, 0xc8, 0x2f, 0x0c, 0x46, 0x7e, 0xe1, 0x69, 0xe4, 0x17, 0x2e, 0x8f,
-	0x64, 0x6c, 0x5b, 0x9d, 0x30, 0x88, 0x30, 0xe1, 0x0a, 0xd3, 0x54, 0x68, 0x6f, 0xb7, 0x21, 0x24,
-	0x3e, 0x73, 0x20, 0xdd, 0x32, 0xef, 0x4d, 0x66, 0xdc, 0xf6, 0xb5, 0xa0, 0xf0, 0xcb, 0xf8, 0x3c,
-	0xf6, 0x5e, 0x02, 0x00, 0x00, 0xff, 0xff, 0xd1, 0x31, 0xba, 0x0a, 0x1e, 0x03, 0x00, 0x00,
+	// 433 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x93, 0xcf, 0x6a, 0x14, 0x41,
+	0x10, 0xc6, 0x77, 0x0c, 0x08, 0xb6, 0x51, 0x70, 0x50, 0xd4, 0xd1, 0x8c, 0x66, 0x03, 0xa2, 0x82,
+	0xd3, 0xae, 0x8a, 0x18, 0xf1, 0xa0, 0xc9, 0xc9, 0xc3, 0x82, 0x66, 0x6f, 0x5e, 0xa4, 0x66, 0xa6,
+	0xb6, 0x77, 0x60, 0xa6, 0xab, 0xed, 0xea, 0xc4, 0x04, 0x7c, 0x00, 0x8f, 0x9e, 0x7c, 0x05, 0x5f,
+	0xc5, 0x63, 0x8e, 0x1e, 0x65, 0xf7, 0x45, 0x64, 0xfe, 0x42, 0xe2, 0xee, 0xba, 0xe6, 0x36, 0x54,
+	0xff, 0xbe, 0xef, 0x2b, 0xbe, 0x9e, 0x16, 0xf7, 0xc6, 0x88, 0x10, 0xb3, 0xb3, 0x90, 0xb8, 0x8c,
+	0xb4, 0x84, 0x98, 0xc7, 0x88, 0xf2, 0x60, 0x10, 0xa3, 0x83, 0x81, 0x74, 0x87, 0x91, 0xb1, 0xe4,
+	0xc8, 0xdf, 0x38, 0xc9, 0x45, 0x35, 0x17, 0x35, 0x5c, 0x70, 0x55, 0x91, 0xa2, 0x8a, 0x94, 0xe5,
+	0x57, 0x2d, 0x0a, 0x6e, 0x2b, 0x22, 0x95, 0xa3, 0x04, 0x93, 0x49, 0xd0, 0x9a, 0x1c, 0x94, 0x5a,
+	0x6e, 0x4e, 0x1f, 0x26, 0xc4, 0x05, 0xb1, 0x8c, 0x81, 0x51, 0x7e, 0xda, 0x47, 0x7b, 0xd4, 0xc5,
+	0x1a, 0x50, 0x99, 0xae, 0xe0, 0x96, 0x5d, 0xbe, 0xa6, 0x01, 0x0b, 0x45, 0xeb, 0xfb, 0x60, 0x39,
+	0x8b, 0x86, 0x92, 0x49, 0x8d, 0xf6, 0x5f, 0x8a, 0x6b, 0x43, 0x56, 0x23, 0xd4, 0xe9, 0xfb, 0x32,
+	0x7f, 0x64, 0xc8, 0xbd, 0xb3, 0x59, 0x82, 0xfe, 0xa6, 0x58, 0x1f, 0x5b, 0x2a, 0x3e, 0x42, 0x9a,
+	0x5a, 0x64, 0xbe, 0xe1, 0xdd, 0xf5, 0xee, 0x5f, 0xd8, 0xbb, 0x58, 0xce, 0xde, 0xd4, 0xa3, 0xfe,
+	0x1d, 0xb1, 0x31, 0x57, 0xbb, 0x87, 0x6c, 0x48, 0x33, 0xf6, 0x9f, 0x8b, 0x2b, 0x25, 0xf0, 0x19,
+	0xcc, 0xae, 0x25, 0xe6, 0xdd, 0x09, 0x64, 0x7a, 0x15, 0xe3, 0x5b, 0xe2, 0xe6, 0x5f, 0xba, 0xce,
+	0x34, 0x15, 0xc1, 0x90, 0xd5, 0x5b, 0xed, 0xd0, 0x26, 0xe5, 0x41, 0x95, 0xbd, 0x03, 0x39, 0xe8,
+	0x04, 0x79, 0x05, 0x77, 0x7f, 0x4b, 0x5c, 0xaa, 0xba, 0xee, 0x98, 0x73, 0x15, 0xb3, 0x5e, 0x0d,
+	0xdb, 0x15, 0xb6, 0xc4, 0xe6, 0xe2, 0x94, 0x7a, 0x17, 0x7c, 0xf2, 0x63, 0x4d, 0xac, 0x0d, 0x59,
+	0xf9, 0x5f, 0x3d, 0xe1, 0xcf, 0xa9, 0xf0, 0x59, 0xb4, 0xf4, 0x97, 0x89, 0xe6, 0x96, 0x17, 0xbc,
+	0x3a, 0x8b, 0xaa, 0x6d, 0xc7, 0xff, 0x22, 0x2e, 0x9f, 0xea, 0xfb, 0xf1, 0x0a, 0x7e, 0x27, 0x14,
+	0xc1, 0x8b, 0xff, 0x55, 0x74, 0xe9, 0xdf, 0x3d, 0x71, 0x7d, 0xd1, 0xcd, 0x6c, 0xff, 0xdb, 0x75,
+	0x81, 0x34, 0x78, 0x7d, 0x66, 0x69, 0x73, 0x53, 0x3b, 0xa3, 0x9f, 0xd3, 0xd0, 0x3b, 0x9e, 0x86,
+	0xde, 0xef, 0x69, 0xe8, 0x7d, 0x9b, 0x85, 0xbd, 0xe3, 0x59, 0xd8, 0xfb, 0x35, 0x0b, 0x7b, 0x1f,
+	0xb6, 0x55, 0xe6, 0x26, 0xfb, 0x71, 0x94, 0x50, 0x21, 0x35, 0x95, 0xee, 0x90, 0x3f, 0xca, 0x21,
+	0x66, 0x79, 0xea, 0x11, 0x1d, 0x0c, 0xe4, 0x61, 0x33, 0x93, 0xee, 0xc8, 0x20, 0xc7, 0xe7, 0xab,
+	0x27, 0xf4, 0xf4, 0x4f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x42, 0xa8, 0x71, 0x5d, 0x42, 0x04, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -244,6 +339,7 @@ const _ = grpc.SupportPackageIsVersion4
 type MsgClient interface {
 	SendQuerySpotPrice(ctx context.Context, in *MsgSendQuerySpotPrice, opts ...grpc.CallOption) (*MsgSendQuerySpotPriceResponse, error)
 	SwapCrossChain(ctx context.Context, in *MsgSwapCrossChain, opts ...grpc.CallOption) (*MsgSwapCrossChainResponse, error)
+	InterchainQueryBalances(ctx context.Context, in *MsgInterchainQueryBalances, opts ...grpc.CallOption) (*MsgInterchainQueryBalancesRespone, error)
 }
 
 type msgClient struct {
@@ -272,10 +368,20 @@ func (c *msgClient) SwapCrossChain(ctx context.Context, in *MsgSwapCrossChain, o
 	return out, nil
 }
 
+func (c *msgClient) InterchainQueryBalances(ctx context.Context, in *MsgInterchainQueryBalances, opts ...grpc.CallOption) (*MsgInterchainQueryBalancesRespone, error) {
+	out := new(MsgInterchainQueryBalancesRespone)
+	err := c.cc.Invoke(ctx, "/feeabstraction.absfee.v1beta1.Msg/InterchainQueryBalances", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	SendQuerySpotPrice(context.Context, *MsgSendQuerySpotPrice) (*MsgSendQuerySpotPriceResponse, error)
 	SwapCrossChain(context.Context, *MsgSwapCrossChain) (*MsgSwapCrossChainResponse, error)
+	InterchainQueryBalances(context.Context, *MsgInterchainQueryBalances) (*MsgInterchainQueryBalancesRespone, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -287,6 +393,9 @@ func (*UnimplementedMsgServer) SendQuerySpotPrice(ctx context.Context, req *MsgS
 }
 func (*UnimplementedMsgServer) SwapCrossChain(ctx context.Context, req *MsgSwapCrossChain) (*MsgSwapCrossChainResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SwapCrossChain not implemented")
+}
+func (*UnimplementedMsgServer) InterchainQueryBalances(ctx context.Context, req *MsgInterchainQueryBalances) (*MsgInterchainQueryBalancesRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InterchainQueryBalances not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -329,6 +438,24 @@ func _Msg_SwapCrossChain_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_InterchainQueryBalances_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgInterchainQueryBalances)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).InterchainQueryBalances(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/feeabstraction.absfee.v1beta1.Msg/InterchainQueryBalances",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).InterchainQueryBalances(ctx, req.(*MsgInterchainQueryBalances))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "feeabstraction.absfee.v1beta1.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -340,6 +467,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SwapCrossChain",
 			Handler:    _Msg_SwapCrossChain_Handler,
+		},
+		{
+			MethodName: "InterchainQueryBalances",
+			Handler:    _Msg_InterchainQueryBalances_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -452,6 +583,66 @@ func (m *MsgSwapCrossChainResponse) MarshalToSizedBuffer(dAtA []byte) (int, erro
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgInterchainQueryBalances) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgInterchainQueryBalances) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgInterchainQueryBalances) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.QueryAddress) > 0 {
+		i -= len(m.QueryAddress)
+		copy(dAtA[i:], m.QueryAddress)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.QueryAddress)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.FromAddress) > 0 {
+		i -= len(m.FromAddress)
+		copy(dAtA[i:], m.FromAddress)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.FromAddress)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgInterchainQueryBalancesRespone) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgInterchainQueryBalancesRespone) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgInterchainQueryBalancesRespone) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -499,6 +690,32 @@ func (m *MsgSwapCrossChain) Size() (n int) {
 }
 
 func (m *MsgSwapCrossChainResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgInterchainQueryBalances) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.FromAddress)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.QueryAddress)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgInterchainQueryBalancesRespone) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -754,6 +971,170 @@ func (m *MsgSwapCrossChainResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgSwapCrossChainResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgInterchainQueryBalances) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgInterchainQueryBalances: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgInterchainQueryBalances: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FromAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FromAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field QueryAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.QueryAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgInterchainQueryBalancesRespone) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgInterchainQueryBalancesRespone: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgInterchainQueryBalancesRespone: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

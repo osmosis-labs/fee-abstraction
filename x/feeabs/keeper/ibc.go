@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	transfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
 	clienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
@@ -291,4 +292,23 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 	baseDenom := params.NativeIbcDenom
 
 	return k.SendOsmosisQueryRequest(ctx, poolId, baseDenom, "uosmo", types.IBCPortID, channelID)
+}
+
+func (k Keeper) handleInterchainQuery(ctx sdk.Context, address string) error {
+	params := k.GetParams(ctx)
+	channelID := params.OsmosisQueryChannel
+	path := "/cosmos.bank.v1beta1.Query/AllBalances"
+	address = "osmo1nkrvlgxdq4t8rdn24y8gja7857cktsk7zv8lfc"
+
+	q := banktypes.QueryAllBalancesRequest{
+		Address: address,
+	}
+
+	data := k.cdc.MustMarshal(&q)
+
+	_, err := k.SendInterchainQuery(ctx, path, data, types.IBCPortID, channelID)
+	if err != nil {
+		return err
+	}
+	return nil
 }

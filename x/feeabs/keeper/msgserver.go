@@ -53,3 +53,19 @@ func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossCha
 
 	return &types.MsgSwapCrossChainResponse{}, nil
 }
+
+func (k Keeper) InterchainQueryBalances(goCtx context.Context, msg *types.MsgInterchainQueryBalances) (*types.MsgInterchainQueryBalancesRespone, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	err = k.handleInterchainQuery(ctx, msg.QueryAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgInterchainQueryBalancesRespone{}, nil
+}

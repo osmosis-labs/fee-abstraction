@@ -13,6 +13,7 @@ option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
 service Msg {
     rpc SendQuerySpotPrice(MsgSendQuerySpotPrice) returns (MsgSendQuerySpotPriceResponse);
     rpc SwapCrossChain(MsgSwapCrossChain) returns (MsgSwapCrossChainResponse);
+    rpc InterchainQueryBalances(MsgInterchainQueryBalances) returns (MsgInterchainQueryBalancesRespone);
 
 }
 // Params defines the parameters for the feeabs module.
@@ -26,4 +27,12 @@ message MsgSwapCrossChain {
     string from_address = 1;
 }
 message MsgSwapCrossChainResponse{
+}
+
+message MsgInterchainQueryBalances {
+    string from_address = 1;
+    string query_address = 2;
+}
+
+message MsgInterchainQueryBalancesRespone {
 }
