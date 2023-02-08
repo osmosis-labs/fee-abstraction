@@ -20,6 +20,7 @@ func NewTxCmd() *cobra.Command {
 
 	txCmd.AddCommand(NewQueryOsmosisSpotPriceCmd())
 	txCmd.AddCommand(NewSwapOverChainCmd())
+	txCmd.AddCommand(NewInterchainQueryCmd())
 
 	return txCmd
 }
@@ -67,10 +68,10 @@ func NewSwapOverChainCmd() *cobra.Command {
 
 func NewInterchainQueryCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "interchain-query",
+		Use:  "interchain-query [address]",
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}

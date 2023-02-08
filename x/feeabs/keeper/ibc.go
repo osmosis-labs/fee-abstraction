@@ -14,7 +14,6 @@ import (
 	channeltypes "github.com/cosmos/ibc-go/v4/modules/core/04-channel/types"
 	host "github.com/cosmos/ibc-go/v4/modules/core/24-host"
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
-	icqtypes "github.com/strangelove-ventures/async-icq/types"
 )
 
 // GetPort returns the portID for the module. Used in ExportGenesis.
@@ -134,6 +133,7 @@ func (k Keeper) SendInterchainQuery(
 	sourcePort string,
 	sourceChannel string,
 ) (uint64, error) {
+	k.Logger(ctx).Error("IBC InterchainQueryBalances sequence")
 	sequence, found := k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
 	if !found {
 		return 0, sdkerrors.Wrapf(
@@ -141,6 +141,7 @@ func (k Keeper) SendInterchainQuery(
 			"source port: %s, source channel: %s", sourcePort, sourceChannel,
 		)
 	}
+	k.Logger(ctx).Error("IBC InterchainQueryBalances sequence")
 	sourceChannelEnd, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
 	if !found {
 		return 0, sdkerrors.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
@@ -152,21 +153,17 @@ func (k Keeper) SendInterchainQuery(
 	timeoutHeight := clienttypes.NewHeight(0, 100000000)
 	timeoutTimestamp := uint64(0)
 
+	k.Logger(ctx).Error("IBC InterchainQueryBalances channelCap")
 	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
 	if !ok {
 		return 0, sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
 	}
 
-	packetData, err := types.NewInterchainQueryPacketData(path, data)
-	if err != nil {
-		return 0, sdkerrors.Wrap(err, "could not serialize reqs into cosmos query")
-	}
-	icqPacketData := icqtypes.InterchainQueryPacketData{
-		Data: packetData,
-	}
+	k.Logger(ctx).Error("IBC InterchainQueryBalances packetData")
+	packetData := types.NewInterchainQueryPacketData(path, data)
 
 	packet := channeltypes.NewPacket(
-		icqPacketData.GetBytes(),
+		packetData.GetBytes(),
 		sequence,
 		sourcePort,
 		sourceChannel,
@@ -175,7 +172,7 @@ func (k Keeper) SendInterchainQuery(
 		timeoutHeight,
 		timeoutTimestamp,
 	)
-
+	k.Logger(ctx).Error("IBC InterchainQueryBalances SendPacket")
 	if err := k.channelKeeper.SendPacket(ctx, channelCap, packet); err != nil {
 		return 0, err
 	}
@@ -295,10 +292,10 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 }
 
 func (k Keeper) handleInterchainQuery(ctx sdk.Context, address string) error {
-	params := k.GetParams(ctx)
-	channelID := params.OsmosisQueryChannel
+	// params := k.GetParams(ctx)
+	channelID := "channel-0"
 	path := "/cosmos.bank.v1beta1.Query/AllBalances"
-	address = "osmo1nkrvlgxdq4t8rdn24y8gja7857cktsk7zv8lfc"
+	address = "osmo1ekqk6ms4fqf2mfeazju4pcu3jq93lcdsfl0tah"
 
 	q := banktypes.QueryAllBalancesRequest{
 		Address: address,
@@ -306,6 +303,7 @@ func (k Keeper) handleInterchainQuery(ctx sdk.Context, address string) error {
 
 	data := k.cdc.MustMarshal(&q)
 
+	k.Logger(ctx).Error("IBC InterchainQueryBalances SendInterchainQuery")
 	_, err := k.SendInterchainQuery(ctx, path, data, types.IBCPortID, channelID)
 	if err != nil {
 		return err

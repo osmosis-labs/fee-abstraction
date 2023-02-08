@@ -4,8 +4,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	icqtypes "github.com/strangelove-ventures/async-icq/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 const (
@@ -39,14 +37,16 @@ func (p OsmosisQuerySpotPriceRequestPacketData) GetBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
 }
 
-func NewInterchainQueryPacketData(path string, data []byte) (bz []byte, err error) {
-	reqs := []abci.RequestQuery{
-		{
-			Data: data,
-			Path: path,
-		},
+func NewInterchainQueryPacketData(path string, data []byte) SendInterchainQuery {
+	return SendInterchainQuery{
+		Data: data,
+		Path: path,
 	}
-	return icqtypes.SerializeCosmosQuery(reqs)
+}
+
+// GetBytes is a helper for serializing.
+func (p SendInterchainQuery) GetBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
 }
 
 // TODO: Those types should be putted in types package

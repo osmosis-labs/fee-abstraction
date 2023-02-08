@@ -38,4 +38,5 @@ message OsmosisQuerySpotPriceRequestPacketData {
 
 message SendInterchainQuery{
 	bytes data = 1;
+	string path = 2;
 }
