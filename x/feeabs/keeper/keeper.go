@@ -100,9 +100,3 @@ func (k Keeper) GetParams(ctx sdk.Context) (params types.Params) {
 func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 	k.paramSpace.SetParamSet(ctx, &params)
 }
-
-// GetParams gets the fee abstraction module's parameters.
-func (k Keeper) GetOsmosisIBCDenomParams(ctx sdk.Context) (denom string) {
-	k.paramSpace.Get(ctx, types.KeyOsmosisIbcDenom, &denom)
-	return denom
-}

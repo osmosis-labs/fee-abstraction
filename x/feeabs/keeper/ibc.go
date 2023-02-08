@@ -164,11 +164,11 @@ func ParseMsgToMemo(msg types.OsmosisSwapMsg, contractAddr string, receiver stri
 	return string(memo_marshalled), nil
 }
 
-func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context) error {
+func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
 	params := k.GetParams(ctx)
 
 	moduleAccountAddress := k.GetModuleAddress()
-	token := k.bk.GetBalance(ctx, moduleAccountAddress, params.OsmosisIbcDenom)
+	token := k.bk.GetBalance(ctx, moduleAccountAddress, hostChainConfig.IbcDenom)
 
 	// if token
 	if sdk.NewInt(1).GTE(token.Amount) {
@@ -227,11 +227,10 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 }
 
 // TODO: use TWAP instead of spotprice
-func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
+func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
 	params := k.GetParams(ctx)
 	channelID := params.OsmosisQueryChannel
-	poolId := params.PoolId // for testing
-	baseDenom := params.NativeIbcDenom
+	poolId := hostChainConfig.PoolId // for testing
 
-	return k.SendOsmosisQueryRequest(ctx, poolId, baseDenom, "uosmo", types.IBCPortID, channelID)
+	return k.SendOsmosisQueryRequest(ctx, poolId, params.NativeIbcedInOsmosis, hostChainConfig.IbcDenom, types.IBCPortID, channelID)
 }

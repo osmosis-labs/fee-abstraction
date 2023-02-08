@@ -10,6 +10,7 @@ func DefaultGenesis() *GenesisState {
 			OsmosisQueryContract:            "",
 			OsmosisExchangeRateUpdatePeriod: DefaultQueryPeriod,
 			AccumulatedOsmosisFeeSwapPeriod: DefaultSwapPeriod,
+			NativeIbcedInOsmosis:            "",
 		},
 		Epochs: []EpochInfo{NewGenesisEpochInfo("query", DefaultQueryPeriod), NewGenesisEpochInfo("swap", DefaultSwapPeriod)},
 		PortId: IBCPortID,

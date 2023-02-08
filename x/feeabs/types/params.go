@@ -22,6 +22,7 @@ var (
 	KeyOsmosisQueryContract            = []byte("osmosisquerycontract")
 	KeyOsmosisExchangeRateUpdatePeriod = []byte("osmosisexchangerateupdateperiod")
 	KeyAccumulatedOsmosisFeeSwapPeriod = []byte("accumulatedosmosisfeeswapperiod")
+	NativeIbcedInOsmosis               = []byte("nativeibcedinosmosis")
 
 	_ paramtypes.ParamSet = &Params{}
 )
@@ -38,6 +39,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 		paramtypes.NewParamSetPair(KeyOsmosisQueryContract, &p.OsmosisQueryContract, validateOsmosisQueryContract),
 		paramtypes.NewParamSetPair(KeyOsmosisExchangeRateUpdatePeriod, &p.OsmosisExchangeRateUpdatePeriod, noOp),
 		paramtypes.NewParamSetPair(KeyAccumulatedOsmosisFeeSwapPeriod, &p.AccumulatedOsmosisFeeSwapPeriod, noOp),
+		paramtypes.NewParamSetPair(NativeIbcedInOsmosis, &p.NativeIbcedInOsmosis, noOp),
 	}
 }
 
