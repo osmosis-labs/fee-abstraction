@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/notional-labs/feeabstraction/v1/x/feeabs/keeper"
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
 	"github.com/stretchr/testify/require"
 )
@@ -31,6 +30,6 @@ func TestParseMsgToMemo(t *testing.T) {
 	mockReceiver := "cosmos123456789"
 
 	//TODO: need to check assert msg
-	_, err := keeper.ParseMsgToMemo(msgSwap, mockAddress, mockReceiver)
+	_, err := types.ParseMsgToMemo(msgSwap, mockAddress, mockReceiver)
 	require.NoError(t, err)
 }

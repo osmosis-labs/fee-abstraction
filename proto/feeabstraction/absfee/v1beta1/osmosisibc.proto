@@ -40,16 +40,25 @@ message HostChainFeeAbsConfig{
     // ibc token is allowed to be used as fee token 
     string ibc_denom = 1 
     [(gogoproto.moretags) = "yaml:\"allowed_token\"" ];
+	
+	// ibced native denom in osmosis dev
+	string host_chain_native_denom_ibced_on_osmosis = 2;
 
-    // connection id to osmosis chain
-    string ibc_transfer_channel = 2;
+	// middleware address in hostchain, can we refator this logic ?
+	string middleware_address = 3;
 
-    // contract on osmosis with custom ibc logic for fetching spot price
-    string handler_outpost_contract_address = 3;
+    // transfer channel from customer_chain -> host chain
+    string ibc_transfer_channel = 4;
 
-    // pool id
-    uint64 pool_id = 4;
+	// transfer channel from host chain -> osmosis
+	string host_zone_ibc_transfer_channel = 5;
+
+	// crosschain-swap contract address 
+	string crosschain_swap_address = 6;
+
+	// pool id
+    uint64 pool_id = 7;
 
     // Active
-    bool active = 5;
+    bool active = 8;
 }

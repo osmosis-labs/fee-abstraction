@@ -30,9 +30,10 @@ func (keeper Keeper) SetHostZoneConfig(ctx sdk.Context, chainId string, chainCon
 	return nil
 }
 
-func (keeper Keeper) GetAllHostZoneConfig(ctx sdk.Context, chainId string) (allChainConfigs []types.HostChainFeeAbsConfig, err error) {
+// use iterator
+func (keeper Keeper) GetAllHostZoneConfig(ctx sdk.Context) (allChainConfigs []types.HostChainFeeAbsConfig, err error) {
 	store := ctx.KVStore(keeper.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.GetKeyHostZoneConfig(chainId))
+	iterator := sdk.KVStorePrefixIterator(store, types.KeyHostChainChainConfig)
 
 	defer iterator.Close()
 
