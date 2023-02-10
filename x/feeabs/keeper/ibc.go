@@ -56,7 +56,7 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Cap
 
 // Send request for query EstimateSwapExactAmountIn over IBC
 func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDenom string, quoteDenom string, sourcePort, sourceChannel string) error {
-	path := "/osmosis.gamm.v2.Query/SpotPrice"
+	path := "/osmosis.gamm.v2.Query/SpotPrice" // hard code for now should add to params
 	packetData := types.NewOsmosisQueryRequestPacketData(poolId, baseDenom, quoteDenom)
 
 	_, err := k.SendInterchainQuery(ctx, path, packetData.GetBytes(), sourcePort, sourceChannel)

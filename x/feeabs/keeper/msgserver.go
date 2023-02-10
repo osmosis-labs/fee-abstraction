@@ -30,7 +30,12 @@ func (k Keeper) SendQuerySpotPrice(goCtx context.Context, msg *types.MsgSendQuer
 	if err != nil {
 		return nil, err
 	}
-	err = k.handleOsmosisIbcQuery(ctx)
+	hostChainConfig, err := k.GetHostZoneConfig(ctx, chainID)
+	if err != nil {
+		return &types.MsgSendQuerySpotPriceResponse{}, nil
+	}
+
+	err = k.handleOsmosisIbcQuery(ctx, hostChainConfig)
 	if err != nil {
 		return nil, err
 	}
