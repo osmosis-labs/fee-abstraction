@@ -87,6 +87,7 @@ func (k Keeper) OnAcknowledgementIbcOsmosisQueryRequest(ctx sdk.Context, ack cha
 	}
 }
 
+// Send request for query state over IBC
 func (k Keeper) SendInterchainQuery(
 	ctx sdk.Context,
 	path string,
