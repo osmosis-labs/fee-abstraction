@@ -56,54 +56,15 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Cap
 
 // Send request for query EstimateSwapExactAmountIn over IBC
 func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDenom string, quoteDenom string, sourcePort, sourceChannel string) error {
+	path := "/osmosis.gamm.v2.Query/SpotPrice"
 	packetData := types.NewOsmosisQueryRequestPacketData(poolId, baseDenom, quoteDenom)
 
-	// Require channelID is the channelID profiles module is bound to
-	// boundChannel := k.GetChannelId(ctx)
-	// if boundChannel != sourceChannel {
-	// 	return sdkerrors.Wrapf(channeltypes.ErrInvalidChannel, "invalid chanel: %s, expected %s", sourceChannel, boundChannel)
-	// }
-
-	// Get the next sequence
-	sequence, found := k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
-	if !found {
-		return sdkerrors.Wrapf(
-			channeltypes.ErrSequenceSendNotFound,
-			"source port: %s, source channel: %s", sourcePort, sourceChannel,
-		)
-	}
-	sourceChannelEnd, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
-	if !found {
-		return sdkerrors.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
+	_, err := k.SendInterchainQuery(ctx, path, packetData.GetBytes(), sourcePort, sourceChannel)
+	if err != nil {
+		return err
 	}
 
-	destinationPort := sourceChannelEnd.GetCounterparty().GetPortID()
-	destinationChannel := sourceChannelEnd.GetCounterparty().GetChannelID()
-
-	timeoutHeight := clienttypes.NewHeight(0, 100000000)
-	timeoutTimestamp := uint64(0)
-
-	// Begin createOutgoingPacket logic
-	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
-	if !ok {
-		return sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
-	}
-
-	packetBytes := packetData.GetBytes()
-	// Create the IBC packet
-	packet := channeltypes.NewPacket(
-		packetBytes,
-		sequence,
-		sourcePort,
-		sourceChannel,
-		destinationPort,
-		destinationChannel,
-		timeoutHeight,
-		timeoutTimestamp,
-	)
-
-	// Send the IBC packet
-	return k.channelKeeper.SendPacket(ctx, channelCap, packet)
+	return nil
 }
 
 // OnAcknowledgementIbcSwapAmountInRoute handle Acknowledgement for SwapAmountInRoute packet
@@ -226,37 +187,37 @@ func ParseMsgToMemo(msg types.OsmosisSwapMsg, contractAddr string, receiver stri
 	return string(memo_marshalled), nil
 }
 
-func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context) error {
-	params := k.GetParams(ctx)
+func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
+	// params := k.GetParams(ctx)
 
-	moduleAccountAddress := k.GetModuleAddress()
-	token := k.bk.GetBalance(ctx, moduleAccountAddress, params.OsmosisIbcDenom)
+	// moduleAccountAddress := k.GetModuleAddress()
+	// token := k.bk.GetBalance(ctx, moduleAccountAddress, hostChainConfig.IbcDenom)
 
-	// if token
-	if sdk.NewInt(1).GTE(token.Amount) {
-		return nil
-	}
+	// // if token
+	// if sdk.NewInt(1).GTE(token.Amount) {
+	// 	return nil
+	// }
 
-	memo, err := buildMemo(sdk.NewCoin("uosmo", token.Amount), params.NativeIbcDenom, params.OsmosisSwapContract, moduleAccountAddress.String())
-	if err != nil {
-		return err
-	}
+	// memo, err := buildMemo(sdk.NewCoin("uosmo", token.Amount), params.NativeIbcDenom, params.OsmosisSwapContract, moduleAccountAddress.String())
+	// if err != nil {
+	// 	return err
+	// }
 
-	transferMsg := transfertypes.MsgTransfer{
-		SourcePort:       transfertypes.PortID,
-		SourceChannel:    params.OsmosisTransferChannel,
-		Token:            token,
-		Sender:           moduleAccountAddress.String(),
-		Receiver:         params.OsmosisSwapContract,
-		TimeoutHeight:    clienttypes.NewHeight(0, 100000000),
-		TimeoutTimestamp: uint64(0),
-		Memo:             memo,
-	}
+	// transferMsg := transfertypes.MsgTransfer{
+	// 	SourcePort:       transfertypes.PortID,
+	// 	SourceChannel:    params.OsmosisTransferChannel,
+	// 	Token:            token,
+	// 	Sender:           moduleAccountAddress.String(),
+	// 	Receiver:         params.OsmosisSwapContract,
+	// 	TimeoutHeight:    clienttypes.NewHeight(0, 100000000),
+	// 	TimeoutTimestamp: uint64(0),
+	// 	Memo:             memo,
+	// }
 
-	_, err = k.executeTransferMsg(ctx, &transferMsg)
-	if err != nil {
-		return err
-	}
+	// _, err = k.executeTransferMsg(ctx, &transferMsg)
+	// if err != nil {
+	// 	return err
+	// }
 
 	return nil
 }
@@ -289,13 +250,12 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 }
 
 // TODO: use TWAP instead of spotprice
-func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
+func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
 	params := k.GetParams(ctx)
 	channelID := params.OsmosisQueryChannel
-	poolId := params.PoolId // for testing
-	baseDenom := params.NativeIbcDenom
+	poolId := hostChainConfig.PoolId // for testing
 
-	return k.SendOsmosisQueryRequest(ctx, poolId, baseDenom, "uosmo", types.IBCPortID, channelID)
+	return k.SendOsmosisQueryRequest(ctx, poolId, params.NativeIbcedInOsmosis, hostChainConfig.IbcDenom, types.IBCPortID, channelID)
 }
 
 func (k Keeper) handleInterchainQuery(ctx sdk.Context, address string) error {

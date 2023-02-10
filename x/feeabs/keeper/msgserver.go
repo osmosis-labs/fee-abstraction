@@ -39,14 +39,17 @@ func (k Keeper) SendQuerySpotPrice(goCtx context.Context, msg *types.MsgSendQuer
 }
 
 // Need to remove this
-func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossChain) (*types.MsgSwapCrossChainResponse, error) {
+func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossChain, chainID string) (*types.MsgSwapCrossChainResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
+	hostChainConfig, err := k.GetHostZoneConfig(ctx, chainID)
+	if err != nil {
+		return &types.MsgSwapCrossChainResponse{}, nil
+	}
+	_, err = sdk.AccAddressFromBech32(msg.FromAddress)
 	if err != nil {
 		return nil, err
 	}
-	err = k.transferIBCTokenToOsmosisContract(ctx)
+	err = k.transferIBCTokenToOsmosisContract(ctx, hostChainConfig)
 	if err != nil {
 		return nil, err
 	}

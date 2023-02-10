@@ -44,3 +44,21 @@ message InterchainQueryRequest{
 message InterchainQueryRequestPacket{
 	repeated InterchainQueryRequest requests = 1 [(gogoproto.nullable) = false];
 }
+
+message HostChainFeeAbsConfig{
+    // ibc token is allowed to be used as fee token 
+    string ibc_denom = 1 
+    [(gogoproto.moretags) = "yaml:\"allowed_token\"" ];
+
+    // connection id to osmosis chain
+    string ibc_transfer_channel = 2;
+
+    // contract on osmosis with custom ibc logic for fetching spot price
+    string handler_outpost_contract_address = 3;
+
+    // pool id
+    uint64 pool_id = 4;
+
+    // Active
+    bool active = 5;
+}

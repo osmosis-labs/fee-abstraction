@@ -10,6 +10,7 @@ require (
 	github.com/cosmos/ibc-go/v4 v4.2.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2
+	github.com/osmosis-labs/osmosis/v14 v14.0.0
 	github.com/gorilla/mux v1.8.0
 	github.com/gravity-devs/liquidity v1.5.1
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
