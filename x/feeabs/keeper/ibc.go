@@ -7,7 +7,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	transfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
 	clienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
@@ -156,11 +155,17 @@ func (k Keeper) GetChannelId(ctx sdk.Context) string {
 
 // TODO: need to test this function
 func (k Keeper) UnmarshalPacketBytesToPrice(bz []byte) (sdk.Dec, error) {
-	var spotPrice types.SpotPrice
-	fmt.Println(string(bz))
-	err := json.Unmarshal(bz, &spotPrice)
+
+	var res types.IcqRespones
+	err := json.Unmarshal(bz, &res)
 	if err != nil {
-		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, "error when json.Unmarshal")
+		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, err.Error())
+	}
+
+	var spotPrice types.SpotPrice
+	err = json.Unmarshal(res.Respones[0].Data, &spotPrice) // hard code Respones[0] for now because currently only 1 query
+	if err != nil {
+		return sdk.Dec{}, sdkerrors.New("spotPrice data umarshal", 1, err.Error())
 	}
 
 	spotPriceDec, err := sdk.NewDecFromStr(spotPrice.SpotPrice)
@@ -262,11 +267,13 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context, hostChainConfig types.Hos
 func (k Keeper) handleInterchainQuery(ctx sdk.Context, address string) error {
 	// params := k.GetParams(ctx)
 	channelID := "channel-0"
-	path := "/cosmos.bank.v1beta1.Query/AllBalances"
+	path := "/osmosis.gamm.v2.Query/SpotPrice"
 	address = "osmo1ekqk6ms4fqf2mfeazju4pcu3jq93lcdsfl0tah"
 
-	q := banktypes.QueryAllBalancesRequest{
-		Address: address,
+	q := types.OsmosisQuerySpotPriceRequestPacketData{
+		PoolId:          uint64(1),
+		BaseAssetDenom:  "uosmo",
+		QuoteAssetDenom: "uatom",
 	}
 
 	data := k.cdc.MustMarshal(&q)

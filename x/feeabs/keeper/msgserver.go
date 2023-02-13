@@ -23,42 +23,50 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 var _ types.MsgServer = msgServer{}
 
 // Need to remove this
+// func (k Keeper) SendQuerySpotPrice(goCtx context.Context, msg *types.MsgSendQuerySpotPrice) (*types.MsgSendQuerySpotPriceResponse, error) {
+// 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+// 	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	hostChainConfig, err := k.GetHostZoneConfig(ctx, chainID)
+// 	if err != nil {
+// 		return &types.MsgSendQuerySpotPriceResponse{}, nil
+// 	}
+
+// 	err = k.handleOsmosisIbcQuery(ctx, hostChainConfig)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return &types.MsgSendQuerySpotPriceResponse{}, nil
+// }
+
 func (k Keeper) SendQuerySpotPrice(goCtx context.Context, msg *types.MsgSendQuerySpotPrice) (*types.MsgSendQuerySpotPriceResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
-	if err != nil {
-		return nil, err
-	}
-	hostChainConfig, err := k.GetHostZoneConfig(ctx, chainID)
-	if err != nil {
-		return &types.MsgSendQuerySpotPriceResponse{}, nil
-	}
-
-	err = k.handleOsmosisIbcQuery(ctx, hostChainConfig)
-	if err != nil {
-		return nil, err
-	}
-
 	return &types.MsgSendQuerySpotPriceResponse{}, nil
 }
 
 // Need to remove this
-func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossChain, chainID string) (*types.MsgSwapCrossChainResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-	hostChainConfig, err := k.GetHostZoneConfig(ctx, chainID)
-	if err != nil {
-		return &types.MsgSwapCrossChainResponse{}, nil
-	}
-	_, err = sdk.AccAddressFromBech32(msg.FromAddress)
-	if err != nil {
-		return nil, err
-	}
-	err = k.transferIBCTokenToOsmosisContract(ctx, hostChainConfig)
-	if err != nil {
-		return nil, err
-	}
+// func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossChain, chainID string) (*types.MsgSwapCrossChainResponse, error) {
+// 	ctx := sdk.UnwrapSDKContext(goCtx)
+// 	hostChainConfig, err := k.GetHostZoneConfig(ctx, chainID)
+// 	if err != nil {
+// 		return &types.MsgSwapCrossChainResponse{}, nil
+// 	}
+// 	_, err = sdk.AccAddressFromBech32(msg.FromAddress)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	err = k.transferIBCTokenToOsmosisContract(ctx, hostChainConfig)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
+// 	return &types.MsgSwapCrossChainResponse{}, nil
+// }
+
+func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossChain) (*types.MsgSwapCrossChainResponse, error) {
 	return &types.MsgSwapCrossChainResponse{}, nil
 }
 

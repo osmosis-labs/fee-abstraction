@@ -15,6 +15,15 @@ type SpotPrice struct {
 	SpotPrice string `json:"spot_price"`
 }
 
+type Result struct {
+	Success bool   `json:"success"`
+	Data    []byte `json:"data"`
+}
+
+type IcqRespones struct {
+	Respones []Result `json:"responses"`
+}
+
 var ModuleCdc = codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
 
 // IBCPortKey defines the key to store the port ID in store.

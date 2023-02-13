@@ -67,9 +67,9 @@ func TestFeeAbsIBCToContract(t *testing.T) {
 			coordinator.CreateChannels(path)
 
 			params := chainA.GetTestSupport().FeeAbsKeeper().GetParams(chainA.GetContext())
-			params.NativeIbcDenom = "denom"
-			params.OsmosisQueryChannel = path.EndpointA.ChannelID
-			params.PoolId = 1
+			// params.NativeIbcDenom = "denom"
+			// params.OsmosisQueryChannel = path.EndpointA.ChannelID
+			// params.PoolId = 1
 			chainA.GetTestSupport().FeeAbsKeeper().SetParams(chainA.GetContext(), params)
 
 			msg := types.NewMsgSendQuerySpotPrice(

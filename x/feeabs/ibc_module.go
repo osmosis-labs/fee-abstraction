@@ -184,9 +184,12 @@ func (am IBCModule) OnAcknowledgementPacket(
 
 	switch resp := ack.Response.(type) {
 	case *channeltypes.Acknowledgement_Result:
+		logger.Error(fmt.Sprintf("Data %s", string(ack.GetResult())))
 		spotPrice, err := am.keeper.UnmarshalPacketBytesToPrice(ack.GetResult())
+		logger.Error(fmt.Sprintf("spotPrice %v", &spotPrice))
 
 		if err != nil {
+			logger.Error(fmt.Sprintf("Error %s", err.Error()))
 			return err
 		}
 
