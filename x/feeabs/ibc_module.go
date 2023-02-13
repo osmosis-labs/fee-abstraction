@@ -163,14 +163,11 @@ func (am IBCModule) OnAcknowledgementPacket(
 	acknowledgement []byte,
 	relayer sdk.AccAddress,
 ) error {
-	logger := am.keeper.Logger(ctx)
-	logger.Error("IBC OnAcknowledgementPacket")
 	var ack channeltypes.Acknowledgement
 	if err := types.ModuleCdc.UnmarshalJSON(acknowledgement, &ack); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
 	}
 
-	logger.Error(fmt.Sprintf("Data %v", &ack))
 	// TODO :  Handler ack logic here
 	// TODO : update spot price when receive ack from osmosis chain
 
@@ -184,12 +181,8 @@ func (am IBCModule) OnAcknowledgementPacket(
 
 	switch resp := ack.Response.(type) {
 	case *channeltypes.Acknowledgement_Result:
-		logger.Error(fmt.Sprintf("Data %s", string(ack.GetResult())))
 		spotPrice, err := am.keeper.UnmarshalPacketBytesToPrice(ack.GetResult())
-		logger.Error(fmt.Sprintf("spotPrice %v", &spotPrice))
-
 		if err != nil {
-			logger.Error(fmt.Sprintf("Error %s", err.Error()))
 			return err
 		}
 

@@ -94,7 +94,6 @@ func (k Keeper) SendInterchainQuery(
 	sourcePort string,
 	sourceChannel string,
 ) (uint64, error) {
-	k.Logger(ctx).Error("IBC InterchainQueryBalances sequence")
 	sequence, found := k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
 	if !found {
 		return 0, sdkerrors.Wrapf(
@@ -102,7 +101,6 @@ func (k Keeper) SendInterchainQuery(
 			"source port: %s, source channel: %s", sourcePort, sourceChannel,
 		)
 	}
-	k.Logger(ctx).Error("IBC InterchainQueryBalances sequence")
 	sourceChannelEnd, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
 	if !found {
 		return 0, sdkerrors.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
@@ -114,13 +112,11 @@ func (k Keeper) SendInterchainQuery(
 	timeoutHeight := clienttypes.NewHeight(0, 100000000)
 	timeoutTimestamp := uint64(0)
 
-	k.Logger(ctx).Error("IBC InterchainQueryBalances channelCap")
 	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
 	if !ok {
 		return 0, sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
 	}
 
-	k.Logger(ctx).Error("IBC InterchainQueryBalances packetData")
 	reqs := []types.InterchainQueryRequest{
 		{
 			Data: data,
@@ -140,7 +136,6 @@ func (k Keeper) SendInterchainQuery(
 		timeoutHeight,
 		timeoutTimestamp,
 	)
-	k.Logger(ctx).Error("IBC InterchainQueryBalances SendPacket")
 	if err := k.channelKeeper.SendPacket(ctx, channelCap, packet); err != nil {
 		return 0, err
 	}
@@ -194,36 +189,36 @@ func ParseMsgToMemo(msg types.OsmosisSwapMsg, contractAddr string, receiver stri
 }
 
 func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
-	// params := k.GetParams(ctx)
+	params := k.GetParams(ctx)
 
-	// moduleAccountAddress := k.GetModuleAddress()
-	// token := k.bk.GetBalance(ctx, moduleAccountAddress, hostChainConfig.IbcDenom)
+	moduleAccountAddress := k.GetModuleAddress()
+	token := k.bk.GetBalance(ctx, moduleAccountAddress, hostChainConfig.IbcDenom)
 
-	// // if token
-	// if sdk.NewInt(1).GTE(token.Amount) {
-	// 	return nil
-	// }
+	// if token
+	if sdk.NewInt(1).GTE(token.Amount) {
+		return nil
+	}
 
-	// memo, err := buildMemo(sdk.NewCoin("uosmo", token.Amount), params.NativeIbcDenom, params.OsmosisSwapContract, moduleAccountAddress.String())
-	// if err != nil {
-	// 	return err
-	// }
+	memo, err := buildMemo(sdk.NewCoin("uosmo", token.Amount), params.NativeIbcDenom, params.OsmosisSwapContract, moduleAccountAddress.String())
+	if err != nil {
+		return err
+	}
 
-	// transferMsg := transfertypes.MsgTransfer{
-	// 	SourcePort:       transfertypes.PortID,
-	// 	SourceChannel:    params.OsmosisTransferChannel,
-	// 	Token:            token,
-	// 	Sender:           moduleAccountAddress.String(),
-	// 	Receiver:         params.OsmosisSwapContract,
-	// 	TimeoutHeight:    clienttypes.NewHeight(0, 100000000),
-	// 	TimeoutTimestamp: uint64(0),
-	// 	Memo:             memo,
-	// }
+	transferMsg := transfertypes.MsgTransfer{
+		SourcePort:       transfertypes.PortID,
+		SourceChannel:    params.OsmosisTransferChannel,
+		Token:            token,
+		Sender:           moduleAccountAddress.String(),
+		Receiver:         params.OsmosisSwapContract,
+		TimeoutHeight:    clienttypes.NewHeight(0, 100000000),
+		TimeoutTimestamp: uint64(0),
+		Memo:             memo,
+	}
 
-	// _, err = k.executeTransferMsg(ctx, &transferMsg)
-	// if err != nil {
-	// 	return err
-	// }
+	_, err = k.executeTransferMsg(ctx, &transferMsg)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -262,26 +257,4 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context, hostChainConfig types.Hos
 	poolId := hostChainConfig.PoolId // for testing
 
 	return k.SendOsmosisQueryRequest(ctx, poolId, params.NativeIbcedInOsmosis, hostChainConfig.IbcDenom, types.IBCPortID, channelID)
-}
-
-func (k Keeper) handleInterchainQuery(ctx sdk.Context, address string) error {
-	// params := k.GetParams(ctx)
-	channelID := "channel-0"
-	path := "/osmosis.gamm.v2.Query/SpotPrice"
-	address = "osmo1ekqk6ms4fqf2mfeazju4pcu3jq93lcdsfl0tah"
-
-	q := types.OsmosisQuerySpotPriceRequestPacketData{
-		PoolId:          uint64(1),
-		BaseAssetDenom:  "uosmo",
-		QuoteAssetDenom: "uatom",
-	}
-
-	data := k.cdc.MustMarshal(&q)
-
-	k.Logger(ctx).Error("IBC InterchainQueryBalances SendInterchainQuery")
-	_, err := k.SendInterchainQuery(ctx, path, data, types.IBCPortID, channelID)
-	if err != nil {
-		return err
-	}
-	return nil
 }

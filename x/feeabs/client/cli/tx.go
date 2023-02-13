@@ -20,7 +20,6 @@ func NewTxCmd() *cobra.Command {
 
 	txCmd.AddCommand(NewQueryOsmosisSpotPriceCmd())
 	txCmd.AddCommand(NewSwapOverChainCmd())
-	txCmd.AddCommand(NewInterchainQueryCmd())
 
 	return txCmd
 }
@@ -59,29 +58,6 @@ func NewSwapOverChainCmd() *cobra.Command {
 			msg := types.NewMsgSwapCrossChain(clientCtx.GetFromAddress())
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 
-		},
-	}
-	flags.AddTxFlagsToCmd(cmd)
-
-	return cmd
-}
-
-func NewInterchainQueryCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:  "interchain-query [address]",
-		Args: cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := &types.MsgInterchainQueryBalances{
-				FromAddress:  clientCtx.GetFromAddress().String(),
-				QueryAddress: args[0],
-			}
-
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
