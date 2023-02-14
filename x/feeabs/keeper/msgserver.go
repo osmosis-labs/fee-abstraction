@@ -26,11 +26,16 @@ var _ types.MsgServer = msgServer{}
 func (k Keeper) SendQuerySpotPrice(goCtx context.Context, msg *types.MsgSendQuerySpotPrice) (*types.MsgSendQuerySpotPriceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
+	denom := "ibc/E7D5E9D0E9BF8B7354929A817DD28D4D017E745F638954764AA88522A7A409EC"
+	hostChainConfig, err := k.GetHostZoneConfig(ctx, denom)
+	if err != nil {
+		return &types.MsgSendQuerySpotPriceResponse{}, nil
+	}
+	_, err = sdk.AccAddressFromBech32(msg.FromAddress)
 	if err != nil {
 		return nil, err
 	}
-	err = k.handleOsmosisIbcQuery(ctx)
+	err = k.handleOsmosisIbcQuery(ctx, hostChainConfig)
 	if err != nil {
 		return nil, err
 	}
