@@ -25,8 +25,6 @@ var _ types.MsgServer = msgServer{}
 // Need to remove this
 func (k Keeper) SendQuerySpotPrice(goCtx context.Context, msg *types.MsgSendQuerySpotPrice) (*types.MsgSendQuerySpotPriceResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	denom := "ibc/E7D5E9D0E9BF8B7354929A817DD28D4D017E745F638954764AA88522A7A409EC"
 	hostChainConfig, err := k.GetHostZoneConfig(ctx, denom)
 	if err != nil {
 		return &types.MsgSendQuerySpotPriceResponse{}, nil
@@ -46,7 +44,6 @@ func (k Keeper) SendQuerySpotPrice(goCtx context.Context, msg *types.MsgSendQuer
 // Need to remove this
 func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossChain) (*types.MsgSwapCrossChainResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	denom := "ibc/E7D5E9D0E9BF8B7354929A817DD28D4D017E745F638954764AA88522A7A409EC"
 	hostChainConfig, err := k.GetHostZoneConfig(ctx, denom)
 	if err != nil {
 		return &types.MsgSwapCrossChainResponse{}, nil
