@@ -18,12 +18,14 @@ service Msg {
 // Params defines the parameters for the feeabs module.
 message MsgSendQuerySpotPrice {
     string from_address = 1;
+    string ibc_denom = 2;
 }
 message MsgSendQuerySpotPriceResponse{}
 
 // Params defines the parameters for the feeabs module.
 message MsgSwapCrossChain {
     string from_address = 1;
+    string ibc_denom = 2;
 }
 message MsgSwapCrossChainResponse{
 }

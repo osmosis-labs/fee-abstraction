@@ -26,6 +26,6 @@ var (
 	KeyHostChainChainConfig = []byte{0x03} // Key for IBC channel to osmosis
 )
 
-func GetKeyHostZoneConfig(chainID string) []byte {
-	return append(KeyHostChainChainConfig, []byte(chainID)...)
+func GetKeyHostZoneConfig(ibcDenom string) []byte {
+	return append(KeyHostChainChainConfig, []byte(ibcDenom)...)
 }

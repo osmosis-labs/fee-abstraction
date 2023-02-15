@@ -4,66 +4,10 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
 )
 
-const (
-	// IBCPortID is the default port id that profiles module binds to.
-	IBCPortID = "feeabs"
-)
-
-type SpotPrice struct {
-	SpotPrice string `json:"spot_price"`
-}
-
-var ModuleCdc = codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
-
-// IBCPortKey defines the key to store the port ID in store.
-var (
-	IBCPortKey        = []byte{0x01}
-	FeePoolAddressKey = []byte{0x02}
-)
-
-// NewOsmosisQueryRequestPacketData create new packet for ibc.
-func NewOsmosisQueryRequestPacketData(poolId uint64, baseDenom string, quoteDenom string) OsmosisQuerySpotPriceRequestPacketData {
-	return OsmosisQuerySpotPriceRequestPacketData{
-		PoolId:          poolId,
-		BaseAssetDenom:  baseDenom,
-		QuoteAssetDenom: quoteDenom,
-	}
-}
-
-// GetBytes is a helper for serializing.
-func (p OsmosisQuerySpotPriceRequestPacketData) GetBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
-}
-
-// TODO: Those types should be putted in types package
-// `{
-// 	"wasm": {
-// 	  "contract": "CROSSCHAIN_SWAPS_ADDRESS",
-// 	  "msg": {
-// 		"osmosis_swap": {
-// 		  "input_coin": {
-// 			"denom": "$DENOM",
-// 			"amount": "100"
-// 		  },
-// 		  "output_denom": "uosmo",
-// 		  "slippage": {
-// 			"twap": {
-// 			  "slippage_percentage": "20",
-// 			  "window_seconds": 10
-// 			}
-// 		  },
-// 		  "receiver": "$VALIDATOR"
-// 		}
-// 	  }
-// 	}
-//   }
-//   `
 type OsmosisSpecialMemo struct {
 	Wasm map[string]interface{} `json:"wasm"`
 }
