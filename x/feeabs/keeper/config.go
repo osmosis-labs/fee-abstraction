@@ -5,9 +5,9 @@ import (
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
 )
 
-func (keeper Keeper) GetHostZoneConfig(ctx sdk.Context, chainId string) (chainConfig types.HostChainFeeAbsConfig, err error) {
+func (keeper Keeper) GetHostZoneConfig(ctx sdk.Context, ibcDenom string) (chainConfig types.HostChainFeeAbsConfig, err error) {
 	store := ctx.KVStore(keeper.storeKey)
-	key := types.GetKeyHostZoneConfig(chainId)
+	key := types.GetKeyHostZoneConfig(ibcDenom)
 	bz := store.Get(key)
 
 	err = keeper.cdc.Unmarshal(bz, &chainConfig)
@@ -18,9 +18,9 @@ func (keeper Keeper) GetHostZoneConfig(ctx sdk.Context, chainId string) (chainCo
 	return
 }
 
-func (keeper Keeper) SetHostZoneConfig(ctx sdk.Context, chainId string, chainConfig types.HostChainFeeAbsConfig) error {
+func (keeper Keeper) SetHostZoneConfig(ctx sdk.Context, ibcDenom string, chainConfig types.HostChainFeeAbsConfig) error {
 	store := ctx.KVStore(keeper.storeKey)
-	key := types.GetKeyHostZoneConfig(chainId)
+	key := types.GetKeyHostZoneConfig(ibcDenom)
 
 	bz, err := keeper.cdc.Marshal(&chainConfig)
 	if err != nil {
@@ -30,9 +30,10 @@ func (keeper Keeper) SetHostZoneConfig(ctx sdk.Context, chainId string, chainCon
 	return nil
 }
 
-func (keeper Keeper) GetAllHostZoneConfig(ctx sdk.Context, chainId string) (allChainConfigs []types.HostChainFeeAbsConfig, err error) {
+// use iterator
+func (keeper Keeper) GetAllHostZoneConfig(ctx sdk.Context) (allChainConfigs []types.HostChainFeeAbsConfig, err error) {
 	store := ctx.KVStore(keeper.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.GetKeyHostZoneConfig(chainId))
+	iterator := sdk.KVStorePrefixIterator(store, types.KeyHostChainChainConfig)
 
 	defer iterator.Close()
 

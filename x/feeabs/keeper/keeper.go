@@ -77,13 +77,19 @@ func (k Keeper) CalculateNativeFromIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins)
 
 // return err if IBC token isn't in allowed_list
 func (k Keeper) verifyIBCCoins(ctx sdk.Context, ibcCoin sdk.Coins) error {
-	// osmosisDenom := k.GetOsmosisIBCDenomParams(ctx)
+	allHostZoneConfig, err := k.GetAllHostZoneConfig(ctx)
+	if err != nil {
+		return err
+	}
+	// TODO: replace it with iterator. @Gnad
+	for _, config := range allHostZoneConfig {
+		if ibcCoin[0].Denom == config.IbcDenom {
+			return nil
+		}
+	}
 
-	// if ibcCoin[0].Denom == osmosisDenom {
-	// 	return fmt.Errorf("unallowed denom for tx fee")
-	// }
-
-	return nil
+	// TODO: we should register error for this
+	return fmt.Errorf("unallowed %s for tx fee", ibcCoin[0].Denom)
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
