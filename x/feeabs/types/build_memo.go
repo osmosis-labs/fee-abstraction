@@ -65,6 +65,7 @@ func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string, receiver string) (s
 	return string(memo_marshalled), nil
 }
 
+// TODO: write test for this.
 func BuildPacketMiddlewareMemo(inputToken sdk.Coin, outputDenom string, receiver string, hostChainConfig HostChainFeeAbsConfig) (string, error) {
 	// TODO: this should be chain params.
 	timeOut := time.Duration(1800000)
@@ -83,7 +84,48 @@ func BuildPacketMiddlewareMemo(inputToken sdk.Coin, outputDenom string, receiver
 	}
 
 	// TODO: need to validate the msg && contract address.
-	memo_marshalled, err := json.Marshal(&metadata)
+	return BuildForwardMetaMemo(metadata)
+}
+
+type ForwardMetadata struct {
+	Receiver string        `json:"receiver,omitempty"`
+	Port     string        `json:"port,omitempty"`
+	Channel  string        `json:"channel,omitempty"`
+	Timeout  time.Duration `json:"timeout,omitempty"`
+	Retries  *uint8        `json:"retries,omitempty"`
+
+	// Memo for the cross-chain-swap contract
+	Next string `json:"next,omitempty"`
+}
+
+// TODO: write test for this
+func BuildNextMemo(inputToken sdk.Coin, outputDenom string, contractAddress, receiver string) (string, error) {
+	swap := Swap{
+		InputCoin:   inputToken,
+		OutPutDenom: outputDenom,
+		Slippage: Twap{
+			Twap: TwapRouter{
+				SlippagePercentage: "20",
+				WindowSeconds:      10,
+			},
+		},
+		Receiver: receiver,
+	}
+
+	msgSwap := OsmosisSwapMsg{
+		OsmosisSwap: swap,
+	}
+	nextMemo, err := ParseMsgToMemo(msgSwap, contractAddress, receiver)
+	if err != nil {
+		return "", err
+	}
+
+	return nextMemo, nil
+}
+
+// TODO: write test for this
+func BuildForwardMetaMemo(forwardMetadata ForwardMetadata) (string, error) {
+	memo_marshalled, err := json.Marshal(&forwardMetadata)
 	if err != nil {
 		return "", err
 	}
