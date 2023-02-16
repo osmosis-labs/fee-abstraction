@@ -21,7 +21,9 @@ service Query {
 }
 
 // QueryOsmosisSpotPriceRequest is the request type for the Query/Feeabs RPC method.
-message QueryOsmosisSpotPriceRequest {}
+message QueryOsmosisSpotPriceRequest {
+  string ibc_denom = 1;
+}
   
 message QueryOsmosisSpotPriceResponse {
     string base_asset = 1;
