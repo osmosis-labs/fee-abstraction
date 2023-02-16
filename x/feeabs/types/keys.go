@@ -21,11 +21,15 @@ const (
 )
 
 var (
-	OsmosisExchangeRate     = []byte{0x01} // Key for the exchange rate of osmosis (to native token)
+	OsmosisTwapExchangeRate = []byte{0x01} // Key for the exchange rate of osmosis (to native token)
 	KeyChannelID            = []byte{0x02} // Key for IBC channel to osmosis
 	KeyHostChainChainConfig = []byte{0x03} // Key for IBC channel to osmosis
 )
 
 func GetKeyHostZoneConfig(ibcDenom string) []byte {
 	return append(KeyHostChainChainConfig, []byte(ibcDenom)...)
+}
+
+func GetKeyTwapExchangeRate(ibcDenom string) []byte {
+	return append(OsmosisTwapExchangeRate, []byte(ibcDenom)...)
 }
