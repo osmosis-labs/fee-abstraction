@@ -67,23 +67,45 @@ func (k Keeper) GetModuleAddress() sdk.AccAddress {
 }
 
 // need to implement
-func (k Keeper) CalculateNativeFromIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins) (coins sdk.Coins, err error) {
+func (k Keeper) CalculateNativeFromIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins, chainConfig types.HostChainFeeAbsConfig) (coins sdk.Coins, err error) {
 	err = k.verifyIBCCoins(ctx, ibcCoins)
 	if err != nil {
 		return sdk.Coins{}, nil
 	}
-	return coins, nil
+
+	twapRate, err := k.GetTwapRate(ctx, chainConfig.IbcDenom)
+	if err != nil {
+		return sdk.Coins{}, nil
+	}
+
+	// mul
+	coin := ibcCoins[0]
+	nativeFeeAmount := twapRate.MulInt(coin.Amount).RoundInt()
+	nativeFee := sdk.NewCoin(k.sk.BondDenom(ctx), nativeFeeAmount)
+
+	return sdk.NewCoins(nativeFee), nil
 }
 
 // return err if IBC token isn't in allowed_list
-func (k Keeper) verifyIBCCoins(ctx sdk.Context, ibcCoin sdk.Coins) error {
-	osmosisDenom := k.GetOsmosisIBCDenomParams(ctx)
-
-	if ibcCoin[0].Denom == osmosisDenom {
-		return fmt.Errorf("unallowed denom for tx fee")
+func (k Keeper) verifyIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins) error {
+	if ibcCoins.Len() != 1 {
+		return types.ErrInvalidIBCFees
 	}
 
-	return nil
+	allHostZoneConfig, err := k.GetAllHostZoneConfig(ctx)
+	if err != nil {
+		return err
+	}
+
+	// TODO: replace it with iterator. @Gnad
+	for _, config := range allHostZoneConfig {
+		if ibcCoins[0].Denom == config.IbcDenom {
+			return nil
+		}
+	}
+
+	// TODO: we should register error for this
+	return fmt.Errorf("unallowed %s for tx fee", ibcCoins[0].Denom)
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
@@ -99,10 +121,4 @@ func (k Keeper) GetParams(ctx sdk.Context) (params types.Params) {
 // SetParams sets all of the parameters in the abstraction module.
 func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 	k.paramSpace.SetParamSet(ctx, &params)
-}
-
-// GetParams gets the fee abstraction module's parameters.
-func (k Keeper) GetOsmosisIBCDenomParams(ctx sdk.Context) (denom string) {
-	k.paramSpace.Get(ctx, types.KeyOsmosisIbcDenom, &denom)
-	return denom
 }

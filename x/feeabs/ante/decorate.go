@@ -7,6 +7,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	feeabskeeper "github.com/notional-labs/feeabstraction/v1/x/feeabs/keeper"
+	feeabstypes "github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
 )
 
 type FeeAbstractionDeductFeeDecorate struct {
@@ -30,12 +31,16 @@ func (fadfd FeeAbstractionDeductFeeDecorate) AnteHandle(ctx sdk.Context, tx sdk.
 	if !ok {
 		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
 	}
+
+	feeDenom := feeTx.GetFee().GetDenomByIndex(0)
+	hostChainConfig, err := fadfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
+
 	// normal deduct logic
-	if !feeTx.FeePayer().Equals(fadfd.feeabsKeeper.GetModuleAddress()) {
+	if err != nil {
 		return fadfd.normalDeductFeeAnteHandle(ctx, tx, simulate, next, feeTx)
 	}
 
-	return fadfd.abstractionDeductFeeHandler(ctx, tx, simulate, next, feeTx)
+	return fadfd.abstractionDeductFeeHandler(ctx, tx, simulate, next, feeTx, hostChainConfig)
 }
 
 func (fadfd FeeAbstractionDeductFeeDecorate) normalDeductFeeAnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler, feeTx sdk.FeeTx) (newCtx sdk.Context, err error) {
@@ -86,7 +91,7 @@ func (fadfd FeeAbstractionDeductFeeDecorate) normalDeductFeeAnteHandle(ctx sdk.C
 	return next(ctx, tx, simulate)
 }
 
-func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler, feeTx sdk.FeeTx) (newCtx sdk.Context, err error) {
+func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler, feeTx sdk.FeeTx, hostChainConfig feeabstypes.HostChainFeeAbsConfig) (newCtx sdk.Context, err error) {
 	//fee abstraction deduct logic
 	deductFeesFrom := fadfd.feeabsKeeper.GetModuleAddress()
 	deductFeesFromAcc := fadfd.accountKeeper.GetAccount(ctx, deductFeesFrom)
@@ -100,7 +105,7 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 		return ctx, sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, "invalid ibc token: %s", ibcFees)
 	}
 
-	nativeFees, err := fadfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, ibcFees)
+	nativeFees, err := fadfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, ibcFees, hostChainConfig)
 	if err != nil {
 		return ctx, err
 	}
@@ -160,7 +165,6 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 
 	feeCoins := feeTx.GetFee()
 	gas := feeTx.GetGas()
-
 	// Ensure that the provided fees meet a minimum threshold for the validator,
 	// if this is a CheckTx. This is only for local mempool purposes, and thus
 	// is only ran on check tx.
@@ -169,9 +173,15 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		if minGasPrices.IsZero() {
 			return next(ctx, tx, simulate)
 		}
-		if feeTx.FeePayer().Equals(famfd.feeabsKeeper.GetModuleAddress()) {
+		feeCoinsLen := feeCoins.Len()
+		if feeCoinsLen == 0 {
+			return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees")
+		}
+
+		hostChainConfig, err := famfd.feeabsKeeper.GetHostZoneConfig(ctx, feeCoins[0].Denom)
+		if err != nil && feeCoinsLen == 1 {
 			ibcFees := feeTx.GetFee()
-			nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, ibcFees)
+			nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, ibcFees, hostChainConfig)
 			if err != nil {
 				return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees")
 

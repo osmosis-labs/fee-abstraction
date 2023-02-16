@@ -30,13 +30,14 @@ func (q Querier) OsmosisSpotPrice(goCtx context.Context, req *types.QueryOsmosis
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	spotPrice, err := q.GetOsmosisExchangeRate(ctx)
+	spotPrice, err := q.GetTwapRate(ctx, req.IbcDenom)
 	if err != nil {
 		return nil, err
 	}
 
+	// TODO: move to use TWAP response
 	return &types.QueryOsmosisSpotPriceResponse{
-		BaseAsset:  "osmo", // TODO: Currently hard code this value. Need to change to params then
+		BaseAsset:  req.IbcDenom, // TODO: Currently hard code this value. Need to change to params then
 		QuoteAsset: q.sk.BondDenom(ctx),
 		SpotPrice:  spotPrice,
 	}, nil
@@ -51,6 +52,7 @@ func (q Querier) FeeabsModuleBalances(goCtx context.Context, req *types.QueryFee
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	moduleAddress := q.GetModuleAddress()
+
 	fmt.Println("==================")
 	fmt.Println(moduleAddress.String())
 	fmt.Println("==================")

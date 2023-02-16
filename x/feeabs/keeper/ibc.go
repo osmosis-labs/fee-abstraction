@@ -53,7 +53,7 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Cap
 	return k.scopedKeeper.ClaimCapability(ctx, capability, name)
 }
 
-// Send request for query EstimateSwapExactAmountIn over IBC
+// Send request for query EstimateSwapExactAmountIn over IBC. Move to use TWAP.
 func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDenom string, quoteDenom string, sourcePort, sourceChannel string) error {
 	packetData := types.NewOsmosisQueryRequestPacketData(poolId, baseDenom, quoteDenom)
 
@@ -146,46 +146,28 @@ func (k Keeper) UnmarshalPacketBytesToPrice(bz []byte) (sdk.Dec, error) {
 	return spotPriceDec, nil
 }
 
-// ParseMsgToMemo build a memo from msg, contractAddr, compatible with ValidateAndParseMemo in https://github.com/osmosis-labs/osmosis/blob/nicolas/crosschain-swaps-new/x/ibc-hooks/wasm_hook.go
-func ParseMsgToMemo(msg types.OsmosisSwapMsg, contractAddr string, receiver string) (string, error) {
-	// TODO: need to validate the msg && contract address
-	memo := types.OsmosisSpecialMemo{
-		Wasm: make(map[string]interface{}),
-	}
-
-	memo.Wasm["contract"] = contractAddr
-	memo.Wasm["msg"] = msg
-	memo.Wasm["receiver"] = receiver
-
-	memo_marshalled, err := json.Marshal(&memo)
-	if err != nil {
-		return "", nil
-	}
-	return string(memo_marshalled), nil
-}
-
-func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context) error {
-	params := k.GetParams(ctx)
-
+func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
 	moduleAccountAddress := k.GetModuleAddress()
-	token := k.bk.GetBalance(ctx, moduleAccountAddress, params.OsmosisIbcDenom)
+	token := k.bk.GetBalance(ctx, moduleAccountAddress, hostChainConfig.IbcDenom)
+	nativeDenomIBCedInOsmosis := k.GetParams(ctx).NativeIbcedInOsmosis
 
-	// if token
+	// TODO: don't use it in product version.
 	if sdk.NewInt(1).GTE(token.Amount) {
 		return nil
 	}
 
-	memo, err := buildMemo(sdk.NewCoin("uosmo", token.Amount), params.NativeIbcDenom, params.OsmosisSwapContract, moduleAccountAddress.String())
+	inputToken := sdk.NewCoin(hostChainConfig.HostChainNativeDenomIbcedOnOsmosis, token.Amount)
+	memo, err := types.BuildPacketMiddlewareMemo(inputToken, nativeDenomIBCedInOsmosis, moduleAccountAddress.String(), hostChainConfig)
 	if err != nil {
 		return err
 	}
 
 	transferMsg := transfertypes.MsgTransfer{
 		SourcePort:       transfertypes.PortID,
-		SourceChannel:    params.OsmosisTransferChannel,
+		SourceChannel:    hostChainConfig.IbcTransferChannel,
 		Token:            token,
 		Sender:           moduleAccountAddress.String(),
-		Receiver:         params.OsmosisSwapContract,
+		Receiver:         hostChainConfig.MiddlewareAddress,
 		TimeoutHeight:    clienttypes.NewHeight(0, 100000000),
 		TimeoutTimestamp: uint64(0),
 		Memo:             memo,
@@ -199,25 +181,6 @@ func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context) error {
 	return nil
 }
 
-func buildMemo(inputToken sdk.Coin, outputDenom string, contractAddress, receiver string) (string, error) {
-	swap := types.Swap{
-		InputCoin:   inputToken,
-		OutPutDenom: outputDenom,
-		Slippage: types.Twap{
-			Twap: types.TwapRouter{
-				SlippagePercentage: "20",
-				WindowSeconds:      10,
-			},
-		},
-		Receiver: receiver,
-	}
-
-	msgSwap := types.OsmosisSwapMsg{
-		OsmosisSwap: swap,
-	}
-	return ParseMsgToMemo(msgSwap, contractAddress, receiver)
-}
-
 func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.MsgTransfer) (*transfertypes.MsgTransferResponse, error) {
 	if err := transferMsg.ValidateBasic(); err != nil {
 		return nil, fmt.Errorf("bad msg %v", err.Error())
@@ -227,11 +190,10 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 }
 
 // TODO: use TWAP instead of spotprice
-func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
+func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
 	params := k.GetParams(ctx)
 	channelID := params.OsmosisQueryChannel
-	poolId := params.PoolId // for testing
-	baseDenom := params.NativeIbcDenom
+	poolId := hostChainConfig.PoolId // for testing
 
-	return k.SendOsmosisQueryRequest(ctx, poolId, baseDenom, "uosmo", types.IBCPortID, channelID)
+	return k.SendOsmosisQueryRequest(ctx, poolId, params.NativeIbcedInOsmosis, hostChainConfig.IbcDenom, types.IBCPortID, channelID)
 }

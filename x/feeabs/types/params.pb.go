@@ -31,27 +31,16 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Params defines the parameters for the feeabs module.
 type Params struct {
-	// only ibc osmosis is allowed to be used as fee token
-	// this is the ibc denom of osmosis
-	OsmosisIbcDenom string `protobuf:"bytes,1,opt,name=osmosis_ibc_denom,json=osmosisIbcDenom,proto3" json:"osmosis_ibc_denom,omitempty" yaml:"allowed_token"`
-	// IBC denom of native token in osmosis chain
-	NativeIbcDenom string `protobuf:"bytes,2,opt,name=native_ibc_denom,json=nativeIbcDenom,proto3" json:"native_ibc_denom,omitempty" yaml:"allowed_token"`
+	// contract on osmosis with custom ibc logic for fetching spot price
+	OsmosisQueryContract string `protobuf:"bytes,1,opt,name=osmosis_query_contract,json=osmosisQueryContract,proto3" json:"osmosis_query_contract,omitempty"`
+	// native ibced in osmosis
+	NativeIbcedInOsmosis string `protobuf:"bytes,2,opt,name=native_ibced_in_osmosis,json=nativeIbcedInOsmosis,proto3" json:"native_ibced_in_osmosis,omitempty"`
 	// connection id to osmosis chain
 	OsmosisQueryChannel string `protobuf:"bytes,3,opt,name=osmosis_query_channel,json=osmosisQueryChannel,proto3" json:"osmosis_query_channel,omitempty"`
-	// connection id to osmosis chain
-	OsmosisTransferChannel string `protobuf:"bytes,4,opt,name=osmosis_transfer_channel,json=osmosisTransferChannel,proto3" json:"osmosis_transfer_channel,omitempty"`
-	// contract on osmosis with custom ibc logic for fetching spot price
-	OsmosisQueryContract string `protobuf:"bytes,5,opt,name=osmosis_query_contract,json=osmosisQueryContract,proto3" json:"osmosis_query_contract,omitempty"`
-	// contract on osmosis with custom ibc logic for fetching spot price
-	OsmosisSwapContract string `protobuf:"bytes,6,opt,name=osmosis_swap_contract,json=osmosisSwapContract,proto3" json:"osmosis_swap_contract,omitempty"`
-	// pool id
-	PoolId uint64 `protobuf:"varint,7,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
 	// we'll update the fee rate each `osmosis_exchange_rate_update_period`
-	OsmosisExchangeRateUpdatePeriod time.Duration `protobuf:"bytes,8,opt,name=osmosis_exchange_rate_update_period,json=osmosisExchangeRateUpdatePeriod,proto3,stdduration" json:"osmosis_exchange_rate_update_period"`
+	OsmosisExchangeRateUpdatePeriod time.Duration `protobuf:"bytes,4,opt,name=osmosis_exchange_rate_update_period,json=osmosisExchangeRateUpdatePeriod,proto3,stdduration" json:"osmosis_exchange_rate_update_period"`
 	// we'll swap our accumulated osmosis fee to native token each `accumulated_osmosis_fee_swap_period`
-	AccumulatedOsmosisFeeSwapPeriod time.Duration `protobuf:"bytes,9,opt,name=accumulated_osmosis_fee_swap_period,json=accumulatedOsmosisFeeSwapPeriod,proto3,stdduration" json:"accumulated_osmosis_fee_swap_period"`
-	// Active
-	Active bool `protobuf:"varint,10,opt,name=active,proto3" json:"active,omitempty"`
+	AccumulatedOsmosisFeeSwapPeriod time.Duration `protobuf:"bytes,5,opt,name=accumulated_osmosis_fee_swap_period,json=accumulatedOsmosisFeeSwapPeriod,proto3,stdduration" json:"accumulated_osmosis_fee_swap_period"`
 }
 
 func (m *Params) Reset()         { *m = Params{} }
@@ -87,16 +76,16 @@ func (m *Params) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Params proto.InternalMessageInfo
 
-func (m *Params) GetOsmosisIbcDenom() string {
+func (m *Params) GetOsmosisQueryContract() string {
 	if m != nil {
-		return m.OsmosisIbcDenom
+		return m.OsmosisQueryContract
 	}
 	return ""
 }
 
-func (m *Params) GetNativeIbcDenom() string {
+func (m *Params) GetNativeIbcedInOsmosis() string {
 	if m != nil {
-		return m.NativeIbcDenom
+		return m.NativeIbcedInOsmosis
 	}
 	return ""
 }
@@ -106,34 +95,6 @@ func (m *Params) GetOsmosisQueryChannel() string {
 		return m.OsmosisQueryChannel
 	}
 	return ""
-}
-
-func (m *Params) GetOsmosisTransferChannel() string {
-	if m != nil {
-		return m.OsmosisTransferChannel
-	}
-	return ""
-}
-
-func (m *Params) GetOsmosisQueryContract() string {
-	if m != nil {
-		return m.OsmosisQueryContract
-	}
-	return ""
-}
-
-func (m *Params) GetOsmosisSwapContract() string {
-	if m != nil {
-		return m.OsmosisSwapContract
-	}
-	return ""
-}
-
-func (m *Params) GetPoolId() uint64 {
-	if m != nil {
-		return m.PoolId
-	}
-	return 0
 }
 
 func (m *Params) GetOsmosisExchangeRateUpdatePeriod() time.Duration {
@@ -150,13 +111,6 @@ func (m *Params) GetAccumulatedOsmosisFeeSwapPeriod() time.Duration {
 	return 0
 }
 
-func (m *Params) GetActive() bool {
-	if m != nil {
-		return m.Active
-	}
-	return false
-}
-
 func init() {
 	proto.RegisterType((*Params)(nil), "feeabstraction.absfee.v1beta1.Params")
 }
@@ -166,40 +120,34 @@ func init() {
 }
 
 var fileDescriptor_64e66a0978c84086 = []byte{
-	// 524 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x93, 0xcd, 0x6e, 0xd3, 0x40,
-	0x14, 0x85, 0x63, 0x68, 0xd3, 0x76, 0x90, 0xf8, 0x09, 0x25, 0x98, 0x08, 0x9c, 0x28, 0x6c, 0xa2,
-	0x4a, 0x78, 0x94, 0xc2, 0x02, 0x58, 0x86, 0x80, 0xd4, 0x15, 0xc5, 0x85, 0x0d, 0x1b, 0xeb, 0xda,
-	0xbe, 0x71, 0x2d, 0xec, 0x19, 0xd7, 0x33, 0x4e, 0x9a, 0x25, 0x6f, 0xc0, 0x92, 0x47, 0xea, 0xb2,
-	0x4b, 0x56, 0x05, 0x25, 0x6f, 0xc0, 0x13, 0xa0, 0x19, 0x8f, 0x43, 0xd2, 0x0d, 0x62, 0x95, 0x4c,
-	0xce, 0x3d, 0xdf, 0x39, 0x93, 0xab, 0x21, 0x07, 0x13, 0x44, 0x08, 0x84, 0x2c, 0x20, 0x94, 0x09,
-	0x67, 0x14, 0x02, 0x31, 0x41, 0xa4, 0xd3, 0x61, 0x80, 0x12, 0x86, 0x34, 0x87, 0x02, 0x32, 0xe1,
-	0xe6, 0x05, 0x97, 0xbc, 0xf5, 0x64, 0x73, 0xd6, 0xad, 0x66, 0x5d, 0x33, 0xdb, 0xd9, 0x8f, 0x79,
-	0xcc, 0xf5, 0x24, 0x55, 0xdf, 0x2a, 0x53, 0xe7, 0x71, 0xcc, 0x79, 0x9c, 0x22, 0x85, 0x3c, 0xa1,
-	0xc0, 0x18, 0x97, 0xa0, 0xbc, 0x06, 0xd9, 0x39, 0x08, 0xb9, 0xc8, 0xb8, 0xa0, 0x01, 0x08, 0xa4,
-	0x67, 0x25, 0x16, 0xf3, 0xb5, 0xe8, 0x38, 0x61, 0x7a, 0xd8, 0xcc, 0x3a, 0x86, 0xa4, 0x4f, 0x41,
-	0x39, 0xa1, 0x51, 0x59, 0xac, 0xe9, 0xfd, 0xaf, 0xdb, 0xa4, 0x79, 0xac, 0xfb, 0xb6, 0xc6, 0xe4,
-	0x9e, 0xe6, 0x26, 0xc2, 0x4f, 0x82, 0xd0, 0x8f, 0x90, 0xf1, 0xcc, 0xb6, 0x7a, 0xd6, 0x60, 0x6f,
-	0x64, 0xff, 0xbe, 0xea, 0xee, 0xcf, 0x21, 0x4b, 0x5f, 0xf7, 0x21, 0x4d, 0xf9, 0x0c, 0x23, 0x5f,
-	0xf2, 0x2f, 0xc8, 0xfa, 0xde, 0x1d, 0x63, 0x39, 0x0a, 0xc2, 0xb1, 0x32, 0xb4, 0x46, 0xe4, 0xae,
-	0x2a, 0x30, 0xc5, 0x35, 0xc8, 0x8d, 0x7f, 0x40, 0x6e, 0x57, 0x8e, 0x15, 0xe3, 0x90, 0x3c, 0xa8,
-	0x9b, 0xe8, 0xeb, 0xf9, 0xe1, 0x29, 0x30, 0x86, 0xa9, 0x7d, 0x53, 0x81, 0xbc, 0xfb, 0x46, 0xfc,
-	0xa0, 0xb4, 0x37, 0x95, 0xd4, 0x7a, 0x49, 0xec, 0xda, 0x23, 0x0b, 0x60, 0x62, 0x82, 0xc5, 0xca,
-	0xb6, 0xa5, 0x6d, 0x6d, 0xa3, 0x7f, 0x34, 0x72, 0xed, 0x7c, 0x41, 0xda, 0xd7, 0xd2, 0x38, 0xd3,
-	0xeb, 0xb2, 0xb7, 0xb5, 0x6f, 0x7f, 0x23, 0xce, 0x68, 0xeb, 0x1d, 0xc5, 0x0c, 0xf2, 0xbf, 0xa6,
-	0xe6, 0x46, 0xc7, 0x93, 0x19, 0xe4, 0x2b, 0xcf, 0x43, 0xb2, 0x93, 0x73, 0x9e, 0xfa, 0x49, 0x64,
-	0xef, 0xf4, 0xac, 0xc1, 0x96, 0xd7, 0x54, 0xc7, 0xa3, 0xa8, 0x75, 0x46, 0x9e, 0xd6, 0x30, 0x3c,
-	0x57, 0xad, 0x63, 0xf4, 0x0b, 0x90, 0xe8, 0x97, 0x79, 0xa4, 0x3e, 0x72, 0x2c, 0x12, 0x1e, 0xd9,
-	0xbb, 0x3d, 0x6b, 0x70, 0xeb, 0xf0, 0x91, 0x5b, 0xed, 0xd4, 0xad, 0x77, 0xea, 0x8e, 0xcd, 0x4e,
-	0x47, 0xbb, 0x17, 0x57, 0xdd, 0xc6, 0xf7, 0x9f, 0x5d, 0xcb, 0xeb, 0x1a, 0xde, 0x5b, 0x83, 0xf3,
-	0x40, 0xe2, 0x27, 0x0d, 0x3b, 0xd6, 0x2c, 0x15, 0x09, 0x61, 0x58, 0x66, 0x65, 0x0a, 0x12, 0x23,
-	0xbf, 0x8e, 0x9f, 0x20, 0x56, 0xf7, 0x31, 0x91, 0x7b, 0xff, 0x11, 0xb9, 0xc6, 0x7b, 0x5f, 0xe1,
-	0xde, 0x21, 0xaa, 0x3f, 0xc0, 0x44, 0xb6, 0x49, 0x53, 0x3d, 0x82, 0x29, 0xda, 0xa4, 0x67, 0x0d,
-	0x76, 0x3d, 0x73, 0x1a, 0x9d, 0x5c, 0x2c, 0x1c, 0xeb, 0x72, 0xe1, 0x58, 0xbf, 0x16, 0x8e, 0xf5,
-	0x6d, 0xe9, 0x34, 0x2e, 0x97, 0x4e, 0xe3, 0xc7, 0xd2, 0x69, 0x7c, 0x7e, 0x15, 0x27, 0xf2, 0xb4,
-	0x0c, 0xdc, 0x90, 0x67, 0x94, 0x71, 0x95, 0x07, 0xe9, 0xb3, 0x14, 0x02, 0x41, 0xaf, 0xbd, 0xc0,
-	0xe9, 0x90, 0x9e, 0x9b, 0xdf, 0xa8, 0x9c, 0xe7, 0x28, 0x82, 0xa6, 0xae, 0xfa, 0xfc, 0x4f, 0x00,
-	0x00, 0x00, 0xff, 0xff, 0x56, 0x1d, 0xa1, 0x13, 0xac, 0x03, 0x00, 0x00,
+	// 417 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0xbd, 0x6e, 0xd4, 0x40,
+	0x14, 0x85, 0x6d, 0x02, 0x11, 0x98, 0xce, 0x04, 0x30, 0x2b, 0xf0, 0x46, 0xd0, 0x44, 0x91, 0xf0,
+	0x68, 0x03, 0x14, 0xb4, 0xe1, 0x47, 0x4a, 0x45, 0xd8, 0x88, 0x86, 0x66, 0x74, 0xc7, 0xbe, 0x76,
+	0x46, 0xb2, 0x67, 0x26, 0x9e, 0xf1, 0x26, 0x79, 0x0a, 0x28, 0x79, 0xa4, 0x94, 0x29, 0xa9, 0x00,
+	0xed, 0xbe, 0x08, 0x9a, 0x1f, 0x4b, 0x9b, 0xed, 0x52, 0xf9, 0xe7, 0x9c, 0xf3, 0x9d, 0x7b, 0x47,
+	0x93, 0xec, 0xd7, 0x88, 0xc0, 0xb4, 0xe9, 0xa1, 0x34, 0x5c, 0x0a, 0x02, 0x4c, 0xd7, 0x88, 0x64,
+	0x31, 0x63, 0x68, 0x60, 0x46, 0x14, 0xf4, 0xd0, 0xe9, 0x42, 0xf5, 0xd2, 0xc8, 0xf4, 0xc5, 0x4d,
+	0x6f, 0xe1, 0xbd, 0x45, 0xf0, 0x4e, 0x76, 0x1a, 0xd9, 0x48, 0xe7, 0x24, 0xf6, 0xcd, 0x87, 0x26,
+	0xcf, 0x1b, 0x29, 0x9b, 0x16, 0x09, 0x28, 0x4e, 0x40, 0x08, 0x69, 0xc0, 0x66, 0x03, 0x72, 0xb2,
+	0x5f, 0x4a, 0xdd, 0x49, 0x4d, 0x18, 0x68, 0x24, 0x67, 0x03, 0xf6, 0x97, 0x6b, 0xd5, 0x0d, 0x17,
+	0xce, 0x1c, 0xbc, 0x79, 0x20, 0xb9, 0x2f, 0x36, 0xd4, 0xa4, 0x1a, 0xfa, 0x35, 0xfd, 0xe5, 0x8f,
+	0xad, 0x64, 0xfb, 0xd8, 0xcd, 0x9b, 0xbe, 0x4d, 0x9e, 0x38, 0x2e, 0xd7, 0xd4, 0x41, 0x69, 0x29,
+	0x85, 0x1b, 0x3b, 0x8b, 0x77, 0xe3, 0xbd, 0x07, 0xf3, 0x9d, 0xa0, 0x7e, 0xb5, 0xe2, 0x87, 0xa0,
+	0xa5, 0xef, 0x92, 0xa7, 0xb6, 0x70, 0x81, 0x94, 0xb3, 0x12, 0x2b, 0xca, 0x05, 0x0d, 0xbe, 0xec,
+	0x8e, 0x8f, 0x79, 0xf9, 0xc8, 0xaa, 0x47, 0xe2, 0x8b, 0xd7, 0xd2, 0x83, 0xe4, 0xf1, 0x46, 0xd9,
+	0x29, 0x08, 0x81, 0x6d, 0xb6, 0xe5, 0x42, 0x8f, 0x6e, 0x74, 0x79, 0x29, 0x3d, 0x4b, 0x5e, 0x8d,
+	0x19, 0xbc, 0xb0, 0xfe, 0x06, 0x69, 0x0f, 0x06, 0xe9, 0xa0, 0x2a, 0xfb, 0x50, 0xd8, 0x73, 0x59,
+	0x65, 0x77, 0x77, 0xe3, 0xbd, 0x87, 0x07, 0xcf, 0x0a, 0xbf, 0x79, 0x31, 0x6e, 0x5e, 0x7c, 0x0c,
+	0x9b, 0x1f, 0xde, 0xbf, 0xfa, 0x33, 0x8d, 0x7e, 0xfd, 0x9d, 0xc6, 0xf3, 0x69, 0xe0, 0x7d, 0x0a,
+	0xb8, 0x39, 0x18, 0xfc, 0xe6, 0x60, 0xc7, 0x8e, 0x65, 0x2b, 0xa1, 0x2c, 0x87, 0x6e, 0x68, 0xc1,
+	0x60, 0x35, 0x6e, 0x46, 0x6b, 0x44, 0xaa, 0xcf, 0x41, 0x8d, 0x95, 0xf7, 0x6e, 0x51, 0xb9, 0xc6,
+	0x0b, 0x87, 0xf1, 0x19, 0xf1, 0xe4, 0x1c, 0x94, 0xaf, 0x3c, 0x3c, 0xb9, 0x5a, 0xe6, 0xf1, 0xf5,
+	0x32, 0x8f, 0xff, 0x2d, 0xf3, 0xf8, 0xe7, 0x2a, 0x8f, 0xae, 0x57, 0x79, 0xf4, 0x7b, 0x95, 0x47,
+	0xdf, 0xdf, 0x37, 0xdc, 0x9c, 0x0e, 0xac, 0x28, 0x65, 0x47, 0x84, 0xb4, 0x5c, 0x68, 0x5f, 0xb7,
+	0xc0, 0x34, 0xd9, 0xb8, 0x8f, 0x8b, 0x19, 0xb9, 0x08, 0xff, 0x88, 0xb9, 0x54, 0xa8, 0xd9, 0xb6,
+	0x1b, 0xe9, 0xcd, 0xff, 0x00, 0x00, 0x00, 0xff, 0xff, 0x01, 0xf1, 0x54, 0x75, 0xba, 0x02, 0x00,
+	0x00,
 }
 
 func (m *Params) Marshal() (dAtA []byte, err error) {
@@ -222,16 +170,6 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Active {
-		i--
-		if m.Active {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i--
-		dAtA[i] = 0x50
-	}
 	n1, err1 := github_com_gogo_protobuf_types.StdDurationMarshalTo(m.AccumulatedOsmosisFeeSwapPeriod, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdDuration(m.AccumulatedOsmosisFeeSwapPeriod):])
 	if err1 != nil {
 		return 0, err1
@@ -239,7 +177,7 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i -= n1
 	i = encodeVarintParams(dAtA, i, uint64(n1))
 	i--
-	dAtA[i] = 0x4a
+	dAtA[i] = 0x2a
 	n2, err2 := github_com_gogo_protobuf_types.StdDurationMarshalTo(m.OsmosisExchangeRateUpdatePeriod, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdDuration(m.OsmosisExchangeRateUpdatePeriod):])
 	if err2 != nil {
 		return 0, err2
@@ -247,33 +185,7 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i -= n2
 	i = encodeVarintParams(dAtA, i, uint64(n2))
 	i--
-	dAtA[i] = 0x42
-	if m.PoolId != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.PoolId))
-		i--
-		dAtA[i] = 0x38
-	}
-	if len(m.OsmosisSwapContract) > 0 {
-		i -= len(m.OsmosisSwapContract)
-		copy(dAtA[i:], m.OsmosisSwapContract)
-		i = encodeVarintParams(dAtA, i, uint64(len(m.OsmosisSwapContract)))
-		i--
-		dAtA[i] = 0x32
-	}
-	if len(m.OsmosisQueryContract) > 0 {
-		i -= len(m.OsmosisQueryContract)
-		copy(dAtA[i:], m.OsmosisQueryContract)
-		i = encodeVarintParams(dAtA, i, uint64(len(m.OsmosisQueryContract)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if len(m.OsmosisTransferChannel) > 0 {
-		i -= len(m.OsmosisTransferChannel)
-		copy(dAtA[i:], m.OsmosisTransferChannel)
-		i = encodeVarintParams(dAtA, i, uint64(len(m.OsmosisTransferChannel)))
-		i--
-		dAtA[i] = 0x22
-	}
+	dAtA[i] = 0x22
 	if len(m.OsmosisQueryChannel) > 0 {
 		i -= len(m.OsmosisQueryChannel)
 		copy(dAtA[i:], m.OsmosisQueryChannel)
@@ -281,17 +193,17 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1a
 	}
-	if len(m.NativeIbcDenom) > 0 {
-		i -= len(m.NativeIbcDenom)
-		copy(dAtA[i:], m.NativeIbcDenom)
-		i = encodeVarintParams(dAtA, i, uint64(len(m.NativeIbcDenom)))
+	if len(m.NativeIbcedInOsmosis) > 0 {
+		i -= len(m.NativeIbcedInOsmosis)
+		copy(dAtA[i:], m.NativeIbcedInOsmosis)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.NativeIbcedInOsmosis)))
 		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.OsmosisIbcDenom) > 0 {
-		i -= len(m.OsmosisIbcDenom)
-		copy(dAtA[i:], m.OsmosisIbcDenom)
-		i = encodeVarintParams(dAtA, i, uint64(len(m.OsmosisIbcDenom)))
+	if len(m.OsmosisQueryContract) > 0 {
+		i -= len(m.OsmosisQueryContract)
+		copy(dAtA[i:], m.OsmosisQueryContract)
+		i = encodeVarintParams(dAtA, i, uint64(len(m.OsmosisQueryContract)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -315,11 +227,11 @@ func (m *Params) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.OsmosisIbcDenom)
+	l = len(m.OsmosisQueryContract)
 	if l > 0 {
 		n += 1 + l + sovParams(uint64(l))
 	}
-	l = len(m.NativeIbcDenom)
+	l = len(m.NativeIbcedInOsmosis)
 	if l > 0 {
 		n += 1 + l + sovParams(uint64(l))
 	}
@@ -327,28 +239,10 @@ func (m *Params) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovParams(uint64(l))
 	}
-	l = len(m.OsmosisTransferChannel)
-	if l > 0 {
-		n += 1 + l + sovParams(uint64(l))
-	}
-	l = len(m.OsmosisQueryContract)
-	if l > 0 {
-		n += 1 + l + sovParams(uint64(l))
-	}
-	l = len(m.OsmosisSwapContract)
-	if l > 0 {
-		n += 1 + l + sovParams(uint64(l))
-	}
-	if m.PoolId != 0 {
-		n += 1 + sovParams(uint64(m.PoolId))
-	}
 	l = github_com_gogo_protobuf_types.SizeOfStdDuration(m.OsmosisExchangeRateUpdatePeriod)
 	n += 1 + l + sovParams(uint64(l))
 	l = github_com_gogo_protobuf_types.SizeOfStdDuration(m.AccumulatedOsmosisFeeSwapPeriod)
 	n += 1 + l + sovParams(uint64(l))
-	if m.Active {
-		n += 2
-	}
 	return n
 }
 
@@ -389,7 +283,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OsmosisIbcDenom", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field OsmosisQueryContract", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -417,11 +311,11 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.OsmosisIbcDenom = string(dAtA[iNdEx:postIndex])
+			m.OsmosisQueryContract = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field NativeIbcDenom", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field NativeIbcedInOsmosis", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -449,7 +343,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.NativeIbcDenom = string(dAtA[iNdEx:postIndex])
+			m.NativeIbcedInOsmosis = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -485,121 +379,6 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OsmosisTransferChannel", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.OsmosisTransferChannel = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OsmosisQueryContract", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.OsmosisQueryContract = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OsmosisSwapContract", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.OsmosisSwapContract = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 7:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PoolId", wireType)
-			}
-			m.PoolId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PoolId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 8:
-			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field OsmosisExchangeRateUpdatePeriod", wireType)
 			}
 			var msglen int
@@ -631,7 +410,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 9:
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AccumulatedOsmosisFeeSwapPeriod", wireType)
 			}
@@ -664,26 +443,6 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 10:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Active", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Active = bool(v != 0)
 		default:
 			iNdEx = preIndex
 			skippy, err := skipParams(dAtA[iNdEx:])

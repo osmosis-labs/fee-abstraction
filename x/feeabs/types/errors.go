@@ -6,4 +6,5 @@ import (
 
 var (
 	ErrInvalidExchangeRate = sdkerrors.Register(ModuleName, 1, "invalid exchange rate")
+	ErrInvalidIBCFees      = sdkerrors.Register(ModuleName, 2, "invalid ibc fees")
 )

@@ -18,17 +18,11 @@ const (
 
 // Parameter keys store keys.
 var (
-	KeyOsmosisIbcDenom                 = []byte("osmosisibcdenom")
-	KeyNativeIbcDenom                  = []byte("nativeibcdenom")
 	KeyOsmosisQueryChannel             = []byte("osmosisquerychannel")
-	KeyOsmosisTransferChannel          = []byte("osmosistransferchannel")
 	KeyOsmosisQueryContract            = []byte("osmosisquerycontract")
-	KeyOsmosisSwapContract             = []byte("osmosisswapcontract")
 	KeyOsmosisExchangeRateUpdatePeriod = []byte("osmosisexchangerateupdateperiod")
 	KeyAccumulatedOsmosisFeeSwapPeriod = []byte("accumulatedosmosisfeeswapperiod")
-	KeyPoolId                          = []byte("poolid")
-	KeyActive                          = []byte("active")
-	KeyAddress                         = []byte("address")
+	NativeIbcedInOsmosis               = []byte("nativeibcedinosmosis")
 
 	_ paramtypes.ParamSet = &Params{}
 )
@@ -41,27 +35,17 @@ func ParamKeyTable() paramtypes.KeyTable {
 // Implements params.ParamSet.
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
-		paramtypes.NewParamSetPair(KeyOsmosisIbcDenom, &p.OsmosisIbcDenom, validateOsmosisIbcDenom),
-		paramtypes.NewParamSetPair(KeyNativeIbcDenom, &p.NativeIbcDenom, validateOsmosisIbcDenom),
 		paramtypes.NewParamSetPair(KeyOsmosisQueryChannel, &p.OsmosisQueryChannel, validateChannelID),
-		paramtypes.NewParamSetPair(KeyOsmosisTransferChannel, &p.OsmosisTransferChannel, validateChannelID),
 		paramtypes.NewParamSetPair(KeyOsmosisQueryContract, &p.OsmosisQueryContract, validateOsmosisQueryContract),
-		paramtypes.NewParamSetPair(KeyOsmosisSwapContract, &p.OsmosisSwapContract, validateOsmosisQueryContract),
 		paramtypes.NewParamSetPair(KeyOsmosisExchangeRateUpdatePeriod, &p.OsmosisExchangeRateUpdatePeriod, noOp),
 		paramtypes.NewParamSetPair(KeyAccumulatedOsmosisFeeSwapPeriod, &p.AccumulatedOsmosisFeeSwapPeriod, noOp),
-		paramtypes.NewParamSetPair(KeyPoolId, &p.PoolId, validatePoolID),
-		paramtypes.NewParamSetPair(KeyActive, &p.Active, validateActive),
+		paramtypes.NewParamSetPair(NativeIbcedInOsmosis, &p.NativeIbcedInOsmosis, noOp),
 	}
 }
 
 // Validate also validates params info.
 func (p Params) Validate() error {
-	err := validateOsmosisIbcDenom(p.OsmosisIbcDenom)
-	if err != nil {
-		return fmt.Errorf("invalid ibc denom %s", err)
-	}
-
-	err = validateChannelID(p.OsmosisQueryChannel)
+	err := validateChannelID(p.OsmosisQueryChannel)
 	if err != nil {
 		return fmt.Errorf("invalid connection id %s", err)
 	}
