@@ -146,8 +146,9 @@ func (k Keeper) UnmarshalPacketBytesToPrice(bz []byte) (sdk.Dec, error) {
 	return spotPriceDec, nil
 }
 
+// TODO: don't use if/else logic
 func (k Keeper) transferIBCTokenToHostChain(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
-	moduleAccountAddress := k.GetModuleAddress()
+	moduleAccountAddress := k.GetFeeAbsModuleAddress()
 	token := k.bk.GetBalance(ctx, moduleAccountAddress, hostChainConfig.IbcDenom)
 	nativeDenomIBCedInOsmosis := k.GetParams(ctx).NativeIbcedInOsmosis
 
@@ -181,8 +182,9 @@ func (k Keeper) transferIBCTokenToHostChain(ctx sdk.Context, hostChainConfig typ
 	return nil
 }
 
+// TODO: don't use if/else logic.
 func (k Keeper) transferIBCTokenToOsmosisChain(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
-	moduleAccountAddress := k.GetModuleAddress()
+	moduleAccountAddress := k.GetFeeAbsModuleAddress()
 	token := k.bk.GetBalance(ctx, moduleAccountAddress, hostChainConfig.IbcDenom)
 	nativeDenomIBCedInOsmosis := k.GetParams(ctx).NativeIbcedInOsmosis
 
@@ -192,7 +194,7 @@ func (k Keeper) transferIBCTokenToOsmosisChain(ctx sdk.Context, hostChainConfig 
 	}
 
 	inputToken := sdk.NewCoin(hostChainConfig.HostChainNativeDenomIbcedOnOsmosis, token.Amount)
-	memo, err := types.BuildNextMemo(inputToken, nativeDenomIBCedInOsmosis, hostChainConfig.CrosschainSwapAddress, moduleAccountAddress.String())
+	memo, err := types.BuildCrossChainSwapMemo(inputToken, nativeDenomIBCedInOsmosis, hostChainConfig.CrosschainSwapAddress, moduleAccountAddress.String())
 	if err != nil {
 		return err
 	}

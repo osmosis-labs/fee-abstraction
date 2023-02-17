@@ -5,7 +5,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
@@ -62,8 +61,8 @@ func NewKeeper(
 	}
 }
 
-func (k Keeper) GetModuleAddress() sdk.AccAddress {
-	return authtypes.NewModuleAddress(types.ModuleName)
+func (k Keeper) GetFeeAbsModuleAddress() sdk.AccAddress {
+	return k.ak.GetModuleAddress(types.ModuleName)
 }
 
 // need to implement
@@ -84,6 +83,14 @@ func (k Keeper) CalculateNativeFromIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins,
 	nativeFee := sdk.NewCoin(k.sk.BondDenom(ctx), nativeFeeAmount)
 
 	return sdk.NewCoins(nativeFee), nil
+}
+
+func (k Keeper) SendAbstractionFeeToModuleAccount(ctx sdk.Context, IBCcoins sdk.Coins, nativeCoins sdk.Coins, feePayer sdk.AccAddress) error {
+	err := k.bk.SendCoinsFromAccountToModule(ctx, feePayer, types.ModuleName, IBCcoins)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // return err if IBC token isn't in allowed_list

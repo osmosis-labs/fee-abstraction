@@ -51,7 +51,7 @@ func (q Querier) FeeabsModuleBalances(goCtx context.Context, req *types.QueryFee
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	moduleAddress := q.GetModuleAddress()
+	moduleAddress := q.GetFeeAbsModuleAddress()
 
 	fmt.Println("==================")
 	fmt.Println(moduleAddress.String())

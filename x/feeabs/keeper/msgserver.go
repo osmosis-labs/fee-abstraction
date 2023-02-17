@@ -53,6 +53,7 @@ func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossCha
 		return nil, err
 	}
 
+	// TODO: don't use if/else logic
 	if hostChainConfig.IsOsmosis {
 		err = k.transferIBCTokenToOsmosisChain(ctx, hostChainConfig)
 	} else {
