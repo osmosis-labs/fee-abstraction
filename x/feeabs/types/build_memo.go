@@ -70,10 +70,11 @@ func BuildPacketMiddlewareMemo(inputToken sdk.Coin, outputDenom string, receiver
 	// TODO: this should be chain params.
 	timeOut := time.Duration(1800000)
 	retries := uint8(8)
-	nextMemo, err := BuildNextMemo(inputToken, outputDenom, hostChainConfig.CrosschainSwapAddress, receiver)
+	nextMemo, err := BuildCrossChainSwapMemo(inputToken, outputDenom, hostChainConfig.CrosschainSwapAddress, receiver)
 	if err != nil {
 		return "", nil
 	}
+
 	metadata := ForwardMetadata{
 		Receiver: hostChainConfig.MiddlewareAddress,
 		Port:     transfertypes.PortID,
@@ -99,7 +100,8 @@ type ForwardMetadata struct {
 }
 
 // TODO: write test for this
-func BuildNextMemo(inputToken sdk.Coin, outputDenom string, contractAddress, receiver string) (string, error) {
+// BuildNextMemo create memo for IBC hook, this execute `CrossChainSwap contract`
+func BuildCrossChainSwapMemo(inputToken sdk.Coin, outputDenom string, contractAddress, receiver string) (string, error) {
 	swap := Swap{
 		InputCoin:   inputToken,
 		OutPutDenom: outputDenom,

@@ -171,8 +171,9 @@ func (k Keeper) UnmarshalPacketBytesToPrice(bz []byte) (sdk.Dec, error) {
 	return ibcTokenTwapDec, nil
 }
 
-func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
-	moduleAccountAddress := k.GetModuleAddress()
+// TODO: don't use if/else logic
+func (k Keeper) transferIBCTokenToHostChain(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
+	moduleAccountAddress := k.GetFeeAbsModuleAddress()
 	token := k.bk.GetBalance(ctx, moduleAccountAddress, hostChainConfig.IbcDenom)
 	nativeDenomIBCedInOsmosis := k.GetParams(ctx).NativeIbcedInOsmosis
 
@@ -183,6 +184,42 @@ func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context, hostChainConf
 
 	inputToken := sdk.NewCoin(hostChainConfig.HostChainNativeDenomIbcedOnOsmosis, token.Amount)
 	memo, err := types.BuildPacketMiddlewareMemo(inputToken, nativeDenomIBCedInOsmosis, moduleAccountAddress.String(), hostChainConfig)
+	if err != nil {
+		return err
+	}
+
+	transferMsg := transfertypes.MsgTransfer{
+		SourcePort:       transfertypes.PortID,
+		SourceChannel:    hostChainConfig.IbcTransferChannel,
+		Token:            token,
+		Sender:           moduleAccountAddress.String(),
+		Receiver:         hostChainConfig.MiddlewareAddress,
+		TimeoutHeight:    clienttypes.NewHeight(0, 100000000),
+		TimeoutTimestamp: uint64(0),
+		Memo:             memo,
+	}
+
+	_, err = k.executeTransferMsg(ctx, &transferMsg)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// TODO: don't use if/else logic.
+func (k Keeper) transferIBCTokenToOsmosisChain(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
+	moduleAccountAddress := k.GetFeeAbsModuleAddress()
+	token := k.bk.GetBalance(ctx, moduleAccountAddress, hostChainConfig.IbcDenom)
+	nativeDenomIBCedInOsmosis := k.GetParams(ctx).NativeIbcedInOsmosis
+
+	// TODO: don't use it in product version.
+	if sdk.NewInt(1).GTE(token.Amount) {
+		return nil
+	}
+
+	inputToken := sdk.NewCoin(hostChainConfig.HostChainNativeDenomIbcedOnOsmosis, token.Amount)
+	memo, err := types.BuildCrossChainSwapMemo(inputToken, nativeDenomIBCedInOsmosis, hostChainConfig.CrosschainSwapAddress, moduleAccountAddress.String())
 	if err != nil {
 		return err
 	}
