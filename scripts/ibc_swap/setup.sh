@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 CHANNEL_ID="channel-0"
-export VALIDATOR=$(osmosisd keys show validator1 -a --keyring-backend test --home=$HOME/.osmosisd)
+export VALIDATOR=$(osmosisd keys show validator1 -a --keyring-backend test --home=$HOME/.osmosisd/validator1)
 echo $VALIDATOR
 
 hermes --config scripts/relayer_hermes/config.toml create channel --a-chain testing --b-chain feeappd-t1 --a-port transfer --b-port transfer --new-client-connection --yes

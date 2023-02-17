@@ -21,7 +21,7 @@ var (
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgSendQuerySpotPrice{},
+		&MsgSendQueryIbcDenomTWAP{},
 	)
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
