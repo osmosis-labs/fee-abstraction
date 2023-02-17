@@ -10,6 +10,8 @@ import (
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
+	_ "github.com/gogo/protobuf/types"
+	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -17,12 +19,14 @@ import (
 	io "io"
 	math "math"
 	math_bits "math/bits"
+	time "time"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+var _ = time.Kitchen
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the proto package it is being compiled against.
@@ -31,23 +35,24 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Params defines the parameters for the feeabs module.
-type MsgSendQuerySpotPrice struct {
-	FromAddress string `protobuf:"bytes,1,opt,name=from_address,json=fromAddress,proto3" json:"from_address,omitempty"`
-	IbcDenom    string `protobuf:"bytes,2,opt,name=ibc_denom,json=ibcDenom,proto3" json:"ibc_denom,omitempty"`
+type MsgSendQueryIbcDenomTWAP struct {
+	FromAddress string    `protobuf:"bytes,1,opt,name=from_address,json=fromAddress,proto3" json:"from_address,omitempty"`
+	IbcDenom    string    `protobuf:"bytes,2,opt,name=ibc_denom,json=ibcDenom,proto3" json:"ibc_denom,omitempty"`
+	StartTime   time.Time `protobuf:"bytes,3,opt,name=start_time,json=startTime,proto3,stdtime" json:"start_time" yaml:"start_time"`
 }
 
-func (m *MsgSendQuerySpotPrice) Reset()         { *m = MsgSendQuerySpotPrice{} }
-func (m *MsgSendQuerySpotPrice) String() string { return proto.CompactTextString(m) }
-func (*MsgSendQuerySpotPrice) ProtoMessage()    {}
-func (*MsgSendQuerySpotPrice) Descriptor() ([]byte, []int) {
+func (m *MsgSendQueryIbcDenomTWAP) Reset()         { *m = MsgSendQueryIbcDenomTWAP{} }
+func (m *MsgSendQueryIbcDenomTWAP) String() string { return proto.CompactTextString(m) }
+func (*MsgSendQueryIbcDenomTWAP) ProtoMessage()    {}
+func (*MsgSendQueryIbcDenomTWAP) Descriptor() ([]byte, []int) {
 	return fileDescriptor_84c172c34645b936, []int{0}
 }
-func (m *MsgSendQuerySpotPrice) XXX_Unmarshal(b []byte) error {
+func (m *MsgSendQueryIbcDenomTWAP) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgSendQuerySpotPrice) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgSendQueryIbcDenomTWAP) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgSendQuerySpotPrice.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgSendQueryIbcDenomTWAP.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -57,47 +62,54 @@ func (m *MsgSendQuerySpotPrice) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
-func (m *MsgSendQuerySpotPrice) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgSendQuerySpotPrice.Merge(m, src)
+func (m *MsgSendQueryIbcDenomTWAP) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSendQueryIbcDenomTWAP.Merge(m, src)
 }
-func (m *MsgSendQuerySpotPrice) XXX_Size() int {
+func (m *MsgSendQueryIbcDenomTWAP) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgSendQuerySpotPrice) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgSendQuerySpotPrice.DiscardUnknown(m)
+func (m *MsgSendQueryIbcDenomTWAP) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSendQueryIbcDenomTWAP.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgSendQuerySpotPrice proto.InternalMessageInfo
+var xxx_messageInfo_MsgSendQueryIbcDenomTWAP proto.InternalMessageInfo
 
-func (m *MsgSendQuerySpotPrice) GetFromAddress() string {
+func (m *MsgSendQueryIbcDenomTWAP) GetFromAddress() string {
 	if m != nil {
 		return m.FromAddress
 	}
 	return ""
 }
 
-func (m *MsgSendQuerySpotPrice) GetIbcDenom() string {
+func (m *MsgSendQueryIbcDenomTWAP) GetIbcDenom() string {
 	if m != nil {
 		return m.IbcDenom
 	}
 	return ""
 }
 
-type MsgSendQuerySpotPriceResponse struct {
+func (m *MsgSendQueryIbcDenomTWAP) GetStartTime() time.Time {
+	if m != nil {
+		return m.StartTime
+	}
+	return time.Time{}
 }
 
-func (m *MsgSendQuerySpotPriceResponse) Reset()         { *m = MsgSendQuerySpotPriceResponse{} }
-func (m *MsgSendQuerySpotPriceResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgSendQuerySpotPriceResponse) ProtoMessage()    {}
-func (*MsgSendQuerySpotPriceResponse) Descriptor() ([]byte, []int) {
+type MsgSendQueryIbcDenomTWAPResponse struct {
+}
+
+func (m *MsgSendQueryIbcDenomTWAPResponse) Reset()         { *m = MsgSendQueryIbcDenomTWAPResponse{} }
+func (m *MsgSendQueryIbcDenomTWAPResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgSendQueryIbcDenomTWAPResponse) ProtoMessage()    {}
+func (*MsgSendQueryIbcDenomTWAPResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_84c172c34645b936, []int{1}
 }
-func (m *MsgSendQuerySpotPriceResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgSendQueryIbcDenomTWAPResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgSendQuerySpotPriceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgSendQueryIbcDenomTWAPResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgSendQuerySpotPriceResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgSendQueryIbcDenomTWAPResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -107,17 +119,17 @@ func (m *MsgSendQuerySpotPriceResponse) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *MsgSendQuerySpotPriceResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgSendQuerySpotPriceResponse.Merge(m, src)
+func (m *MsgSendQueryIbcDenomTWAPResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSendQueryIbcDenomTWAPResponse.Merge(m, src)
 }
-func (m *MsgSendQuerySpotPriceResponse) XXX_Size() int {
+func (m *MsgSendQueryIbcDenomTWAPResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgSendQuerySpotPriceResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgSendQuerySpotPriceResponse.DiscardUnknown(m)
+func (m *MsgSendQueryIbcDenomTWAPResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSendQueryIbcDenomTWAPResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgSendQuerySpotPriceResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgSendQueryIbcDenomTWAPResponse proto.InternalMessageInfo
 
 // Params defines the parameters for the feeabs module.
 type MsgSwapCrossChain struct {
@@ -209,8 +221,8 @@ func (m *MsgSwapCrossChainResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgSwapCrossChainResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*MsgSendQuerySpotPrice)(nil), "feeabstraction.absfee.v1beta1.MsgSendQuerySpotPrice")
-	proto.RegisterType((*MsgSendQuerySpotPriceResponse)(nil), "feeabstraction.absfee.v1beta1.MsgSendQuerySpotPriceResponse")
+	proto.RegisterType((*MsgSendQueryIbcDenomTWAP)(nil), "feeabstraction.absfee.v1beta1.MsgSendQueryIbcDenomTWAP")
+	proto.RegisterType((*MsgSendQueryIbcDenomTWAPResponse)(nil), "feeabstraction.absfee.v1beta1.MsgSendQueryIbcDenomTWAPResponse")
 	proto.RegisterType((*MsgSwapCrossChain)(nil), "feeabstraction.absfee.v1beta1.MsgSwapCrossChain")
 	proto.RegisterType((*MsgSwapCrossChainResponse)(nil), "feeabstraction.absfee.v1beta1.MsgSwapCrossChainResponse")
 }
@@ -220,32 +232,37 @@ func init() {
 }
 
 var fileDescriptor_84c172c34645b936 = []byte{
-	// 389 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x92, 0x41, 0x8b, 0xd3, 0x40,
-	0x14, 0xc7, 0x9b, 0x15, 0xc4, 0x1d, 0x45, 0x30, 0x28, 0xac, 0x59, 0x37, 0x6a, 0x0f, 0xa2, 0x82,
-	0x19, 0xab, 0x1e, 0x14, 0xbc, 0xe8, 0x7a, 0x5d, 0xd0, 0xcd, 0x41, 0xf0, 0xb2, 0xbc, 0x49, 0x5e,
-	0xa7, 0x03, 0xcd, 0xbc, 0x71, 0xde, 0xec, 0xda, 0x82, 0x1f, 0xc0, 0x93, 0xf8, 0xb1, 0x3c, 0xf6,
-	0xe8, 0x51, 0xda, 0x2f, 0x22, 0x49, 0x1a, 0xa1, 0xb5, 0x14, 0x75, 0x6f, 0xc9, 0x7b, 0xbf, 0xff,
-	0xff, 0xff, 0x5e, 0xf2, 0xc4, 0xbd, 0x21, 0x22, 0x28, 0x0e, 0x1e, 0x8a, 0x60, 0xc8, 0x4a, 0x50,
-	0x3c, 0x44, 0x94, 0x67, 0x03, 0x85, 0x01, 0x06, 0x32, 0x4c, 0x32, 0xe7, 0x29, 0x50, 0x7c, 0xb0,
-	0xca, 0x65, 0x2d, 0x97, 0x2d, 0xb9, 0xe4, 0xba, 0x26, 0x4d, 0x0d, 0x29, 0xeb, 0xa7, 0x56, 0x94,
-	0xdc, 0xd2, 0x44, 0x7a, 0x8c, 0x12, 0x9c, 0x91, 0x60, 0x2d, 0x05, 0xa8, 0xb5, 0xbc, 0xec, 0x3e,
-	0x2c, 0x88, 0x2b, 0x62, 0xa9, 0x80, 0x51, 0x7e, 0x3c, 0x45, 0x3f, 0xfd, 0x1d, 0xeb, 0x40, 0x1b,
-	0xdb, 0xc0, 0x1d, 0xbb, 0x7d, 0x4c, 0x07, 0x1e, 0xaa, 0xce, 0xf7, 0xc1, 0x76, 0x16, 0x1d, 0x15,
-	0xa3, 0x16, 0xed, 0xbf, 0x17, 0x37, 0x8e, 0x58, 0xe7, 0x68, 0xcb, 0x77, 0x75, 0x7e, 0xee, 0x28,
-	0xbc, 0xf5, 0xa6, 0xc0, 0xf8, 0xae, 0xb8, 0x32, 0xf4, 0x54, 0x9d, 0x40, 0x59, 0x7a, 0x64, 0xde,
-	0x8b, 0xee, 0x44, 0xf7, 0x77, 0x8f, 0x2f, 0xd7, 0xb5, 0x57, 0x6d, 0x29, 0xde, 0x17, 0xbb, 0x46,
-	0x15, 0x27, 0x25, 0x5a, 0xaa, 0xf6, 0x76, 0x9a, 0xfe, 0x25, 0xa3, 0x8a, 0x37, 0xf5, 0x7b, 0xff,
-	0xb6, 0x38, 0xd8, 0x68, 0x7c, 0x8c, 0xec, 0xc8, 0x32, 0xf6, 0x73, 0x71, 0xad, 0x06, 0x3e, 0x81,
-	0x3b, 0xf4, 0xc4, 0x7c, 0x38, 0x02, 0x63, 0xcf, 0x9d, 0xba, 0x2f, 0x6e, 0xfe, 0x61, 0xda, 0x25,
-	0x3e, 0xf9, 0xba, 0x23, 0x2e, 0x1c, 0xb1, 0x8e, 0xbf, 0x44, 0x22, 0xde, 0xb0, 0xf1, 0xb3, 0x6c,
-	0xeb, 0x1f, 0xce, 0x36, 0xae, 0x93, 0xbc, 0xfc, 0x1f, 0x55, 0x37, 0x52, 0xfc, 0x59, 0x5c, 0x5d,
-	0xfb, 0x02, 0x8f, 0xff, 0xc2, 0x6f, 0x45, 0x91, 0x3c, 0xff, 0x57, 0x45, 0x97, 0xfe, 0x3a, 0xff,
-	0x3e, 0x4f, 0xa3, 0xd9, 0x3c, 0x8d, 0x7e, 0xce, 0xd3, 0xe8, 0xdb, 0x22, 0xed, 0xcd, 0x16, 0x69,
-	0xef, 0xc7, 0x22, 0xed, 0x7d, 0x78, 0xa1, 0x4d, 0x18, 0x9d, 0xaa, 0xac, 0xa0, 0x4a, 0x5a, 0xaa,
-	0x5d, 0x61, 0xfc, 0x68, 0x0c, 0x8a, 0xe5, 0xda, 0x69, 0x9d, 0x0d, 0xe4, 0x64, 0x59, 0x93, 0x61,
-	0xea, 0x90, 0xd5, 0xc5, 0xe6, 0xb0, 0x9e, 0xfe, 0x0a, 0x00, 0x00, 0xff, 0xff, 0x2c, 0xc9, 0x78,
-	0x9e, 0x58, 0x03, 0x00, 0x00,
+	// 465 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x92, 0xcb, 0x6e, 0x13, 0x31,
+	0x14, 0x86, 0xe3, 0x56, 0x42, 0xc4, 0x45, 0x48, 0x1d, 0x81, 0x14, 0xa6, 0x74, 0x12, 0x66, 0x81,
+	0x0a, 0x12, 0x36, 0x29, 0x0b, 0x2e, 0x1b, 0xd4, 0x96, 0x0d, 0x8b, 0x4a, 0x90, 0x54, 0x02, 0xb1,
+	0x89, 0x8e, 0x27, 0xce, 0x64, 0xa4, 0x19, 0xdb, 0xcc, 0x71, 0x4a, 0x23, 0xf1, 0x10, 0x65, 0xc5,
+	0x8b, 0xf0, 0x10, 0x5d, 0x76, 0xc9, 0xaa, 0xa0, 0xe4, 0x0d, 0x78, 0x02, 0xe4, 0xb9, 0x80, 0x5a,
+	0x48, 0xc4, 0x65, 0x37, 0x73, 0xfc, 0xfd, 0x17, 0x5b, 0x87, 0xde, 0x1e, 0x49, 0x09, 0x02, 0x6d,
+	0x0e, 0x91, 0x4d, 0xb4, 0xe2, 0x20, 0x70, 0x24, 0x25, 0x3f, 0xec, 0x0a, 0x69, 0xa1, 0xcb, 0xed,
+	0x11, 0x33, 0xb9, 0xb6, 0xda, 0xdb, 0x3c, 0xcf, 0xb1, 0x92, 0x63, 0x15, 0xe7, 0x5f, 0x8b, 0x75,
+	0xac, 0x0b, 0x92, 0xbb, 0xaf, 0x52, 0xe4, 0xdf, 0x8c, 0xb5, 0x8e, 0x53, 0xc9, 0xc1, 0x24, 0x1c,
+	0x94, 0xd2, 0x16, 0x9c, 0x16, 0xab, 0xd3, 0xbb, 0x91, 0xc6, 0x4c, 0x23, 0x17, 0x80, 0x92, 0xbf,
+	0x9d, 0xc8, 0x7c, 0xfa, 0x23, 0xd6, 0x40, 0x9c, 0xa8, 0x02, 0xae, 0xd9, 0xe5, 0x35, 0x0d, 0xe4,
+	0x90, 0xd5, 0xbe, 0x77, 0x96, 0xb3, 0xd2, 0xe8, 0x68, 0x5c, 0xa1, 0xed, 0xaa, 0x60, 0xf1, 0x27,
+	0x26, 0x23, 0x6e, 0x93, 0x4c, 0xa2, 0x85, 0xcc, 0x94, 0x40, 0xf8, 0x89, 0xd0, 0xd6, 0x3e, 0xc6,
+	0x7d, 0xa9, 0x86, 0x2f, 0x5d, 0xc3, 0xe7, 0x22, 0x7a, 0x26, 0x95, 0xce, 0x0e, 0x5e, 0xed, 0xbc,
+	0xf0, 0x6e, 0xd1, 0x2b, 0xa3, 0x5c, 0x67, 0x03, 0x18, 0x0e, 0x73, 0x89, 0xd8, 0x22, 0x1d, 0xb2,
+	0xd5, 0xec, 0xad, 0xb9, 0xd9, 0x4e, 0x39, 0xf2, 0x36, 0x68, 0x33, 0x11, 0xd1, 0x60, 0xe8, 0x34,
+	0xad, 0x95, 0xe2, 0xfc, 0x72, 0x52, 0x79, 0x78, 0xaf, 0x29, 0x45, 0x0b, 0xb9, 0x1d, 0xb8, 0xd4,
+	0xd6, 0x6a, 0x87, 0x6c, 0xad, 0x6d, 0xfb, 0xac, 0xac, 0xc4, 0xea, 0x4a, 0xec, 0xa0, 0xae, 0xb4,
+	0xbb, 0x79, 0x72, 0xd6, 0x6e, 0x7c, 0x3b, 0x6b, 0xaf, 0x4f, 0x21, 0x4b, 0x9f, 0x84, 0x3f, 0xb5,
+	0xe1, 0xf1, 0x97, 0x36, 0xe9, 0x35, 0x8b, 0x81, 0xc3, 0xc3, 0x90, 0x76, 0x16, 0xb5, 0xee, 0x49,
+	0x34, 0x5a, 0xa1, 0x0c, 0xfb, 0x74, 0xdd, 0x31, 0xef, 0xc0, 0xec, 0xe5, 0x1a, 0x71, 0x6f, 0x0c,
+	0x89, 0xfa, 0xdf, 0x2b, 0x85, 0x1b, 0xf4, 0xc6, 0x2f, 0xa6, 0x75, 0xe2, 0xf6, 0xc7, 0x15, 0xba,
+	0xba, 0x8f, 0xb1, 0xf7, 0x81, 0xd0, 0xeb, 0xbf, 0x7f, 0xd1, 0x87, 0x6c, 0xe9, 0x9a, 0xb1, 0x45,
+	0x97, 0xf2, 0x9f, 0xfe, 0xa3, 0xb0, 0xee, 0xe6, 0xbd, 0xa7, 0x57, 0x2f, 0x3c, 0xc5, 0xfd, 0x3f,
+	0xb0, 0x3c, 0xa7, 0xf0, 0x1f, 0xfd, 0xad, 0xa2, 0x4e, 0xdf, 0xed, 0x9f, 0xcc, 0x02, 0x72, 0x3a,
+	0x0b, 0xc8, 0xd7, 0x59, 0x40, 0x8e, 0xe7, 0x41, 0xe3, 0x74, 0x1e, 0x34, 0x3e, 0xcf, 0x83, 0xc6,
+	0x9b, 0xc7, 0x71, 0x62, 0xc7, 0x13, 0xc1, 0x22, 0x9d, 0x71, 0xa5, 0x9d, 0x2b, 0xa4, 0xf7, 0x52,
+	0x10, 0xc8, 0x2f, 0x6c, 0xf9, 0x61, 0x97, 0x1f, 0x55, 0x33, 0x6e, 0xa7, 0x46, 0xa2, 0xb8, 0x54,
+	0xac, 0xd0, 0x83, 0xef, 0x01, 0x00, 0x00, 0xff, 0xff, 0xe7, 0x8d, 0xe9, 0xf2, 0xe3, 0x03, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -260,7 +277,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
-	SendQuerySpotPrice(ctx context.Context, in *MsgSendQuerySpotPrice, opts ...grpc.CallOption) (*MsgSendQuerySpotPriceResponse, error)
+	SendQueryIbcDenomTWAP(ctx context.Context, in *MsgSendQueryIbcDenomTWAP, opts ...grpc.CallOption) (*MsgSendQueryIbcDenomTWAPResponse, error)
 	SwapCrossChain(ctx context.Context, in *MsgSwapCrossChain, opts ...grpc.CallOption) (*MsgSwapCrossChainResponse, error)
 }
 
@@ -272,9 +289,9 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
-func (c *msgClient) SendQuerySpotPrice(ctx context.Context, in *MsgSendQuerySpotPrice, opts ...grpc.CallOption) (*MsgSendQuerySpotPriceResponse, error) {
-	out := new(MsgSendQuerySpotPriceResponse)
-	err := c.cc.Invoke(ctx, "/feeabstraction.absfee.v1beta1.Msg/SendQuerySpotPrice", in, out, opts...)
+func (c *msgClient) SendQueryIbcDenomTWAP(ctx context.Context, in *MsgSendQueryIbcDenomTWAP, opts ...grpc.CallOption) (*MsgSendQueryIbcDenomTWAPResponse, error) {
+	out := new(MsgSendQueryIbcDenomTWAPResponse)
+	err := c.cc.Invoke(ctx, "/feeabstraction.absfee.v1beta1.Msg/SendQueryIbcDenomTWAP", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -292,7 +309,7 @@ func (c *msgClient) SwapCrossChain(ctx context.Context, in *MsgSwapCrossChain, o
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
-	SendQuerySpotPrice(context.Context, *MsgSendQuerySpotPrice) (*MsgSendQuerySpotPriceResponse, error)
+	SendQueryIbcDenomTWAP(context.Context, *MsgSendQueryIbcDenomTWAP) (*MsgSendQueryIbcDenomTWAPResponse, error)
 	SwapCrossChain(context.Context, *MsgSwapCrossChain) (*MsgSwapCrossChainResponse, error)
 }
 
@@ -300,8 +317,8 @@ type MsgServer interface {
 type UnimplementedMsgServer struct {
 }
 
-func (*UnimplementedMsgServer) SendQuerySpotPrice(ctx context.Context, req *MsgSendQuerySpotPrice) (*MsgSendQuerySpotPriceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendQuerySpotPrice not implemented")
+func (*UnimplementedMsgServer) SendQueryIbcDenomTWAP(ctx context.Context, req *MsgSendQueryIbcDenomTWAP) (*MsgSendQueryIbcDenomTWAPResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendQueryIbcDenomTWAP not implemented")
 }
 func (*UnimplementedMsgServer) SwapCrossChain(ctx context.Context, req *MsgSwapCrossChain) (*MsgSwapCrossChainResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SwapCrossChain not implemented")
@@ -311,20 +328,20 @@ func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
 }
 
-func _Msg_SendQuerySpotPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgSendQuerySpotPrice)
+func _Msg_SendQueryIbcDenomTWAP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSendQueryIbcDenomTWAP)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).SendQuerySpotPrice(ctx, in)
+		return srv.(MsgServer).SendQueryIbcDenomTWAP(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/feeabstraction.absfee.v1beta1.Msg/SendQuerySpotPrice",
+		FullMethod: "/feeabstraction.absfee.v1beta1.Msg/SendQueryIbcDenomTWAP",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).SendQuerySpotPrice(ctx, req.(*MsgSendQuerySpotPrice))
+		return srv.(MsgServer).SendQueryIbcDenomTWAP(ctx, req.(*MsgSendQueryIbcDenomTWAP))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -352,8 +369,8 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*MsgServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SendQuerySpotPrice",
-			Handler:    _Msg_SendQuerySpotPrice_Handler,
+			MethodName: "SendQueryIbcDenomTWAP",
+			Handler:    _Msg_SendQueryIbcDenomTWAP_Handler,
 		},
 		{
 			MethodName: "SwapCrossChain",
@@ -364,7 +381,7 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 	Metadata: "feeabstraction/absfee/v1beta1/tx.proto",
 }
 
-func (m *MsgSendQuerySpotPrice) Marshal() (dAtA []byte, err error) {
+func (m *MsgSendQueryIbcDenomTWAP) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -374,16 +391,24 @@ func (m *MsgSendQuerySpotPrice) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgSendQuerySpotPrice) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgSendQueryIbcDenomTWAP) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgSendQuerySpotPrice) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgSendQueryIbcDenomTWAP) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	n1, err1 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.StartTime, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.StartTime):])
+	if err1 != nil {
+		return 0, err1
+	}
+	i -= n1
+	i = encodeVarintTx(dAtA, i, uint64(n1))
+	i--
+	dAtA[i] = 0x1a
 	if len(m.IbcDenom) > 0 {
 		i -= len(m.IbcDenom)
 		copy(dAtA[i:], m.IbcDenom)
@@ -401,7 +426,7 @@ func (m *MsgSendQuerySpotPrice) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgSendQuerySpotPriceResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgSendQueryIbcDenomTWAPResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -411,12 +436,12 @@ func (m *MsgSendQuerySpotPriceResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgSendQuerySpotPriceResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgSendQueryIbcDenomTWAPResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgSendQuerySpotPriceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgSendQueryIbcDenomTWAPResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -495,7 +520,7 @@ func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *MsgSendQuerySpotPrice) Size() (n int) {
+func (m *MsgSendQueryIbcDenomTWAP) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -509,10 +534,12 @@ func (m *MsgSendQuerySpotPrice) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
+	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.StartTime)
+	n += 1 + l + sovTx(uint64(l))
 	return n
 }
 
-func (m *MsgSendQuerySpotPriceResponse) Size() (n int) {
+func (m *MsgSendQueryIbcDenomTWAPResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -553,7 +580,7 @@ func sovTx(x uint64) (n int) {
 func sozTx(x uint64) (n int) {
 	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *MsgSendQuerySpotPrice) Unmarshal(dAtA []byte) error {
+func (m *MsgSendQueryIbcDenomTWAP) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -576,10 +603,10 @@ func (m *MsgSendQuerySpotPrice) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgSendQuerySpotPrice: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgSendQueryIbcDenomTWAP: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgSendQuerySpotPrice: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgSendQueryIbcDenomTWAP: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -646,6 +673,39 @@ func (m *MsgSendQuerySpotPrice) Unmarshal(dAtA []byte) error {
 			}
 			m.IbcDenom = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field StartTime", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.StartTime, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -667,7 +727,7 @@ func (m *MsgSendQuerySpotPrice) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgSendQuerySpotPriceResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgSendQueryIbcDenomTWAPResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -690,10 +750,10 @@ func (m *MsgSendQuerySpotPriceResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgSendQuerySpotPriceResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgSendQueryIbcDenomTWAPResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgSendQuerySpotPriceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgSendQueryIbcDenomTWAPResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

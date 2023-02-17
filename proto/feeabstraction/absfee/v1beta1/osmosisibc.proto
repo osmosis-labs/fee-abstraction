@@ -2,6 +2,7 @@ syntax = "proto3";
 package feeabstraction.absfee.v1beta1;
 
 import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 
 option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
@@ -34,6 +35,17 @@ message OsmosisQuerySpotPriceRequestPacketData {
 	uint64 pool_id = 1;
 	string base_asset_denom = 2;
 	string quote_asset_denom = 3;
+}
+
+message QueryArithmeticTwapToNowRequest {
+	uint64 pool_id = 1;
+	string base_asset = 2;
+	string quote_asset = 3;
+	google.protobuf.Timestamp start_time = 4 [
+	  (gogoproto.nullable) = false,
+	  (gogoproto.stdtime) = true,
+	  (gogoproto.moretags) = "yaml:\"start_time\""
+	];
 }
 
 message InterchainQueryRequest{

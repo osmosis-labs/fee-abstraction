@@ -23,22 +23,22 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 var _ types.MsgServer = msgServer{}
 
 // Need to remove this
-func (k Keeper) SendQuerySpotPrice(goCtx context.Context, msg *types.MsgSendQuerySpotPrice) (*types.MsgSendQuerySpotPriceResponse, error) {
+func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQueryIbcDenomTWAP) (*types.MsgSendQueryIbcDenomTWAPResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	hostChainConfig, err := k.GetHostZoneConfig(ctx, msg.IbcDenom)
 	if err != nil {
-		return &types.MsgSendQuerySpotPriceResponse{}, nil
+		return &types.MsgSendQueryIbcDenomTWAPResponse{}, nil
 	}
 	_, err = sdk.AccAddressFromBech32(msg.FromAddress)
 	if err != nil {
 		return nil, err
 	}
-	err = k.handleOsmosisIbcQuery(ctx, hostChainConfig)
+	err = k.handleOsmosisIbcQuery(ctx, msg.StartTime, hostChainConfig)
 	if err != nil {
 		return nil, err
 	}
 
-	return &types.MsgSendQuerySpotPriceResponse{}, nil
+	return &types.MsgSendQueryIbcDenomTWAPResponse{}, nil
 }
 
 // Need to remove this

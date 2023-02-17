@@ -6,20 +6,26 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "feeabstraction/absfee/v1beta1/params.proto";
 import "feeabstraction/absfee/v1beta1/epoch.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
 
 // Msg is the cosmos.group.v1 Msg service.
 service Msg {
-    rpc SendQuerySpotPrice(MsgSendQuerySpotPrice) returns (MsgSendQuerySpotPriceResponse);
+    rpc SendQueryIbcDenomTWAP(MsgSendQueryIbcDenomTWAP) returns (MsgSendQueryIbcDenomTWAPResponse);
     rpc SwapCrossChain(MsgSwapCrossChain) returns (MsgSwapCrossChainResponse);
 }
 // Params defines the parameters for the feeabs module.
-message MsgSendQuerySpotPrice {
+message MsgSendQueryIbcDenomTWAP {
     string from_address = 1;
     string ibc_denom = 2;
+    google.protobuf.Timestamp start_time = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"start_time\""
+  ];
 }
-message MsgSendQuerySpotPriceResponse{}
+message MsgSendQueryIbcDenomTWAPResponse{}
 
 // Params defines the parameters for the feeabs module.
 message MsgSwapCrossChain {

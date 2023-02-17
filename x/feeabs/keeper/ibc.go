@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -54,9 +55,9 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Cap
 }
 
 // Send request for query EstimateSwapExactAmountIn over IBC. Move to use TWAP.
-func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDenom string, quoteDenom string, sourcePort, sourceChannel string) error {
-	path := "/osmosis.gamm.v2.Query/SpotPrice" // hard code for now should add to params
-	packetData := types.NewOsmosisQueryRequestPacketData(poolId, baseDenom, quoteDenom)
+func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDenom string, quoteDenom string, startTime time.Time, sourcePort, sourceChannel string) error {
+	path := "/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow" // hard code for now should add to params
+	packetData := types.NewQueryArithmeticTwapToNowRequest(poolId, baseDenom, quoteDenom, startTime)
 
 	_, err := k.SendInterchainQuery(ctx, path, packetData.GetBytes(), sourcePort, sourceChannel)
 	if err != nil {
@@ -214,10 +215,10 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 }
 
 // TODO: use TWAP instead of spotprice
-func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
+func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context, startTime time.Time, hostChainConfig types.HostChainFeeAbsConfig) error {
 	params := k.GetParams(ctx)
 	channelID := params.OsmosisQueryChannel
 	poolId := hostChainConfig.PoolId // for testing
 
-	return k.SendOsmosisQueryRequest(ctx, poolId, params.NativeIbcedInOsmosis, hostChainConfig.IbcDenom, types.IBCPortID, channelID)
+	return k.SendOsmosisQueryRequest(ctx, poolId, params.NativeIbcedInOsmosis, hostChainConfig.IbcDenom, startTime, types.IBCPortID, channelID)
 }

@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -43,6 +45,25 @@ func NewOsmosisQueryRequestPacketData(poolId uint64, baseDenom string, quoteDeno
 
 // GetBytes is a helper for serializing.
 func (p OsmosisQuerySpotPriceRequestPacketData) GetBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
+}
+
+// NewQueryArithmeticTwapToNowRequest create new packet for ibc.
+func NewQueryArithmeticTwapToNowRequest(
+	poolID uint64,
+	baseDenom string,
+	quoteDenom string,
+	startTime time.Time,
+) QueryArithmeticTwapToNowRequest {
+	return QueryArithmeticTwapToNowRequest{
+		PoolId:     poolID,
+		BaseAsset:  baseDenom,
+		QuoteAsset: quoteDenom,
+		StartTime:  startTime,
+	}
+}
+
+func (p QueryArithmeticTwapToNowRequest) GetBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
 }
 
