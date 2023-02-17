@@ -78,14 +78,15 @@ func TestFeeAbsIBCToContract(t *testing.T) {
 				IbcDenom:                           "ibc/denom",
 				HostChainNativeDenomIbcedOnOsmosis: "denom",
 			}
-			chainA.GetTestSupport().FeeAbsKeeper().SetHostZoneConfig(chainA.GetContext(), "ibc/denom", hostZoneConfig)
+			err := chainA.GetTestSupport().FeeAbsKeeper().SetHostZoneConfig(chainA.GetContext(), "ibc/denom", hostZoneConfig)
+			require.NoError(t, err)
 
 			msg := types.NewMsgSendQueryIbcDenomTWAP(
 				chainA.SenderAccount.GetAddress(),
 				"ibc/denom",
 				time.Now().UTC(),
 			)
-			_, err := chainA.SendMsgs(msg)
+			_, err = chainA.SendMsgs(msg)
 			require.NoError(t, err)
 			require.NoError(t, path.EndpointB.UpdateClient())
 
