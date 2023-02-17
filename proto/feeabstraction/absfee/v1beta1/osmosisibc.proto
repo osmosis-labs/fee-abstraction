@@ -44,7 +44,7 @@ message HostChainFeeAbsConfig{
 	// ibced native denom in osmosis dev
 	string host_chain_native_denom_ibced_on_osmosis = 2;
 
-	// middleware address in hostchain, can we refator this logic ?
+	//TODO: middleware address in hostchain, can we refator this logic ?
 	string middleware_address = 3;
 
     // transfer channel from customer_chain -> host chain
@@ -60,5 +60,5 @@ message HostChainFeeAbsConfig{
     uint64 pool_id = 7;
 
     // Active
-    bool active = 8;
+    bool is_osmosis = 8;
 }

@@ -74,6 +74,7 @@ func BuildPacketMiddlewareMemo(inputToken sdk.Coin, outputDenom string, receiver
 	if err != nil {
 		return "", nil
 	}
+
 	metadata := ForwardMetadata{
 		Receiver: hostChainConfig.MiddlewareAddress,
 		Port:     transfertypes.PortID,
@@ -99,6 +100,7 @@ type ForwardMetadata struct {
 }
 
 // TODO: write test for this
+// BuildNextMemo create memo for IBC hook, this execute `CrossChainSwap contract`
 func BuildNextMemo(inputToken sdk.Coin, outputDenom string, contractAddress, receiver string) (string, error) {
 	swap := Swap{
 		InputCoin:   inputToken,
