@@ -68,6 +68,9 @@ update_genesis '.app_state["mint"]["params"]["epoch_identifier"]="day"'
 # update gamm genesis
 update_genesis '.app_state["gamm"]["params"]["pool_creation_fee"][0]["denom"]="uosmo"'
 
+# update interchainquery genesis
+update_genesis '.app_state["interchainquery"]["params"]["allow_queries"][0]="/cosmos.bank.v1beta1.Query/AllBalances"'
+
 
 # port key (validator1 uses default ports)
 # validator1 1317, 9090, 9091, 26658, 26657, 26656, 6060

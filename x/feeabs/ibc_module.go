@@ -167,6 +167,7 @@ func (am IBCModule) OnAcknowledgementPacket(
 	if err := types.ModuleCdc.UnmarshalJSON(acknowledgement, &ack); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
 	}
+
 	// TODO :  Handler ack logic here
 	// TODO : update spot price when receive ack from osmosis chain
 
@@ -180,14 +181,13 @@ func (am IBCModule) OnAcknowledgementPacket(
 
 	switch resp := ack.Response.(type) {
 	case *channeltypes.Acknowledgement_Result:
-		spotPrice, err := am.keeper.UnmarshalPacketBytesToPrice(ack.GetResult())
-
+		IbcTokenTwap, err := am.keeper.UnmarshalPacketBytesToPrice(ack.GetResult())
 		if err != nil {
 			return err
 		}
 
 		// set spot price here
-		am.keeper.SetOsmosisExchangeRate(ctx, spotPrice)
+		am.keeper.SetOsmosisExchangeRate(ctx, IbcTokenTwap)
 
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(

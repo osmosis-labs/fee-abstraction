@@ -1,6 +1,9 @@
 package cli
 
 import (
+	"strconv"
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -18,16 +21,16 @@ func NewTxCmd() *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	txCmd.AddCommand(NewQueryOsmosisSpotPriceCmd())
+	txCmd.AddCommand(NewQueryOsmosisTWAPCmd())
 	txCmd.AddCommand(NewSwapOverChainCmd())
 
 	return txCmd
 }
 
-func NewQueryOsmosisSpotPriceCmd() *cobra.Command {
+func NewQueryOsmosisTWAPCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "queryomosis",
-		Args: cobra.ExactArgs(0),
+		Use:  "query-osmosis-twap [ibc-denom] [start-time]",
+		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -36,7 +39,11 @@ func NewQueryOsmosisSpotPriceCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			msg := types.NewMsgSendQuerySpotPrice(clientCtx.GetFromAddress())
+
+			timeUnix, _ := strconv.ParseInt(args[1], 10, 64)
+			startTime := time.Unix(timeUnix, 0)
+
+			msg := types.NewMsgSendQueryIbcDenomTWAP(clientCtx.GetFromAddress(), args[0], startTime)
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 
 		},

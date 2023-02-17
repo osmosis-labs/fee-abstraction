@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -54,55 +55,16 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Cap
 }
 
 // Send request for query EstimateSwapExactAmountIn over IBC. Move to use TWAP.
-func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDenom string, quoteDenom string, sourcePort, sourceChannel string) error {
-	packetData := types.NewOsmosisQueryRequestPacketData(poolId, baseDenom, quoteDenom)
+func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDenom string, quoteDenom string, startTime time.Time, sourcePort, sourceChannel string) error {
+	path := "/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow" // hard code for now should add to params
+	packetData := types.NewQueryArithmeticTwapToNowRequest(poolId, baseDenom, quoteDenom, startTime)
 
-	// Require channelID is the channelID profiles module is bound to
-	// boundChannel := k.GetChannelId(ctx)
-	// if boundChannel != sourceChannel {
-	// 	return sdkerrors.Wrapf(channeltypes.ErrInvalidChannel, "invalid chanel: %s, expected %s", sourceChannel, boundChannel)
-	// }
-
-	// Get the next sequence
-	sequence, found := k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
-	if !found {
-		return sdkerrors.Wrapf(
-			channeltypes.ErrSequenceSendNotFound,
-			"source port: %s, source channel: %s", sourcePort, sourceChannel,
-		)
-	}
-	sourceChannelEnd, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
-	if !found {
-		return sdkerrors.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
+	_, err := k.SendInterchainQuery(ctx, path, packetData.GetBytes(), sourcePort, sourceChannel)
+	if err != nil {
+		return err
 	}
 
-	destinationPort := sourceChannelEnd.GetCounterparty().GetPortID()
-	destinationChannel := sourceChannelEnd.GetCounterparty().GetChannelID()
-
-	timeoutHeight := clienttypes.NewHeight(0, 100000000)
-	timeoutTimestamp := uint64(0)
-
-	// Begin createOutgoingPacket logic
-	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
-	if !ok {
-		return sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
-	}
-
-	packetBytes := packetData.GetBytes()
-	// Create the IBC packet
-	packet := channeltypes.NewPacket(
-		packetBytes,
-		sequence,
-		sourcePort,
-		sourceChannel,
-		destinationPort,
-		destinationChannel,
-		timeoutHeight,
-		timeoutTimestamp,
-	)
-
-	// Send the IBC packet
-	return k.channelKeeper.SendPacket(ctx, channelCap, packet)
+	return nil
 }
 
 // OnAcknowledgementIbcSwapAmountInRoute handle Acknowledgement for SwapAmountInRoute packet
@@ -125,6 +87,63 @@ func (k Keeper) OnAcknowledgementIbcOsmosisQueryRequest(ctx sdk.Context, ack cha
 	}
 }
 
+// Send request for query state over IBC
+func (k Keeper) SendInterchainQuery(
+	ctx sdk.Context,
+	path string,
+	data []byte,
+	sourcePort string,
+	sourceChannel string,
+) (uint64, error) {
+	sequence, found := k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
+	if !found {
+		return 0, sdkerrors.Wrapf(
+			channeltypes.ErrSequenceSendNotFound,
+			"source port: %s, source channel: %s", sourcePort, sourceChannel,
+		)
+	}
+	sourceChannelEnd, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
+	if !found {
+		return 0, sdkerrors.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
+	}
+
+	destinationPort := sourceChannelEnd.GetCounterparty().GetPortID()
+	destinationChannel := sourceChannelEnd.GetCounterparty().GetChannelID()
+
+	timeoutHeight := clienttypes.NewHeight(0, 100000000)
+	timeoutTimestamp := uint64(0)
+
+	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
+	if !ok {
+		return 0, sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
+	}
+
+	reqs := []types.InterchainQueryRequest{
+		{
+			Data: data,
+			Path: path,
+		},
+	}
+
+	packetData := types.NewInterchainQueryRequestPacket(reqs)
+
+	packet := channeltypes.NewPacket(
+		packetData.GetBytes(),
+		sequence,
+		sourcePort,
+		sourceChannel,
+		destinationPort,
+		destinationChannel,
+		timeoutHeight,
+		timeoutTimestamp,
+	)
+	if err := k.channelKeeper.SendPacket(ctx, channelCap, packet); err != nil {
+		return 0, err
+	}
+
+	return sequence, nil
+}
+
 func (k Keeper) GetChannelId(ctx sdk.Context) string {
 	store := ctx.KVStore(k.storeKey)
 	return string(store.Get(types.KeyChannelID))
@@ -132,18 +151,24 @@ func (k Keeper) GetChannelId(ctx sdk.Context) string {
 
 // TODO: need to test this function
 func (k Keeper) UnmarshalPacketBytesToPrice(bz []byte) (sdk.Dec, error) {
-	var spotPrice types.SpotPrice
-	fmt.Println(string(bz))
-	err := json.Unmarshal(bz, &spotPrice)
+
+	var res types.IcqRespones
+	err := json.Unmarshal(bz, &res)
 	if err != nil {
-		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, "error when json.Unmarshal")
+		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, err.Error())
 	}
 
-	spotPriceDec, err := sdk.NewDecFromStr(spotPrice.SpotPrice)
+	var ibcTokenTwap types.ArithmeticTWAP
+	err = json.Unmarshal(res.Respones[0].Data, &ibcTokenTwap) // hard code Respones[0] for now because currently only 1 query
+	if err != nil {
+		return sdk.Dec{}, sdkerrors.New("arithmeticTwap data umarshal", 1, err.Error())
+	}
+
+	ibcTokenTwapDec, err := sdk.NewDecFromStr(ibcTokenTwap.ArithmeticTWAP)
 	if err != nil {
 		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, "error when NewDecFromStr")
 	}
-	return spotPriceDec, nil
+	return ibcTokenTwapDec, nil
 }
 
 func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
@@ -190,10 +215,10 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 }
 
 // TODO: use TWAP instead of spotprice
-func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
+func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context, startTime time.Time, hostChainConfig types.HostChainFeeAbsConfig) error {
 	params := k.GetParams(ctx)
 	channelID := params.OsmosisQueryChannel
 	poolId := hostChainConfig.PoolId // for testing
 
-	return k.SendOsmosisQueryRequest(ctx, poolId, params.NativeIbcedInOsmosis, hostChainConfig.IbcDenom, types.IBCPortID, channelID)
+	return k.SendOsmosisQueryRequest(ctx, poolId, params.NativeIbcedInOsmosis, hostChainConfig.IbcDenom, startTime, types.IBCPortID, channelID)
 }
