@@ -158,17 +158,17 @@ func (k Keeper) UnmarshalPacketBytesToPrice(bz []byte) (sdk.Dec, error) {
 		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, err.Error())
 	}
 
-	var spotPrice types.SpotPrice
-	err = json.Unmarshal(res.Respones[0].Data, &spotPrice) // hard code Respones[0] for now because currently only 1 query
+	var ibcTokenTwap types.ArithmeticTWAP
+	err = json.Unmarshal(res.Respones[0].Data, &ibcTokenTwap) // hard code Respones[0] for now because currently only 1 query
 	if err != nil {
-		return sdk.Dec{}, sdkerrors.New("spotPrice data umarshal", 1, err.Error())
+		return sdk.Dec{}, sdkerrors.New("arithmeticTwap data umarshal", 1, err.Error())
 	}
 
-	spotPriceDec, err := sdk.NewDecFromStr(spotPrice.SpotPrice)
+	ibcTokenTwapDec, err := sdk.NewDecFromStr(ibcTokenTwap.ArithmeticTWAP)
 	if err != nil {
 		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, "error when NewDecFromStr")
 	}
-	return spotPriceDec, nil
+	return ibcTokenTwapDec, nil
 }
 
 func (k Keeper) transferIBCTokenToOsmosisContract(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {

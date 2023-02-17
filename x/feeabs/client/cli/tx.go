@@ -43,7 +43,7 @@ func NewQueryOsmosisTWAPCmd() *cobra.Command {
 			timeUnix, _ := strconv.ParseInt(args[1], 10, 64)
 			startTime := time.Unix(timeUnix, 0)
 
-			msg := types.NewMsgSendQuerySpotPrice(clientCtx.GetFromAddress(), args[0], startTime)
+			msg := types.NewMsgSendQueryIbcDenomTWAP(clientCtx.GetFromAddress(), args[0], startTime)
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 
 		},

@@ -13,8 +13,8 @@ const (
 	IBCPortID = "feeabs"
 )
 
-type SpotPrice struct {
-	SpotPrice string `json:"spot_price"`
+type ArithmeticTWAP struct {
+	ArithmeticTWAP string `json:"arithmetic_twap"`
 }
 
 type Result struct {

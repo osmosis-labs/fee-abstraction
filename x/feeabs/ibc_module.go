@@ -181,13 +181,13 @@ func (am IBCModule) OnAcknowledgementPacket(
 
 	switch resp := ack.Response.(type) {
 	case *channeltypes.Acknowledgement_Result:
-		spotPrice, err := am.keeper.UnmarshalPacketBytesToPrice(ack.GetResult())
+		IbcTokenTwap, err := am.keeper.UnmarshalPacketBytesToPrice(ack.GetResult())
 		if err != nil {
 			return err
 		}
 
 		// set spot price here
-		am.keeper.SetOsmosisExchangeRate(ctx, spotPrice)
+		am.keeper.SetOsmosisExchangeRate(ctx, IbcTokenTwap)
 
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(

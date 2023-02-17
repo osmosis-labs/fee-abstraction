@@ -39,7 +39,7 @@ func (m MsgSendQueryIbcDenomTWAP) ValidateBasic() error {
 	return nil
 }
 
-func NewMsgSendQuerySpotPrice(
+func NewMsgSendQueryIbcDenomTWAP(
 	fromAddr sdk.AccAddress,
 	denom string,
 	startTime time.Time,
