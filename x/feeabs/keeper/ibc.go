@@ -53,7 +53,7 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Cap
 	return k.scopedKeeper.ClaimCapability(ctx, capability, name)
 }
 
-// Send request for query EstimateSwapExactAmountIn over IBC
+// Send request for query EstimateSwapExactAmountIn over IBC. Move to use TWAP.
 func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDenom string, quoteDenom string, sourcePort, sourceChannel string) error {
 	path := "/osmosis.gamm.v2.Query/SpotPrice" // hard code for now should add to params
 	packetData := types.NewOsmosisQueryRequestPacketData(poolId, baseDenom, quoteDenom)

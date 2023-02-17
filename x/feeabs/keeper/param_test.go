@@ -1,18 +1,14 @@
 package keeper_test
 
-import (
-	"testing"
-)
+// func TestGetOsmosisIBCDenomParams(t *testing.T) {
+// 	app := apphelpers.Setup(t, false, 1)
+// 	ctx := apphelpers.NewContextForApp(*app)
 
-func TestGetOsmosisIBCDenomParams(t *testing.T) {
-	// app := apphelpers.Setup(t, false, 1)
-	// ctx := apphelpers.NewContextForApp(*app)
+// 	params := feeabstypes.Params{
+// 		OsmosisIbcDenom: "ibc/acb",
+// 	}
+// 	app.FeeabsKeeper.SetParams(ctx, params)
 
-	// params := feeabstypes.Params{
-	// 	OsmosisIbcDenom: "ibc/acb",
-	// }
-	// app.FeeabsKeeper.SetParams(ctx, params)
-
-	// osmosisIBCDenom := app.FeeabsKeeper.GetOsmosisIBCDenomParams(ctx)
-	// require.Equal(t, params.OsmosisIbcDenom, osmosisIBCDenom)
-}
+// 	osmosisIBCDenom := app.FeeabsKeeper.GetOsmosisIBCDenomParams(ctx)
+// 	require.Equal(t, params.OsmosisIbcDenom, osmosisIBCDenom)
+// }
