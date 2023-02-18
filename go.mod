@@ -4,12 +4,12 @@ go 1.18
 
 require (
 	github.com/CosmWasm/wasmd v0.30.0
+	github.com/CosmWasm/wasmvm v1.1.1
 	github.com/cosmos/cosmos-sdk v0.45.11
 	github.com/cosmos/gogoproto v1.4.3
 	github.com/cosmos/ibc-go/v4 v4.2.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2
-	github.com/osmosis-labs/osmosis/v14 v14.0.0
 	github.com/gorilla/mux v1.8.0
 	github.com/gravity-devs/liquidity v1.5.1
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
@@ -17,7 +17,6 @@ require (
 	github.com/rakyll/statik v0.1.7
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/cobra v1.6.1
-	github.com/strangelove-ventures/async-icq v0.0.0-20230116084035-5609e84dd443
 	github.com/stretchr/testify v1.8.1
 	github.com/tendermint/tendermint v0.34.24
 	github.com/tendermint/tm-db v0.6.7
@@ -30,7 +29,6 @@ require (
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
 	github.com/99designs/keyring v1.2.1 // indirect
 	github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d // indirect
-	github.com/CosmWasm/wasmvm v1.1.1 // indirect
 	github.com/Workiva/go-datastructures v1.0.53 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect

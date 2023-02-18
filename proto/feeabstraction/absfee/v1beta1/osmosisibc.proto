@@ -62,7 +62,7 @@ message HostChainFeeAbsConfig{
     string ibc_denom = 1 
     [(gogoproto.moretags) = "yaml:\"allowed_token\"" ];
 	
-	// ibced native denom in osmosis dev
+	// ibced native denom of host zone in osmosis dev
 	string host_chain_native_denom_ibced_on_osmosis = 2;
 
 	//TODO: middleware address in hostchain, can we refator this logic ?
