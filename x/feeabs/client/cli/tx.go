@@ -4,6 +4,9 @@ import (
 	"strconv"
 	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -68,6 +71,46 @@ func NewSwapOverChainCmd() *cobra.Command {
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func NewCmdSubmitAddHostZoneProposal() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "add-hostzone-config [proposal-file]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Submit an add host zone proposal",
+		Long: "Submit an add host zone proposal along with an initial deposit.\n" +
+			"Please specify a IBC denom identifier you want to use as abtraction fee..\n",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			proposal, err := ParseAddHostZoneProposalJSON(clientCtx.LegacyAmino, args[0])
+			if err != nil {
+				return err
+			}
+
+			content := types.NewAddHostZoneProposal(
+				proposal.Title, proposal.Description, proposal.HostChainFeeAbsConfig,
+			)
+
+			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)
+			if err != nil {
+				return err
+			}
+
+			from := clientCtx.GetFromAddress()
+			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
+			if err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+
+		},
+	}
 
 	return cmd
 }
