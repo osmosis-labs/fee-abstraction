@@ -86,3 +86,13 @@ message HostChainFeeAbsConfig{
 	// Frozen
 	bool frozen = 9;
 }
+
+message AddHostZoneProposal {
+	option (gogoproto.goproto_getters) = false;
+	// the title of the proposal
+	string title = 1;
+	// the description of the proposal
+	string description = 2;
+	// the host chain config
+	HostChainFeeAbsConfig host_chain_config = 3;
+}
