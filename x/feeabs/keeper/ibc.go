@@ -140,6 +140,7 @@ func (k Keeper) UnmarshalPacketBytesToICQtResponses(bz []byte) (types.IcqRespone
 	return res, nil
 }
 
+// TODO: add testing
 func (k Keeper) GetDecTWAPFromBytes(bz []byte) (sdk.Dec, error) {
 	var ibcTokenTwap types.ArithmeticTWAP
 	err := json.Unmarshal(bz, &ibcTokenTwap)
@@ -154,7 +155,6 @@ func (k Keeper) GetDecTWAPFromBytes(bz []byte) (sdk.Dec, error) {
 	return ibcTokenTwapDec, nil
 }
 
-// TODO: don't use if/else logic
 func (k Keeper) transferIBCTokenToHostChain(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
 	moduleAccountAddress := k.GetFeeAbsModuleAddress()
 	token := k.bk.GetBalance(ctx, moduleAccountAddress, hostChainConfig.IbcDenom)
