@@ -168,9 +168,6 @@ func (am IBCModule) OnAcknowledgementPacket(
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
 	}
 
-	// TODO :  Handler ack logic here
-	// TODO : update spot price when receive ack from osmosis chain
-
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypePacket,
@@ -181,13 +178,25 @@ func (am IBCModule) OnAcknowledgementPacket(
 
 	switch resp := ack.Response.(type) {
 	case *channeltypes.Acknowledgement_Result:
-		IbcTokenTwap, err := am.keeper.UnmarshalPacketBytesToPrice(ack.GetResult())
+		ICQResponses, err := am.keeper.UnmarshalPacketBytesToICQtResponses(ack.GetResult())
 		if err != nil {
 			return err
 		}
 
-		// set spot price here
-		am.keeper.SetOsmosisExchangeRate(ctx, IbcTokenTwap)
+		index := 0
+		am.keeper.IteraterHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+			index++
+			if !ICQResponses.Respones[index].Success {
+				am.keeper.FronzenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+				return false
+			}
+			twapRate, err := am.keeper.GetDecTWAPFromBytes(ICQResponses.Respones[index].Data)
+			if err != nil {
+				return false
+			}
+			am.keeper.SetTwapRate(ctx, hostZoneConfig.IbcDenom, twapRate)
+			return false
+		})
 
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(
@@ -196,6 +205,11 @@ func (am IBCModule) OnAcknowledgementPacket(
 			),
 		)
 	case *channeltypes.Acknowledgement_Error:
+		am.keeper.IteraterHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+			am.keeper.FronzenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+			return false
+		})
+
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(
 				types.EventTypePacket,

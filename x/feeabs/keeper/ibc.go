@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"time"
 
@@ -67,26 +66,6 @@ func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDeno
 	return nil
 }
 
-// OnAcknowledgementIbcSwapAmountInRoute handle Acknowledgement for SwapAmountInRoute packet
-func (k Keeper) OnAcknowledgementIbcOsmosisQueryRequest(ctx sdk.Context, ack channeltypes.Acknowledgement) error {
-	switch dispatchedAck := ack.Response.(type) {
-	case *channeltypes.Acknowledgement_Error:
-		_ = dispatchedAck.Error
-		return nil
-	case *channeltypes.Acknowledgement_Result:
-		// Unmarshal dispatchedAck result
-		spotPrice, err := k.UnmarshalPacketBytesToPrice(dispatchedAck.Result)
-		if err != nil {
-			return err
-		}
-		k.SetOsmosisExchangeRate(ctx, spotPrice)
-		return nil
-	default:
-		// The counter-party module doesn't implement the correct acknowledgment format
-		return errors.New("invalid acknowledgment format")
-	}
-}
-
 // Send request for query state over IBC
 func (k Keeper) SendInterchainQuery(
 	ctx sdk.Context,
@@ -137,6 +116,7 @@ func (k Keeper) SendInterchainQuery(
 		timeoutHeight,
 		timeoutTimestamp,
 	)
+
 	if err := k.channelKeeper.SendPacket(ctx, channelCap, packet); err != nil {
 		return 0, err
 	}
@@ -150,16 +130,20 @@ func (k Keeper) GetChannelId(ctx sdk.Context) string {
 }
 
 // TODO: need to test this function
-func (k Keeper) UnmarshalPacketBytesToPrice(bz []byte) (sdk.Dec, error) {
-
+func (k Keeper) UnmarshalPacketBytesToICQtResponses(bz []byte) (types.IcqRespones, error) {
 	var res types.IcqRespones
 	err := json.Unmarshal(bz, &res)
 	if err != nil {
-		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, err.Error())
+		return types.IcqRespones{}, sdkerrors.New("ibc ack data umarshal", 1, err.Error())
 	}
 
+	return res, nil
+}
+
+// TODO: add testing
+func (k Keeper) GetDecTWAPFromBytes(bz []byte) (sdk.Dec, error) {
 	var ibcTokenTwap types.ArithmeticTWAP
-	err = json.Unmarshal(res.Respones[0].Data, &ibcTokenTwap) // hard code Respones[0] for now because currently only 1 query
+	err := json.Unmarshal(bz, &ibcTokenTwap)
 	if err != nil {
 		return sdk.Dec{}, sdkerrors.New("arithmeticTwap data umarshal", 1, err.Error())
 	}
@@ -171,7 +155,6 @@ func (k Keeper) UnmarshalPacketBytesToPrice(bz []byte) (sdk.Dec, error) {
 	return ibcTokenTwapDec, nil
 }
 
-// TODO: don't use if/else logic
 func (k Keeper) transferIBCTokenToHostChain(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
 	moduleAccountAddress := k.GetFeeAbsModuleAddress()
 	token := k.bk.GetBalance(ctx, moduleAccountAddress, hostChainConfig.IbcDenom)
@@ -252,7 +235,10 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 }
 
 // TODO: use TWAP instead of spotprice
-func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context, startTime time.Time, hostChainConfig types.HostChainFeeAbsConfig) error {
+func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
+	// TODO: it should be a chain param
+	startTime := ctx.BlockTime().Add(-time.Hour * 5)
+
 	params := k.GetParams(ctx)
 	channelID := params.OsmosisQueryChannel
 	poolId := hostChainConfig.PoolId // for testing

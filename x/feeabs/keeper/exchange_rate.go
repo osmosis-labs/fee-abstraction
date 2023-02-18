@@ -1,20 +1,10 @@
 package keeper
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
 )
-
-// TODO:  not use anymore, will remove this in v2.0.0
-// SetOsmosisExchangeRate set osmosis exchange rate (osmosis to native token)
-func (k Keeper) SetOsmosisExchangeRate(ctx sdk.Context, osmosisExchangeRate sdk.Dec) {
-	store := ctx.KVStore(k.storeKey)
-	bz, _ := osmosisExchangeRate.Marshal()
-	store.Set(types.OsmosisTwapExchangeRate, bz)
-}
 
 // GetOsmosisExchangeRate get osmosis exchange rate (osmosis to native token)
 // TODO:  not use anymore, will remove this in v2.0.0
@@ -25,7 +15,6 @@ func (k Keeper) GetOsmosisExchangeRate(ctx sdk.Context) (sdk.Dec, error) {
 		return sdk.ZeroDec(), sdkerrors.Wrapf(types.ErrInvalidExchangeRate, "Osmosis does not have exchange rate data")
 	}
 
-	fmt.Println(string(bz))
 	var osmosisExchangeRate sdk.Dec
 	if err := osmosisExchangeRate.Unmarshal(bz); err != nil {
 		panic(err)
