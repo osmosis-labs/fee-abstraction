@@ -82,4 +82,7 @@ message HostChainFeeAbsConfig{
 
     // Active
     bool is_osmosis = 8;
+
+	// Frozen
+	bool frozen = 9;
 }

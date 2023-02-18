@@ -99,14 +99,11 @@ func (k Keeper) verifyIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins) error {
 		return types.ErrInvalidIBCFees
 	}
 
-	allHostZoneConfig, err := k.GetAllHostZoneConfig(ctx)
-	if err != nil {
-		return err
-	}
+	iterator := k.IteratorHostZone(ctx)
+	defer iterator.Close()
 
-	// TODO: replace it with iterator. @Gnad
-	for _, config := range allHostZoneConfig {
-		if ibcCoins[0].Denom == config.IbcDenom {
+	for ; iterator.Valid(); iterator.Next() {
+		if ibcCoins[0].Denom == string(iterator.Key()) {
 			return nil
 		}
 	}

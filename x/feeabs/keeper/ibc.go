@@ -137,6 +137,7 @@ func (k Keeper) SendInterchainQuery(
 		timeoutHeight,
 		timeoutTimestamp,
 	)
+
 	if err := k.channelKeeper.SendPacket(ctx, channelCap, packet); err != nil {
 		return 0, err
 	}
@@ -151,7 +152,6 @@ func (k Keeper) GetChannelId(ctx sdk.Context) string {
 
 // TODO: need to test this function
 func (k Keeper) UnmarshalPacketBytesToPrice(bz []byte) (sdk.Dec, error) {
-
 	var res types.IcqRespones
 	err := json.Unmarshal(bz, &res)
 	if err != nil {
@@ -252,7 +252,10 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 }
 
 // TODO: use TWAP instead of spotprice
-func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context, startTime time.Time, hostChainConfig types.HostChainFeeAbsConfig) error {
+func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
+	// TODO: it should be a chain param
+	startTime := ctx.BlockTime().Add(-time.Hour * 5)
+
 	params := k.GetParams(ctx)
 	channelID := params.OsmosisQueryChannel
 	poolId := hostChainConfig.PoolId // for testing

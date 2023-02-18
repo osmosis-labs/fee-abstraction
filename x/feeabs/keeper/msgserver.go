@@ -33,7 +33,7 @@ func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQ
 	if err != nil {
 		return nil, err
 	}
-	err = k.handleOsmosisIbcQuery(ctx, msg.StartTime, hostChainConfig)
+	err = k.handleOsmosisIbcQuery(ctx, hostChainConfig)
 	if err != nil {
 		return nil, err
 	}
