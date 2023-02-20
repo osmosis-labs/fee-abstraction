@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -43,8 +42,7 @@ func NewQueryOsmosisTWAPCmd() *cobra.Command {
 				return err
 			}
 
-			timeUnix, _ := strconv.ParseInt(args[1], 10, 64)
-			startTime := time.Unix(timeUnix, 0)
+			startTime := time.Unix(1676778631, 0)
 
 			msg := types.NewMsgSendQueryIbcDenomTWAP(clientCtx.GetFromAddress(), args[0], startTime)
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)

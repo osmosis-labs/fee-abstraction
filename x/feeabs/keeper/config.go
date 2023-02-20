@@ -9,9 +9,10 @@ import (
 func (keeper Keeper) GetHostZoneConfig(ctx sdk.Context, ibcDenom string) (chainConfig types.HostChainFeeAbsConfig, err error) {
 	store := ctx.KVStore(keeper.storeKey)
 	key := types.GetKeyHostZoneConfig(ibcDenom)
-	bz := store.Get(key)
 
+	bz := store.Get(key)
 	err = keeper.cdc.Unmarshal(bz, &chainConfig)
+
 	if err != nil {
 		return types.HostChainFeeAbsConfig{}, err
 	}
@@ -28,12 +29,20 @@ func (keeper Keeper) SetHostZoneConfig(ctx sdk.Context, ibcDenom string, chainCo
 		return err
 	}
 	store.Set(key, bz)
+
 	return nil
+}
+
+func (keeper Keeper) RemoveHostZoneConfig(ctx sdk.Context, ibcDenom string) {
+	store := ctx.KVStore(keeper.storeKey)
+	key := types.GetKeyHostZoneConfig(ibcDenom)
+
+	store.Delete(key)
 }
 
 // use iterator
 func (keeper Keeper) GetAllHostZoneConfig(ctx sdk.Context) (allChainConfigs []types.HostChainFeeAbsConfig, err error) {
-	keeper.IteraterHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+	keeper.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
 		allChainConfigs = append(allChainConfigs, hostZoneConfig)
 		return false
 	})
@@ -46,18 +55,16 @@ func (keeper Keeper) IteratorHostZone(ctx sdk.Context) sdk.Iterator {
 	return sdk.KVStorePrefixIterator(store, types.KeyHostChainChainConfig)
 }
 
-// IteraterHostZone iterates over the hostzone .
-func (keeper Keeper) IteraterHostZone(ctx sdk.Context, cb func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool)) {
+// IterateHostZone iterates over the hostzone .
+// TODO: write test for this .
+func (keeper Keeper) IterateHostZone(ctx sdk.Context, cb func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool)) {
 	store := ctx.KVStore(keeper.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.KeyHostChainChainConfig)
 
 	defer iterator.Close()
 	for ; iterator.Valid(); iterator.Next() {
-		hostZoneConfig, err := keeper.GetHostZoneConfig(ctx, string(iterator.Key()))
-		if err != nil {
-			panic(err)
-		}
-
+		var hostZoneConfig types.HostChainFeeAbsConfig
+		keeper.cdc.MustUnmarshal(iterator.Value(), &hostZoneConfig)
 		if cb(hostZoneConfig) {
 			break
 		}

@@ -32,6 +32,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // Params defines the parameters for the feeabs module.
 type Params struct {
 	// contract on osmosis with custom ibc logic for fetching spot price
+	// TODO: remove
 	OsmosisQueryContract string `protobuf:"bytes,1,opt,name=osmosis_query_contract,json=osmosisQueryContract,proto3" json:"osmosis_query_contract,omitempty"`
 	// native ibced in osmosis
 	NativeIbcedInOsmosis string `protobuf:"bytes,2,opt,name=native_ibced_in_osmosis,json=nativeIbcedInOsmosis,proto3" json:"native_ibced_in_osmosis,omitempty"`

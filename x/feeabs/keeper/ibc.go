@@ -57,7 +57,13 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Cap
 func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDenom string, quoteDenom string, startTime time.Time, sourcePort, sourceChannel string) error {
 	path := "/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow" // hard code for now should add to params
 	packetData := types.NewQueryArithmeticTwapToNowRequest(poolId, baseDenom, quoteDenom, startTime)
+	fmt.Println("========packetData=============")
+	fmt.Println(packetData)
+	fmt.Println("=========packetData============")
 
+	// 	========packetData=============
+	// {1 ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878 uosmo 2023-02-19 22:48:46.847436117 +0000 UTC}
+	// =========packetData============
 	_, err := k.SendInterchainQuery(ctx, path, packetData.GetBytes(), sourcePort, sourceChannel)
 	if err != nil {
 		return err
@@ -235,13 +241,18 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 }
 
 // TODO: use TWAP instead of spotprice
-func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
+func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) {
 	// TODO: it should be a chain param
-	startTime := ctx.BlockTime().Add(-time.Hour * 5)
+	startTime := ctx.BlockTime().Add(-time.Minute * 5)
 
 	params := k.GetParams(ctx)
 	channelID := params.OsmosisQueryChannel
-	poolId := hostChainConfig.PoolId // for testing
 
-	return k.SendOsmosisQueryRequest(ctx, poolId, params.NativeIbcedInOsmosis, hostChainConfig.IbcDenom, startTime, types.IBCPortID, channelID)
+	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+		err := k.SendOsmosisQueryRequest(ctx, hostZoneConfig.PoolId, params.NativeIbcedInOsmosis, "uosmo", startTime, types.IBCPortID, channelID)
+		if err != nil {
+			k.FronzenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+		}
+		return false
+	})
 }

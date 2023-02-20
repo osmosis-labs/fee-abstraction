@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -49,6 +48,4 @@ func TestParseProposal(t *testing.T) {
 	require.Equal(t, "Add Fee Abbtraction Host Zone", proposal.Description)
 	require.Equal(t, "1000stake", proposal.Deposit)
 	require.Equal(t, expectedConfig, proposal.HostChainFeeAbsConfig)
-
-	fmt.Println(proposal)
 }

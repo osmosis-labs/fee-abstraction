@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -25,15 +26,14 @@ var _ types.MsgServer = msgServer{}
 // Need to remove this
 func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQueryIbcDenomTWAP) (*types.MsgSendQueryIbcDenomTWAPResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	hostChainConfig, err := k.GetHostZoneConfig(ctx, msg.IbcDenom)
-	if err != nil {
-		return &types.MsgSendQueryIbcDenomTWAPResponse{}, nil
-	}
-	_, err = sdk.AccAddressFromBech32(msg.FromAddress)
-	if err != nil {
-		return nil, err
-	}
-	err = k.handleOsmosisIbcQuery(ctx, hostChainConfig)
+
+	fmt.Println("=========allthings=================")
+	fmt.Println(k.GetAllHostZoneConfig(ctx))
+	fmt.Println("==========================")
+	fmt.Println(k.GetHostZoneConfig(ctx, "ibc"))
+	fmt.Println("==========================")
+	k.handleOsmosisIbcQuery(ctx)
+	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
 	if err != nil {
 		return nil, err
 	}

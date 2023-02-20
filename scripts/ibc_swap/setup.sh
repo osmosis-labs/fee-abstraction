@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 CHANNEL_ID="channel-0"
-export VALIDATOR=$(osmosisd keys show validator1 -a --keyring-backend test --home=$HOME/.osmosisd/validator1)
+export VALIDATOR=$(osmosisd keys show validator1 -a --keyring-backend test )
 echo $VALIDATOR
 
 hermes --config scripts/relayer_hermes/config.toml create channel --a-chain testing --b-chain feeappd-t1 --a-port transfer --b-port transfer --new-client-connection --yes
 
-feeappd tx ibc-transfer transfer transfer $CHANNEL_ID "$VALIDATOR" 1000000000stake --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes
+feeappd tx ibc-transfer transfer transfer $CHANNEL_ID "$VALIDATOR" 1000000000000stake --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes
 sleep 22 
 echo $(osmosisd q bank balances "$VALIDATOR")
 
@@ -15,7 +15,7 @@ DENOM=$(osmosisd q bank balances "$VALIDATOR" -o json | jq -r '.balances[] | sel
 cat > sample_pool.json <<EOF
 {
         "weights": "1${DENOM},1uosmo",
-        "initial-deposit": "1000000${DENOM},1000000uosmo",
+        "initial-deposit": "10000000000${DENOM},10000000000uosmo",
         "swap-fee": "0.01",
         "exit-fee": "0.01",
         "future-governor": "168h"
@@ -66,3 +66,4 @@ sleep 20  # wait for the roundtrip
 
 new_balances=$(feeappd query bank balances "$feeacc" -o json | jq '.balances')
 echo "old balances: $balances, new balances: $new_balances"
+

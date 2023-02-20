@@ -57,19 +57,12 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 
 // executeAllHostChainTWAPQuery will iterate all hostZone and send the IBC Query Packet to Osmosis chain.
 func (k Keeper) executeAllHostChainTWAPQuery(ctx sdk.Context) {
-	k.IteraterHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-		err := k.handleOsmosisIbcQuery(ctx, hostZoneConfig)
-		if err != nil {
-			k.FronzenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
-		}
-
-		return false
-	})
+	k.handleOsmosisIbcQuery(ctx)
 }
 
 // executeAllHostChainTWAPSwap will iterate all hostZone and execute swap over chain.
 func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
-	k.IteraterHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
 		var err error
 
 		if hostZoneConfig.Frozen {
