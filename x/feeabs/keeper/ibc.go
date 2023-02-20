@@ -54,17 +54,18 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Cap
 }
 
 // Send request for query EstimateSwapExactAmountIn over IBC. Move to use TWAP.
-func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDenom string, quoteDenom string, startTime time.Time, sourcePort, sourceChannel string) error {
+func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryArithmeticTwapToNowRequest, sourcePort, sourceChannel string) error {
 	path := "/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow" // hard code for now should add to params
-	packetData := types.NewQueryArithmeticTwapToNowRequest(poolId, baseDenom, quoteDenom, startTime)
-	fmt.Println("========packetData=============")
-	fmt.Println(packetData)
-	fmt.Println("=========packetData============")
 
-	// 	========packetData=============
-	// {1 ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878 uosmo 2023-02-19 22:48:46.847436117 +0000 UTC}
-	// =========packetData============
-	_, err := k.SendInterchainQuery(ctx, path, packetData.GetBytes(), sourcePort, sourceChannel)
+	IcqReqs := make([]types.InterchainQueryRequest, len(twapReqs))
+	for i, req := range twapReqs {
+		IcqReqs[i] = types.InterchainQueryRequest{
+			Path: path,
+			Data: k.cdc.MustMarshal(&req),
+		}
+	}
+
+	_, err := k.SendInterchainQuery(ctx, IcqReqs, sourcePort, sourceChannel)
 	if err != nil {
 		return err
 	}
@@ -75,8 +76,7 @@ func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, poolId uint64, baseDeno
 // Send request for query state over IBC
 func (k Keeper) SendInterchainQuery(
 	ctx sdk.Context,
-	path string,
-	data []byte,
+	reqs []types.InterchainQueryRequest,
 	sourcePort string,
 	sourceChannel string,
 ) (uint64, error) {
@@ -101,13 +101,6 @@ func (k Keeper) SendInterchainQuery(
 	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
 	if !ok {
 		return 0, sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
-	}
-
-	reqs := []types.InterchainQueryRequest{
-		{
-			Data: data,
-			Path: path,
-		},
 	}
 
 	packetData := types.NewInterchainQueryRequestPacket(reqs)
@@ -244,15 +237,23 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) {
 	// TODO: it should be a chain param
 	startTime := ctx.BlockTime().Add(-time.Minute * 5)
+	k.Logger(ctx).Info(fmt.Sprintf("Start time: %v", startTime.Unix()))
 
 	params := k.GetParams(ctx)
 	channelID := params.OsmosisQueryChannel
 
+	var reqs []types.QueryArithmeticTwapToNowRequest
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-		err := k.SendOsmosisQueryRequest(ctx, hostZoneConfig.PoolId, params.NativeIbcedInOsmosis, "uosmo", startTime, types.IBCPortID, channelID)
-		if err != nil {
-			k.FronzenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
-		}
+		req := types.NewQueryArithmeticTwapToNowRequest(
+			hostZoneConfig.PoolId,
+			params.NativeIbcedInOsmosis,
+			"uosmo",
+			startTime,
+		)
+		reqs = append(reqs, req)
+		k.FronzenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 		return false
 	})
+
+	_ = k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, channelID)
 }

@@ -3,7 +3,7 @@
 	"description": "Add Fee Abbtraction Host Zone",
 	"host_chain_fee_abs_config": 
 		{
-			"ibc_denom": "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
+			"ibc_denom": "uatom",
 			"host_chain_native_denom_ibced_on_osmosis": "",
 			"middleware_address": "",
 			"ibc_transfer_channel":"channel-0",

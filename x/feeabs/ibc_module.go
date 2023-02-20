@@ -163,10 +163,6 @@ func (am IBCModule) OnAcknowledgementPacket(
 	acknowledgement []byte,
 	relayer sdk.AccAddress,
 ) error {
-	fmt.Println("==============ack================")
-	fmt.Println(string(acknowledgement))
-	fmt.Println("==============ack================")
-
 	var ack channeltypes.Acknowledgement
 	if err := types.ModuleCdc.UnmarshalJSON(acknowledgement, &ack); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
@@ -180,10 +176,6 @@ func (am IBCModule) OnAcknowledgementPacket(
 		),
 	)
 
-	fmt.Println("==============ack================")
-	fmt.Println(ack)
-	fmt.Println("==============ack================")
-
 	switch resp := ack.Response.(type) {
 	case *channeltypes.Acknowledgement_Result:
 		ICQResponses, err := am.keeper.UnmarshalPacketBytesToICQtResponses(ack.GetResult())
@@ -191,27 +183,22 @@ func (am IBCModule) OnAcknowledgementPacket(
 			return err
 		}
 
-		fmt.Println("==============ack================")
-		fmt.Println(ICQResponses)
-		fmt.Println("==============ack================")
-
 		index := 0
 		am.keeper.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+			IcqRes := ICQResponses.Respones[index]
 			index++
-			if !ICQResponses.Respones[index].Success {
+
+			if !IcqRes.Success {
 				am.keeper.FronzenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 				return false
 			}
 
-			fmt.Println("==============price================")
-			fmt.Println(string(ICQResponses.Respones[index].Data))
-			fmt.Println("==============price================")
-
-			twapRate, err := am.keeper.GetDecTWAPFromBytes(ICQResponses.Respones[index].Data)
+			twapRate, err := am.keeper.GetDecTWAPFromBytes(IcqRes.Data)
 			if err != nil {
 				return false
 			}
 			am.keeper.SetTwapRate(ctx, hostZoneConfig.IbcDenom, twapRate)
+
 			return false
 		})
 
