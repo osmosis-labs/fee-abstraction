@@ -20,7 +20,7 @@ service Query {
     option (google.api.http).get = "/fee-abstraction/feeabs/v1/module-balances";
   }
 
-  rpc HostChainConfig(QueryHostChainConfigRequest) returns (QueryOsmosisArithmeticTwapRequest) {
+  rpc HostChainConfig(QueryHostChainConfigRequest) returns (QueryHostChainConfigRespone) {
     option (google.api.http).get = "/fee-abstraction/feeabs/v1/host-chain-config/{ibc_denom}";
   }
 }
