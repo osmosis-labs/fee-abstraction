@@ -19,18 +19,19 @@ func GetQueryCmd() *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		GetCmdQueryOsmosisSpotPrice(),
+		GetCmdQueryOsmosisArithmeticTwap(),
 		GetCmdQueryFeeabsModuleBalances(),
+		GetCmdQueryHostChainConfig(),
 	)
 
 	return cmd
 }
 
-func GetCmdQueryOsmosisSpotPrice() *cobra.Command {
+func GetCmdQueryOsmosisArithmeticTwap() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "osmo-spot-price",
-		Args:  cobra.NoArgs,
-		Short: "Query the spot price of osmosis",
+		Use:   "osmo-arithmetic-twap [ibc-denom]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Query the arithmetic twap of osmosis",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -39,7 +40,11 @@ func GetCmdQueryOsmosisSpotPrice() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			res, err := queryClient.OsmosisSpotPrice(cmd.Context(), &types.QueryOsmosisSpotPriceRequest{})
+			req := &types.QueryOsmosisArithmeticTwapRequest{
+				IbcDenom: args[0],
+			}
+
+			res, err := queryClient.OsmosisArithmeticTwap(cmd.Context(), req)
 			if err != nil {
 				return err
 			}
@@ -66,6 +71,36 @@ func GetCmdQueryFeeabsModuleBalances() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			res, err := queryClient.FeeabsModuleBalances(cmd.Context(), &types.QueryFeeabsModuleBalacesRequest{})
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func GetCmdQueryHostChainConfig() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "host-chain-config [ibc-denom]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Query host chain config",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			queryClient := types.NewQueryClient(clientCtx)
+
+			req := &types.QueryHostChainConfigRequest{
+				IbcDenom: args[0],
+			}
+
+			res, err := queryClient.HostChainConfig(cmd.Context(), req)
 			if err != nil {
 				return err
 			}

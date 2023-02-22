@@ -23,23 +23,21 @@ func NewQuerier(k Keeper) Querier {
 }
 
 // OsmosisSpotPrice return spot price of pair Osmo/nativeToken
-func (q Querier) OsmosisSpotPrice(goCtx context.Context, req *types.QueryOsmosisSpotPriceRequest) (*types.QueryOsmosisSpotPriceResponse, error) {
+func (q Querier) OsmosisArithmeticTwap(goCtx context.Context, req *types.QueryOsmosisArithmeticTwapRequest) (*types.QueryOsmosisArithmeticTwapResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	spotPrice, err := q.GetTwapRate(ctx, req.IbcDenom)
+	twapRate, err := q.GetTwapRate(ctx, req.IbcDenom)
 	if err != nil {
 		return nil, err
 	}
 
 	// TODO: move to use TWAP response
-	return &types.QueryOsmosisSpotPriceResponse{
-		BaseAsset:  req.IbcDenom, // TODO: Currently hard code this value. Need to change to params then
-		QuoteAsset: q.sk.BondDenom(ctx),
-		SpotPrice:  spotPrice,
+	return &types.QueryOsmosisArithmeticTwapResponse{
+		ArithmeticTwap: twapRate,
 	}, nil
 }
 
@@ -61,5 +59,22 @@ func (q Querier) FeeabsModuleBalances(goCtx context.Context, req *types.QueryFee
 
 	return &types.QueryFeeabsModuleBalacesResponse{
 		Balances: moduleBalances,
+	}, nil
+}
+
+func (q Querier) HostChainConfig(goCtx context.Context, req *types.QueryHostChainConfigRequest) (*types.QueryHostChainConfigRespone, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "empty request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	hostChainConfig, err := q.GetHostZoneConfig(ctx, req.IbcDenom)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.QueryHostChainConfigRespone{
+		HostChainConfig: hostChainConfig,
 	}, nil
 }

@@ -31,23 +31,22 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// QueryOsmosisSpotPriceRequest is the request type for the Query/Feeabs RPC method.
-type QueryOsmosisSpotPriceRequest struct {
+type QueryHostChainConfigRequest struct {
 	IbcDenom string `protobuf:"bytes,1,opt,name=ibc_denom,json=ibcDenom,proto3" json:"ibc_denom,omitempty"`
 }
 
-func (m *QueryOsmosisSpotPriceRequest) Reset()         { *m = QueryOsmosisSpotPriceRequest{} }
-func (m *QueryOsmosisSpotPriceRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryOsmosisSpotPriceRequest) ProtoMessage()    {}
-func (*QueryOsmosisSpotPriceRequest) Descriptor() ([]byte, []int) {
+func (m *QueryHostChainConfigRequest) Reset()         { *m = QueryHostChainConfigRequest{} }
+func (m *QueryHostChainConfigRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryHostChainConfigRequest) ProtoMessage()    {}
+func (*QueryHostChainConfigRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0a3dde61db3cbb0e, []int{0}
 }
-func (m *QueryOsmosisSpotPriceRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryHostChainConfigRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryOsmosisSpotPriceRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryHostChainConfigRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryOsmosisSpotPriceRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryHostChainConfigRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -57,43 +56,41 @@ func (m *QueryOsmosisSpotPriceRequest) XXX_Marshal(b []byte, deterministic bool)
 		return b[:n], nil
 	}
 }
-func (m *QueryOsmosisSpotPriceRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryOsmosisSpotPriceRequest.Merge(m, src)
+func (m *QueryHostChainConfigRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryHostChainConfigRequest.Merge(m, src)
 }
-func (m *QueryOsmosisSpotPriceRequest) XXX_Size() int {
+func (m *QueryHostChainConfigRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryOsmosisSpotPriceRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryOsmosisSpotPriceRequest.DiscardUnknown(m)
+func (m *QueryHostChainConfigRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryHostChainConfigRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryOsmosisSpotPriceRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryHostChainConfigRequest proto.InternalMessageInfo
 
-func (m *QueryOsmosisSpotPriceRequest) GetIbcDenom() string {
+func (m *QueryHostChainConfigRequest) GetIbcDenom() string {
 	if m != nil {
 		return m.IbcDenom
 	}
 	return ""
 }
 
-type QueryOsmosisSpotPriceResponse struct {
-	BaseAsset  string                                 `protobuf:"bytes,1,opt,name=base_asset,json=baseAsset,proto3" json:"base_asset,omitempty"`
-	QuoteAsset string                                 `protobuf:"bytes,2,opt,name=quote_asset,json=quoteAsset,proto3" json:"quote_asset,omitempty"`
-	SpotPrice  github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,3,opt,name=spot_price,json=spotPrice,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"spot_price" yaml:"spot_price"`
+type QueryHostChainConfigRespone struct {
+	HostChainConfig HostChainFeeAbsConfig `protobuf:"bytes,1,opt,name=host_chain_config,json=hostChainConfig,proto3" json:"host_chain_config" yaml:"host_chain_config"`
 }
 
-func (m *QueryOsmosisSpotPriceResponse) Reset()         { *m = QueryOsmosisSpotPriceResponse{} }
-func (m *QueryOsmosisSpotPriceResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryOsmosisSpotPriceResponse) ProtoMessage()    {}
-func (*QueryOsmosisSpotPriceResponse) Descriptor() ([]byte, []int) {
+func (m *QueryHostChainConfigRespone) Reset()         { *m = QueryHostChainConfigRespone{} }
+func (m *QueryHostChainConfigRespone) String() string { return proto.CompactTextString(m) }
+func (*QueryHostChainConfigRespone) ProtoMessage()    {}
+func (*QueryHostChainConfigRespone) Descriptor() ([]byte, []int) {
 	return fileDescriptor_0a3dde61db3cbb0e, []int{1}
 }
-func (m *QueryOsmosisSpotPriceResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryHostChainConfigRespone) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryOsmosisSpotPriceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryHostChainConfigRespone) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryOsmosisSpotPriceResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryHostChainConfigRespone.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -103,31 +100,106 @@ func (m *QueryOsmosisSpotPriceResponse) XXX_Marshal(b []byte, deterministic bool
 		return b[:n], nil
 	}
 }
-func (m *QueryOsmosisSpotPriceResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryOsmosisSpotPriceResponse.Merge(m, src)
+func (m *QueryHostChainConfigRespone) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryHostChainConfigRespone.Merge(m, src)
 }
-func (m *QueryOsmosisSpotPriceResponse) XXX_Size() int {
+func (m *QueryHostChainConfigRespone) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryOsmosisSpotPriceResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryOsmosisSpotPriceResponse.DiscardUnknown(m)
+func (m *QueryHostChainConfigRespone) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryHostChainConfigRespone.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryOsmosisSpotPriceResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryHostChainConfigRespone proto.InternalMessageInfo
 
-func (m *QueryOsmosisSpotPriceResponse) GetBaseAsset() string {
+func (m *QueryHostChainConfigRespone) GetHostChainConfig() HostChainFeeAbsConfig {
 	if m != nil {
-		return m.BaseAsset
+		return m.HostChainConfig
+	}
+	return HostChainFeeAbsConfig{}
+}
+
+// QueryOsmosisSpotPriceRequest is the request type for the Query/Feeabs RPC method.
+type QueryOsmosisArithmeticTwapRequest struct {
+	IbcDenom string `protobuf:"bytes,1,opt,name=ibc_denom,json=ibcDenom,proto3" json:"ibc_denom,omitempty"`
+}
+
+func (m *QueryOsmosisArithmeticTwapRequest) Reset()         { *m = QueryOsmosisArithmeticTwapRequest{} }
+func (m *QueryOsmosisArithmeticTwapRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryOsmosisArithmeticTwapRequest) ProtoMessage()    {}
+func (*QueryOsmosisArithmeticTwapRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0a3dde61db3cbb0e, []int{2}
+}
+func (m *QueryOsmosisArithmeticTwapRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryOsmosisArithmeticTwapRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryOsmosisArithmeticTwapRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryOsmosisArithmeticTwapRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryOsmosisArithmeticTwapRequest.Merge(m, src)
+}
+func (m *QueryOsmosisArithmeticTwapRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryOsmosisArithmeticTwapRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryOsmosisArithmeticTwapRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryOsmosisArithmeticTwapRequest proto.InternalMessageInfo
+
+func (m *QueryOsmosisArithmeticTwapRequest) GetIbcDenom() string {
+	if m != nil {
+		return m.IbcDenom
 	}
 	return ""
 }
 
-func (m *QueryOsmosisSpotPriceResponse) GetQuoteAsset() string {
-	if m != nil {
-		return m.QuoteAsset
-	}
-	return ""
+type QueryOsmosisArithmeticTwapResponse struct {
+	ArithmeticTwap github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,1,opt,name=arithmetic_twap,json=arithmeticTwap,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"arithmetic_twap" yaml:"arithmetic_twap"`
 }
+
+func (m *QueryOsmosisArithmeticTwapResponse) Reset()         { *m = QueryOsmosisArithmeticTwapResponse{} }
+func (m *QueryOsmosisArithmeticTwapResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryOsmosisArithmeticTwapResponse) ProtoMessage()    {}
+func (*QueryOsmosisArithmeticTwapResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0a3dde61db3cbb0e, []int{3}
+}
+func (m *QueryOsmosisArithmeticTwapResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryOsmosisArithmeticTwapResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryOsmosisArithmeticTwapResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryOsmosisArithmeticTwapResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryOsmosisArithmeticTwapResponse.Merge(m, src)
+}
+func (m *QueryOsmosisArithmeticTwapResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryOsmosisArithmeticTwapResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryOsmosisArithmeticTwapResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryOsmosisArithmeticTwapResponse proto.InternalMessageInfo
 
 // QueryFeeabsModuleBalacesRequest is the request type for the Query/Feeabs RPC method.
 type QueryFeeabsModuleBalacesRequest struct {
@@ -137,7 +209,7 @@ func (m *QueryFeeabsModuleBalacesRequest) Reset()         { *m = QueryFeeabsModu
 func (m *QueryFeeabsModuleBalacesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryFeeabsModuleBalacesRequest) ProtoMessage()    {}
 func (*QueryFeeabsModuleBalacesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0a3dde61db3cbb0e, []int{2}
+	return fileDescriptor_0a3dde61db3cbb0e, []int{4}
 }
 func (m *QueryFeeabsModuleBalacesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -174,7 +246,7 @@ func (m *QueryFeeabsModuleBalacesResponse) Reset()         { *m = QueryFeeabsMod
 func (m *QueryFeeabsModuleBalacesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryFeeabsModuleBalacesResponse) ProtoMessage()    {}
 func (*QueryFeeabsModuleBalacesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_0a3dde61db3cbb0e, []int{3}
+	return fileDescriptor_0a3dde61db3cbb0e, []int{5}
 }
 func (m *QueryFeeabsModuleBalacesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -211,8 +283,10 @@ func (m *QueryFeeabsModuleBalacesResponse) GetBalances() github_com_cosmos_cosmo
 }
 
 func init() {
-	proto.RegisterType((*QueryOsmosisSpotPriceRequest)(nil), "feeabstraction.absfee.v1beta1.QueryOsmosisSpotPriceRequest")
-	proto.RegisterType((*QueryOsmosisSpotPriceResponse)(nil), "feeabstraction.absfee.v1beta1.QueryOsmosisSpotPriceResponse")
+	proto.RegisterType((*QueryHostChainConfigRequest)(nil), "feeabstraction.absfee.v1beta1.QueryHostChainConfigRequest")
+	proto.RegisterType((*QueryHostChainConfigRespone)(nil), "feeabstraction.absfee.v1beta1.QueryHostChainConfigRespone")
+	proto.RegisterType((*QueryOsmosisArithmeticTwapRequest)(nil), "feeabstraction.absfee.v1beta1.QueryOsmosisArithmeticTwapRequest")
+	proto.RegisterType((*QueryOsmosisArithmeticTwapResponse)(nil), "feeabstraction.absfee.v1beta1.QueryOsmosisArithmeticTwapResponse")
 	proto.RegisterType((*QueryFeeabsModuleBalacesRequest)(nil), "feeabstraction.absfee.v1beta1.QueryFeeabsModuleBalacesRequest")
 	proto.RegisterType((*QueryFeeabsModuleBalacesResponse)(nil), "feeabstraction.absfee.v1beta1.QueryFeeabsModuleBalacesResponse")
 }
@@ -222,42 +296,48 @@ func init() {
 }
 
 var fileDescriptor_0a3dde61db3cbb0e = []byte{
-	// 553 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x53, 0xc1, 0x6e, 0xd3, 0x4c,
-	0x10, 0x8e, 0x1b, 0xfd, 0xbf, 0x9a, 0xed, 0x01, 0xb0, 0x7a, 0x08, 0xa1, 0xb1, 0x83, 0x0f, 0x28,
-	0x54, 0xd8, 0xab, 0x04, 0x71, 0x80, 0x22, 0x10, 0x69, 0xc5, 0x0d, 0x01, 0xe9, 0x8d, 0x4b, 0xb4,
-	0x76, 0x26, 0xc1, 0xc2, 0xf6, 0x38, 0xd9, 0x75, 0x44, 0x38, 0xf2, 0x04, 0x48, 0x5c, 0x11, 0x0f,
-	0xc0, 0x6b, 0xc0, 0xa1, 0x12, 0x97, 0x4a, 0x5c, 0x10, 0x87, 0x80, 0x12, 0x9e, 0xa0, 0x4f, 0x80,
-	0x76, 0xd7, 0xa6, 0x25, 0x52, 0xa2, 0xaa, 0xa7, 0xc4, 0x33, 0xdf, 0x37, 0x33, 0xdf, 0x7c, 0xb3,
-	0xe4, 0xe6, 0x00, 0x80, 0xf9, 0x5c, 0x8c, 0x59, 0x20, 0x42, 0x4c, 0x28, 0xf3, 0xf9, 0x00, 0x80,
-	0x4e, 0x5a, 0x3e, 0x08, 0xd6, 0xa2, 0xa3, 0x0c, 0xc6, 0x53, 0x2f, 0x1d, 0xa3, 0x40, 0xb3, 0xfe,
-	0x2f, 0xd4, 0xd3, 0x50, 0x2f, 0x87, 0xd6, 0xb6, 0x87, 0x38, 0x44, 0x85, 0xa4, 0xf2, 0x9f, 0x26,
-	0xd5, 0x76, 0x86, 0x88, 0xc3, 0x08, 0x28, 0x4b, 0x43, 0xca, 0x92, 0x04, 0x05, 0x93, 0x5c, 0x9e,
-	0x67, 0x77, 0xd7, 0x77, 0x4f, 0xd9, 0x98, 0xc5, 0x05, 0xd6, 0x0a, 0x90, 0xc7, 0xc8, 0xa9, 0xcf,
-	0xf8, 0x29, 0x22, 0xc0, 0x30, 0xd1, 0x79, 0x67, 0x8f, 0xec, 0x3c, 0x97, 0xd3, 0x3e, 0x95, 0xa8,
-	0x90, 0x1f, 0xa6, 0x28, 0x9e, 0x8d, 0xc3, 0x00, 0xba, 0x30, 0xca, 0x80, 0x0b, 0xf3, 0x1a, 0xa9,
-	0x84, 0x7e, 0xd0, 0xeb, 0x43, 0x82, 0x71, 0xd5, 0x68, 0x18, 0xcd, 0x4a, 0x77, 0x33, 0xf4, 0x83,
-	0x03, 0xf9, 0xed, 0x7c, 0x36, 0x48, 0x7d, 0x05, 0x9b, 0xa7, 0x98, 0x70, 0x30, 0xeb, 0x84, 0xc8,
-	0xce, 0x3d, 0xc6, 0x39, 0x88, 0x9c, 0x5f, 0x91, 0x91, 0x47, 0x32, 0x60, 0xda, 0x64, 0x6b, 0x94,
-	0xa1, 0x28, 0xf2, 0x1b, 0x2a, 0x4f, 0x54, 0x48, 0x03, 0x7c, 0x42, 0x78, 0x8a, 0xa2, 0x97, 0xca,
-	0xaa, 0xd5, 0xb2, 0xcc, 0x77, 0xf6, 0x8f, 0x66, 0x76, 0xe9, 0xc7, 0xcc, 0xbe, 0x31, 0x0c, 0xc5,
-	0xcb, 0xcc, 0xf7, 0x02, 0x8c, 0x69, 0xae, 0x52, 0xff, 0xb8, 0xbc, 0xff, 0x8a, 0x8a, 0x69, 0x0a,
-	0xdc, 0x3b, 0x80, 0xe0, 0x64, 0x66, 0x5f, 0x99, 0xb2, 0x38, 0xba, 0xe7, 0x9c, 0x56, 0x72, 0xba,
-	0x15, 0x5e, 0xcc, 0xea, 0x5c, 0x27, 0xb6, 0x12, 0xf1, 0x58, 0x6d, 0xf5, 0x09, 0xf6, 0xb3, 0x08,
-	0x3a, 0x2c, 0x62, 0x01, 0xf0, 0x7c, 0x0b, 0xce, 0x47, 0x83, 0x34, 0x56, 0x63, 0x72, 0xad, 0x6f,
-	0xc8, 0xa6, 0xcf, 0x22, 0x96, 0x04, 0xc0, 0xab, 0x46, 0xa3, 0xdc, 0xdc, 0x6a, 0x5f, 0xf5, 0xf4,
-	0x40, 0x9e, 0x54, 0x5c, 0x58, 0xee, 0xed, 0x63, 0x98, 0x68, 0x11, 0x27, 0x33, 0xfb, 0x92, 0x1e,
-	0xad, 0x20, 0x3a, 0x9f, 0x7e, 0xda, 0xcd, 0x73, 0xe8, 0x92, 0x35, 0x78, 0xf7, 0x6f, 0xbf, 0xf6,
-	0x87, 0x32, 0xf9, 0x4f, 0x0d, 0x68, 0x7e, 0x31, 0xc8, 0xe5, 0x65, 0x3b, 0xcc, 0x3d, 0x6f, 0xed,
-	0x15, 0x7a, 0xeb, 0x4e, 0xa0, 0x76, 0xff, 0x62, 0x64, 0xbd, 0x15, 0xe7, 0xce, 0xdb, 0x6f, 0xbf,
-	0xdf, 0x6f, 0x50, 0xd3, 0xa5, 0x03, 0x00, 0xf7, 0xec, 0xd9, 0xea, 0xaa, 0x74, 0xd2, 0xa2, 0xa8,
-	0xc9, 0xae, 0xf4, 0xc4, 0x55, 0x06, 0x99, 0x5f, 0x0d, 0xb2, 0xbd, 0xbc, 0x6c, 0xa9, 0xd4, 0x7c,
-	0x70, 0x9e, 0x69, 0x56, 0x5b, 0x59, 0x7b, 0x78, 0x61, 0x7e, 0x2e, 0xa8, 0xad, 0x04, 0xdd, 0x32,
-	0x77, 0xd7, 0x08, 0x8a, 0x15, 0xd3, 0x2d, 0xec, 0xe9, 0x1c, 0x1e, 0xcd, 0x2d, 0xe3, 0x78, 0x6e,
-	0x19, 0xbf, 0xe6, 0x96, 0xf1, 0x6e, 0x61, 0x95, 0x8e, 0x17, 0x56, 0xe9, 0xfb, 0xc2, 0x2a, 0xbd,
-	0xb8, 0x7b, 0xc6, 0xec, 0x04, 0x65, 0x19, 0x16, 0xb9, 0x91, 0x2c, 0xb3, 0xf4, 0xc8, 0x27, 0x2d,
-	0xfa, 0xba, 0xe8, 0xa0, 0x6e, 0xc0, 0xff, 0x5f, 0xbd, 0xe0, 0xdb, 0x7f, 0x02, 0x00, 0x00, 0xff,
-	0xff, 0xd5, 0x41, 0x14, 0x75, 0x8d, 0x04, 0x00, 0x00,
+	// 655 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x54, 0x4f, 0x4f, 0x13, 0x4f,
+	0x18, 0xee, 0xfe, 0x7e, 0xc1, 0xc0, 0x90, 0xd8, 0x38, 0x41, 0x83, 0x45, 0xb7, 0x65, 0x0e, 0x06,
+	0x89, 0xbb, 0x13, 0xaa, 0x07, 0xed, 0x01, 0x4b, 0x4b, 0x08, 0x17, 0x63, 0xac, 0x9e, 0xbc, 0x34,
+	0xb3, 0xc3, 0xb4, 0x9d, 0xb8, 0xbb, 0xb3, 0x74, 0xa6, 0x20, 0x1a, 0x2f, 0x1c, 0x3d, 0x99, 0x78,
+	0xf0, 0xe6, 0xc1, 0xa3, 0x9f, 0x84, 0xc4, 0x0b, 0x89, 0x17, 0xe3, 0xa1, 0x1a, 0xe0, 0x13, 0xf0,
+	0x09, 0xcc, 0xcc, 0x6c, 0x0b, 0x54, 0x5a, 0x1a, 0x3c, 0xf5, 0xcf, 0x3c, 0xef, 0x33, 0xcf, 0xf3,
+	0x3e, 0xef, 0xbc, 0xe0, 0x6e, 0x83, 0x31, 0x12, 0x48, 0xd5, 0x26, 0x54, 0x71, 0x11, 0x63, 0x12,
+	0xc8, 0x06, 0x63, 0x78, 0x6b, 0x29, 0x60, 0x8a, 0x2c, 0xe1, 0xcd, 0x0e, 0x6b, 0xef, 0xf8, 0x49,
+	0x5b, 0x28, 0x01, 0x6f, 0x9f, 0x85, 0xfa, 0x16, 0xea, 0xa7, 0xd0, 0xdc, 0x4c, 0x53, 0x34, 0x85,
+	0x41, 0x62, 0xfd, 0xcd, 0x16, 0xe5, 0x6e, 0x35, 0x85, 0x68, 0x86, 0x0c, 0x93, 0x84, 0x63, 0x12,
+	0xc7, 0x42, 0x11, 0x5d, 0x2b, 0xd3, 0xd3, 0xc5, 0xd1, 0xb7, 0x27, 0xa4, 0x4d, 0xa2, 0x1e, 0xd6,
+	0x1f, 0x8d, 0x15, 0x32, 0x12, 0x92, 0x4b, 0x1e, 0xd0, 0x14, 0xef, 0x52, 0xf3, 0x17, 0x0e, 0x88,
+	0x3c, 0x41, 0x51, 0xc1, 0x63, 0x7b, 0x8e, 0x4a, 0x60, 0xee, 0x99, 0x76, 0xb7, 0x2e, 0xa4, 0xaa,
+	0xb6, 0x08, 0x8f, 0xab, 0x22, 0x6e, 0xf0, 0x66, 0x8d, 0x6d, 0x76, 0x98, 0x54, 0x70, 0x0e, 0x4c,
+	0xf1, 0x80, 0xd6, 0x37, 0x58, 0x2c, 0xa2, 0x59, 0xa7, 0xe0, 0x2c, 0x4c, 0xd5, 0x26, 0x79, 0x40,
+	0x57, 0xf5, 0x6f, 0xf4, 0xc5, 0x19, 0x56, 0x2c, 0x13, 0x11, 0x33, 0xb8, 0xeb, 0x80, 0x6b, 0x2d,
+	0x21, 0x55, 0x9d, 0xea, 0xb3, 0x3a, 0x35, 0x87, 0x86, 0x65, 0xba, 0xf8, 0xc0, 0x1f, 0xd9, 0x47,
+	0xbf, 0x4f, 0xb9, 0xc6, 0xd8, 0x4a, 0x20, 0x2d, 0x71, 0xa5, 0xb0, 0xd7, 0xcd, 0x67, 0x8e, 0xbb,
+	0xf9, 0xd9, 0x1d, 0x12, 0x85, 0x25, 0xf4, 0x17, 0x39, 0xaa, 0x65, 0x5b, 0x67, 0xb5, 0xa0, 0x32,
+	0x98, 0x37, 0x1a, 0x9f, 0xda, 0xce, 0xac, 0xb4, 0xb9, 0x6a, 0x45, 0x4c, 0x71, 0xfa, 0x62, 0x9b,
+	0x24, 0x63, 0xd9, 0xfc, 0xe4, 0x00, 0x34, 0x8a, 0x42, 0x9b, 0x95, 0x0c, 0x6e, 0x82, 0x2c, 0xe9,
+	0x9f, 0xd4, 0xd5, 0x36, 0x49, 0x2c, 0x53, 0x65, 0x5d, 0x8b, 0xfe, 0xd9, 0xcd, 0xdf, 0x69, 0x72,
+	0xd5, 0xea, 0x04, 0x3e, 0x15, 0x11, 0x4e, 0x53, 0xb1, 0x1f, 0x9e, 0xdc, 0x78, 0x85, 0xd5, 0x4e,
+	0xc2, 0xa4, 0xbf, 0xca, 0xe8, 0x71, 0x37, 0x7f, 0xc3, 0xda, 0x1b, 0xa0, 0x43, 0xb5, 0xab, 0xe4,
+	0xcc, 0xd5, 0x68, 0x1e, 0xe4, 0x8d, 0xb0, 0x35, 0xd3, 0xca, 0x27, 0x62, 0xa3, 0x13, 0xb2, 0x0a,
+	0x09, 0x09, 0x65, 0x32, 0x75, 0x86, 0x3e, 0x3b, 0xa0, 0x30, 0x1c, 0x93, 0x4a, 0x7f, 0x03, 0x26,
+	0x03, 0x12, 0x92, 0x98, 0x32, 0x39, 0xeb, 0x14, 0xfe, 0x5f, 0x98, 0x2e, 0xde, 0xf4, 0xad, 0x34,
+	0x5f, 0xcf, 0x4d, 0x3f, 0x94, 0xaa, 0xe0, 0x71, 0xa5, 0x9a, 0x66, 0x90, 0xb5, 0x22, 0x7b, 0x85,
+	0xe8, 0xeb, 0xaf, 0xfc, 0xc2, 0x18, 0x0e, 0x35, 0x87, 0xac, 0xf5, 0xef, 0x2b, 0xbe, 0x9f, 0x00,
+	0x13, 0x46, 0x20, 0x3c, 0x72, 0xc0, 0xf5, 0x73, 0x5b, 0x0c, 0xcb, 0x17, 0x0c, 0xcb, 0x85, 0x01,
+	0xe7, 0x56, 0xfe, 0x81, 0xc1, 0x36, 0x09, 0xad, 0xed, 0x7e, 0x3f, 0xfa, 0xf8, 0x5f, 0x19, 0x2e,
+	0xe3, 0x06, 0x63, 0xde, 0xe9, 0x37, 0x68, 0xa9, 0xf1, 0x56, 0xff, 0xf9, 0x79, 0x27, 0x39, 0x79,
+	0x3a, 0x39, 0xfc, 0xb6, 0x3f, 0x5d, 0xef, 0xe0, 0x37, 0x07, 0xcc, 0x0c, 0x86, 0xa1, 0x3b, 0x01,
+	0x97, 0xc7, 0xd1, 0x38, 0x3c, 0xea, 0xdc, 0xe3, 0x4b, 0xd7, 0xa7, 0x0e, 0x8b, 0xc6, 0xe1, 0x3d,
+	0xb8, 0x38, 0xc2, 0x61, 0x64, 0x2a, 0xbd, 0x5e, 0x7c, 0xda, 0x4d, 0x76, 0xe0, 0xf9, 0xc3, 0xd2,
+	0x38, 0x42, 0xce, 0x5f, 0x38, 0xb9, 0xcb, 0xd5, 0x9a, 0x7d, 0x83, 0xca, 0x46, 0x7f, 0x09, 0x3e,
+	0x1c, 0xa1, 0x5f, 0xaf, 0x07, 0xcf, 0xac, 0x0c, 0xcf, 0xae, 0x8c, 0xd3, 0xd9, 0x54, 0x9e, 0xef,
+	0x1d, 0xb8, 0xce, 0xfe, 0x81, 0xeb, 0xfc, 0x3e, 0x70, 0x9d, 0x0f, 0x87, 0x6e, 0x66, 0xff, 0xd0,
+	0xcd, 0xfc, 0x38, 0x74, 0x33, 0x2f, 0x1f, 0x9d, 0x1a, 0xed, 0x58, 0x68, 0x52, 0x12, 0x7a, 0xa1,
+	0x26, 0x1d, 0x58, 0xc8, 0x5b, 0x4b, 0xf8, 0x75, 0xef, 0x3e, 0x33, 0xf1, 0xc1, 0x15, 0xb3, 0x69,
+	0xef, 0xff, 0x09, 0x00, 0x00, 0xff, 0xff, 0xdd, 0x3f, 0xb0, 0x48, 0x65, 0x06, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -273,9 +353,10 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
 	// OsmosisSpotPrice return spot price of pair Osmo/nativeToken
-	OsmosisSpotPrice(ctx context.Context, in *QueryOsmosisSpotPriceRequest, opts ...grpc.CallOption) (*QueryOsmosisSpotPriceResponse, error)
+	OsmosisArithmeticTwap(ctx context.Context, in *QueryOsmosisArithmeticTwapRequest, opts ...grpc.CallOption) (*QueryOsmosisArithmeticTwapResponse, error)
 	// FeeabsModuleBalances return total balances of feeabs module
 	FeeabsModuleBalances(ctx context.Context, in *QueryFeeabsModuleBalacesRequest, opts ...grpc.CallOption) (*QueryFeeabsModuleBalacesResponse, error)
+	HostChainConfig(ctx context.Context, in *QueryHostChainConfigRequest, opts ...grpc.CallOption) (*QueryHostChainConfigRespone, error)
 }
 
 type queryClient struct {
@@ -286,9 +367,9 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 	return &queryClient{cc}
 }
 
-func (c *queryClient) OsmosisSpotPrice(ctx context.Context, in *QueryOsmosisSpotPriceRequest, opts ...grpc.CallOption) (*QueryOsmosisSpotPriceResponse, error) {
-	out := new(QueryOsmosisSpotPriceResponse)
-	err := c.cc.Invoke(ctx, "/feeabstraction.absfee.v1beta1.Query/OsmosisSpotPrice", in, out, opts...)
+func (c *queryClient) OsmosisArithmeticTwap(ctx context.Context, in *QueryOsmosisArithmeticTwapRequest, opts ...grpc.CallOption) (*QueryOsmosisArithmeticTwapResponse, error) {
+	out := new(QueryOsmosisArithmeticTwapResponse)
+	err := c.cc.Invoke(ctx, "/feeabstraction.absfee.v1beta1.Query/OsmosisArithmeticTwap", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -304,43 +385,56 @@ func (c *queryClient) FeeabsModuleBalances(ctx context.Context, in *QueryFeeabsM
 	return out, nil
 }
 
+func (c *queryClient) HostChainConfig(ctx context.Context, in *QueryHostChainConfigRequest, opts ...grpc.CallOption) (*QueryHostChainConfigRespone, error) {
+	out := new(QueryHostChainConfigRespone)
+	err := c.cc.Invoke(ctx, "/feeabstraction.absfee.v1beta1.Query/HostChainConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// OsmosisSpotPrice return spot price of pair Osmo/nativeToken
-	OsmosisSpotPrice(context.Context, *QueryOsmosisSpotPriceRequest) (*QueryOsmosisSpotPriceResponse, error)
+	OsmosisArithmeticTwap(context.Context, *QueryOsmosisArithmeticTwapRequest) (*QueryOsmosisArithmeticTwapResponse, error)
 	// FeeabsModuleBalances return total balances of feeabs module
 	FeeabsModuleBalances(context.Context, *QueryFeeabsModuleBalacesRequest) (*QueryFeeabsModuleBalacesResponse, error)
+	HostChainConfig(context.Context, *QueryHostChainConfigRequest) (*QueryHostChainConfigRespone, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
 type UnimplementedQueryServer struct {
 }
 
-func (*UnimplementedQueryServer) OsmosisSpotPrice(ctx context.Context, req *QueryOsmosisSpotPriceRequest) (*QueryOsmosisSpotPriceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OsmosisSpotPrice not implemented")
+func (*UnimplementedQueryServer) OsmosisArithmeticTwap(ctx context.Context, req *QueryOsmosisArithmeticTwapRequest) (*QueryOsmosisArithmeticTwapResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OsmosisArithmeticTwap not implemented")
 }
 func (*UnimplementedQueryServer) FeeabsModuleBalances(ctx context.Context, req *QueryFeeabsModuleBalacesRequest) (*QueryFeeabsModuleBalacesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FeeabsModuleBalances not implemented")
+}
+func (*UnimplementedQueryServer) HostChainConfig(ctx context.Context, req *QueryHostChainConfigRequest) (*QueryHostChainConfigRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HostChainConfig not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
 	s.RegisterService(&_Query_serviceDesc, srv)
 }
 
-func _Query_OsmosisSpotPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryOsmosisSpotPriceRequest)
+func _Query_OsmosisArithmeticTwap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryOsmosisArithmeticTwapRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).OsmosisSpotPrice(ctx, in)
+		return srv.(QueryServer).OsmosisArithmeticTwap(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/feeabstraction.absfee.v1beta1.Query/OsmosisSpotPrice",
+		FullMethod: "/feeabstraction.absfee.v1beta1.Query/OsmosisArithmeticTwap",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).OsmosisSpotPrice(ctx, req.(*QueryOsmosisSpotPriceRequest))
+		return srv.(QueryServer).OsmosisArithmeticTwap(ctx, req.(*QueryOsmosisArithmeticTwapRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -363,24 +457,46 @@ func _Query_FeeabsModuleBalances_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_HostChainConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryHostChainConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).HostChainConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/feeabstraction.absfee.v1beta1.Query/HostChainConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).HostChainConfig(ctx, req.(*QueryHostChainConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "feeabstraction.absfee.v1beta1.Query",
 	HandlerType: (*QueryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "OsmosisSpotPrice",
-			Handler:    _Query_OsmosisSpotPrice_Handler,
+			MethodName: "OsmosisArithmeticTwap",
+			Handler:    _Query_OsmosisArithmeticTwap_Handler,
 		},
 		{
 			MethodName: "FeeabsModuleBalances",
 			Handler:    _Query_FeeabsModuleBalances_Handler,
+		},
+		{
+			MethodName: "HostChainConfig",
+			Handler:    _Query_HostChainConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "feeabstraction/absfee/v1beta1/query.proto",
 }
 
-func (m *QueryOsmosisSpotPriceRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryHostChainConfigRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -390,12 +506,12 @@ func (m *QueryOsmosisSpotPriceRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryOsmosisSpotPriceRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryHostChainConfigRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryOsmosisSpotPriceRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryHostChainConfigRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -410,7 +526,7 @@ func (m *QueryOsmosisSpotPriceRequest) MarshalToSizedBuffer(dAtA []byte) (int, e
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryOsmosisSpotPriceResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryHostChainConfigRespone) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -420,40 +536,89 @@ func (m *QueryOsmosisSpotPriceResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryOsmosisSpotPriceResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryHostChainConfigRespone) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryOsmosisSpotPriceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryHostChainConfigRespone) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	{
-		size := m.SpotPrice.Size()
+		size, err := m.HostChainConfig.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
 		i -= size
-		if _, err := m.SpotPrice.MarshalTo(dAtA[i:]); err != nil {
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryOsmosisArithmeticTwapRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryOsmosisArithmeticTwapRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryOsmosisArithmeticTwapRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.IbcDenom) > 0 {
+		i -= len(m.IbcDenom)
+		copy(dAtA[i:], m.IbcDenom)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.IbcDenom)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryOsmosisArithmeticTwapResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryOsmosisArithmeticTwapResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryOsmosisArithmeticTwapResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size := m.ArithmeticTwap.Size()
+		i -= size
+		if _, err := m.ArithmeticTwap.MarshalTo(dAtA[i:]); err != nil {
 			return 0, err
 		}
 		i = encodeVarintQuery(dAtA, i, uint64(size))
 	}
 	i--
-	dAtA[i] = 0x1a
-	if len(m.QuoteAsset) > 0 {
-		i -= len(m.QuoteAsset)
-		copy(dAtA[i:], m.QuoteAsset)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.QuoteAsset)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.BaseAsset) > 0 {
-		i -= len(m.BaseAsset)
-		copy(dAtA[i:], m.BaseAsset)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.BaseAsset)))
-		i--
-		dAtA[i] = 0xa
-	}
+	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -528,7 +693,7 @@ func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *QueryOsmosisSpotPriceRequest) Size() (n int) {
+func (m *QueryHostChainConfigRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -541,21 +706,37 @@ func (m *QueryOsmosisSpotPriceRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryOsmosisSpotPriceResponse) Size() (n int) {
+func (m *QueryHostChainConfigRespone) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.BaseAsset)
+	l = m.HostChainConfig.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryOsmosisArithmeticTwapRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.IbcDenom)
 	if l > 0 {
 		n += 1 + l + sovQuery(uint64(l))
 	}
-	l = len(m.QuoteAsset)
-	if l > 0 {
-		n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryOsmosisArithmeticTwapResponse) Size() (n int) {
+	if m == nil {
+		return 0
 	}
-	l = m.SpotPrice.Size()
+	var l int
+	_ = l
+	l = m.ArithmeticTwap.Size()
 	n += 1 + l + sovQuery(uint64(l))
 	return n
 }
@@ -590,7 +771,7 @@ func sovQuery(x uint64) (n int) {
 func sozQuery(x uint64) (n int) {
 	return sovQuery(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *QueryOsmosisSpotPriceRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryHostChainConfigRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -613,10 +794,10 @@ func (m *QueryOsmosisSpotPriceRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryOsmosisSpotPriceRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryHostChainConfigRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryOsmosisSpotPriceRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryHostChainConfigRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -672,7 +853,7 @@ func (m *QueryOsmosisSpotPriceRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryOsmosisSpotPriceResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryHostChainConfigRespone) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -695,17 +876,17 @@ func (m *QueryOsmosisSpotPriceResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryOsmosisSpotPriceResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryHostChainConfigRespone: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryOsmosisSpotPriceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryHostChainConfigRespone: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BaseAsset", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field HostChainConfig", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowQuery
@@ -715,27 +896,78 @@ func (m *QueryOsmosisSpotPriceResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthQuery
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthQuery
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.BaseAsset = string(dAtA[iNdEx:postIndex])
+			if err := m.HostChainConfig.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
-		case 2:
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryOsmosisArithmeticTwapRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryOsmosisArithmeticTwapRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryOsmosisArithmeticTwapRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field QuoteAsset", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field IbcDenom", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -763,11 +995,61 @@ func (m *QueryOsmosisSpotPriceResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.QuoteAsset = string(dAtA[iNdEx:postIndex])
+			m.IbcDenom = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryOsmosisArithmeticTwapResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryOsmosisArithmeticTwapResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryOsmosisArithmeticTwapResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SpotPrice", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ArithmeticTwap", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -795,7 +1077,7 @@ func (m *QueryOsmosisSpotPriceResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.SpotPrice.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.ArithmeticTwap.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
