@@ -7,11 +7,6 @@
         "subspace": "feeabs",
         "key": "nativeibcedinosmosis",
         "value": "uatom"
-      },
-      {
-        "subspace": "feeabs",
-        "key": "osmosisquerychannel",
-        "value": "channel-0"
       }
     ],
     "deposit": "10000000000stake"

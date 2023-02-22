@@ -20,9 +20,10 @@ echo $CONTRACT
 osmosisd q wasm contract-state smart osmo17p9rzwnnfxcjp32un9ug7yhhzgtkhvl9jfksztgw5uh69wac2pgs5yczr8 '{"get_route":{"input_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878","output_denom":"uosmo"}}'
 hermes --config scripts/relayer_hermes/config.toml create channel --a-chain testing --b-chain feeappd-t1 --a-port wasm.osmo17p9rzwnnfxcjp32un9ug7yhhzgtkhvl9jfksztgw5uh69wac2pgs5yczr8 --b-port feeabs --new-client-connection --yes
 
-#osmosisd tx wasm store scripts/bytecode/ibc_stargate.wasm --keyring-backend=test --home=$HOME/.osmosisd/validator1 --from osmo1hj5fveer5cjtn4wd6wstzugjfdxzl0xpwhpz63 --chain-id testing --gas 10000000 --fees 25000stake --yes
+#osmosisd tx wasm store scripts/bytecode/ibc_stargate-aarch64.wasm --keyring-backend=test --home=$HOME/.osmosisd --from osmo1hj5fveer5cjtn4wd6wstzugjfdxzl0xpwhpz63 --chain-id testing --gas 10000000 --fees 25000stake --yes
 #INIT='{"packet_lifetime":100}'
-#osmosisd tx wasm instantiate 1 "$INIT" --keyring-backend=test --home=$HOME/.osmosisd/validator1 --from deployer --chain-id testing --label "test" --no-admin --yes
-# hermes --config scripts/relayer_hermes/config.toml create channel --a-chain testing --b-chain feeappd-t1 --a-port wasm.osmo14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sq2r9g9 --b-port feeabs --new-client-connection --yes
-#osmosisd tx gamm create-pool --pool-file scripts/pool.json --from validator1 --keyring-backend=test --home=$HOME/.osmosisd/validator1 --chain-id testing --yes
+#osmosisd tx wasm instantiate 1 "$INIT" --keyring-backend=test --home=$HOME/.osmosisd --from deployer --chain-id testing --label "test" --no-admin --yes
+#hermes --config scripts/relayer_hermes/config.toml create channel --a-chain testing --b-chain feeappd-t1 --a-port wasm.osmo14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sq2r9g9 --b-port feeabs --new-client-connection --yes
+#osmosisd tx gamm create-pool --pool-file scripts/pool.json --from validator1 --keyring-backend=test --home=$HOME/.osmosisd --chain-id testing --yes
 #feeappd tx feeabs interchain-query osmo1ekqk6ms4fqf2mfeazju4pcu3jq93lcdsfl0tah --keyring-backend test --chain-id feeappd-t1 --from feeacc
+#feeappd tx feeabs query-osmosis-twap uatom 1676778631 --keyring-backend test --chain-id feeappd-t1 --from feeacc
