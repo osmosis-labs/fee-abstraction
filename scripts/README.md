@@ -30,11 +30,21 @@ spot_price: "2.000000000000000000"
 ## Gov proposal
 
 ```
-feeappd tx gov submit-proposal param-change scripts/proposal1.json --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes
+feeappd tx gov submit-proposal param-change scripts/proposal.json --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes
 
 feeappd tx gov vote 1 yes --from feeapp1 --keyring-backend test --chain-id feeappd-t1 --yes
 
 feeappd tx gov submit-proposal add-hostzone-config scripts/host_zone.json --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes               
 
 feeappd tx gov vote 1 yes --from feeapp1 --keyring-backend test --chain-id feeappd-t1 --yes
+```
+
+```
+feeappd tx gov submit-proposal param-change scripts/proposal_query.json --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes
+
+feeappd tx gov vote 1 yes --from feeapp1 --keyring-backend test --chain-id feeappd-t1 --yes
+
+feeappd tx gov submit-proposal add-hostzone-config scripts/host_zone_query.json --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes               
+
+feeappd tx gov vote 2 yes --from feeapp1 --keyring-backend test --chain-id feeappd-t1 --yes
 ```
