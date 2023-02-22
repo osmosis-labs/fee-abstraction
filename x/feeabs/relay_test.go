@@ -70,13 +70,13 @@ func TestFeeAbsIBCToContract(t *testing.T) {
 			// set params
 			params := chainA.GetTestSupport().FeeAbsKeeper().GetParams(chainA.GetContext())
 			params.NativeIbcedInOsmosis = "denom"
-			params.OsmosisQueryChannel = path.EndpointA.ChannelID
 			chainA.GetTestSupport().FeeAbsKeeper().SetParams(chainA.GetContext(), params)
 
 			// set hostzone config
 			hostZoneConfig := types.HostChainFeeAbsConfig{
-				IbcDenom:                           "ibc/denom",
-				HostChainNativeDenomIbcedOnOsmosis: "denom",
+				IbcDenom:                "ibc/denom",
+				OsmosisPoolTokenDenomIn: "denom",
+				OsmosisQueryChannel:     path.EndpointA.ChannelID,
 			}
 			err := chainA.GetTestSupport().FeeAbsKeeper().SetHostZoneConfig(chainA.GetContext(), "ibc/denom", hostZoneConfig)
 			require.NoError(t, err)

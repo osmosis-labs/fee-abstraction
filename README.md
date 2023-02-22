@@ -46,4 +46,6 @@ We use osmosis's ibc hook feature to do this. We basically ibc transfer to the o
  - Main repo: https://github.com/notional-labs/fee-abstraction
  - Contract repo: https://github.com/notional-labs/feeabstraction-contract
 
-Test
+```
+{"wasm":{"contract":"osmo1nc5tatafv6eyq7llkr2gv50ff9e22mnf70qgjlv737ktmt4eswrqvlx82r","msg":{"osmosis_swap":{"input_coin":{"denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878","amount":"1000"},"output_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878","slippage":{"twap":{"slippage_percentage":"20","window_seconds":10}},"receiver":"feeabs1hj5fveer5cjtn4wd6wstzugjfdxzl0xpjhy828"}},"receiver":"feeabs1hj5fveer5cjtn4wd6wstzugjfdxzl0xpjhy828"}}
+```

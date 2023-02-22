@@ -16,10 +16,11 @@ type OsmosisSwapMsg struct {
 	OsmosisSwap Swap `json:"osmosis_swap"`
 }
 type Swap struct {
-	InputCoin   sdk.Coin `json:"input_coin"`
-	OutPutDenom string   `json:"output_denom"`
-	Slippage    Twap     `json:"slippage"`
-	Receiver    string   `json:"receiver"`
+	InputCoin        sdk.Coin `json:"input_coin"`
+	OutPutDenom      string   `json:"output_denom"`
+	Slippage         Twap     `json:"slippage"`
+	Receiver         string   `json:"receiver"`
+	OnFailedDelivery string   `json:"on_failed_delivery"`
 }
 
 type Twap struct {
@@ -111,7 +112,8 @@ func BuildCrossChainSwapMemo(inputToken sdk.Coin, outputDenom string, contractAd
 				WindowSeconds:      10,
 			},
 		},
-		Receiver: receiver,
+		Receiver:         receiver,
+		OnFailedDelivery: "do_nothing",
 	}
 
 	msgSwap := OsmosisSwapMsg{

@@ -138,6 +138,7 @@ var (
 			upgradeclient.CancelProposalHandler,
 			ibcclientclient.UpdateClientProposalHandler,
 			ibcclientclient.UpgradeProposalHandler,
+			feeabsmodule.UpdateClientProposalHandler,
 		),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
@@ -392,15 +393,6 @@ func NewFeeAbs(
 		scopedIBCKeeper,
 	)
 
-	// register the proposal types
-	govRouter := govtypes.NewRouter()
-	govRouter.
-		AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
-		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
-		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
-		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
-		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper))
-
 	// Create Transfer Keepers
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec,
@@ -413,6 +405,34 @@ func NewFeeAbs(
 		app.BankKeeper,
 		scopedTransferKeeper,
 	)
+
+	app.FeeabsKeeper = feeabskeeper.NewKeeper(
+		appCodec,
+		keys[feeabstypes.StoreKey],
+		keys[feeabstypes.MemStoreKey], // TODO: Need to re-check, do we need this memKey?
+		app.GetSubspace(feeabstypes.ModuleName),
+		app.StakingKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.TransferKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedFeeabsKeeper,
+	)
+
+	feeabsModule := feeabsmodule.NewAppModule(appCodec, app.FeeabsKeeper)
+	feeabsIBCModule := feeabsmodule.NewIBCModule(appCodec, app.FeeabsKeeper)
+
+	// register the proposal types
+	govRouter := govtypes.NewRouter()
+	govRouter.
+		AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
+		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
+		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
+		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
+		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
+		AddRoute(feeabstypes.RouterKey, feeabsmodule.NewAddHostZoneProposal(app.FeeabsKeeper))
+
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
 	transferIBCModule := transfer.NewIBCModule(app.TransferKeeper)
 
@@ -438,23 +458,6 @@ func NewFeeAbs(
 	)
 	icaModule := ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper)
 	icaHostIBCModule := icahost.NewIBCModule(app.ICAHostKeeper)
-
-	app.FeeabsKeeper = feeabskeeper.NewKeeper(
-		appCodec,
-		keys[feeabstypes.StoreKey],
-		keys[feeabstypes.MemStoreKey], // TODO: Need to re-check, do we need this memKey?
-		app.GetSubspace(feeabstypes.ModuleName),
-		app.StakingKeeper,
-		app.AccountKeeper,
-		app.BankKeeper,
-		app.TransferKeeper,
-		app.IBCKeeper.ChannelKeeper,
-		&app.IBCKeeper.PortKeeper,
-		scopedFeeabsKeeper,
-	)
-
-	feeabsModule := feeabsmodule.NewAppModule(appCodec, app.FeeabsKeeper)
-	feeabsIBCModule := feeabsmodule.NewIBCModule(appCodec, app.FeeabsKeeper)
 
 	// create evidence keeper with router
 	evidenceKeeper := evidencekeeper.NewKeeper(

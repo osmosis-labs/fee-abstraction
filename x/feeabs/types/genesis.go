@@ -6,11 +6,9 @@ import fmt "fmt"
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		Params: &Params{
-			OsmosisQueryChannel:             "",
-			OsmosisQueryContract:            "",
 			OsmosisExchangeRateUpdatePeriod: DefaultQueryPeriod,
 			AccumulatedOsmosisFeeSwapPeriod: DefaultSwapPeriod,
-			NativeIbcedInOsmosis:            "",
+			NativeIbcedInOsmosis:            "ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
 		},
 		Epochs: []EpochInfo{NewGenesisEpochInfo("query", DefaultQueryPeriod), NewGenesisEpochInfo("swap", DefaultSwapPeriod)},
 		PortId: IBCPortID,
