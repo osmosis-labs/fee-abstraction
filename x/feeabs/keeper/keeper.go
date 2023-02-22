@@ -62,6 +62,7 @@ func NewKeeper(
 }
 
 func (k Keeper) GetFeeAbsModuleAddress() sdk.AccAddress {
+	//TODO: hard code address for now, need to fix then
 	return sdk.MustAccAddressFromBech32("feeabs1hj5fveer5cjtn4wd6wstzugjfdxzl0xpjhy828")
 }
 
