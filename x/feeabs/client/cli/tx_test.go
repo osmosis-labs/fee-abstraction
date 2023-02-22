@@ -11,15 +11,15 @@ import (
 
 func TestParseProposal(t *testing.T) {
 	expectedConfig := types.HostChainFeeAbsConfig{
-		IbcDenom:                           "ibc/123",
-		HostChainNativeDenomIbcedOnOsmosis: "ibc/456",
-		MiddlewareAddress:                  "cosmos123",
-		IbcTransferChannel:                 "channel-1",
-		HostZoneIbcTransferChannel:         "channel-2",
-		CrosschainSwapAddress:              "osmo123456",
-		PoolId:                             1,
-		IsOsmosis:                          false,
-		Frozen:                             false,
+		IbcDenom:                   "ibc/123",
+		OsmosisPoolTokenDenomIn:    "ibc/456",
+		MiddlewareAddress:          "cosmos123",
+		IbcTransferChannel:         "channel-1",
+		HostZoneIbcTransferChannel: "channel-2",
+		CrosschainSwapAddress:      "osmo123456",
+		PoolId:                     1,
+		IsOsmosis:                  false,
+		Frozen:                     false,
 	}
 	cdc := codec.NewLegacyAmino()
 	okJSON := testutil.WriteToNewTempFile(t, `

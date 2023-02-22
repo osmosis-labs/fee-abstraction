@@ -4,12 +4,12 @@ osmosisd tx wasm store scripts/bytecode/ibc_stargate.wasm --keyring-backend=test
 
 sleep 2
 
-ID=5
+ID=3
 
-INIT='{"packet_lifetime":10000000}'
+INIT='{"packet_lifetime":1000000000}'
 osmosisd tx wasm instantiate $ID "$INIT" --keyring-backend=test --from validator1 --chain-id testing --label "test" --no-admin --yes
 
-CONTRACT=$(osmosisd query wasm list-contract-by-code 5 --output json | jq -r '.contracts[-1]')
+CONTRACT=$(osmosisd query wasm list-contract-by-code 3 --output json | jq -r '.contracts[-1]')
 echo $CONTRACT
 query_params='{"query_stargate_twap":{"pool_id":1,"token_in_denom":"uosmo","token_out_denom":"uatom","with_swap_fee":false}}'
 osmosisd query wasm contract-state smart osmo1eyfccmjm6732k7wp4p6gdjwhxjwsvje44j0hfx8nkgrm8fs7vqfsn92ayh "$query_params"

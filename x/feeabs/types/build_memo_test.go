@@ -58,10 +58,10 @@ func TestParsePacketMiddlewareMemoToMemo(t *testing.T) {
 	execepted_memo_str := `{"receiver":"cosmos123","port":"transfer","channel":"channel-56","timeout":1800000,"retries":8,"next":"{\"wasm\":{\"contract\":\"\",\"msg\":{\"osmosis_swap\":{\"input_coin\":{\"denom\":\"stake\",\"amount\":\"123\"},\"output_denom\":\"uosmo\",\"slippage\":{\"twap\":{\"slippage_percentage\":\"20\",\"window_seconds\":10}},\"receiver\":\"osmo1c3ljch9dfw5kf52nfwpxd2zmj2ese7agnx0p9tenkrryasrle5sqf3ftpg\"}},\"receiver\":\"osmo1c3ljch9dfw5kf52nfwpxd2zmj2ese7agnx0p9tenkrryasrle5sqf3ftpg\"}}"}`
 
 	config := types.HostChainFeeAbsConfig{
-		IbcDenom:                           "ibc/123",
-		HostChainNativeDenomIbcedOnOsmosis: "ibc/456",
-		MiddlewareAddress:                  "cosmos123",
-		HostZoneIbcTransferChannel:         "channel-56",
+		IbcDenom:                   "ibc/123",
+		OsmosisPoolTokenDenomIn:    "ibc/456",
+		MiddlewareAddress:          "cosmos123",
+		HostZoneIbcTransferChannel: "channel-56",
 	}
 
 	// TODO: need to check assert msg

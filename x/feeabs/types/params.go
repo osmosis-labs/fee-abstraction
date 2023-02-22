@@ -18,11 +18,9 @@ const (
 
 // Parameter keys store keys.
 var (
-	KeyOsmosisQueryChannel             = []byte("osmosisquerychannel")
-	KeyOsmosisQueryContract            = []byte("osmosisquerycontract")
 	KeyOsmosisExchangeRateUpdatePeriod = []byte("osmosisexchangerateupdateperiod")
 	KeyAccumulatedOsmosisFeeSwapPeriod = []byte("accumulatedosmosisfeeswapperiod")
-	NativeIbcedInOsmosis               = []byte("nativeibcedinosmosis")
+	KeyNativeIbcedInOsmosis            = []byte("nativeibcedinosmosis")
 
 	_ paramtypes.ParamSet = &Params{}
 )
@@ -35,25 +33,14 @@ func ParamKeyTable() paramtypes.KeyTable {
 // Implements params.ParamSet.
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
-		paramtypes.NewParamSetPair(KeyOsmosisQueryChannel, &p.OsmosisQueryChannel, validateChannelID),
-		paramtypes.NewParamSetPair(KeyOsmosisQueryContract, &p.OsmosisQueryContract, validateOsmosisQueryContract),
 		paramtypes.NewParamSetPair(KeyOsmosisExchangeRateUpdatePeriod, &p.OsmosisExchangeRateUpdatePeriod, noOp),
 		paramtypes.NewParamSetPair(KeyAccumulatedOsmosisFeeSwapPeriod, &p.AccumulatedOsmosisFeeSwapPeriod, noOp),
-		paramtypes.NewParamSetPair(NativeIbcedInOsmosis, &p.NativeIbcedInOsmosis, noOp),
+		paramtypes.NewParamSetPair(KeyNativeIbcedInOsmosis, &p.NativeIbcedInOsmosis, noOp),
 	}
 }
 
 // Validate also validates params info.
 func (p Params) Validate() error {
-	err := validateChannelID(p.OsmosisQueryChannel)
-	if err != nil {
-		return fmt.Errorf("invalid connection id %s", err)
-	}
-
-	err = validateOsmosisQueryContract(p.OsmosisQueryContract)
-	if err != nil {
-		return fmt.Errorf("invalid query contract %s", err)
-	}
 
 	if p.OsmosisExchangeRateUpdatePeriod == 0 {
 		return fmt.Errorf("invalid zero period")

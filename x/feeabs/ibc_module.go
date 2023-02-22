@@ -163,6 +163,11 @@ func (am IBCModule) OnAcknowledgementPacket(
 	acknowledgement []byte,
 	relayer sdk.AccAddress,
 ) error {
+
+	fmt.Println("======twap===========")
+	fmt.Println(string(acknowledgement))
+	fmt.Println("=======twap==========")
+
 	var ack channeltypes.Acknowledgement
 	if err := types.ModuleCdc.UnmarshalJSON(acknowledgement, &ack); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
@@ -197,7 +202,14 @@ func (am IBCModule) OnAcknowledgementPacket(
 			if err != nil {
 				return false
 			}
+			fmt.Println("======twap===========")
+			fmt.Println(twapRate)
+			fmt.Println("=======twap==========")
+
 			am.keeper.SetTwapRate(ctx, hostZoneConfig.IbcDenom, twapRate)
+			fmt.Println("======twap=rate==========")
+			fmt.Println(am.keeper.GetTwapRate(ctx, hostZoneConfig.IbcDenom))
+			fmt.Println("=======twap=rate=========")
 
 			return false
 		})

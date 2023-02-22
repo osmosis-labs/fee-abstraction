@@ -30,6 +30,7 @@ func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQ
 	fmt.Println("=========allthings=================")
 	fmt.Println(k.GetAllHostZoneConfig(ctx))
 	fmt.Println("==========================")
+	// k.RemoveHostZoneConfig(ctx, "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518")
 	fmt.Println(k.GetHostZoneConfig(ctx, "ibc"))
 	fmt.Println("==========================")
 	k.handleOsmosisIbcQuery(ctx)
@@ -44,7 +45,7 @@ func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQ
 // Need to remove this
 func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossChain) (*types.MsgSwapCrossChainResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	hostChainConfig, err := k.GetHostZoneConfig(ctx, msg.IbcDenom)
+	hostChainConfig, err := k.GetHostZoneConfig(ctx, "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518")
 	if err != nil {
 		return &types.MsgSwapCrossChainResponse{}, nil
 	}
@@ -55,9 +56,9 @@ func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossCha
 
 	// TODO: don't use if/else logic
 	if hostChainConfig.IsOsmosis {
-		err = k.transferIBCTokenToOsmosisChain(ctx, hostChainConfig)
+		err = k.transferIBCTokenToOsmosisChainWithIBCHookMemo(ctx, hostChainConfig)
 	} else {
-		err = k.transferIBCTokenToHostChain(ctx, hostChainConfig)
+		err = k.transferIBCTokenToHostChainWithMiddlewareMemo(ctx, hostChainConfig)
 	}
 
 	if err != nil {

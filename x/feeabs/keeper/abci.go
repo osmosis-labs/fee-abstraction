@@ -70,9 +70,9 @@ func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
 		}
 
 		if hostZoneConfig.IsOsmosis {
-			err = k.transferIBCTokenToOsmosisChain(ctx, hostZoneConfig)
+			err = k.transferIBCTokenToOsmosisChainWithIBCHookMemo(ctx, hostZoneConfig)
 		} else {
-			err = k.transferIBCTokenToHostChain(ctx, hostZoneConfig)
+			err = k.transferIBCTokenToHostChainWithMiddlewareMemo(ctx, hostZoneConfig)
 		}
 
 		if err != nil {

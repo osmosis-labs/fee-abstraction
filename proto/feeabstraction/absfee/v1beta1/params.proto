@@ -11,18 +11,12 @@ option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
 
 // Params defines the parameters for the feeabs module.
 message Params {
-    // contract on osmosis with custom ibc logic for fetching spot price
-    string osmosis_query_contract = 1;
-
     // native ibced in osmosis
-    string native_ibced_in_osmosis = 2;
-
-    // connection id to osmosis chain
-    string osmosis_query_channel = 3;
+    string native_ibced_in_osmosis = 1;
 
     // we'll update the fee rate each `osmosis_exchange_rate_update_period`
-    google.protobuf.Duration osmosis_exchange_rate_update_period = 4 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
+    google.protobuf.Duration osmosis_exchange_rate_update_period = 2 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
     
     // we'll swap our accumulated osmosis fee to native token each `accumulated_osmosis_fee_swap_period` 
-    google.protobuf.Duration accumulated_osmosis_fee_swap_period = 5 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
+    google.protobuf.Duration accumulated_osmosis_fee_swap_period = 3 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
 }
