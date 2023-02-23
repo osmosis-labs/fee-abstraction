@@ -32,9 +32,13 @@ func (fadfd FeeAbstractionDeductFeeDecorate) AnteHandle(ctx sdk.Context, tx sdk.
 		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
 	}
 
-	feeDenom := feeTx.GetFee().GetDenomByIndex(0)
-	hostChainConfig, err := fadfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
+	fee := feeTx.GetFee()
+	if len(fee) == 0 {
+		return fadfd.normalDeductFeeAnteHandle(ctx, tx, simulate, next, feeTx)
+	}
 
+	feeDenom := fee.GetDenomByIndex(0)
+	hostChainConfig, err := fadfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
 	// normal deduct logic
 	if err != nil {
 		return fadfd.normalDeductFeeAnteHandle(ctx, tx, simulate, next, feeTx)
