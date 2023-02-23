@@ -5,6 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
@@ -59,6 +60,10 @@ func NewKeeper(
 		scopedKeeper:   scopedKeeper,
 		portKeeper:     portKeeper,
 	}
+}
+
+func (k Keeper) GetFeeAbsModuleAccount(ctx sdk.Context) authtypes.ModuleAccountI {
+	return k.ak.GetModuleAccount(ctx, types.ModuleName)
 }
 
 func (k Keeper) GetFeeAbsModuleAddress() sdk.AccAddress {

@@ -13,6 +13,7 @@ import (
 type AccountKeeper interface {
 	GetAccount(ctx sdk.Context, addr sdk.AccAddress) types.AccountI
 	GetModuleAddress(moduleName string) sdk.AccAddress
+	GetModuleAccount(ctx sdk.Context, moduleName string) types.ModuleAccountI
 }
 
 // BankKeeper defines the expected interface needed to retrieve account balances.
