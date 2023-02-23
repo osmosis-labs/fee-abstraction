@@ -32,10 +32,6 @@ func (fadfd FeeAbstractionDeductFeeDecorate) AnteHandle(ctx sdk.Context, tx sdk.
 		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
 	}
 
-	fmt.Println("==================Debug==================")
-	fmt.Printf("%v\n", feeTx.GetFee())
-	fmt.Println("==================Debug==================")
-
 	fee := feeTx.GetFee()
 	if len(fee) == 0 {
 		return fadfd.normalDeductFeeAnteHandle(ctx, tx, simulate, next, feeTx)

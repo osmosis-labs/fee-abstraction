@@ -104,15 +104,9 @@ func (k Keeper) verifyIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins) error {
 		return types.ErrInvalidIBCFees
 	}
 
-	iterator := k.IteratorHostZone(ctx)
-	defer iterator.Close()
-
-	for ; iterator.Valid(); iterator.Next() {
-		if ibcCoins[0].Denom == string(iterator.Key()) {
-			return nil
-		}
+	if k.HasHostZoneConfig(ctx, ibcCoins[0].Denom) {
+		return nil
 	}
-
 	// TODO: we should register error for this
 	return fmt.Errorf("unallowed %s for tx fee", ibcCoins[0].Denom)
 }
