@@ -10,7 +10,7 @@ echo $OWNER=$(osmosisd keys show deployer -a --keyring-backend test )
 hermes --config scripts/relayer_hermes/config.toml create channel --a-chain testing --b-chain feeappd-t1 --a-port transfer --b-port transfer --new-client-connection --yes
 
 feeappd tx ibc-transfer transfer transfer $CHANNEL_ID "$VALIDATOR" 1000000000000stake --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes
-sleep 22 
+sleep 20 
 echo $(osmosisd q bank balances "$VALIDATOR")
 
 DENOM=$(osmosisd q bank balances "$VALIDATOR" -o json | jq -r '.balances[] | select(.denom | contains("ibc")) | .denom')
@@ -43,13 +43,15 @@ SWAPROUTER_ADDRESS=$(osmosisd query wasm list-contract-by-code "$SWAPROUTER_CODE
 echo $SWAPROUTER_ADDRESS
 
 # Configure the swaprouter
+CONFIG_SWAPROUTER='{"set_route":{"input_denom":"uosmo","output_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878","pool_route":[{"pool_id":"1","token_out_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878"}]}}'
 
 CONFIG_SWAPROUTER='{"set_route":{"input_denom":"'$DENOM'","output_denom":"uosmo","pool_route":[{"pool_id":"1","token_out_denom":"uosmo"}]}}'
+
 echo ==========================
 echo $CONFIG_SWAPROUTER
 echo ==========================
 
-osmosisd tx wasm execute "$SWAPROUTER_ADDRESS" "$CONFIG_SWAPROUTER" --keyring-backend=test --home=$HOME/.osmosisd --from deployer --chain-id testing -y
+osmosisd tx wasm execute osmo14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sq2r9g9 "$CONFIG_SWAPROUTER" --keyring-backend=test --home=$HOME/.osmosisd --from deployer --chain-id testing -y
 sleep 5
 
 # Store the crosschainswap contract

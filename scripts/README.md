@@ -48,3 +48,9 @@ feeappd tx gov submit-proposal add-hostzone-config scripts/host_zone_query.json 
 
 feeappd tx gov vote 2 yes --from feeapp1 --keyring-backend test --chain-id feeappd-t1 --yes
 ```
+
+```
+{ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518 ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878  channel-0  osmo1nc5tatafv6eyq7llkr2gv50ff9e22mnf70qgjlv737ktmt4eswrqvlx82r 1 true true channel-1}
+B834FA96EB41DB72C1DFA61DAE0000C76065ADAC
+0ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518
+```

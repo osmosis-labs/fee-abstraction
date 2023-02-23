@@ -165,7 +165,7 @@ func (k Keeper) transferIBCTokenToHostChainWithMiddlewareMemo(ctx sdk.Context, h
 	token := k.bk.GetBalance(ctx, moduleAccountAddress, hostChainConfig.IbcDenom)
 	nativeDenomIBCedInOsmosis := k.GetParams(ctx).NativeIbcedInOsmosis
 
-	// TODO: don't use it in product version.
+	// TODO: don't use it in product version. Use params instead of.
 	if sdk.NewInt(1).GTE(token.Amount) {
 		return nil
 	}
@@ -262,13 +262,16 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) {
 		req := types.NewQueryArithmeticTwapToNowRequest(
 			hostZoneConfig.PoolId,
 			params.NativeIbcedInOsmosis,
-			"uosmo",
+			hostZoneConfig.OsmosisPoolTokenDenomIn,
 			startTime,
 		)
 		reqs = append(reqs, req)
 		fmt.Println("=======iter===========")
 		fmt.Println(hostZoneConfig)
 		fmt.Println("=======iter===========")
+		fmt.Println("=======req===========")
+		fmt.Println(req)
+		fmt.Println("=======req===========")
 
 		err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, hostZoneConfig.OsmosisQueryChannel)
 		if err != nil {
