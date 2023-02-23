@@ -251,7 +251,7 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 
 // TODO: use TWAP instead of spotprice
 func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) {
-	// TODO: it should be a chain param
+	// TODO: `time.Minute * 5` it should be a chain param
 	startTime := ctx.BlockTime().Add(-time.Minute * 5)
 	k.Logger(ctx).Info(fmt.Sprintf("Start time: %v", startTime.Unix()))
 
