@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-osmosisd tx wasm store scripts/fee_abstraction.wasm --keyring-backend=test  --from deployer --chain-id testing --gas 10000000 --fees 25000stake --yes
+osmosisd tx wasm store scripts/bytecode/ibc_stargate.wasm --keyring-backend=test  --from deployer --chain-id testing --gas 10000000 --fees 25000stake --yes
 
 sleep 5
 
-ID=1
+ID=3
 
-INIT='{"packet_lifetime":10000}'
+INIT='{"packet_lifetime":1000000}'
 osmosisd tx wasm instantiate 3 "$INIT" --keyring-backend=test  --from deployer --chain-id testing --label "test" --no-admin --yes
 
 sleep 5

@@ -43,11 +43,6 @@ func NewOsmosisQueryRequestPacketData(poolId uint64, baseDenom string, quoteDeno
 	}
 }
 
-// GetBytes is a helper for serializing.
-func (p OsmosisQuerySpotPriceRequestPacketData) GetBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
-}
-
 // NewQueryArithmeticTwapToNowRequest create new packet for ibc.
 func NewQueryArithmeticTwapToNowRequest(
 	poolID uint64,
@@ -72,11 +67,6 @@ func NewInterchainQueryRequest(path string, data []byte) InterchainQueryRequest 
 		Data: data,
 		Path: path,
 	}
-}
-
-// GetBytes is a helper for serializing.
-func (p InterchainQueryRequest) GetBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
 }
 
 func NewInterchainQueryRequestPacket(req []InterchainQueryRequest) InterchainQueryRequestPacket {

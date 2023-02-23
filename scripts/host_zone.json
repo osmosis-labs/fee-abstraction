@@ -4,7 +4,7 @@
 	"host_chain_fee_abs_config": 
 		{
 			"ibc_denom": "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
-			"osmosis_pool_token_denom_in": "ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
+			"osmosis_pool_token_denom_in": "uosmo",
 			"middleware_address": "",
 			"ibc_transfer_channel":"channel-0",
 			"host_zone_ibc_transfer_channel":"",
