@@ -29,6 +29,8 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
 			panic(err)
 		}
 	}
+
+	k.ak.GetModuleAccount(ctx, types.ModuleName)
 }
 
 // ExportGenesis returns the x/incentives module's exported genesis.

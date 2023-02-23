@@ -32,14 +32,18 @@ func (fadfd FeeAbstractionDeductFeeDecorate) AnteHandle(ctx sdk.Context, tx sdk.
 		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
 	}
 
-	feeDenom := feeTx.GetFee().GetDenomByIndex(0)
-	hostChainConfig, err := fadfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
-
-	// normal deduct logic
-	if err != nil {
+	fee := feeTx.GetFee()
+	if len(fee) == 0 {
 		return fadfd.normalDeductFeeAnteHandle(ctx, tx, simulate, next, feeTx)
 	}
 
+	feeDenom := fee.GetDenomByIndex(0)
+	hasHostChainConfig := fadfd.feeabsKeeper.HasHostZoneConfig(ctx, feeDenom)
+	if !hasHostChainConfig {
+		return fadfd.normalDeductFeeAnteHandle(ctx, tx, simulate, next, feeTx)
+	}
+
+	hostChainConfig, _ := fadfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
 	return fadfd.abstractionDeductFeeHandler(ctx, tx, simulate, next, feeTx, hostChainConfig)
 }
 
@@ -77,7 +81,7 @@ func (fadfd FeeAbstractionDeductFeeDecorate) normalDeductFeeAnteHandle(ctx sdk.C
 
 	// deduct the fees
 	if !feeTx.GetFee().IsZero() {
-		err = DeductFees(fadfd.bankKeeper, ctx, deductFeesFromAcc, feeTx.GetFee())
+		err = DeductFees(fadfd.bankKeeper, ctx, deductFeesFrom, feeTx.GetFee())
 		if err != nil {
 			return ctx, err
 		}
@@ -133,12 +137,12 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 
 	// deduct the fees
 	if !feeTx.GetFee().IsZero() {
-		err = fadfd.bankKeeper.SendCoinsFromAccountToModule(ctx, feeAbstractionPayer, types.ModuleName, ibcFees)
+		err = fadfd.bankKeeper.SendCoinsFromAccountToModule(ctx, feeAbstractionPayer, feeabstypes.ModuleName, ibcFees)
 		if err != nil {
 			return ctx, err
 		}
 
-		err = DeductFees(fadfd.bankKeeper, ctx, deductFeesFromAcc, nativeFees)
+		err = DeductFees(fadfd.bankKeeper, ctx, deductFeesFrom, nativeFees)
 		if err != nil {
 			return ctx, err
 		}
@@ -154,12 +158,12 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 }
 
 // DeductFees deducts fees from the given account.
-func DeductFees(bankKeeper types.BankKeeper, ctx sdk.Context, acc types.AccountI, fees sdk.Coins) error {
+func DeductFees(bankKeeper types.BankKeeper, ctx sdk.Context, accAddress sdk.AccAddress, fees sdk.Coins) error {
 	if !fees.IsValid() {
 		return sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "invalid fee amount: %s", fees)
 	}
 
-	err := bankKeeper.SendCoinsFromAccountToModule(ctx, acc.GetAddress(), types.FeeCollectorName, fees)
+	err := bankKeeper.SendCoinsFromAccountToModule(ctx, accAddress, types.FeeCollectorName, fees)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, err.Error())
 	}

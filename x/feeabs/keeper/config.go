@@ -6,6 +6,12 @@ import (
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
 )
 
+func (keeper Keeper) HasHostZoneConfig(ctx sdk.Context, ibcDenom string) bool {
+	store := ctx.KVStore(keeper.storeKey)
+	key := types.GetKeyHostZoneConfig(ibcDenom)
+	return store.Has(key)
+}
+
 func (keeper Keeper) GetHostZoneConfig(ctx sdk.Context, ibcDenom string) (chainConfig types.HostChainFeeAbsConfig, err error) {
 	store := ctx.KVStore(keeper.storeKey)
 	key := types.GetKeyHostZoneConfig(ibcDenom)

@@ -1,16 +1,12 @@
 package app
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	ibcante "github.com/cosmos/ibc-go/v4/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v4/modules/core/keeper"
 
-	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-
-	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	feeabsante "github.com/notional-labs/feeabstraction/v1/x/feeabs/ante"
 	feeabskeeper "github.com/notional-labs/feeabstraction/v1/x/feeabs/keeper"
 )
@@ -19,14 +15,8 @@ import (
 type HandlerOptions struct {
 	ante.HandlerOptions
 
-	GovKeeper            govkeeper.Keeper
-	IBCKeeper            *ibckeeper.Keeper
-	TxCounterStoreKey    sdk.StoreKey
-	FeeAbskeeper         feeabskeeper.Keeper
-	Cdc                  codec.BinaryCodec
-	BypassMinFeeMsgTypes []string
-	GlobalFeeSubspace    paramtypes.Subspace
-	StakingSubspace      paramtypes.Subspace
+	IBCKeeper    *ibckeeper.Keeper
+	FeeAbskeeper feeabskeeper.Keeper
 }
 
 // NewAnteHandler returns an AnteHandler that checks and increments sequence

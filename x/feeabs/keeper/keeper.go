@@ -5,6 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
@@ -61,6 +62,10 @@ func NewKeeper(
 	}
 }
 
+func (k Keeper) GetFeeAbsModuleAccount(ctx sdk.Context) authtypes.ModuleAccountI {
+	return k.ak.GetModuleAccount(ctx, types.ModuleName)
+}
+
 func (k Keeper) GetFeeAbsModuleAddress() sdk.AccAddress {
 	return k.ak.GetModuleAddress(types.ModuleName)
 }
@@ -99,15 +104,9 @@ func (k Keeper) verifyIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins) error {
 		return types.ErrInvalidIBCFees
 	}
 
-	iterator := k.IteratorHostZone(ctx)
-	defer iterator.Close()
-
-	for ; iterator.Valid(); iterator.Next() {
-		if ibcCoins[0].Denom == string(iterator.Key()) {
-			return nil
-		}
+	if k.HasHostZoneConfig(ctx, ibcCoins[0].Denom) {
+		return nil
 	}
-
 	// TODO: we should register error for this
 	return fmt.Errorf("unallowed %s for tx fee", ibcCoins[0].Denom)
 }
