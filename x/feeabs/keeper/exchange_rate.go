@@ -6,23 +6,6 @@ import (
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
 )
 
-// GetOsmosisExchangeRate get osmosis exchange rate (osmosis to native token)
-// TODO:  not use anymore, will remove this in v2.0.0
-func (k Keeper) GetOsmosisExchangeRate(ctx sdk.Context) (sdk.Dec, error) {
-	store := ctx.KVStore(k.storeKey)
-	bz := store.Get(types.OsmosisTwapExchangeRate)
-	if bz == nil {
-		return sdk.ZeroDec(), sdkerrors.Wrapf(types.ErrInvalidExchangeRate, "Osmosis does not have exchange rate data")
-	}
-
-	var osmosisExchangeRate sdk.Dec
-	if err := osmosisExchangeRate.Unmarshal(bz); err != nil {
-		panic(err)
-	}
-
-	return osmosisExchangeRate, nil
-}
-
 // GetTwapRate return Twap Price of ibcDenom
 func (k Keeper) GetTwapRate(ctx sdk.Context, ibcDenom string) (sdk.Dec, error) {
 	store := ctx.KVStore(k.storeKey)
