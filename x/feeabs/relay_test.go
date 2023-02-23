@@ -102,11 +102,11 @@ func TestFeeAbsIBCToContract(t *testing.T) {
 			require.Equal(t, 0, len(chainA.PendingSendPackets))
 			require.Equal(t, 0, len(chainB.PendingSendPackets))
 
-			expectedSpotPrice, err := sdk.NewDecFromStr("2.0")
+			expectedTwapPrice, err := sdk.NewDecFromStr("2.0")
 			require.NoError(t, err)
-			spotPrice, err := chainA.GetTestSupport().FeeAbsKeeper().GetOsmosisExchangeRate(chainA.GetContext())
+			twapPrice, err := chainA.GetTestSupport().FeeAbsKeeper().GetTwapRate(chainA.GetContext(), "ibc/denom")
 			require.NoError(t, err)
-			require.Equal(t, expectedSpotPrice, spotPrice)
+			require.Equal(t, expectedTwapPrice, twapPrice)
 		})
 	}
 }
