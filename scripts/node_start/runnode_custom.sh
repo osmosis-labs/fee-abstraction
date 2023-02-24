@@ -78,5 +78,5 @@ sed -i 's/cors_allowed_origins = \[\]/cors_allowed_origins = \["\*"\]/g' ~/.feea
 sed -i 's/enable = false/enable = true/g' ~/.feeappd/config/app.toml
 sed -i '/address = "tcp:\/\/0.0.0.0:1317"/c\address = "tcp:\/\/0.0.0.0:1318"' ~/.feeappd/config/app.toml
 
-feeappd config node tcp://127.0.0.1:2241
-feeappd start --pruning=nothing  --minimum-gas-prices=0uchau --p2p.laddr tcp://0.0.0.0:2240 --rpc.laddr tcp://127.0.0.1:2241 --grpc.address 127.0.0.1:2242 --grpc-web.address 127.0.0.1:2243
+feeappd config node tcp://0.0.0.0:2241
+feeappd start --pruning=nothing  --minimum-gas-prices=0uchau --p2p.laddr tcp://0.0.0.0:2240 --rpc.laddr tcp://0.0.0.0:2241 --grpc.address 0.0.0.0:2242 --grpc-web.address 0.0.0.0:2243
