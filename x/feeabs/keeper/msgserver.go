@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -26,15 +25,11 @@ var _ types.MsgServer = msgServer{}
 // Need to remove this
 func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQueryIbcDenomTWAP) (*types.MsgSendQueryIbcDenomTWAPResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	fmt.Println("=========allthings=================")
-	fmt.Println(k.GetAllHostZoneConfig(ctx))
-	fmt.Println("==========================")
-	// k.RemoveHostZoneConfig(ctx, "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518")
-	fmt.Println(k.GetHostZoneConfig(ctx, "ibc"))
-	fmt.Println("==========================")
-	k.handleOsmosisIbcQuery(ctx)
 	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
+	if err != nil {
+		return nil, err
+	}
+	err = k.handleOsmosisIbcQuery(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +40,7 @@ func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQ
 // Need to remove this
 func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossChain) (*types.MsgSwapCrossChainResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	hostChainConfig, err := k.GetHostZoneConfig(ctx, "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518")
+	hostChainConfig, err := k.GetHostZoneConfig(ctx, msg.IbcDenom)
 	if err != nil {
 		return &types.MsgSwapCrossChainResponse{}, nil
 	}

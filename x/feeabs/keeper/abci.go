@@ -57,7 +57,10 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 
 // executeAllHostChainTWAPQuery will iterate all hostZone and send the IBC Query Packet to Osmosis chain.
 func (k Keeper) executeAllHostChainTWAPQuery(ctx sdk.Context) {
-	k.handleOsmosisIbcQuery(ctx)
+	err := k.handleOsmosisIbcQuery(ctx)
+	if err != nil {
+		k.Logger(ctx).Error(fmt.Sprintf("Error executeAllHostChainTWAPQuery %s", err.Error()))
+	}
 }
 
 // executeAllHostChainTWAPSwap will iterate all hostZone and execute swap over chain.
@@ -76,7 +79,11 @@ func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
 		}
 
 		if err != nil {
-			k.FronzenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+			k.Logger(ctx).Error(fmt.Sprintf("Failed to transfer IBC token %s", err.Error()))
+			err = k.FronzenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+			if err != nil {
+				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozem host zone %s", err.Error()))
+			}
 		}
 
 		return false

@@ -56,7 +56,7 @@ func noOp(i interface{}) error {
 	return nil
 }
 
-func validateOsmosisIbcDenom(i interface{}) error {
+func validateOsmosisIbcDenom(i interface{}) error { //nolint:deadcode,unused
 	_, ok := i.(string)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
@@ -65,7 +65,7 @@ func validateOsmosisIbcDenom(i interface{}) error {
 	return nil
 }
 
-func validateChannelID(i interface{}) error {
+func validateChannelID(i interface{}) error { //nolint:deadcode,unused
 	_, ok := i.(string)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
@@ -74,7 +74,7 @@ func validateChannelID(i interface{}) error {
 	return nil
 }
 
-func validateOsmosisQueryContract(i interface{}) error {
+func validateOsmosisQueryContract(i interface{}) error { //nolint:deadcode,unused
 	_, ok := i.(string)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
@@ -83,7 +83,7 @@ func validateOsmosisQueryContract(i interface{}) error {
 	return nil
 }
 
-func validatePoolID(i interface{}) error {
+func validatePoolID(i interface{}) error { //nolint:deadcode,unused
 	_, ok := i.(uint64)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
@@ -92,7 +92,7 @@ func validatePoolID(i interface{}) error {
 	return nil
 }
 
-func validateActive(i interface{}) error {
+func validateActive(i interface{}) error { //nolint:deadcode,unused
 	_, ok := i.(bool)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)

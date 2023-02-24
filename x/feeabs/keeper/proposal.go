@@ -1,18 +1,12 @@
 package keeper
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
 )
 
 func (k Keeper) AddHostZoneProposal(ctx sdk.Context, p *types.AddHostZoneProposal) error {
 	config, _ := k.GetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom)
-	fmt.Println("=================")
-	fmt.Println(config)
-	fmt.Println("=================")
-
 	if (config != types.HostChainFeeAbsConfig{}) {
 		return types.ErrDuplicateHostZoneConfig
 	}

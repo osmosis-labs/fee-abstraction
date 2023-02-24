@@ -29,7 +29,7 @@ func TestParseProposal(t *testing.T) {
 	"host_chain_fee_abs_config": 
 		{
 			"ibc_denom": "ibc/123",
-			"host_chain_native_denom_ibced_on_osmosis": "ibc/456",
+			"osmosis_pool_token_denom_in": "ibc/456",
 			"middleware_address": "cosmos123",
 			"ibc_transfer_channel":"channel-1",
 			"host_zone_ibc_transfer_channel":"channel-2",
