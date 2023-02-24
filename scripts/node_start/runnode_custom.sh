@@ -39,23 +39,23 @@ from_scratch () {
   update_test_genesis '.consensus_params["block"]["max_gas"]="100000000"'
   update_test_genesis '.app_state["gov"]["voting_params"]["voting_period"]="45s"'
 
-  update_test_genesis '.app_state["staking"]["params"]["bond_denom"]="stake"'
-  update_test_genesis '.app_state["bank"]["params"]["send_enabled"]=[{"denom": "stake","enabled": true}]'
+  update_test_genesis '.app_state["staking"]["params"]["bond_denom"]="uchau"'
+  update_test_genesis '.app_state["bank"]["params"]["send_enabled"]=[{"denom": "uchau","enabled": true}]'
   # update_test_genesis '.app_state["staking"]["params"]["min_commission_rate"]="0.100000000000000000"' # sdk 46 only
 
-  update_test_genesis '.app_state["mint"]["params"]["mint_denom"]="stake"'
-  update_test_genesis '.app_state["gov"]["deposit_params"]["min_deposit"]=[{"denom": "stake","amount": "1000000"}]'
-  update_test_genesis '.app_state["crisis"]["constant_fee"]={"denom": "stake","amount": "1000"}'
+  update_test_genesis '.app_state["mint"]["params"]["mint_denom"]="uchau"'
+  update_test_genesis '.app_state["gov"]["deposit_params"]["min_deposit"]=[{"denom": "uchau","amount": "1000000"}]'
+  update_test_genesis '.app_state["crisis"]["constant_fee"]={"denom": "uchau","amount": "1000"}'
 
-  update_test_genesis '.app_state["tokenfactory"]["params"]["denom_creation_fee"]=[{"denom":"stake","amount":"100"}]'
+  update_test_genesis '.app_state["tokenfactory"]["params"]["denom_creation_fee"]=[{"denom":"uchau","amount":"100"}]'
 
-  update_test_genesis '.app_state["feeshare"]["params"]["allowed_denoms"]=["stake"]'
+  update_test_genesis '.app_state["feeshare"]["params"]["allowed_denoms"]=["uchau"]'
 
   # Allocate genesis accounts
-  feeappd add-genesis-account $KEY 10000000000000stake,100000000000000utest --keyring-backend $KEYRING
-  feeappd add-genesis-account feeacc 10000000000000stake,100000000000000utest --keyring-backend $KEYRING
+  feeappd add-genesis-account $KEY 10000000000000uchau,100000000000000utest --keyring-backend $KEYRING
+  feeappd add-genesis-account feeacc 10000000000000uchau,100000000000000utest --keyring-backend $KEYRING
 
-  feeappd gentx $KEY 10000000000000stake --keyring-backend $KEYRING --chain-id $CHAINID
+  feeappd gentx $KEY 10000000000000uchau --keyring-backend $KEYRING --chain-id $CHAINID
 
   # Collect genesis tx
   feeappd collect-gentxs
@@ -79,4 +79,4 @@ sed -i 's/enable = false/enable = true/g' ~/.feeappd/config/app.toml
 sed -i '/address = "tcp:\/\/0.0.0.0:1317"/c\address = "tcp:\/\/0.0.0.0:1318"' ~/.feeappd/config/app.toml
 
 feeappd config node tcp://127.0.0.1:2241
-feeappd start --pruning=nothing  --minimum-gas-prices=0stake --p2p.laddr tcp://0.0.0.0:2240 --rpc.laddr tcp://127.0.0.1:2241 --grpc.address 127.0.0.1:2242 --grpc-web.address 127.0.0.1:2243
+feeappd start --pruning=nothing  --minimum-gas-prices=0uchau --p2p.laddr tcp://0.0.0.0:2240 --rpc.laddr tcp://127.0.0.1:2241 --grpc.address 127.0.0.1:2242 --grpc-web.address 127.0.0.1:2243
