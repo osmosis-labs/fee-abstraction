@@ -12,25 +12,25 @@ option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
 
 // Msg is the cosmos.group.v1 Msg service.
 service Msg {
-    rpc SendQueryIbcDenomTWAP(MsgSendQueryIbcDenomTWAP) returns (MsgSendQueryIbcDenomTWAPResponse);
-    rpc SwapCrossChain(MsgSwapCrossChain) returns (MsgSwapCrossChainResponse);
+  rpc SendQueryIbcDenomTWAP(MsgSendQueryIbcDenomTWAP)
+      returns (MsgSendQueryIbcDenomTWAPResponse);
+  rpc SwapCrossChain(MsgSwapCrossChain) returns (MsgSwapCrossChainResponse);
 }
 // Params defines the parameters for the feeabs module.
 message MsgSendQueryIbcDenomTWAP {
-    string from_address = 1;
-    string ibc_denom = 2;
-    google.protobuf.Timestamp start_time = 3 [
+  string from_address = 1;
+  string ibc_denom = 2;
+  google.protobuf.Timestamp start_time = 3 [
     (gogoproto.nullable) = false,
     (gogoproto.stdtime) = true,
     (gogoproto.moretags) = "yaml:\"start_time\""
   ];
 }
-message MsgSendQueryIbcDenomTWAPResponse{}
+message MsgSendQueryIbcDenomTWAPResponse {}
 
 // Params defines the parameters for the feeabs module.
 message MsgSwapCrossChain {
-    string from_address = 1;
-    string ibc_denom = 2;
+  string from_address = 1;
+  string ibc_denom = 2;
 }
-message MsgSwapCrossChainResponse{
-}
+message MsgSwapCrossChainResponse {}

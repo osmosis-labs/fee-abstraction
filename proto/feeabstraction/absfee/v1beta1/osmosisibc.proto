@@ -7,95 +7,94 @@ import "google/api/annotations.proto";
 
 option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
 
-
 message FeeabsIbcPacketData {
-	oneof packet {
-		NoData noData = 1;
-		SwapAmountInRoute ibcSwapAmountInRoute = 2;
-		OsmosisQuerySpotPriceRequestPacketData ibcOsmosisQuerySpotPriceRequestPacketData = 3;
-	}
+  oneof packet {
+    NoData noData = 1;
+    SwapAmountInRoute ibcSwapAmountInRoute = 2;
+    OsmosisQuerySpotPriceRequestPacketData
+        ibcOsmosisQuerySpotPriceRequestPacketData = 3;
+  }
 }
 
 message NoData {}
 
 // TODO : add more details for this message
 message SwapAmountInRoute {
-	uint64 pool_id   = 1;
-	string token_out_denom = 2;
+  uint64 pool_id = 1;
+  string token_out_denom = 2;
 }
 
 // TODO : add more details for this message
-message OsmosisQueryRequestPacketData  {
-	uint64 pool_id = 1;
-	string token_in = 2;
-	repeated SwapAmountInRoute routes = 3 [(gogoproto.nullable) = false];
+message OsmosisQueryRequestPacketData {
+  uint64 pool_id = 1;
+  string token_in = 2;
+  repeated SwapAmountInRoute routes = 3 [ (gogoproto.nullable) = false ];
 }
 
 message OsmosisQuerySpotPriceRequestPacketData {
-	uint64 pool_id = 1;
-	string base_asset_denom = 2;
-	string quote_asset_denom = 3;
+  uint64 pool_id = 1;
+  string base_asset_denom = 2;
+  string quote_asset_denom = 3;
 }
 
 message QueryArithmeticTwapToNowRequest {
-	uint64 pool_id = 1;
-	string base_asset = 2;
-	string quote_asset = 3;
-	google.protobuf.Timestamp start_time = 4 [
-	  (gogoproto.nullable) = false,
-	  (gogoproto.stdtime) = true,
-	  (gogoproto.moretags) = "yaml:\"start_time\""
-	];
+  uint64 pool_id = 1;
+  string base_asset = 2;
+  string quote_asset = 3;
+  google.protobuf.Timestamp start_time = 4 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"start_time\""
+  ];
 }
 
-message InterchainQueryRequest{
-	bytes data = 1;
-	string path = 2;
+message InterchainQueryRequest {
+  bytes data = 1;
+  string path = 2;
 }
 
-message InterchainQueryRequestPacket{
-	repeated InterchainQueryRequest requests = 1 [(gogoproto.nullable) = false];
+message InterchainQueryRequestPacket {
+  repeated InterchainQueryRequest requests = 1 [ (gogoproto.nullable) = false ];
 }
 
-message HostChainFeeAbsConfig{
-    // ibc token is allowed to be used as fee token 
-    string ibc_denom = 1 
-    [(gogoproto.moretags) = "yaml:\"allowed_token\"" ];
-	
-	// token_in in cross_chain swap contract.
-	string osmosis_pool_token_denom_in = 2;
+message HostChainFeeAbsConfig {
+  // ibc token is allowed to be used as fee token
+  string ibc_denom = 1 [ (gogoproto.moretags) = "yaml:\"allowed_token\"" ];
 
-	//TODO: middleware address in hostchain, can we refator this logic ?
-	string middleware_address = 3;
+  // token_in in cross_chain swap contract.
+  string osmosis_pool_token_denom_in = 2;
 
-    // transfer channel from customer_chain -> host chain
-    string ibc_transfer_channel = 4;
+  // TODO: middleware address in hostchain, can we refator this logic ?
+  string middleware_address = 3;
 
-	// transfer channel from host chain -> osmosis
-	string host_zone_ibc_transfer_channel = 5;
+  // transfer channel from customer_chain -> host chain
+  string ibc_transfer_channel = 4;
 
-	// crosschain-swap contract address 
-	string crosschain_swap_address = 6;
+  // transfer channel from host chain -> osmosis
+  string host_zone_ibc_transfer_channel = 5;
 
-	// pool id
-    uint64 pool_id = 7;
+  // crosschain-swap contract address
+  string crosschain_swap_address = 6;
 
-    // Active
-    bool is_osmosis = 8;
+  // pool id
+  uint64 pool_id = 7;
 
-	// Frozen
-	bool frozen = 9;
+  // Active
+  bool is_osmosis = 8;
 
-	// Query channel
-	string osmosis_query_channel = 10;
+  // Frozen
+  bool frozen = 9;
+
+  // Query channel
+  string osmosis_query_channel = 10;
 }
 
 message AddHostZoneProposal {
-	option (gogoproto.goproto_getters) = false;
-	// the title of the proposal
-	string title = 1;
-	// the description of the proposal
-	string description = 2;
-	// the host chain config
-	HostChainFeeAbsConfig host_chain_config = 3;
+  option (gogoproto.goproto_getters) = false;
+  // the title of the proposal
+  string title = 1;
+  // the description of the proposal
+  string description = 2;
+  // the host chain config
+  HostChainFeeAbsConfig host_chain_config = 3;
 }
