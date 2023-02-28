@@ -99,3 +99,23 @@ message AddHostZoneProposal {
 	// the host chain config
 	HostChainFeeAbsConfig host_chain_config = 3;
 }
+
+message DeleteHostZoneProposal {
+	option (gogoproto.goproto_getters) = false;
+	// the title of the proposal
+	string title = 1;
+	// the description of the proposal
+	string description = 2;
+	// the host chain config
+	HostChainFeeAbsConfig host_chain_config = 3;
+}
+
+message SetHostZoneProposal {
+	option (gogoproto.goproto_getters) = false;
+	// the title of the proposal
+	string title = 1;
+	// the description of the proposal
+	string description = 2;
+	// the host chain config
+	HostChainFeeAbsConfig host_chain_config = 3;
+}

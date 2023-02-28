@@ -190,7 +190,7 @@ func (am IBCModule) OnAcknowledgementPacket(
 			index++
 
 			if !IcqRes.Success {
-				err := am.keeper.FronzenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+				err := am.keeper.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 				if err != nil {
 					am.keeper.Logger(ctx).Error(fmt.Sprintf("Failed to frozem host zone %s", err.Error()))
 				}
@@ -217,7 +217,7 @@ func (am IBCModule) OnAcknowledgementPacket(
 		)
 	case *channeltypes.Acknowledgement_Error:
 		am.keeper.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-			err := am.keeper.FronzenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+			err := am.keeper.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 			if err != nil {
 				am.keeper.Logger(ctx).Error(fmt.Sprintf("Failed to frozem host zone %s", err.Error()))
 			}

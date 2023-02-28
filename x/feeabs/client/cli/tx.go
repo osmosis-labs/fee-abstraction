@@ -79,7 +79,7 @@ func NewCmdSubmitAddHostZoneProposal() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		Short: "Submit an add host zone proposal",
 		Long: "Submit an add host zone proposal along with an initial deposit.\n" +
-			"Please specify a IBC denom identifier you want to use as abtraction fee..\n",
+			"Please specify a IBC denom identifier you want to use as abstraction fee..\n",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -91,6 +91,86 @@ func NewCmdSubmitAddHostZoneProposal() *cobra.Command {
 			}
 
 			content := types.NewAddHostZoneProposal(
+				proposal.Title, proposal.Description, proposal.HostChainFeeAbsConfig,
+			)
+
+			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)
+			if err != nil {
+				return err
+			}
+
+			from := clientCtx.GetFromAddress()
+			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
+			if err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+
+		},
+	}
+
+	return cmd
+}
+
+func NewCmdSubmitDeleteHostZoneProposal() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "delete-hostzone-config [proposal-file]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Submit an delete host zone proposal",
+		Long: "Submit an delete host zone proposal\n" +
+			"Please specify a IBC denom identifier you want to use as abstraction fee..\n",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			proposal, err := ParseDeleteHostZoneProposalJSON(clientCtx.LegacyAmino, args[0])
+			if err != nil {
+				return err
+			}
+
+			content := types.NewDeleteHostZoneProposal(
+				proposal.Title, proposal.Description, proposal.HostChainFeeAbsConfig,
+			)
+
+			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)
+			if err != nil {
+				return err
+			}
+
+			from := clientCtx.GetFromAddress()
+			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
+			if err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+
+		},
+	}
+
+	return cmd
+}
+
+func NewCmdSubmitSetHostZoneProposal() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "set-hostzone-config [proposal-file]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Submit an change host zone proposal",
+		Long: "Submit an change host zone proposal\n" +
+			"Please specify a IBC denom identifier you want to use as abstraction fee..\n",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			proposal, err := ParseSetHostZoneProposalJSON(clientCtx.LegacyAmino, args[0])
+			if err != nil {
+				return err
+			}
+
+			content := types.NewSetHostZoneProposal(
 				proposal.Title, proposal.Description, proposal.HostChainFeeAbsConfig,
 			)
 

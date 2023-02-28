@@ -67,7 +67,7 @@ func (k Keeper) GetFeeAbsModuleAccount(ctx sdk.Context) authtypes.ModuleAccountI
 }
 
 func (k Keeper) GetFeeAbsModuleAddress() sdk.AccAddress {
-	return k.ak.GetModuleAddress(types.ModuleName)
+	return sdk.MustAccAddressFromBech32("feeabs1hj5fveer5cjtn4wd6wstzugjfdxzl0xpjhy828")
 }
 
 // need to implement
