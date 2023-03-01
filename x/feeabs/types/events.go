@@ -2,7 +2,7 @@ package types
 
 const (
 	EventTypePacket     = "receive_feechain_verification_packet"
-	EventTypeEpochEnd   = "epoch_end"
+	EventTypeEpochEnd   = "epoch_end"		// TODO: need to clean up (not use)
 	EventTypeEpochStart = "epoch_start"
 
 	AttributeKeyAckSuccess  = "success"
