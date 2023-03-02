@@ -15,5 +15,5 @@ The `Feeabs` module fetches Osmosis [twap](https://github.com/osmosis-labs/osmos
 3. **[Epoch](03_epoch.md)**
 4. **[Events](04_events.md)**
 5. **[Parameters](05_params.md)**
-6. **[Integration](06_Integration.md)**
+6. **[Integration](Integration.md)**
 
