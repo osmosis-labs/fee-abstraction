@@ -10,8 +10,6 @@ The `Feeabs` module fetches Osmosis [twap](https://github.com/osmosis-labs/osmos
 
 1. **[Concepts](01_concepts.md)**
 2. **[State](02_state.md)**
-   - [OsmosisTwapExchangeRate](02_state.md#OsmosisTwapExchangeRate)
-   - [HostChainChainConfig](02_state.md#HostChainChainConfig)
 3. **[Epoch](03_epoch.md)**
 4. **[Events](04_events.md)**
 5. **[Parameters](05_params.md)**
