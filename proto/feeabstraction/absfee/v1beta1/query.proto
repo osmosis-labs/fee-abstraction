@@ -23,7 +23,10 @@ service Query {
   rpc HostChainConfig(QueryHostChainConfigRequest) returns (QueryHostChainConfigRespone) {
     option (google.api.http).get = "/fee-abstraction/feeabs/v1/host-chain-config/{ibc_denom}";
   }
-}
+
+  rpc AllHostChainConfig(AllQueryHostChainConfigRequest) returns (AllQueryHostChainConfigRespone) {
+    option (google.api.http).get = "/fee-abstraction/feeabs/v1/all-host-chain-config";
+  }}
 
 message QueryHostChainConfigRequest {
   string ibc_denom = 1;
@@ -58,4 +61,13 @@ message QueryFeeabsModuleBalacesResponse {
       (gogoproto.moretags)     = "yaml:\"balances\"",
       (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
     ];
+}
+
+message AllQueryHostChainConfigRequest {}
+
+message AllQueryHostChainConfigRespone {
+  repeated HostChainFeeAbsConfig all_host_chain_config = 1 [
+    (gogoproto.moretags) = "yaml:\"all_host_chain_config\"",
+    (gogoproto.nullable) = false
+  ];
 }

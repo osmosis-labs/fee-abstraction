@@ -22,6 +22,7 @@ func GetQueryCmd() *cobra.Command {
 		GetCmdQueryOsmosisArithmeticTwap(),
 		GetCmdQueryFeeabsModuleBalances(),
 		GetCmdQueryHostChainConfig(),
+		GetCmdQueryAllHostChainConfig(),
 	)
 
 	return cmd
@@ -101,6 +102,33 @@ func GetCmdQueryHostChainConfig() *cobra.Command {
 			}
 
 			res, err := queryClient.HostChainConfig(cmd.Context(), req)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+func GetCmdQueryAllHostChainConfig() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "all-host-chain-config [ibc-denom]",
+		Args:  cobra.ExactArgs(0),
+		Short: "Query all host chain config",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			queryClient := types.NewQueryClient(clientCtx)
+
+			req := &types.AllQueryHostChainConfigRequest{}
+
+			res, err := queryClient.AllHostChainConfig(cmd.Context(), req)
 			if err != nil {
 				return err
 			}
