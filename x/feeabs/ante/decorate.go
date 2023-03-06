@@ -208,10 +208,11 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 			return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees")
 		}
 
-		hostChainConfig, err := famfd.feeabsKeeper.GetHostZoneConfig(ctx, feeCoins[0].Denom)
-		if err != nil && feeCoinsLen == 1 {
-			ibcFees := feeTx.GetFee()
-			nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, ibcFees, hostChainConfig)
+		feeDenom := feeCoins.GetDenomByIndex(0)
+		hasHostChainConfig := famfd.feeabsKeeper.HasHostZoneConfig(ctx, feeDenom)
+		if hasHostChainConfig && feeCoinsLen == 1 {
+			hostChainConfig, _ := famfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
+			nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, feeCoins, hostChainConfig)
 			if err != nil {
 				return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees")
 

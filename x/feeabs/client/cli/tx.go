@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"time"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
@@ -31,8 +29,8 @@ func NewTxCmd() *cobra.Command {
 
 func NewQueryOsmosisTWAPCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "query-osmosis-twap [ibc-denom] [start-time]",
-		Args: cobra.ExactArgs(2),
+		Use:  "query-osmosis-twap",
+		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -42,9 +40,7 @@ func NewQueryOsmosisTWAPCmd() *cobra.Command {
 				return err
 			}
 
-			startTime := time.Unix(1676778631, 0)
-
-			msg := types.NewMsgSendQueryIbcDenomTWAP(clientCtx.GetFromAddress(), args[0], startTime)
+			msg := types.NewMsgSendQueryIbcDenomTWAP(clientCtx.GetFromAddress())
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 
 		},
@@ -56,14 +52,14 @@ func NewQueryOsmosisTWAPCmd() *cobra.Command {
 
 func NewSwapOverChainCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "swap",
-		Args: cobra.ExactArgs(0),
+		Use:  "swap [ibc-denom]",
+		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
-			msg := types.NewMsgSwapCrossChain(clientCtx.GetFromAddress())
+			msg := types.NewMsgSwapCrossChain(clientCtx.GetFromAddress(), args[0])
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 
 		},

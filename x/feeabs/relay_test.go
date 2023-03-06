@@ -2,7 +2,6 @@ package feeabs_test
 
 import (
 	"testing"
-	"time"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/CosmWasm/wasmd/x/wasm/keeper/wasmtesting"
@@ -83,8 +82,6 @@ func TestFeeAbsIBCToContract(t *testing.T) {
 
 			msg := types.NewMsgSendQueryIbcDenomTWAP(
 				chainA.SenderAccount.GetAddress(),
-				"ibc/denom",
-				time.Now().UTC(),
 			)
 			_, err = chainA.SendMsgs(msg)
 			require.NoError(t, err)
