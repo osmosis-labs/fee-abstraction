@@ -61,6 +61,7 @@ message QueryFeeabsModuleBalacesResponse {
       (gogoproto.moretags)     = "yaml:\"balances\"",
       (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
     ];
+    string address = 2;
 }
 
 message AllQueryHostChainConfigRequest {}
