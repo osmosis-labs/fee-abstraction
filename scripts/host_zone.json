@@ -8,7 +8,7 @@
 			"middleware_address": "",
 			"ibc_transfer_channel":"channel-0",
 			"host_zone_ibc_transfer_channel":"",
-			"crosschain_swap_address":"osmo1nc5tatafv6eyq7llkr2gv50ff9e22mnf70qgjlv737ktmt4eswrqvlx82r",
+			"crosschain_swap_address":"",
 			"pool_id": "1",
 			"is_osmosis": true,
 			"frozen": false,

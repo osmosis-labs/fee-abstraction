@@ -206,10 +206,10 @@ func (k Keeper) getQueryArithmeticTwapToNowRequest(
 	for (index < packetLen) && (!found) {
 		icqReq := icqReqs.Requests[index]
 		if err := k.cdc.Unmarshal(icqReq.GetData(), &icqReqData); err != nil {
-			k.Logger(ctx).Error(fmt.Sprintf("Failed to unmarshal icqReqData %s - %v", err.Error(), icqReq))
+			k.Logger(ctx).Error(fmt.Sprintf("Failed to unmarshal icqReqData %s - %s", err.Error(), icqReq))
 			index++
 		} else {
-			k.Logger(ctx).Info(fmt.Sprintf("Success to unmarshal icqReqData %d - %v", index, icqReq))
+			k.Logger(ctx).Info(fmt.Sprintf("Success to unmarshal icqReqData %d - %s", index, icqReq))
 			found = true
 		}
 	}
