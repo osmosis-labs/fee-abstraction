@@ -178,7 +178,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 		k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
 			err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 			if err != nil {
-				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozem host zone %s", err.Error()))
+				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
 			}
 
 			return false
