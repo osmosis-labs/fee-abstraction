@@ -62,3 +62,23 @@ func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossCha
 
 	return &types.MsgSwapCrossChainResponse{}, nil
 }
+
+func (k Keeper) FundFeeAbsModuleAccount(
+	goCtx context.Context,
+	msg *types.MsgFundFeeAbsModuleAccount,
+) (*types.MsgFundFeeAbsModuleAccountResponse, error) {
+	// Unwrap context
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	// Check sender address
+	sender, err := sdk.AccAddressFromBech32(msg.FromAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	err = k.bk.SendCoinsFromAccountToModule(ctx, sender, types.ModuleName, msg.Amount)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgFundFeeAbsModuleAccountResponse{}, nil
+}
