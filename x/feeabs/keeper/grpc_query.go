@@ -53,6 +53,7 @@ func (q Querier) FeeabsModuleBalances(goCtx context.Context, req *types.QueryFee
 
 	return &types.QueryFeeabsModuleBalacesResponse{
 		Balances: moduleBalances,
+		Address:  moduleAddress.String(),
 	}, nil
 }
 
