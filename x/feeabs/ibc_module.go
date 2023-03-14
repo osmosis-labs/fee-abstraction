@@ -168,9 +168,15 @@ func (am IBCModule) OnAcknowledgementPacket(
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
 	}
 
-	var IcqReqs types.InterchainQueryRequestPacket
-	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &IcqReqs); err != nil {
+	var IcqPacketData types.InterchainQueryPacketData
+	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &IcqPacketData); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %v", err)
+	}
+
+	IcqReqs, err := types.DeserializeCosmosQuery(IcqPacketData.GetData())
+	if err != nil {
+		am.keeper.Logger(ctx).Error(fmt.Sprintf("Failed to deserialize cosmos query %s", err.Error()))
+		return err
 	}
 
 	ctx.EventManager().EmitEvent(

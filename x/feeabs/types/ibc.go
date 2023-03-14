@@ -6,25 +6,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 const (
 	// IBCPortID is the default port id that profiles module binds to.
 	IBCPortID = "feeabs"
 )
-
-type ArithmeticTWAP struct {
-	ArithmeticTWAP string `json:"arithmetic_twap"`
-}
-
-type Result struct {
-	Success bool   `json:"success"`
-	Data    []byte `json:"data"`
-}
-
-type IcqRespones struct {
-	Respones []Result `json:"responses"`
-}
 
 var ModuleCdc = codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
 
@@ -33,15 +21,6 @@ var (
 	IBCPortKey        = []byte{0x01}
 	FeePoolAddressKey = []byte{0x02}
 )
-
-// NewOsmosisQueryRequestPacketData create new packet for ibc.
-func NewOsmosisQueryRequestPacketData(poolId uint64, baseDenom string, quoteDenom string) OsmosisQuerySpotPriceRequestPacketData {
-	return OsmosisQuerySpotPriceRequestPacketData{
-		PoolId:          poolId,
-		BaseAssetDenom:  baseDenom,
-		QuoteAssetDenom: quoteDenom,
-	}
-}
 
 // NewQueryArithmeticTwapToNowRequest create new packet for ibc.
 func NewQueryArithmeticTwapToNowRequest(
@@ -59,7 +38,33 @@ func NewQueryArithmeticTwapToNowRequest(
 }
 
 func (p QueryArithmeticTwapToNowRequest) GetBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
+	return ModuleCdc.MustMarshal(&p)
+}
+
+func SerializeCosmosQuery(reqs []abci.RequestQuery) (bz []byte, err error) {
+	q := &CosmosQuery{
+		Requests: reqs,
+	}
+	return ModuleCdc.Marshal(q)
+}
+
+func DeserializeCosmosQuery(bz []byte) (reqs []abci.RequestQuery, err error) {
+	var q CosmosQuery
+	err = ModuleCdc.Unmarshal(bz, &q)
+	return q.Requests, err
+}
+
+func SerializeCosmosResponse(resps []abci.ResponseQuery) (bz []byte, err error) {
+	r := &CosmosResponse{
+		Responses: resps,
+	}
+	return ModuleCdc.Marshal(r)
+}
+
+func DeserializeCosmosResponse(bz []byte) (resps []abci.ResponseQuery, err error) {
+	var r CosmosResponse
+	err = ModuleCdc.Unmarshal(bz, &r)
+	return r.Responses, err
 }
 
 func NewInterchainQueryRequest(path string, data []byte) InterchainQueryRequest {
@@ -69,13 +74,14 @@ func NewInterchainQueryRequest(path string, data []byte) InterchainQueryRequest 
 	}
 }
 
-func NewInterchainQueryRequestPacket(req []InterchainQueryRequest) InterchainQueryRequestPacket {
-	return InterchainQueryRequestPacket{
-		Requests: req,
+func NewInterchainQueryPacketData(data []byte, memo string) InterchainQueryPacketData {
+	return InterchainQueryPacketData{
+		Data: data,
+		Memo: memo,
 	}
 }
 
-// GetBytes is a helper for serializing.
-func (p InterchainQueryRequestPacket) GetBytes() []byte {
+// GetBytes returns the JSON marshalled interchain query packet data.
+func (p InterchainQueryPacketData) GetBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
 }

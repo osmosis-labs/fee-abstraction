@@ -79,4 +79,4 @@ sed -i 's/enable = false/enable = true/g' ~/.feeappd/config/app.toml
 sed -i '/address = "tcp:\/\/0.0.0.0:1317"/c\address = "tcp:\/\/0.0.0.0:1318"' ~/.feeappd/config/app.toml
 
 feeappd config node tcp://0.0.0.0:2241
-feeappd start --pruning=nothing  --minimum-gas-prices=0.025stake --p2p.laddr tcp://0.0.0.0:2240 --rpc.laddr tcp://0.0.0.0:2241 --grpc.address 0.0.0.0:2242 --grpc-web.address 0.0.0.0:2243
+feeappd start --pruning=nothing  --minimum-gas-prices=0stake --p2p.laddr tcp://0.0.0.0:2240 --rpc.laddr tcp://0.0.0.0:2241 --grpc.address 0.0.0.0:2242 --grpc-web.address 0.0.0.0:2243

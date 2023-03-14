@@ -4,38 +4,10 @@ package feeabstraction.absfee.v1beta1;
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
+import "tendermint/abci/types.proto";
 
 option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
 
-
-message FeeabsIbcPacketData {
-	oneof packet {
-		NoData noData = 1;
-		SwapAmountInRoute ibcSwapAmountInRoute = 2;
-		OsmosisQuerySpotPriceRequestPacketData ibcOsmosisQuerySpotPriceRequestPacketData = 3;
-	}
-}
-
-message NoData {}
-
-// TODO : add more details for this message
-message SwapAmountInRoute {
-	uint64 pool_id   = 1;
-	string token_out_denom = 2;
-}
-
-// TODO : add more details for this message
-message OsmosisQueryRequestPacketData  {
-	uint64 pool_id = 1;
-	string token_in = 2;
-	repeated SwapAmountInRoute routes = 3 [(gogoproto.nullable) = false];
-}
-
-message OsmosisQuerySpotPriceRequestPacketData {
-	uint64 pool_id = 1;
-	string base_asset_denom = 2;
-	string quote_asset_denom = 3;
-}
 
 message QueryArithmeticTwapToNowRequest {
 	uint64 pool_id = 1;
@@ -48,74 +20,41 @@ message QueryArithmeticTwapToNowRequest {
 	];
 }
 
+message QueryArithmeticTwapToNowResponse {
+	string arithmetic_twap = 1 [
+	  (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+	  (gogoproto.moretags) = "yaml:\"arithmetic_twap\"",
+	  (gogoproto.nullable) = false
+	];
+}
+
 message InterchainQueryRequest{
 	bytes data = 1;
 	string path = 2;
+}
+
+// InterchainQueryPacketData is comprised of raw query.
+message InterchainQueryPacketData {
+	bytes data = 1;
+	// optional memo
+	string memo = 2;
+}
+
+// InterchainQueryPacketAck is comprised of an ABCI query response with non-deterministic fields left empty (e.g. Codespace, Log, Info and ...).
+message InterchainQueryPacketAck {
+	bytes data = 1;
 }
 
 message InterchainQueryRequestPacket{
 	repeated InterchainQueryRequest requests = 1 [(gogoproto.nullable) = false];
 }
 
-message HostChainFeeAbsConfig{
-    // ibc token is allowed to be used as fee token 
-    string ibc_denom = 1 
-    [(gogoproto.moretags) = "yaml:\"allowed_token\"" ];
-	
-	// token_in in cross_chain swap contract.
-	string osmosis_pool_token_denom_in = 2;
-
-	//TODO: middleware address in hostchain, can we refator this logic ?
-	string middleware_address = 3;
-
-    // transfer channel from customer_chain -> host chain
-    string ibc_transfer_channel = 4;
-
-	// transfer channel from host chain -> osmosis
-	string host_zone_ibc_transfer_channel = 5;
-
-	// crosschain-swap contract address 
-	string crosschain_swap_address = 6;
-
-	// pool id
-    uint64 pool_id = 7;
-
-    // Active
-    bool is_osmosis = 8;
-
-	// Frozen
-	bool frozen = 9;
-
-	// Query channel
-	string osmosis_query_channel = 10;
-}
-
-message AddHostZoneProposal {
-	option (gogoproto.goproto_getters) = false;
-	// the title of the proposal
-	string title = 1;
-	// the description of the proposal
-	string description = 2;
-	// the host chain config
-	HostChainFeeAbsConfig host_chain_config = 3;
-}
-
-message DeleteHostZoneProposal {
-	option (gogoproto.goproto_getters) = false;
-	// the title of the proposal
-	string title = 1;
-	// the description of the proposal
-	string description = 2;
-	// the host chain config
-	HostChainFeeAbsConfig host_chain_config = 3;
-}
-
-message SetHostZoneProposal {
-	option (gogoproto.goproto_getters) = false;
-	// the title of the proposal
-	string title = 1;
-	// the description of the proposal
-	string description = 2;
-	// the host chain config
-	HostChainFeeAbsConfig host_chain_config = 3;
-}
+// CosmosQuery contains a list of tendermint ABCI query requests. It should be used when sending queries to an SDK host chain.
+message CosmosQuery {
+	repeated tendermint.abci.RequestQuery requests = 1 [(gogoproto.nullable) = false];
+  }
+  
+  // CosmosResponse contains a list of tendermint ABCI query responses. It should be used when receiving responses from an SDK host chain.
+  message CosmosResponse {
+	repeated tendermint.abci.ResponseQuery responses = 1 [(gogoproto.nullable) = false];
+  }

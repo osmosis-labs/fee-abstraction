@@ -5,11 +5,12 @@ package types
 
 import (
 	fmt "fmt"
+	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/cosmos/gogoproto/gogoproto"
-	proto "github.com/gogo/protobuf/proto"	
+	proto "github.com/gogo/protobuf/proto"
 	_ "github.com/gogo/protobuf/types"
 	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
-	_ "github.com/gogo/protobuf/types"
+	types1 "github.com/tendermint/tendermint/abci/types"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	io "io"
 	math "math"
@@ -29,317 +30,6 @@ var _ = time.Kitchen
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-type FeeabsIbcPacketData struct {
-	// Types that are valid to be assigned to Packet:
-	//	*FeeabsIbcPacketData_NoData
-	//	*FeeabsIbcPacketData_IbcSwapAmountInRoute
-	//	*FeeabsIbcPacketData_IbcOsmosisQuerySpotPriceRequestPacketData
-	Packet isFeeabsIbcPacketData_Packet `protobuf_oneof:"packet"`
-}
-
-func (m *FeeabsIbcPacketData) Reset()         { *m = FeeabsIbcPacketData{} }
-func (m *FeeabsIbcPacketData) String() string { return proto.CompactTextString(m) }
-func (*FeeabsIbcPacketData) ProtoMessage()    {}
-func (*FeeabsIbcPacketData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d7e956854d14a746, []int{0}
-}
-func (m *FeeabsIbcPacketData) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *FeeabsIbcPacketData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_FeeabsIbcPacketData.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *FeeabsIbcPacketData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_FeeabsIbcPacketData.Merge(m, src)
-}
-func (m *FeeabsIbcPacketData) XXX_Size() int {
-	return m.Size()
-}
-func (m *FeeabsIbcPacketData) XXX_DiscardUnknown() {
-	xxx_messageInfo_FeeabsIbcPacketData.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_FeeabsIbcPacketData proto.InternalMessageInfo
-
-type isFeeabsIbcPacketData_Packet interface {
-	isFeeabsIbcPacketData_Packet()
-	MarshalTo([]byte) (int, error)
-	Size() int
-}
-
-type FeeabsIbcPacketData_NoData struct {
-	NoData *NoData `protobuf:"bytes,1,opt,name=noData,proto3,oneof" json:"noData,omitempty"`
-}
-type FeeabsIbcPacketData_IbcSwapAmountInRoute struct {
-	IbcSwapAmountInRoute *SwapAmountInRoute `protobuf:"bytes,2,opt,name=ibcSwapAmountInRoute,proto3,oneof" json:"ibcSwapAmountInRoute,omitempty"`
-}
-type FeeabsIbcPacketData_IbcOsmosisQuerySpotPriceRequestPacketData struct {
-	IbcOsmosisQuerySpotPriceRequestPacketData *OsmosisQuerySpotPriceRequestPacketData `protobuf:"bytes,3,opt,name=ibcOsmosisQuerySpotPriceRequestPacketData,proto3,oneof" json:"ibcOsmosisQuerySpotPriceRequestPacketData,omitempty"`
-}
-
-func (*FeeabsIbcPacketData_NoData) isFeeabsIbcPacketData_Packet()               {}
-func (*FeeabsIbcPacketData_IbcSwapAmountInRoute) isFeeabsIbcPacketData_Packet() {}
-func (*FeeabsIbcPacketData_IbcOsmosisQuerySpotPriceRequestPacketData) isFeeabsIbcPacketData_Packet() {
-}
-
-func (m *FeeabsIbcPacketData) GetPacket() isFeeabsIbcPacketData_Packet {
-	if m != nil {
-		return m.Packet
-	}
-	return nil
-}
-
-func (m *FeeabsIbcPacketData) GetNoData() *NoData {
-	if x, ok := m.GetPacket().(*FeeabsIbcPacketData_NoData); ok {
-		return x.NoData
-	}
-	return nil
-}
-
-func (m *FeeabsIbcPacketData) GetIbcSwapAmountInRoute() *SwapAmountInRoute {
-	if x, ok := m.GetPacket().(*FeeabsIbcPacketData_IbcSwapAmountInRoute); ok {
-		return x.IbcSwapAmountInRoute
-	}
-	return nil
-}
-
-func (m *FeeabsIbcPacketData) GetIbcOsmosisQuerySpotPriceRequestPacketData() *OsmosisQuerySpotPriceRequestPacketData {
-	if x, ok := m.GetPacket().(*FeeabsIbcPacketData_IbcOsmosisQuerySpotPriceRequestPacketData); ok {
-		return x.IbcOsmosisQuerySpotPriceRequestPacketData
-	}
-	return nil
-}
-
-// XXX_OneofWrappers is for the internal use of the proto package.
-func (*FeeabsIbcPacketData) XXX_OneofWrappers() []interface{} {
-	return []interface{}{
-		(*FeeabsIbcPacketData_NoData)(nil),
-		(*FeeabsIbcPacketData_IbcSwapAmountInRoute)(nil),
-		(*FeeabsIbcPacketData_IbcOsmosisQuerySpotPriceRequestPacketData)(nil),
-	}
-}
-
-type NoData struct {
-}
-
-func (m *NoData) Reset()         { *m = NoData{} }
-func (m *NoData) String() string { return proto.CompactTextString(m) }
-func (*NoData) ProtoMessage()    {}
-func (*NoData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d7e956854d14a746, []int{1}
-}
-func (m *NoData) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *NoData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_NoData.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *NoData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NoData.Merge(m, src)
-}
-func (m *NoData) XXX_Size() int {
-	return m.Size()
-}
-func (m *NoData) XXX_DiscardUnknown() {
-	xxx_messageInfo_NoData.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_NoData proto.InternalMessageInfo
-
-// TODO : add more details for this message
-type SwapAmountInRoute struct {
-	PoolId        uint64 `protobuf:"varint,1,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
-	TokenOutDenom string `protobuf:"bytes,2,opt,name=token_out_denom,json=tokenOutDenom,proto3" json:"token_out_denom,omitempty"`
-}
-
-func (m *SwapAmountInRoute) Reset()         { *m = SwapAmountInRoute{} }
-func (m *SwapAmountInRoute) String() string { return proto.CompactTextString(m) }
-func (*SwapAmountInRoute) ProtoMessage()    {}
-func (*SwapAmountInRoute) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d7e956854d14a746, []int{2}
-}
-func (m *SwapAmountInRoute) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *SwapAmountInRoute) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_SwapAmountInRoute.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *SwapAmountInRoute) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SwapAmountInRoute.Merge(m, src)
-}
-func (m *SwapAmountInRoute) XXX_Size() int {
-	return m.Size()
-}
-func (m *SwapAmountInRoute) XXX_DiscardUnknown() {
-	xxx_messageInfo_SwapAmountInRoute.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SwapAmountInRoute proto.InternalMessageInfo
-
-func (m *SwapAmountInRoute) GetPoolId() uint64 {
-	if m != nil {
-		return m.PoolId
-	}
-	return 0
-}
-
-func (m *SwapAmountInRoute) GetTokenOutDenom() string {
-	if m != nil {
-		return m.TokenOutDenom
-	}
-	return ""
-}
-
-// TODO : add more details for this message
-type OsmosisQueryRequestPacketData struct {
-	PoolId  uint64              `protobuf:"varint,1,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
-	TokenIn string              `protobuf:"bytes,2,opt,name=token_in,json=tokenIn,proto3" json:"token_in,omitempty"`
-	Routes  []SwapAmountInRoute `protobuf:"bytes,3,rep,name=routes,proto3" json:"routes"`
-}
-
-func (m *OsmosisQueryRequestPacketData) Reset()         { *m = OsmosisQueryRequestPacketData{} }
-func (m *OsmosisQueryRequestPacketData) String() string { return proto.CompactTextString(m) }
-func (*OsmosisQueryRequestPacketData) ProtoMessage()    {}
-func (*OsmosisQueryRequestPacketData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d7e956854d14a746, []int{3}
-}
-func (m *OsmosisQueryRequestPacketData) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *OsmosisQueryRequestPacketData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_OsmosisQueryRequestPacketData.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *OsmosisQueryRequestPacketData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OsmosisQueryRequestPacketData.Merge(m, src)
-}
-func (m *OsmosisQueryRequestPacketData) XXX_Size() int {
-	return m.Size()
-}
-func (m *OsmosisQueryRequestPacketData) XXX_DiscardUnknown() {
-	xxx_messageInfo_OsmosisQueryRequestPacketData.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_OsmosisQueryRequestPacketData proto.InternalMessageInfo
-
-func (m *OsmosisQueryRequestPacketData) GetPoolId() uint64 {
-	if m != nil {
-		return m.PoolId
-	}
-	return 0
-}
-
-func (m *OsmosisQueryRequestPacketData) GetTokenIn() string {
-	if m != nil {
-		return m.TokenIn
-	}
-	return ""
-}
-
-func (m *OsmosisQueryRequestPacketData) GetRoutes() []SwapAmountInRoute {
-	if m != nil {
-		return m.Routes
-	}
-	return nil
-}
-
-type OsmosisQuerySpotPriceRequestPacketData struct {
-	PoolId          uint64 `protobuf:"varint,1,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
-	BaseAssetDenom  string `protobuf:"bytes,2,opt,name=base_asset_denom,json=baseAssetDenom,proto3" json:"base_asset_denom,omitempty"`
-	QuoteAssetDenom string `protobuf:"bytes,3,opt,name=quote_asset_denom,json=quoteAssetDenom,proto3" json:"quote_asset_denom,omitempty"`
-}
-
-func (m *OsmosisQuerySpotPriceRequestPacketData) Reset() {
-	*m = OsmosisQuerySpotPriceRequestPacketData{}
-}
-func (m *OsmosisQuerySpotPriceRequestPacketData) String() string { return proto.CompactTextString(m) }
-func (*OsmosisQuerySpotPriceRequestPacketData) ProtoMessage()    {}
-func (*OsmosisQuerySpotPriceRequestPacketData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d7e956854d14a746, []int{4}
-}
-func (m *OsmosisQuerySpotPriceRequestPacketData) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *OsmosisQuerySpotPriceRequestPacketData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_OsmosisQuerySpotPriceRequestPacketData.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *OsmosisQuerySpotPriceRequestPacketData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OsmosisQuerySpotPriceRequestPacketData.Merge(m, src)
-}
-func (m *OsmosisQuerySpotPriceRequestPacketData) XXX_Size() int {
-	return m.Size()
-}
-func (m *OsmosisQuerySpotPriceRequestPacketData) XXX_DiscardUnknown() {
-	xxx_messageInfo_OsmosisQuerySpotPriceRequestPacketData.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_OsmosisQuerySpotPriceRequestPacketData proto.InternalMessageInfo
-
-func (m *OsmosisQuerySpotPriceRequestPacketData) GetPoolId() uint64 {
-	if m != nil {
-		return m.PoolId
-	}
-	return 0
-}
-
-func (m *OsmosisQuerySpotPriceRequestPacketData) GetBaseAssetDenom() string {
-	if m != nil {
-		return m.BaseAssetDenom
-	}
-	return ""
-}
-
-func (m *OsmosisQuerySpotPriceRequestPacketData) GetQuoteAssetDenom() string {
-	if m != nil {
-		return m.QuoteAssetDenom
-	}
-	return ""
-}
-
 type QueryArithmeticTwapToNowRequest struct {
 	PoolId     uint64    `protobuf:"varint,1,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
 	BaseAsset  string    `protobuf:"bytes,2,opt,name=base_asset,json=baseAsset,proto3" json:"base_asset,omitempty"`
@@ -351,7 +41,7 @@ func (m *QueryArithmeticTwapToNowRequest) Reset()         { *m = QueryArithmetic
 func (m *QueryArithmeticTwapToNowRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryArithmeticTwapToNowRequest) ProtoMessage()    {}
 func (*QueryArithmeticTwapToNowRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d7e956854d14a746, []int{5}
+	return fileDescriptor_d7e956854d14a746, []int{0}
 }
 func (m *QueryArithmeticTwapToNowRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -408,6 +98,43 @@ func (m *QueryArithmeticTwapToNowRequest) GetStartTime() time.Time {
 	return time.Time{}
 }
 
+type QueryArithmeticTwapToNowResponse struct {
+	ArithmeticTwap github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,1,opt,name=arithmetic_twap,json=arithmeticTwap,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"arithmetic_twap" yaml:"arithmetic_twap"`
+}
+
+func (m *QueryArithmeticTwapToNowResponse) Reset()         { *m = QueryArithmeticTwapToNowResponse{} }
+func (m *QueryArithmeticTwapToNowResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryArithmeticTwapToNowResponse) ProtoMessage()    {}
+func (*QueryArithmeticTwapToNowResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d7e956854d14a746, []int{1}
+}
+func (m *QueryArithmeticTwapToNowResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryArithmeticTwapToNowResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryArithmeticTwapToNowResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryArithmeticTwapToNowResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryArithmeticTwapToNowResponse.Merge(m, src)
+}
+func (m *QueryArithmeticTwapToNowResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryArithmeticTwapToNowResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryArithmeticTwapToNowResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryArithmeticTwapToNowResponse proto.InternalMessageInfo
+
 type InterchainQueryRequest struct {
 	Data []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	Path string `protobuf:"bytes,2,opt,name=path,proto3" json:"path,omitempty"`
@@ -417,7 +144,7 @@ func (m *InterchainQueryRequest) Reset()         { *m = InterchainQueryRequest{}
 func (m *InterchainQueryRequest) String() string { return proto.CompactTextString(m) }
 func (*InterchainQueryRequest) ProtoMessage()    {}
 func (*InterchainQueryRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d7e956854d14a746, []int{6}
+	return fileDescriptor_d7e956854d14a746, []int{2}
 }
 func (m *InterchainQueryRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -460,6 +187,105 @@ func (m *InterchainQueryRequest) GetPath() string {
 	return ""
 }
 
+// InterchainQueryPacketData is comprised of raw query.
+type InterchainQueryPacketData struct {
+	Data []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	// optional memo
+	Memo string `protobuf:"bytes,2,opt,name=memo,proto3" json:"memo,omitempty"`
+}
+
+func (m *InterchainQueryPacketData) Reset()         { *m = InterchainQueryPacketData{} }
+func (m *InterchainQueryPacketData) String() string { return proto.CompactTextString(m) }
+func (*InterchainQueryPacketData) ProtoMessage()    {}
+func (*InterchainQueryPacketData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d7e956854d14a746, []int{3}
+}
+func (m *InterchainQueryPacketData) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *InterchainQueryPacketData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_InterchainQueryPacketData.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *InterchainQueryPacketData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_InterchainQueryPacketData.Merge(m, src)
+}
+func (m *InterchainQueryPacketData) XXX_Size() int {
+	return m.Size()
+}
+func (m *InterchainQueryPacketData) XXX_DiscardUnknown() {
+	xxx_messageInfo_InterchainQueryPacketData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_InterchainQueryPacketData proto.InternalMessageInfo
+
+func (m *InterchainQueryPacketData) GetData() []byte {
+	if m != nil {
+		return m.Data
+	}
+	return nil
+}
+
+func (m *InterchainQueryPacketData) GetMemo() string {
+	if m != nil {
+		return m.Memo
+	}
+	return ""
+}
+
+// InterchainQueryPacketAck is comprised of an ABCI query response with non-deterministic fields left empty (e.g. Codespace, Log, Info and ...).
+type InterchainQueryPacketAck struct {
+	Data []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+}
+
+func (m *InterchainQueryPacketAck) Reset()         { *m = InterchainQueryPacketAck{} }
+func (m *InterchainQueryPacketAck) String() string { return proto.CompactTextString(m) }
+func (*InterchainQueryPacketAck) ProtoMessage()    {}
+func (*InterchainQueryPacketAck) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d7e956854d14a746, []int{4}
+}
+func (m *InterchainQueryPacketAck) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *InterchainQueryPacketAck) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_InterchainQueryPacketAck.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *InterchainQueryPacketAck) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_InterchainQueryPacketAck.Merge(m, src)
+}
+func (m *InterchainQueryPacketAck) XXX_Size() int {
+	return m.Size()
+}
+func (m *InterchainQueryPacketAck) XXX_DiscardUnknown() {
+	xxx_messageInfo_InterchainQueryPacketAck.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_InterchainQueryPacketAck proto.InternalMessageInfo
+
+func (m *InterchainQueryPacketAck) GetData() []byte {
+	if m != nil {
+		return m.Data
+	}
+	return nil
+}
+
 type InterchainQueryRequestPacket struct {
 	Requests []InterchainQueryRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests"`
 }
@@ -468,7 +294,7 @@ func (m *InterchainQueryRequestPacket) Reset()         { *m = InterchainQueryReq
 func (m *InterchainQueryRequestPacket) String() string { return proto.CompactTextString(m) }
 func (*InterchainQueryRequestPacket) ProtoMessage()    {}
 func (*InterchainQueryRequestPacket) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d7e956854d14a746, []int{7}
+	return fileDescriptor_d7e956854d14a746, []int{5}
 }
 func (m *InterchainQueryRequestPacket) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -504,41 +330,23 @@ func (m *InterchainQueryRequestPacket) GetRequests() []InterchainQueryRequest {
 	return nil
 }
 
-type HostChainFeeAbsConfig struct {
-	// ibc token is allowed to be used as fee token
-	IbcDenom string `protobuf:"bytes,1,opt,name=ibc_denom,json=ibcDenom,proto3" json:"ibc_denom,omitempty" yaml:"allowed_token"`
-	// token_in in cross_chain swap contract.
-	OsmosisPoolTokenDenomIn string `protobuf:"bytes,2,opt,name=osmosis_pool_token_denom_in,json=osmosisPoolTokenDenomIn,proto3" json:"osmosis_pool_token_denom_in,omitempty"`
-	// TODO: middleware address in hostchain, can we refator this logic ?
-	MiddlewareAddress string `protobuf:"bytes,3,opt,name=middleware_address,json=middlewareAddress,proto3" json:"middleware_address,omitempty"`
-	// transfer channel from customer_chain -> host chain
-	IbcTransferChannel string `protobuf:"bytes,4,opt,name=ibc_transfer_channel,json=ibcTransferChannel,proto3" json:"ibc_transfer_channel,omitempty"`
-	// transfer channel from host chain -> osmosis
-	HostZoneIbcTransferChannel string `protobuf:"bytes,5,opt,name=host_zone_ibc_transfer_channel,json=hostZoneIbcTransferChannel,proto3" json:"host_zone_ibc_transfer_channel,omitempty"`
-	// crosschain-swap contract address
-	CrosschainSwapAddress string `protobuf:"bytes,6,opt,name=crosschain_swap_address,json=crosschainSwapAddress,proto3" json:"crosschain_swap_address,omitempty"`
-	// pool id
-	PoolId uint64 `protobuf:"varint,7,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
-	// Active
-	IsOsmosis bool `protobuf:"varint,8,opt,name=is_osmosis,json=isOsmosis,proto3" json:"is_osmosis,omitempty"`
-	// Frozen
-	Frozen bool `protobuf:"varint,9,opt,name=frozen,proto3" json:"frozen,omitempty"`
-	// Query channel
-	OsmosisQueryChannel string `protobuf:"bytes,10,opt,name=osmosis_query_channel,json=osmosisQueryChannel,proto3" json:"osmosis_query_channel,omitempty"`
+// CosmosQuery contains a list of tendermint ABCI query requests. It should be used when sending queries to an SDK host chain.
+type CosmosQuery struct {
+	Requests []types1.RequestQuery `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests"`
 }
 
-func (m *HostChainFeeAbsConfig) Reset()         { *m = HostChainFeeAbsConfig{} }
-func (m *HostChainFeeAbsConfig) String() string { return proto.CompactTextString(m) }
-func (*HostChainFeeAbsConfig) ProtoMessage()    {}
-func (*HostChainFeeAbsConfig) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d7e956854d14a746, []int{8}
+func (m *CosmosQuery) Reset()         { *m = CosmosQuery{} }
+func (m *CosmosQuery) String() string { return proto.CompactTextString(m) }
+func (*CosmosQuery) ProtoMessage()    {}
+func (*CosmosQuery) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d7e956854d14a746, []int{6}
 }
-func (m *HostChainFeeAbsConfig) XXX_Unmarshal(b []byte) error {
+func (m *CosmosQuery) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *HostChainFeeAbsConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *CosmosQuery) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_HostChainFeeAbsConfig.Marshal(b, m, deterministic)
+		return xxx_messageInfo_CosmosQuery.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -548,109 +356,42 @@ func (m *HostChainFeeAbsConfig) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
-func (m *HostChainFeeAbsConfig) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_HostChainFeeAbsConfig.Merge(m, src)
+func (m *CosmosQuery) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CosmosQuery.Merge(m, src)
 }
-func (m *HostChainFeeAbsConfig) XXX_Size() int {
+func (m *CosmosQuery) XXX_Size() int {
 	return m.Size()
 }
-func (m *HostChainFeeAbsConfig) XXX_DiscardUnknown() {
-	xxx_messageInfo_HostChainFeeAbsConfig.DiscardUnknown(m)
+func (m *CosmosQuery) XXX_DiscardUnknown() {
+	xxx_messageInfo_CosmosQuery.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_HostChainFeeAbsConfig proto.InternalMessageInfo
+var xxx_messageInfo_CosmosQuery proto.InternalMessageInfo
 
-func (m *HostChainFeeAbsConfig) GetIbcDenom() string {
+func (m *CosmosQuery) GetRequests() []types1.RequestQuery {
 	if m != nil {
-		return m.IbcDenom
+		return m.Requests
 	}
-	return ""
+	return nil
 }
 
-func (m *HostChainFeeAbsConfig) GetOsmosisPoolTokenDenomIn() string {
-	if m != nil {
-		return m.OsmosisPoolTokenDenomIn
-	}
-	return ""
+// CosmosResponse contains a list of tendermint ABCI query responses. It should be used when receiving responses from an SDK host chain.
+type CosmosResponse struct {
+	Responses []types1.ResponseQuery `protobuf:"bytes,1,rep,name=responses,proto3" json:"responses"`
 }
 
-func (m *HostChainFeeAbsConfig) GetMiddlewareAddress() string {
-	if m != nil {
-		return m.MiddlewareAddress
-	}
-	return ""
+func (m *CosmosResponse) Reset()         { *m = CosmosResponse{} }
+func (m *CosmosResponse) String() string { return proto.CompactTextString(m) }
+func (*CosmosResponse) ProtoMessage()    {}
+func (*CosmosResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d7e956854d14a746, []int{7}
 }
-
-func (m *HostChainFeeAbsConfig) GetIbcTransferChannel() string {
-	if m != nil {
-		return m.IbcTransferChannel
-	}
-	return ""
-}
-
-func (m *HostChainFeeAbsConfig) GetHostZoneIbcTransferChannel() string {
-	if m != nil {
-		return m.HostZoneIbcTransferChannel
-	}
-	return ""
-}
-
-func (m *HostChainFeeAbsConfig) GetCrosschainSwapAddress() string {
-	if m != nil {
-		return m.CrosschainSwapAddress
-	}
-	return ""
-}
-
-func (m *HostChainFeeAbsConfig) GetPoolId() uint64 {
-	if m != nil {
-		return m.PoolId
-	}
-	return 0
-}
-
-func (m *HostChainFeeAbsConfig) GetIsOsmosis() bool {
-	if m != nil {
-		return m.IsOsmosis
-	}
-	return false
-}
-
-func (m *HostChainFeeAbsConfig) GetFrozen() bool {
-	if m != nil {
-		return m.Frozen
-	}
-	return false
-}
-
-func (m *HostChainFeeAbsConfig) GetOsmosisQueryChannel() string {
-	if m != nil {
-		return m.OsmosisQueryChannel
-	}
-	return ""
-}
-
-type AddHostZoneProposal struct {
-	// the title of the proposal
-	Title string `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
-	// the description of the proposal
-	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	// the host chain config
-	HostChainConfig *HostChainFeeAbsConfig `protobuf:"bytes,3,opt,name=host_chain_config,json=hostChainConfig,proto3" json:"host_chain_config,omitempty"`
-}
-
-func (m *AddHostZoneProposal) Reset()         { *m = AddHostZoneProposal{} }
-func (m *AddHostZoneProposal) String() string { return proto.CompactTextString(m) }
-func (*AddHostZoneProposal) ProtoMessage()    {}
-func (*AddHostZoneProposal) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d7e956854d14a746, []int{9}
-}
-func (m *AddHostZoneProposal) XXX_Unmarshal(b []byte) error {
+func (m *CosmosResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *AddHostZoneProposal) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *CosmosResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_AddHostZoneProposal.Marshal(b, m, deterministic)
+		return xxx_messageInfo_CosmosResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -660,115 +401,34 @@ func (m *AddHostZoneProposal) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return b[:n], nil
 	}
 }
-func (m *AddHostZoneProposal) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AddHostZoneProposal.Merge(m, src)
+func (m *CosmosResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CosmosResponse.Merge(m, src)
 }
-func (m *AddHostZoneProposal) XXX_Size() int {
+func (m *CosmosResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *AddHostZoneProposal) XXX_DiscardUnknown() {
-	xxx_messageInfo_AddHostZoneProposal.DiscardUnknown(m)
+func (m *CosmosResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CosmosResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_AddHostZoneProposal proto.InternalMessageInfo
+var xxx_messageInfo_CosmosResponse proto.InternalMessageInfo
 
-type DeleteHostZoneProposal struct {
-	// the title of the proposal
-	Title string `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
-	// the description of the proposal
-	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	// the host chain config
-	HostChainConfig *HostChainFeeAbsConfig `protobuf:"bytes,3,opt,name=host_chain_config,json=hostChainConfig,proto3" json:"host_chain_config,omitempty"`
-}
-
-func (m *DeleteHostZoneProposal) Reset()         { *m = DeleteHostZoneProposal{} }
-func (m *DeleteHostZoneProposal) String() string { return proto.CompactTextString(m) }
-func (*DeleteHostZoneProposal) ProtoMessage()    {}
-func (*DeleteHostZoneProposal) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d7e956854d14a746, []int{9}
-}
-func (m *DeleteHostZoneProposal) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *DeleteHostZoneProposal) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_DeleteHostZoneProposal.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
+func (m *CosmosResponse) GetResponses() []types1.ResponseQuery {
+	if m != nil {
+		return m.Responses
 	}
+	return nil
 }
-func (m *DeleteHostZoneProposal) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteHostZoneProposal.Merge(m, src)
-}
-func (m *DeleteHostZoneProposal) XXX_Size() int {
-	return m.Size()
-}
-func (m *DeleteHostZoneProposal) XXX_DiscardUnknown() {
-	xxx_messageInfo_DeleteHostZoneProposal.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DeleteHostZoneProposal proto.InternalMessageInfo
-
-type SetHostZoneProposal struct {
-	// the title of the proposal
-	Title string `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
-	// the description of the proposal
-	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	// the host chain config
-	HostChainConfig *HostChainFeeAbsConfig `protobuf:"bytes,3,opt,name=host_chain_config,json=hostChainConfig,proto3" json:"host_chain_config,omitempty"`
-}
-
-func (m *SetHostZoneProposal) Reset()         { *m = SetHostZoneProposal{} }
-func (m *SetHostZoneProposal) String() string { return proto.CompactTextString(m) }
-func (*SetHostZoneProposal) ProtoMessage()    {}
-func (*SetHostZoneProposal) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d7e956854d14a746, []int{9}
-}
-func (m *SetHostZoneProposal) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *SetHostZoneProposal) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_SetHostZoneProposal.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *SetHostZoneProposal) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SetHostZoneProposal.Merge(m, src)
-}
-func (m *SetHostZoneProposal) XXX_Size() int {
-	return m.Size()
-}
-func (m *SetHostZoneProposal) XXX_DiscardUnknown() {
-	xxx_messageInfo_SetHostZoneProposal.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SetHostZoneProposal proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*FeeabsIbcPacketData)(nil), "feeabstraction.absfee.v1beta1.FeeabsIbcPacketData")
-	proto.RegisterType((*NoData)(nil), "feeabstraction.absfee.v1beta1.NoData")
-	proto.RegisterType((*SwapAmountInRoute)(nil), "feeabstraction.absfee.v1beta1.SwapAmountInRoute")
-	proto.RegisterType((*OsmosisQueryRequestPacketData)(nil), "feeabstraction.absfee.v1beta1.OsmosisQueryRequestPacketData")
-	proto.RegisterType((*OsmosisQuerySpotPriceRequestPacketData)(nil), "feeabstraction.absfee.v1beta1.OsmosisQuerySpotPriceRequestPacketData")
 	proto.RegisterType((*QueryArithmeticTwapToNowRequest)(nil), "feeabstraction.absfee.v1beta1.QueryArithmeticTwapToNowRequest")
+	proto.RegisterType((*QueryArithmeticTwapToNowResponse)(nil), "feeabstraction.absfee.v1beta1.QueryArithmeticTwapToNowResponse")
 	proto.RegisterType((*InterchainQueryRequest)(nil), "feeabstraction.absfee.v1beta1.InterchainQueryRequest")
+	proto.RegisterType((*InterchainQueryPacketData)(nil), "feeabstraction.absfee.v1beta1.InterchainQueryPacketData")
+	proto.RegisterType((*InterchainQueryPacketAck)(nil), "feeabstraction.absfee.v1beta1.InterchainQueryPacketAck")
 	proto.RegisterType((*InterchainQueryRequestPacket)(nil), "feeabstraction.absfee.v1beta1.InterchainQueryRequestPacket")
-	proto.RegisterType((*HostChainFeeAbsConfig)(nil), "feeabstraction.absfee.v1beta1.HostChainFeeAbsConfig")
-	proto.RegisterType((*AddHostZoneProposal)(nil), "feeabstraction.absfee.v1beta1.AddHostZoneProposal")
-	proto.RegisterType((*DeleteHostZoneProposal)(nil), "feeabstraction.absfee.v1beta1.DeleteHostZoneProposal")
-	proto.RegisterType((*SetHostZoneProposal)(nil), "feeabstraction.absfee.v1beta1.SetHostZoneProposal")
+	proto.RegisterType((*CosmosQuery)(nil), "feeabstraction.absfee.v1beta1.CosmosQuery")
+	proto.RegisterType((*CosmosResponse)(nil), "feeabstraction.absfee.v1beta1.CosmosResponse")
 }
 
 func init() {
@@ -776,312 +436,44 @@ func init() {
 }
 
 var fileDescriptor_d7e956854d14a746 = []byte{
-	// 969 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0x41, 0x6f, 0x1b, 0x45,
-	0x14, 0xf6, 0xd6, 0xae, 0x63, 0xbf, 0x00, 0xc1, 0x93, 0xa4, 0x31, 0xa1, 0xb1, 0xa3, 0x95, 0xa8,
-	0x02, 0x52, 0x77, 0x9b, 0x42, 0x91, 0xa8, 0x90, 0xc0, 0x4e, 0xa9, 0xec, 0x4b, 0x1a, 0x36, 0x96,
-	0x40, 0xbd, 0x2c, 0xb3, 0xbb, 0x63, 0x7b, 0xd4, 0xf5, 0xcc, 0x66, 0x67, 0xb6, 0x26, 0xfd, 0x05,
-	0x1c, 0x7b, 0xe3, 0x8a, 0x84, 0xf8, 0x09, 0xfc, 0x87, 0x1e, 0x7b, 0xe0, 0xc0, 0x29, 0xa0, 0xe4,
-	0x8c, 0x84, 0xfa, 0x0b, 0xd0, 0xcc, 0x8e, 0x63, 0x27, 0x71, 0x48, 0xd4, 0xdb, 0xcc, 0x7b, 0xdf,
-	0x7b, 0xef, 0x9b, 0xf7, 0xbe, 0xb7, 0x36, 0x38, 0x7d, 0x42, 0x70, 0x20, 0x64, 0x8a, 0x43, 0x49,
-	0x39, 0x73, 0x71, 0x20, 0xfa, 0x84, 0xb8, 0xcf, 0xb7, 0x03, 0x22, 0xf1, 0xb6, 0xcb, 0xc5, 0x88,
-	0x0b, 0x2a, 0x68, 0x10, 0x3a, 0x49, 0xca, 0x25, 0x47, 0x1b, 0x67, 0xf1, 0x4e, 0x8e, 0x77, 0x0c,
-	0x7e, 0x7d, 0x65, 0xc0, 0x07, 0x5c, 0x23, 0x5d, 0x75, 0xca, 0x83, 0xd6, 0x9b, 0x03, 0xce, 0x07,
-	0x31, 0x71, 0xf5, 0x2d, 0xc8, 0xfa, 0xae, 0xa4, 0x23, 0x22, 0x24, 0x1e, 0x25, 0x06, 0x70, 0xdb,
-	0x00, 0x70, 0x42, 0x5d, 0xcc, 0x18, 0x97, 0x58, 0x25, 0x17, 0xb9, 0xd7, 0xfe, 0xf7, 0x06, 0x2c,
-	0x3f, 0xd6, 0x65, 0xbb, 0x41, 0xb8, 0x87, 0xc3, 0x67, 0x44, 0x3e, 0xc2, 0x12, 0xa3, 0xaf, 0xa0,
-	0xcc, 0xb8, 0x3a, 0xd5, 0xad, 0x4d, 0x6b, 0x6b, 0xf1, 0xfe, 0x47, 0xce, 0xff, 0x92, 0x73, 0x76,
-	0x35, 0xb8, 0x53, 0xf0, 0x4c, 0x18, 0xea, 0xc3, 0x0a, 0x0d, 0xc2, 0xfd, 0x31, 0x4e, 0x5a, 0x23,
-	0x9e, 0x31, 0xd9, 0x65, 0x1e, 0xcf, 0x24, 0xa9, 0xdf, 0xd0, 0xe9, 0xee, 0x5d, 0x91, 0xee, 0x42,
-	0x5c, 0xa7, 0xe0, 0xcd, 0xcd, 0x87, 0x7e, 0xb3, 0xe0, 0x63, 0x1a, 0x84, 0x4f, 0xf2, 0x66, 0x7e,
-	0x9b, 0x91, 0xf4, 0x70, 0x3f, 0xe1, 0x72, 0x2f, 0xa5, 0x21, 0xf1, 0xc8, 0x41, 0x46, 0x84, 0x9c,
-	0x3e, 0xab, 0x5e, 0xd4, 0xd5, 0xbf, 0xb9, 0xa2, 0xfa, 0xf5, 0x92, 0x75, 0x0a, 0xde, 0xf5, 0x2b,
-	0xb7, 0x2b, 0x50, 0x4e, 0xf4, 0xcd, 0xae, 0x40, 0x39, 0xef, 0x96, 0xdd, 0x83, 0xda, 0xc5, 0x07,
-	0xad, 0xc1, 0x42, 0xc2, 0x79, 0xec, 0xd3, 0x48, 0xb7, 0xbe, 0xe4, 0x95, 0xd5, 0xb5, 0x1b, 0xa1,
-	0x3b, 0xb0, 0x24, 0xf9, 0x33, 0xc2, 0x7c, 0x9e, 0x49, 0x3f, 0x22, 0x8c, 0x8f, 0x74, 0x33, 0xab,
-	0xde, 0xbb, 0xda, 0xfc, 0x24, 0x93, 0x8f, 0x94, 0xd1, 0xfe, 0xd5, 0x82, 0x8d, 0x59, 0x52, 0x17,
-	0xb8, 0x5c, 0x5e, 0xe2, 0x03, 0xa8, 0xe4, 0x25, 0x28, 0x33, 0xb9, 0x17, 0xf4, 0xbd, 0xcb, 0xd0,
-	0x2e, 0x94, 0x53, 0xc5, 0x4f, 0xd4, 0x8b, 0x9b, 0xc5, 0xb7, 0x99, 0x60, 0xbb, 0xf4, 0xea, 0xa8,
-	0x59, 0xf0, 0x4c, 0x16, 0xfb, 0x67, 0x0b, 0xee, 0x5c, 0xaf, 0x75, 0x97, 0xd3, 0xdd, 0x82, 0xf7,
-	0x03, 0x2c, 0x88, 0x8f, 0x85, 0x20, 0x67, 0x5b, 0xf2, 0x9e, 0xb2, 0xb7, 0x94, 0x59, 0xf7, 0x04,
-	0x7d, 0x02, 0xb5, 0x83, 0x8c, 0xcb, 0xb3, 0xd0, 0xa2, 0x86, 0x2e, 0x69, 0xc7, 0x14, 0x6b, 0xff,
-	0x61, 0x41, 0x53, 0x53, 0x6a, 0xa5, 0x54, 0x0e, 0x47, 0x44, 0xd2, 0xb0, 0x37, 0xc6, 0x49, 0x8f,
-	0xef, 0xf2, 0xb1, 0x21, 0x77, 0x39, 0xa5, 0x0d, 0x80, 0x29, 0x25, 0x43, 0xa6, 0x7a, 0x4a, 0x06,
-	0x35, 0x61, 0x71, 0x86, 0x87, 0x61, 0x00, 0x53, 0x06, 0xe8, 0x7b, 0x00, 0x21, 0x71, 0x2a, 0x7d,
-	0xb5, 0xc6, 0xf5, 0x92, 0x96, 0xeb, 0xba, 0x93, 0xaf, 0xb0, 0x33, 0xd9, 0x71, 0xa7, 0x37, 0xd9,
-	0xf1, 0xf6, 0x86, 0x6a, 0xea, 0x9b, 0xa3, 0x66, 0xed, 0x10, 0x8f, 0xe2, 0x87, 0xf6, 0x34, 0xd6,
-	0x7e, 0xf9, 0x57, 0xd3, 0xf2, 0xaa, 0xda, 0xa0, 0xe0, 0xf6, 0xd7, 0x70, 0xab, 0xcb, 0x24, 0x49,
-	0xc3, 0x21, 0xa6, 0x6c, 0x56, 0x18, 0x08, 0x41, 0x29, 0x9a, 0x6c, 0xfa, 0x3b, 0x9e, 0x3e, 0x2b,
-	0x5b, 0x82, 0xe5, 0xd0, 0xbc, 0x40, 0x9f, 0xed, 0x31, 0xdc, 0x9e, 0x9f, 0x21, 0x9f, 0x15, 0xfa,
-	0x0e, 0x2a, 0x69, 0x6e, 0x10, 0x75, 0x4b, 0x8b, 0xe4, 0xc1, 0x15, 0x22, 0x99, 0x9f, 0xce, 0x28,
-	0xe5, 0x34, 0x99, 0xfd, 0x4f, 0x11, 0x56, 0x3b, 0x5c, 0xc8, 0x1d, 0x85, 0x7c, 0x4c, 0x48, 0x2b,
-	0x10, 0x3b, 0x9c, 0xf5, 0xe9, 0x00, 0x3d, 0x80, 0x2a, 0x0d, 0x42, 0x33, 0x4f, 0xc5, 0xbf, 0xda,
-	0xae, 0xbf, 0x39, 0x6a, 0xae, 0xe4, 0xdd, 0xc0, 0x71, 0xcc, 0xc7, 0x24, 0xf2, 0xb5, 0x86, 0x6d,
-	0xaf, 0x42, 0x83, 0x30, 0x97, 0xc3, 0x97, 0xf0, 0xa1, 0xf9, 0xfa, 0xfa, 0x7a, 0x8c, 0xb9, 0xe8,
-	0x75, 0x96, 0xa9, 0xf4, 0xd7, 0x0c, 0x64, 0x8f, 0xf3, 0xb8, 0xa7, 0x00, 0x3a, 0xb6, 0xcb, 0xd0,
-	0x5d, 0x40, 0x23, 0x1a, 0x45, 0x31, 0x19, 0xe3, 0x94, 0xf8, 0x38, 0x8a, 0x52, 0x22, 0x84, 0x99,
-	0x65, 0x6d, 0xea, 0x69, 0xe5, 0x0e, 0x74, 0x4f, 0x7f, 0x09, 0x7d, 0x99, 0x62, 0x26, 0xfa, 0x24,
-	0xf5, 0xc3, 0x21, 0x66, 0x8c, 0xc4, 0x7a, 0xb8, 0x55, 0x0f, 0xd1, 0x20, 0xec, 0x19, 0xd7, 0x4e,
-	0xee, 0x41, 0x6d, 0x68, 0x0c, 0xb9, 0x90, 0xfe, 0x0b, 0xce, 0x88, 0x3f, 0x37, 0xf6, 0xa6, 0x8e,
-	0x5d, 0x57, 0xa8, 0xa7, 0x9c, 0x91, 0xee, 0xc5, 0x1c, 0x9f, 0xc3, 0x5a, 0x98, 0x72, 0x21, 0x74,
-	0x77, 0x7d, 0x31, 0xc6, 0xc9, 0x29, 0xd3, 0xb2, 0x0e, 0x5e, 0x9d, 0xba, 0xf5, 0xae, 0x1a, 0xb6,
-	0x33, 0xca, 0x5e, 0x38, 0xaf, 0x6c, 0x2a, 0x7c, 0xd3, 0x93, 0x7a, 0x65, 0xd3, 0xda, 0xaa, 0x78,
-	0x55, 0x2a, 0xcc, 0x0e, 0xa3, 0x5b, 0x50, 0xee, 0xa7, 0xfc, 0x05, 0x61, 0xf5, 0xaa, 0x76, 0x99,
-	0x1b, 0xba, 0x0f, 0xab, 0x93, 0x56, 0x1f, 0xa8, 0x19, 0x9f, 0x3e, 0x01, 0x34, 0x8b, 0x65, 0x3e,
-	0xf3, 0x0d, 0x30, 0xdc, 0xed, 0xdf, 0x2d, 0x58, 0x6e, 0x45, 0x51, 0xc7, 0xbc, 0x6e, 0x2f, 0xe5,
-	0x09, 0x17, 0x38, 0x46, 0x2b, 0x70, 0x53, 0x52, 0x19, 0x93, 0x7c, 0xd2, 0x5e, 0x7e, 0x41, 0x9b,
-	0xb0, 0x18, 0x11, 0x11, 0xa6, 0x34, 0x51, 0x12, 0x33, 0xc3, 0x9b, 0x35, 0xa1, 0x1f, 0xa0, 0xa6,
-	0xfb, 0x99, 0xf7, 0x22, 0xd4, 0xd2, 0x31, 0x3f, 0x05, 0x9f, 0x5d, 0xa1, 0xd0, 0xb9, 0xb2, 0xf3,
-	0x96, 0x86, 0x13, 0x73, 0x6e, 0x78, 0x58, 0xfa, 0xe9, 0x97, 0x66, 0xa1, 0xbd, 0xff, 0xea, 0xb8,
-	0x61, 0xbd, 0x3e, 0x6e, 0x58, 0x7f, 0x1f, 0x37, 0xac, 0x97, 0x27, 0x8d, 0xc2, 0xeb, 0x93, 0x46,
-	0xe1, 0xcf, 0x93, 0x46, 0xe1, 0xe9, 0x17, 0x03, 0x2a, 0x87, 0x59, 0xe0, 0x84, 0x7c, 0xe4, 0x32,
-	0xae, 0x0a, 0xe1, 0xf8, 0x6e, 0x8c, 0x03, 0xe1, 0x9e, 0xfb, 0x8f, 0xf0, 0x7c, 0xdb, 0xfd, 0xd1,
-	0xd8, 0x5c, 0x79, 0x98, 0x10, 0x11, 0x94, 0xf5, 0xd6, 0x7f, 0xfa, 0x5f, 0x00, 0x00, 0x00, 0xff,
-	0xff, 0x5f, 0x74, 0x2d, 0xeb, 0x4e, 0x08, 0x00, 0x00,
-}
-
-func (m *FeeabsIbcPacketData) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *FeeabsIbcPacketData) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *FeeabsIbcPacketData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Packet != nil {
-		{
-			size := m.Packet.Size()
-			i -= size
-			if _, err := m.Packet.MarshalTo(dAtA[i:]); err != nil {
-				return 0, err
-			}
-		}
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *FeeabsIbcPacketData_NoData) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *FeeabsIbcPacketData_NoData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	if m.NoData != nil {
-		{
-			size, err := m.NoData.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintOsmosisibc(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-func (m *FeeabsIbcPacketData_IbcSwapAmountInRoute) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *FeeabsIbcPacketData_IbcSwapAmountInRoute) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	if m.IbcSwapAmountInRoute != nil {
-		{
-			size, err := m.IbcSwapAmountInRoute.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintOsmosisibc(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
-	return len(dAtA) - i, nil
-}
-func (m *FeeabsIbcPacketData_IbcOsmosisQuerySpotPriceRequestPacketData) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *FeeabsIbcPacketData_IbcOsmosisQuerySpotPriceRequestPacketData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	if m.IbcOsmosisQuerySpotPriceRequestPacketData != nil {
-		{
-			size, err := m.IbcOsmosisQuerySpotPriceRequestPacketData.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintOsmosisibc(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x1a
-	}
-	return len(dAtA) - i, nil
-}
-func (m *NoData) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *NoData) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *NoData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
-func (m *SwapAmountInRoute) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *SwapAmountInRoute) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *SwapAmountInRoute) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.TokenOutDenom) > 0 {
-		i -= len(m.TokenOutDenom)
-		copy(dAtA[i:], m.TokenOutDenom)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.TokenOutDenom)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if m.PoolId != 0 {
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(m.PoolId))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *OsmosisQueryRequestPacketData) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *OsmosisQueryRequestPacketData) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *OsmosisQueryRequestPacketData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Routes) > 0 {
-		for iNdEx := len(m.Routes) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Routes[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintOsmosisibc(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x1a
-		}
-	}
-	if len(m.TokenIn) > 0 {
-		i -= len(m.TokenIn)
-		copy(dAtA[i:], m.TokenIn)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.TokenIn)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if m.PoolId != 0 {
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(m.PoolId))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *OsmosisQuerySpotPriceRequestPacketData) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *OsmosisQuerySpotPriceRequestPacketData) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *OsmosisQuerySpotPriceRequestPacketData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.QuoteAssetDenom) > 0 {
-		i -= len(m.QuoteAssetDenom)
-		copy(dAtA[i:], m.QuoteAssetDenom)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.QuoteAssetDenom)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if len(m.BaseAssetDenom) > 0 {
-		i -= len(m.BaseAssetDenom)
-		copy(dAtA[i:], m.BaseAssetDenom)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.BaseAssetDenom)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if m.PoolId != 0 {
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(m.PoolId))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
+	// 587 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x94, 0xc1, 0x6e, 0xd3, 0x40,
+	0x10, 0x86, 0x63, 0x1a, 0x15, 0xb2, 0x41, 0x45, 0x58, 0xa8, 0x84, 0xd2, 0xd8, 0x91, 0x0f, 0x28,
+	0x97, 0xee, 0xaa, 0x45, 0x1c, 0xe0, 0x02, 0x4d, 0x7b, 0xa0, 0x97, 0x0a, 0x4c, 0x24, 0x10, 0x97,
+	0x68, 0xec, 0x6c, 0x93, 0x55, 0x62, 0xaf, 0xe3, 0xdd, 0x34, 0xe4, 0x2d, 0x7a, 0xe1, 0x9d, 0x7a,
+	0xec, 0x81, 0x03, 0xe2, 0x10, 0x50, 0xf2, 0x06, 0x7d, 0x02, 0xb4, 0xeb, 0x75, 0xd2, 0xa6, 0x86,
+	0x93, 0x67, 0x67, 0xfe, 0xf9, 0x76, 0x66, 0x3c, 0x36, 0xc2, 0x67, 0x94, 0x42, 0x20, 0x64, 0x0a,
+	0xa1, 0x64, 0x3c, 0x26, 0x10, 0x88, 0x33, 0x4a, 0xc9, 0xf9, 0x7e, 0x40, 0x25, 0xec, 0x13, 0x2e,
+	0x22, 0x2e, 0x98, 0x60, 0x41, 0x88, 0x93, 0x94, 0x4b, 0x6e, 0xd7, 0x6f, 0xeb, 0x71, 0xa6, 0xc7,
+	0x46, 0xbf, 0xf3, 0xa4, 0xc7, 0x7b, 0x5c, 0x2b, 0x89, 0xb2, 0xb2, 0xa4, 0x1d, 0xb7, 0xc7, 0x79,
+	0x6f, 0x48, 0x89, 0x3e, 0x05, 0xe3, 0x33, 0x22, 0x59, 0x44, 0x85, 0x84, 0x28, 0x31, 0x82, 0x5d,
+	0x23, 0x80, 0x84, 0x11, 0x88, 0x63, 0x2e, 0x41, 0xc1, 0x85, 0x89, 0x3e, 0x97, 0x34, 0xee, 0xd2,
+	0x34, 0x62, 0xb1, 0x24, 0x10, 0x84, 0x8c, 0xc8, 0x69, 0x42, 0x4d, 0xd0, 0xfb, 0x61, 0x21, 0xf7,
+	0xe3, 0x98, 0xa6, 0xd3, 0xc3, 0x94, 0xc9, 0x7e, 0x44, 0x25, 0x0b, 0xdb, 0x13, 0x48, 0xda, 0xfc,
+	0x94, 0x4f, 0x7c, 0x3a, 0x1a, 0x53, 0x21, 0xed, 0xa7, 0xe8, 0x7e, 0xc2, 0xf9, 0xb0, 0xc3, 0xba,
+	0x35, 0xab, 0x61, 0x35, 0xcb, 0xfe, 0xa6, 0x3a, 0x9e, 0x74, 0xed, 0x3a, 0x42, 0x01, 0x08, 0xda,
+	0x01, 0x21, 0xa8, 0xac, 0xdd, 0x6b, 0x58, 0xcd, 0x8a, 0x5f, 0x51, 0x9e, 0x43, 0xe5, 0xb0, 0x5d,
+	0x54, 0x1d, 0x8d, 0xb9, 0xcc, 0xe3, 0x1b, 0x3a, 0x8e, 0xb4, 0x2b, 0x13, 0x7c, 0x41, 0x48, 0x48,
+	0x48, 0x65, 0x47, 0x35, 0x54, 0x2b, 0x37, 0xac, 0x66, 0xf5, 0x60, 0x07, 0x67, 0xcd, 0xe0, 0xbc,
+	0x5b, 0xdc, 0xce, 0xbb, 0x6d, 0xd5, 0x2f, 0x67, 0x6e, 0xe9, 0x7a, 0xe6, 0x3e, 0x9e, 0x42, 0x34,
+	0x7c, 0xe3, 0xad, 0x72, 0xbd, 0x8b, 0xdf, 0xae, 0xe5, 0x57, 0xb4, 0x43, 0xc9, 0xbd, 0xef, 0x16,
+	0x6a, 0xfc, 0xbb, 0x2d, 0x91, 0xf0, 0x58, 0x50, 0x7b, 0x84, 0x1e, 0xc1, 0x32, 0xdc, 0x91, 0x13,
+	0x48, 0x74, 0x7f, 0x95, 0xd6, 0x7b, 0x75, 0xcf, 0xaf, 0x99, 0xfb, 0xa2, 0xc7, 0x64, 0x7f, 0x1c,
+	0xe0, 0x90, 0x47, 0x24, 0xd4, 0xef, 0xd2, 0x3c, 0xf6, 0x44, 0x77, 0x60, 0xc6, 0x78, 0x4c, 0xc3,
+	0xeb, 0x99, 0xbb, 0x9d, 0x55, 0xb4, 0x86, 0xf3, 0xfc, 0x2d, 0xb8, 0x75, 0xbf, 0xf7, 0x0e, 0x6d,
+	0x9f, 0xc4, 0x92, 0xa6, 0x61, 0x1f, 0x58, 0xac, 0x0b, 0xcc, 0x87, 0x6c, 0xa3, 0x72, 0x17, 0x24,
+	0xe8, 0x0a, 0x1e, 0xfa, 0xda, 0x56, 0xbe, 0x04, 0x64, 0xdf, 0x4c, 0x56, 0xdb, 0xde, 0x11, 0x7a,
+	0xb6, 0x46, 0xf8, 0x00, 0xe1, 0x80, 0xca, 0x63, 0x93, 0x50, 0x04, 0x89, 0x68, 0xc4, 0x73, 0x88,
+	0xb2, 0x3d, 0x8c, 0x6a, 0x85, 0x90, 0xc3, 0x70, 0x50, 0xc4, 0xf0, 0x26, 0x68, 0xb7, 0xb8, 0xec,
+	0x2c, 0xcd, 0xfe, 0x8c, 0x1e, 0xa4, 0x99, 0x43, 0xd4, 0xac, 0xc6, 0x46, 0xb3, 0x7a, 0xf0, 0x0a,
+	0xff, 0x77, 0xd3, 0x71, 0x31, 0xae, 0x55, 0x56, 0x93, 0xf7, 0x97, 0x30, 0xef, 0x14, 0x55, 0x8f,
+	0xf4, 0xc4, 0xb5, 0xca, 0x7e, 0x7b, 0xe7, 0x9e, 0x3a, 0x5e, 0x6d, 0x37, 0x56, 0xdb, 0x8d, 0x0d,
+	0x4a, 0x27, 0xdc, 0xe1, 0xb5, 0xd1, 0x56, 0xc6, 0x5b, 0x2e, 0x41, 0x0b, 0x55, 0x52, 0x63, 0xe7,
+	0x4c, 0xa7, 0x80, 0x99, 0x29, 0x6e, 0x42, 0x57, 0x69, 0xad, 0x4f, 0x97, 0x73, 0xc7, 0xba, 0x9a,
+	0x3b, 0xd6, 0x9f, 0xb9, 0x63, 0x5d, 0x2c, 0x9c, 0xd2, 0xd5, 0xc2, 0x29, 0xfd, 0x5c, 0x38, 0xa5,
+	0xaf, 0xaf, 0x6f, 0x6c, 0x50, 0xcc, 0xd5, 0x20, 0x60, 0xb8, 0x37, 0x84, 0x40, 0x90, 0xb5, 0x1f,
+	0xc7, 0xf9, 0x3e, 0xf9, 0x66, 0x7c, 0xd9, 0x62, 0x05, 0x9b, 0xfa, 0x03, 0x78, 0xf9, 0x37, 0x00,
+	0x00, 0xff, 0xff, 0x2b, 0xac, 0xa2, 0x0d, 0x63, 0x04, 0x00, 0x00,
 }
 
 func (m *QueryArithmeticTwapToNowRequest) Marshal() (dAtA []byte, err error) {
@@ -1104,12 +496,12 @@ func (m *QueryArithmeticTwapToNowRequest) MarshalToSizedBuffer(dAtA []byte) (int
 	_ = i
 	var l int
 	_ = l
-	n4, err4 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.StartTime, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.StartTime):])
-	if err4 != nil {
-		return 0, err4
+	n1, err1 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.StartTime, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.StartTime):])
+	if err1 != nil {
+		return 0, err1
 	}
-	i -= n4
-	i = encodeVarintOsmosisibc(dAtA, i, uint64(n4))
+	i -= n1
+	i = encodeVarintOsmosisibc(dAtA, i, uint64(n1))
 	i--
 	dAtA[i] = 0x22
 	if len(m.QuoteAsset) > 0 {
@@ -1131,6 +523,39 @@ func (m *QueryArithmeticTwapToNowRequest) MarshalToSizedBuffer(dAtA []byte) (int
 		i--
 		dAtA[i] = 0x8
 	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryArithmeticTwapToNowResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryArithmeticTwapToNowResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryArithmeticTwapToNowResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size := m.ArithmeticTwap.Size()
+		i -= size
+		if _, err := m.ArithmeticTwap.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintOsmosisibc(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -1161,6 +586,73 @@ func (m *InterchainQueryRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 		i--
 		dAtA[i] = 0x12
 	}
+	if len(m.Data) > 0 {
+		i -= len(m.Data)
+		copy(dAtA[i:], m.Data)
+		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.Data)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *InterchainQueryPacketData) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *InterchainQueryPacketData) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *InterchainQueryPacketData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Memo) > 0 {
+		i -= len(m.Memo)
+		copy(dAtA[i:], m.Memo)
+		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.Memo)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Data) > 0 {
+		i -= len(m.Data)
+		copy(dAtA[i:], m.Data)
+		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.Data)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *InterchainQueryPacketAck) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *InterchainQueryPacketAck) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *InterchainQueryPacketAck) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
 	if len(m.Data) > 0 {
 		i -= len(m.Data)
 		copy(dAtA[i:], m.Data)
@@ -1208,7 +700,7 @@ func (m *InterchainQueryRequestPacket) MarshalToSizedBuffer(dAtA []byte) (int, e
 	return len(dAtA) - i, nil
 }
 
-func (m *HostChainFeeAbsConfig) Marshal() (dAtA []byte, err error) {
+func (m *CosmosQuery) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1218,94 +710,34 @@ func (m *HostChainFeeAbsConfig) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *HostChainFeeAbsConfig) MarshalTo(dAtA []byte) (int, error) {
+func (m *CosmosQuery) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *HostChainFeeAbsConfig) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *CosmosQuery) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.OsmosisQueryChannel) > 0 {
-		i -= len(m.OsmosisQueryChannel)
-		copy(dAtA[i:], m.OsmosisQueryChannel)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.OsmosisQueryChannel)))
-		i--
-		dAtA[i] = 0x52
-	}
-	if m.Frozen {
-		i--
-		if m.Frozen {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
+	if len(m.Requests) > 0 {
+		for iNdEx := len(m.Requests) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Requests[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOsmosisibc(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
 		}
-		i--
-		dAtA[i] = 0x48
-	}
-	if m.IsOsmosis {
-		i--
-		if m.IsOsmosis {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i--
-		dAtA[i] = 0x40
-	}
-	if m.PoolId != 0 {
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(m.PoolId))
-		i--
-		dAtA[i] = 0x38
-	}
-	if len(m.CrosschainSwapAddress) > 0 {
-		i -= len(m.CrosschainSwapAddress)
-		copy(dAtA[i:], m.CrosschainSwapAddress)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.CrosschainSwapAddress)))
-		i--
-		dAtA[i] = 0x32
-	}
-	if len(m.HostZoneIbcTransferChannel) > 0 {
-		i -= len(m.HostZoneIbcTransferChannel)
-		copy(dAtA[i:], m.HostZoneIbcTransferChannel)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.HostZoneIbcTransferChannel)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if len(m.IbcTransferChannel) > 0 {
-		i -= len(m.IbcTransferChannel)
-		copy(dAtA[i:], m.IbcTransferChannel)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.IbcTransferChannel)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.MiddlewareAddress) > 0 {
-		i -= len(m.MiddlewareAddress)
-		copy(dAtA[i:], m.MiddlewareAddress)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.MiddlewareAddress)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if len(m.OsmosisPoolTokenDenomIn) > 0 {
-		i -= len(m.OsmosisPoolTokenDenomIn)
-		copy(dAtA[i:], m.OsmosisPoolTokenDenomIn)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.OsmosisPoolTokenDenomIn)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.IbcDenom) > 0 {
-		i -= len(m.IbcDenom)
-		copy(dAtA[i:], m.IbcDenom)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.IbcDenom)))
-		i--
-		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *AddHostZoneProposal) Marshal() (dAtA []byte, err error) {
+func (m *CosmosResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1315,139 +747,29 @@ func (m *AddHostZoneProposal) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *AddHostZoneProposal) MarshalTo(dAtA []byte) (int, error) {
+func (m *CosmosResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *AddHostZoneProposal) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *CosmosResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.HostChainConfig != nil {
-		{
-			size, err := m.HostChainConfig.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
+	if len(m.Responses) > 0 {
+		for iNdEx := len(m.Responses) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Responses[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintOsmosisibc(dAtA, i, uint64(size))
 			}
-			i -= size
-			i = encodeVarintOsmosisibc(dAtA, i, uint64(size))
+			i--
+			dAtA[i] = 0xa
 		}
-		i--
-		dAtA[i] = 0x1a
-	}
-	if len(m.Description) > 0 {
-		i -= len(m.Description)
-		copy(dAtA[i:], m.Description)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.Description)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Title) > 0 {
-		i -= len(m.Title)
-		copy(dAtA[i:], m.Title)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.Title)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *DeleteHostZoneProposal) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *DeleteHostZoneProposal) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *DeleteHostZoneProposal) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.HostChainConfig != nil {
-		{
-			size, err := m.HostChainConfig.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintOsmosisibc(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x1a
-	}
-	if len(m.Description) > 0 {
-		i -= len(m.Description)
-		copy(dAtA[i:], m.Description)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.Description)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Title) > 0 {
-		i -= len(m.Title)
-		copy(dAtA[i:], m.Title)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.Title)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *SetHostZoneProposal) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *SetHostZoneProposal) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *SetHostZoneProposal) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.HostChainConfig != nil {
-		{
-			size, err := m.HostChainConfig.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintOsmosisibc(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x1a
-	}
-	if len(m.Description) > 0 {
-		i -= len(m.Description)
-		copy(dAtA[i:], m.Description)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.Description)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Title) > 0 {
-		i -= len(m.Title)
-		copy(dAtA[i:], m.Title)
-		i = encodeVarintOsmosisibc(dAtA, i, uint64(len(m.Title)))
-		i--
-		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -1463,121 +785,6 @@ func encodeVarintOsmosisibc(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *FeeabsIbcPacketData) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Packet != nil {
-		n += m.Packet.Size()
-	}
-	return n
-}
-
-func (m *FeeabsIbcPacketData_NoData) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.NoData != nil {
-		l = m.NoData.Size()
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	return n
-}
-func (m *FeeabsIbcPacketData_IbcSwapAmountInRoute) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.IbcSwapAmountInRoute != nil {
-		l = m.IbcSwapAmountInRoute.Size()
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	return n
-}
-func (m *FeeabsIbcPacketData_IbcOsmosisQuerySpotPriceRequestPacketData) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.IbcOsmosisQuerySpotPriceRequestPacketData != nil {
-		l = m.IbcOsmosisQuerySpotPriceRequestPacketData.Size()
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	return n
-}
-func (m *NoData) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *SwapAmountInRoute) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.PoolId != 0 {
-		n += 1 + sovOsmosisibc(uint64(m.PoolId))
-	}
-	l = len(m.TokenOutDenom)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	return n
-}
-
-func (m *OsmosisQueryRequestPacketData) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.PoolId != 0 {
-		n += 1 + sovOsmosisibc(uint64(m.PoolId))
-	}
-	l = len(m.TokenIn)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	if len(m.Routes) > 0 {
-		for _, e := range m.Routes {
-			l = e.Size()
-			n += 1 + l + sovOsmosisibc(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *OsmosisQuerySpotPriceRequestPacketData) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.PoolId != 0 {
-		n += 1 + sovOsmosisibc(uint64(m.PoolId))
-	}
-	l = len(m.BaseAssetDenom)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	l = len(m.QuoteAssetDenom)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	return n
-}
-
 func (m *QueryArithmeticTwapToNowRequest) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1600,6 +807,17 @@ func (m *QueryArithmeticTwapToNowRequest) Size() (n int) {
 	return n
 }
 
+func (m *QueryArithmeticTwapToNowResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.ArithmeticTwap.Size()
+	n += 1 + l + sovOsmosisibc(uint64(l))
+	return n
+}
+
 func (m *InterchainQueryRequest) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1611,6 +829,36 @@ func (m *InterchainQueryRequest) Size() (n int) {
 		n += 1 + l + sovOsmosisibc(uint64(l))
 	}
 	l = len(m.Path)
+	if l > 0 {
+		n += 1 + l + sovOsmosisibc(uint64(l))
+	}
+	return n
+}
+
+func (m *InterchainQueryPacketData) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Data)
+	if l > 0 {
+		n += 1 + l + sovOsmosisibc(uint64(l))
+	}
+	l = len(m.Memo)
+	if l > 0 {
+		n += 1 + l + sovOsmosisibc(uint64(l))
+	}
+	return n
+}
+
+func (m *InterchainQueryPacketAck) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Data)
 	if l > 0 {
 		n += 1 + l + sovOsmosisibc(uint64(l))
 	}
@@ -1632,111 +880,32 @@ func (m *InterchainQueryRequestPacket) Size() (n int) {
 	return n
 }
 
-func (m *HostChainFeeAbsConfig) Size() (n int) {
+func (m *CosmosQuery) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.IbcDenom)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	l = len(m.OsmosisPoolTokenDenomIn)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	l = len(m.MiddlewareAddress)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	l = len(m.IbcTransferChannel)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	l = len(m.HostZoneIbcTransferChannel)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	l = len(m.CrosschainSwapAddress)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	if m.PoolId != 0 {
-		n += 1 + sovOsmosisibc(uint64(m.PoolId))
-	}
-	if m.IsOsmosis {
-		n += 2
-	}
-	if m.Frozen {
-		n += 2
-	}
-	l = len(m.OsmosisQueryChannel)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
+	if len(m.Requests) > 0 {
+		for _, e := range m.Requests {
+			l = e.Size()
+			n += 1 + l + sovOsmosisibc(uint64(l))
+		}
 	}
 	return n
 }
 
-func (m *AddHostZoneProposal) Size() (n int) {
+func (m *CosmosResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.Title)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	l = len(m.Description)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	if m.HostChainConfig != nil {
-		l = m.HostChainConfig.Size()
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	return n
-}
-
-func (m *DeleteHostZoneProposal) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Title)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	l = len(m.Description)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	if m.HostChainConfig != nil {
-		l = m.HostChainConfig.Size()
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	return n
-}
-
-func (m *SetHostZoneProposal) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Title)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	l = len(m.Description)
-	if l > 0 {
-		n += 1 + l + sovOsmosisibc(uint64(l))
-	}
-	if m.HostChainConfig != nil {
-		l = m.HostChainConfig.Size()
-		n += 1 + l + sovOsmosisibc(uint64(l))
+	if len(m.Responses) > 0 {
+		for _, e := range m.Responses {
+			l = e.Size()
+			n += 1 + l + sovOsmosisibc(uint64(l))
+		}
 	}
 	return n
 }
@@ -1746,580 +915,6 @@ func sovOsmosisibc(x uint64) (n int) {
 }
 func sozOsmosisibc(x uint64) (n int) {
 	return sovOsmosisibc(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *FeeabsIbcPacketData) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOsmosisibc
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: FeeabsIbcPacketData: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: FeeabsIbcPacketData: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field NoData", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			v := &NoData{}
-			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			m.Packet = &FeeabsIbcPacketData_NoData{v}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field IbcSwapAmountInRoute", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			v := &SwapAmountInRoute{}
-			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			m.Packet = &FeeabsIbcPacketData_IbcSwapAmountInRoute{v}
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field IbcOsmosisQuerySpotPriceRequestPacketData", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			v := &OsmosisQuerySpotPriceRequestPacketData{}
-			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			m.Packet = &FeeabsIbcPacketData_IbcOsmosisQuerySpotPriceRequestPacketData{v}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOsmosisibc(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *NoData) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOsmosisibc
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: NoData: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: NoData: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOsmosisibc(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *SwapAmountInRoute) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOsmosisibc
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: SwapAmountInRoute: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: SwapAmountInRoute: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PoolId", wireType)
-			}
-			m.PoolId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PoolId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TokenOutDenom", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.TokenOutDenom = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOsmosisibc(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *OsmosisQueryRequestPacketData) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOsmosisibc
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: OsmosisQueryRequestPacketData: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: OsmosisQueryRequestPacketData: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PoolId", wireType)
-			}
-			m.PoolId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PoolId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TokenIn", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.TokenIn = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Routes", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Routes = append(m.Routes, SwapAmountInRoute{})
-			if err := m.Routes[len(m.Routes)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOsmosisibc(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *OsmosisQuerySpotPriceRequestPacketData) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOsmosisibc
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: OsmosisQuerySpotPriceRequestPacketData: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: OsmosisQuerySpotPriceRequestPacketData: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PoolId", wireType)
-			}
-			m.PoolId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PoolId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BaseAssetDenom", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.BaseAssetDenom = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field QuoteAssetDenom", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.QuoteAssetDenom = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOsmosisibc(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
 }
 func (m *QueryArithmeticTwapToNowRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -2487,6 +1082,90 @@ func (m *QueryArithmeticTwapToNowRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *QueryArithmeticTwapToNowResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOsmosisibc
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryArithmeticTwapToNowResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryArithmeticTwapToNowResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ArithmeticTwap", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOsmosisibc
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOsmosisibc
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOsmosisibc
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.ArithmeticTwap.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOsmosisibc(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthOsmosisibc
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *InterchainQueryRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2603,6 +1282,206 @@ func (m *InterchainQueryRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *InterchainQueryPacketData) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOsmosisibc
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: InterchainQueryPacketData: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: InterchainQueryPacketData: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Data", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOsmosisibc
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthOsmosisibc
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOsmosisibc
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Data = append(m.Data[:0], dAtA[iNdEx:postIndex]...)
+			if m.Data == nil {
+				m.Data = []byte{}
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Memo", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOsmosisibc
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthOsmosisibc
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOsmosisibc
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Memo = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOsmosisibc(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthOsmosisibc
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *InterchainQueryPacketAck) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOsmosisibc
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: InterchainQueryPacketAck: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: InterchainQueryPacketAck: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Data", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOsmosisibc
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthOsmosisibc
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthOsmosisibc
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Data = append(m.Data[:0], dAtA[iNdEx:postIndex]...)
+			if m.Data == nil {
+				m.Data = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOsmosisibc(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthOsmosisibc
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *InterchainQueryRequestPacket) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2687,7 +1566,7 @@ func (m *InterchainQueryRequestPacket) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *HostChainFeeAbsConfig) Unmarshal(dAtA []byte) error {
+func (m *CosmosQuery) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2710,412 +1589,15 @@ func (m *HostChainFeeAbsConfig) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: HostChainFeeAbsConfig: wiretype end group for non-group")
+			return fmt.Errorf("proto: CosmosQuery: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: HostChainFeeAbsConfig: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: CosmosQuery: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field IbcDenom", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.IbcDenom = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OsmosisPoolTokenDenomIn", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.OsmosisPoolTokenDenomIn = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MiddlewareAddress", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.MiddlewareAddress = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field IbcTransferChannel", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.IbcTransferChannel = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field HostZoneIbcTransferChannel", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.HostZoneIbcTransferChannel = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field CrosschainSwapAddress", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.CrosschainSwapAddress = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 7:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PoolId", wireType)
-			}
-			m.PoolId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PoolId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 8:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field IsOsmosis", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.IsOsmosis = bool(v != 0)
-		case 9:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Frozen", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Frozen = bool(v != 0)
-		case 10:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OsmosisQueryChannel", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.OsmosisQueryChannel = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOsmosisibc(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *AddHostZoneProposal) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOsmosisibc
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: AddHostZoneProposal: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: AddHostZoneProposal: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Title", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Title = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Description = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field HostChainConfig", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Requests", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -3142,10 +1624,8 @@ func (m *AddHostZoneProposal) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.HostChainConfig == nil {
-				m.HostChainConfig = &HostChainFeeAbsConfig{}
-			}
-			if err := m.HostChainConfig.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.Requests = append(m.Requests, types1.RequestQuery{})
+			if err := m.Requests[len(m.Requests)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -3170,8 +1650,7 @@ func (m *AddHostZoneProposal) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
-func (m *DeleteHostZoneProposal) Unmarshal(dAtA []byte) error {
+func (m *CosmosResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3194,79 +1673,15 @@ func (m *DeleteHostZoneProposal) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: DeleteHostZoneProposal: wiretype end group for non-group")
+			return fmt.Errorf("proto: CosmosResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: DeleteHostZoneProposal: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: CosmosResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Title", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Title = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Description = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field HostChainConfig", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Responses", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -3293,10 +1708,8 @@ func (m *DeleteHostZoneProposal) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.HostChainConfig == nil {
-				m.HostChainConfig = &HostChainFeeAbsConfig{}
-			}
-			if err := m.HostChainConfig.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.Responses = append(m.Responses, types1.ResponseQuery{})
+			if err := m.Responses[len(m.Responses)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -3321,158 +1734,6 @@ func (m *DeleteHostZoneProposal) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
-func (m *SetHostZoneProposal) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOsmosisibc
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: SetHostZoneProposal: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: SetHostZoneProposal: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Title", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Title = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Description = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field HostChainConfig", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsmosisibc
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.HostChainConfig == nil {
-				m.HostChainConfig = &HostChainFeeAbsConfig{}
-			}
-			if err := m.HostChainConfig.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOsmosisibc(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthOsmosisibc
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-
 func skipOsmosisibc(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
