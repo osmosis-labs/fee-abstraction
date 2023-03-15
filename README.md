@@ -34,7 +34,7 @@ For this to work, we first has to set up an ibc channel from `feeabs` to `async-
 
 The process of pulling Twap data and update exchange rate :
 
-![](https://i.imgur.com/olERCSv.png)
+!       [](https://i.imgur.com/olERCSv.png)
 
 Description :
     For every `update exchange rate period`, at fee-abs `BeginBlocker()` we submit a `InterchainQueryPacketData` which wrapped `QueryArithmeticTwapToNowRequest` to the querying channel on the customer chain's end. Then relayers will submit `MsgReceivePacket` so that our `QueryTwapPacket` which will be routed to `async-icq` module to be processed. `async-icq` module then unpack `InterchainQueryPacketData` and send query to TWAP module. The correspone response will be wrapped in the ibc acknowledgement. Relayers then submit `MsgAcknowledgement` to the customer chain so that the ibc acknowledgement is routed to fee-abs to be processed. Fee-abs then update exchange rate according to the Twap wrapped in the ibc acknowledgement.
