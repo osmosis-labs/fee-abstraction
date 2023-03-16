@@ -1,8 +1,8 @@
 # Epoch
 
-The fee abstraction levegage the Osmosis `epoch` which is used to schedule the Inter-Blockchain Communication (IBC) send packet requests. These requests are for `RequestTwapData` and `SwapIBCToken`.
+The fee abstraction levegage the Osmosis `epoch` which is used to schedule the Inter-Blockchain Communication (IBC) send packet requests. These requests are for ``QueryArithmeticTwapToNowRequest` and `SwapIBCToken`.
 
-The `RequestTwapData` packet is used to request Time-Weighted Average Price (TWAP) data from Osmosis network.
+The `QueryArithmeticTwapToNowRequest` packet is used to request Time-Weighted Average Price (TWAP) data from Osmosis network.
 
 The `SwapIBCToken` packet is for a feature of the fee abstraction module which allows for the transfer of IBC fees to the Osmosis cross-swap contract. The module account will then receive the native token associated with the fee..
 
