@@ -2,7 +2,7 @@
 
 ## `SendQueryIbcDenomTWAP`
 
-A Ibc-token/Native-token TWAP pair is achieved by using the `QueryArithmeticTwapToNowRequest` and `InterchainQueryRequest`:
+A Ibc-token/Native-token TWAP pair is achieved by using the `QueryArithmeticTwapToNowRequest` and `InterchainQueryPacketData`:
 
 ```go
 type QueryArithmeticTwapToNowRequest struct {
@@ -14,13 +14,13 @@ type QueryArithmeticTwapToNowRequest struct {
 ```
 
 ```go
-type InterchainQueryRequest struct {
+type InterchainQueryPacketData struct {
 	Data []byte
-	Path string
+	Memo string
 }
 ```
 
-The `QueryArithmeticTwapToNowRequest` will be embedded in the `Data` field of the `InterchainQueryRequest`, the `Path` field should match with the Osmosis `ArithmeticTwapToNow` GRPC query, which is `"/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow"`
+The `QueryArithmeticTwapToNowRequest` will be embedded in the `Data` field of the `InterchainQueryPacketData`
 
 This message will send a query TWAP to the feeabs-contract on counterparty chain (Osmosis) represented by the counterparty Channel End connected to the Channel End with the identifiers `SourcePort` and `SourceChannel`.
 
@@ -28,7 +28,7 @@ The denomination provided for QueryArithmeticTwapToNowRequest should correspond 
 
 ## `SwapCrossChain`
 
-Feeabs module exchange Ibc token to native token using the `SwapCrossChain`:
+Feeabs module exchange Ibc token to native token using the `SwapCrossChain` which is `MsgTransfer` with a specific `Memo`:
 
 ```go
 type MsgTransfer struct {
