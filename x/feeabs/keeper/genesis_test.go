@@ -16,7 +16,7 @@ import (
 var now = time.Now().UTC()
 
 var testGenesis = types.GenesisState{
-	Params: &types.Params{
+	Params: types.Params{
 		OsmosisExchangeRateUpdatePeriod: types.DefaultQueryPeriod,
 		AccumulatedOsmosisFeeSwapPeriod: types.DefaultSwapPeriod,
 		NativeIbcedInOsmosis:            "ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
@@ -57,7 +57,7 @@ func TestInitGenesis(t *testing.T) {
 	app.FeeabsKeeper.InitGenesis(ctx, genesis)
 
 	params := app.FeeabsKeeper.GetParams(ctx)
-	require.Equal(t, params, *genesis.Params)
+	require.Equal(t, params, genesis.Params)
 
 	epochs := app.FeeabsKeeper.AllEpochInfos(ctx)
 	require.Equal(t, epochs, genesis.Epochs)
