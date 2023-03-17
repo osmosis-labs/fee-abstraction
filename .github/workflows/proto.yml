@@ -3,7 +3,6 @@ name: Protobuf
 # This workflow is only run when a .proto file has been changed
 on:
   pull_request:
-    types: [ labeled ]
     paths:
       - "**.proto"
 jobs:

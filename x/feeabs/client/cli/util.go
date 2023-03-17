@@ -24,8 +24,50 @@ func ParseAddHostZoneProposalJSON(cdc *codec.LegacyAmino, proposalFile string) (
 	return proposal, nil
 }
 
+func ParseDeleteHostZoneProposalJSON(cdc *codec.LegacyAmino, proposalFile string) (DeleteHostZoneProposalJSON, error) {
+	proposal := DeleteHostZoneProposalJSON{}
+
+	contents, err := ioutil.ReadFile(proposalFile)
+	if err != nil {
+		return proposal, err
+	}
+
+	if err := cdc.UnmarshalJSON(contents, &proposal); err != nil {
+		return proposal, err
+	}
+
+	return proposal, nil
+}
+
+func ParseSetHostZoneProposalJSON(cdc *codec.LegacyAmino, proposalFile string) (SetHostZoneProposalJSON, error) {
+	proposal := SetHostZoneProposalJSON{}
+
+	contents, err := ioutil.ReadFile(proposalFile)
+	if err != nil {
+		return proposal, err
+	}
+
+	if err := cdc.UnmarshalJSON(contents, &proposal); err != nil {
+		return proposal, err
+	}
+
+	return proposal, nil
+}
+
 type (
 	AddHostZoneProposalJSON struct {
+		Title                 string                      `json:"title" yaml:"title"`
+		Description           string                      `json:"description" yaml:"description"`
+		HostChainFeeAbsConfig types.HostChainFeeAbsConfig `json:"host_chain_fee_abs_config" yaml:"host_chain_fee_abs_config"`
+		Deposit               string                      `json:"deposit" yaml:"deposit"`
+	}
+	DeleteHostZoneProposalJSON struct {
+		Title                 string                      `json:"title" yaml:"title"`
+		Description           string                      `json:"description" yaml:"description"`
+		HostChainFeeAbsConfig types.HostChainFeeAbsConfig `json:"host_chain_fee_abs_config" yaml:"host_chain_fee_abs_config"`
+		Deposit               string                      `json:"deposit" yaml:"deposit"`
+	}
+	SetHostZoneProposalJSON struct {
 		Title                 string                      `json:"title" yaml:"title"`
 		Description           string                      `json:"description" yaml:"description"`
 		HostChainFeeAbsConfig types.HostChainFeeAbsConfig `json:"host_chain_fee_abs_config" yaml:"host_chain_fee_abs_config"`

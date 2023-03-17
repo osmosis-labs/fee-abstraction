@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -13,6 +12,8 @@ import (
 	channeltypes "github.com/cosmos/ibc-go/v4/modules/core/04-channel/types"
 	host "github.com/cosmos/ibc-go/v4/modules/core/24-host"
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
+	abci "github.com/tendermint/tendermint/abci/types"
+	abcitypes "github.com/tendermint/tendermint/abci/types"
 )
 
 // GetPort returns the portID for the module. Used in ExportGenesis.
@@ -57,9 +58,9 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Cap
 func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryArithmeticTwapToNowRequest, sourcePort, sourceChannel string) error {
 	path := "/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow" // hard code for now should add to params
 
-	IcqReqs := make([]types.InterchainQueryRequest, len(twapReqs))
+	IcqReqs := make([]abcitypes.RequestQuery, len(twapReqs))
 	for i, req := range twapReqs {
-		IcqReqs[i] = types.InterchainQueryRequest{
+		IcqReqs[i] = abcitypes.RequestQuery{
 			Path: path,
 			Data: k.cdc.MustMarshal(&req),
 		}
@@ -76,7 +77,7 @@ func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryA
 // Send request for query state over IBC
 func (k Keeper) SendInterchainQuery(
 	ctx sdk.Context,
-	reqs []types.InterchainQueryRequest,
+	reqs []abcitypes.RequestQuery,
 	sourcePort string,
 	sourceChannel string,
 ) (uint64, error) {
@@ -95,25 +96,27 @@ func (k Keeper) SendInterchainQuery(
 	destinationPort := sourceChannelEnd.GetCounterparty().GetPortID()
 	destinationChannel := sourceChannelEnd.GetCounterparty().GetChannelID()
 
-	timeoutHeight := clienttypes.NewHeight(0, 100000000)
-	timeoutTimestamp := uint64(0)
-
+	timeoutTimestamp := ctx.BlockTime().Add(time.Minute * 5).UnixNano()
 	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
 	if !ok {
 		return 0, sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
 	}
 
-	packetData := types.NewInterchainQueryRequestPacket(reqs)
+	data, err := types.SerializeCosmosQuery(reqs)
+	if err != nil {
+		return 0, sdkerrors.Wrap(err, "could not serialize reqs into cosmos query")
+	}
+	icqPacketData := types.NewInterchainQueryPacketData(data, "")
 
 	packet := channeltypes.NewPacket(
-		packetData.GetBytes(),
+		icqPacketData.GetBytes(),
 		sequence,
 		sourcePort,
 		sourceChannel,
 		destinationPort,
 		destinationChannel,
-		timeoutHeight,
-		timeoutTimestamp,
+		clienttypes.ZeroHeight(),
+		uint64(timeoutTimestamp),
 	)
 
 	if err := k.channelKeeper.SendPacket(ctx, channelCap, packet); err != nil {
@@ -123,35 +126,121 @@ func (k Keeper) SendInterchainQuery(
 	return sequence, nil
 }
 
+func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknowledgement, icqReqs []abci.RequestQuery) error {
+	switch resp := ack.Response.(type) {
+	case *channeltypes.Acknowledgement_Result:
+		var ackData types.InterchainQueryPacketAck
+		if err := types.ModuleCdc.UnmarshalJSON(resp.Result, &ackData); err != nil {
+			return sdkerrors.Wrap(err, "failed to unmarshal interchain query packet ack")
+		}
+
+		ICQResponses, err := types.DeserializeCosmosResponse(ackData.Data)
+		if err != nil {
+			return sdkerrors.Wrap(err, "could not deserialize data to cosmos response")
+		}
+
+		index := 0
+		k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+			// Get icq data
+			icqReqData, reqPosition, found := k.getQueryArithmeticTwapToNowRequest(ctx, icqReqs, index)
+			// update the index
+			index = reqPosition
+			if !found {
+				// if not found any request, end the iterator
+				return true
+			}
+			// Check if icq TWAP denom match with hostzone denom store
+			if icqReqData.QuoteAsset != hostZoneConfig.OsmosisPoolTokenDenomIn {
+				return false
+			}
+			// Get icq QueryArithmeticTwapToNowRequest response
+			IcqRes := ICQResponses[index]
+			index++
+
+			if IcqRes.Code != 0 {
+				k.Logger(ctx).Error(fmt.Sprintf("Failed to send interchain query code %d", IcqRes.Code))
+				err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+				if err != nil {
+					k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
+				}
+				return false
+			}
+
+			twapRate, err := k.GetDecTWAPFromBytes(IcqRes.Value)
+			if err != nil {
+				k.Logger(ctx).Error("Failed to get twap")
+				return false
+			}
+			k.Logger(ctx).Info(fmt.Sprintf("TwapRate %v", twapRate))
+			k.SetTwapRate(ctx, hostZoneConfig.IbcDenom, twapRate)
+
+			return false
+		})
+
+		k.Logger(ctx).Info("packet ICQ request successfully")
+
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypePacket,
+				sdk.NewAttribute(types.AttributeKeyAckSuccess, string(resp.Result)),
+			),
+		)
+	case *channeltypes.Acknowledgement_Error:
+		k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+			err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+			if err != nil {
+				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
+			}
+
+			return false
+		})
+		k.Logger(ctx).Error(fmt.Sprintf("failed to send packet ICQ request %v", resp.Error))
+
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypePacket,
+				sdk.NewAttribute(types.AttributeKeyAckError, resp.Error),
+			),
+		)
+	}
+	return nil
+}
+
+func (k Keeper) getQueryArithmeticTwapToNowRequest(
+	ctx sdk.Context,
+	icqReqs []abci.RequestQuery,
+	index int,
+) (types.QueryArithmeticTwapToNowRequest, int, bool) {
+	packetLen := len(icqReqs)
+	found := false
+	var icqReqData types.QueryArithmeticTwapToNowRequest
+	for (index < packetLen) && (!found) {
+		icqReq := icqReqs[index]
+		if err := k.cdc.Unmarshal(icqReq.GetData(), &icqReqData); err != nil {
+			k.Logger(ctx).Error(fmt.Sprintf("Failed to unmarshal icqReqData %s", err.Error()))
+			index++
+		} else {
+			found = true
+		}
+	}
+
+	return icqReqData, index, found
+}
+
 func (k Keeper) GetChannelId(ctx sdk.Context) string {
 	store := ctx.KVStore(k.storeKey)
 	return string(store.Get(types.KeyChannelID))
 }
 
-// TODO: need to test this function
-func (k Keeper) UnmarshalPacketBytesToICQResponses(bz []byte) (types.IcqRespones, error) {
-	var res types.IcqRespones
-	err := json.Unmarshal(bz, &res)
-	if err != nil {
-		return types.IcqRespones{}, sdkerrors.New("ibc ack data umarshal", 1, err.Error())
-	}
-
-	return res, nil
-}
-
 // TODO: add testing
 func (k Keeper) GetDecTWAPFromBytes(bz []byte) (sdk.Dec, error) {
-	var ibcTokenTwap types.ArithmeticTWAP
-	err := json.Unmarshal(bz, &ibcTokenTwap)
+	var ibcTokenTwap types.QueryArithmeticTwapToNowResponse
+	err := k.cdc.Unmarshal(bz, &ibcTokenTwap)
 	if err != nil {
 		return sdk.Dec{}, sdkerrors.New("arithmeticTwap data umarshal", 1, err.Error())
 	}
 
-	ibcTokenTwapDec, err := sdk.NewDecFromStr(ibcTokenTwap.ArithmeticTWAP)
-	if err != nil {
-		return sdk.Dec{}, sdkerrors.New("ibc ack data umarshal", 1, "error when NewDecFromStr")
-	}
-	return ibcTokenTwapDec, nil
+	return ibcTokenTwap.ArithmeticTwap, nil
 }
 
 func (k Keeper) transferIBCTokenToHostChainWithMiddlewareMemo(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
@@ -170,14 +259,16 @@ func (k Keeper) transferIBCTokenToHostChainWithMiddlewareMemo(ctx sdk.Context, h
 		return err
 	}
 
+	timeoutTimestamp := ctx.BlockTime().Add(time.Minute * 5).UnixNano()
+
 	transferMsg := transfertypes.MsgTransfer{
 		SourcePort:       transfertypes.PortID,
 		SourceChannel:    hostChainConfig.IbcTransferChannel,
 		Token:            token,
 		Sender:           moduleAccountAddress.String(),
 		Receiver:         hostChainConfig.MiddlewareAddress,
-		TimeoutHeight:    clienttypes.NewHeight(0, 100000000),
-		TimeoutTimestamp: uint64(0),
+		TimeoutHeight:    clienttypes.ZeroHeight(),
+		TimeoutTimestamp: uint64(timeoutTimestamp),
 		Memo:             memo,
 	}
 
@@ -206,14 +297,16 @@ func (k Keeper) transferIBCTokenToOsmosisChainWithIBCHookMemo(ctx sdk.Context, h
 		return err
 	}
 
+	timeoutTimestamp := ctx.BlockTime().Add(time.Minute * 5).UnixNano()
+
 	transferMsg := transfertypes.MsgTransfer{
 		SourcePort:       transfertypes.PortID,
 		SourceChannel:    hostChainConfig.IbcTransferChannel,
 		Token:            token,
 		Sender:           moduleAccountAddress.String(),
 		Receiver:         hostChainConfig.CrosschainSwapAddress,
-		TimeoutHeight:    clienttypes.NewHeight(0, 100000000),
-		TimeoutTimestamp: uint64(0),
+		TimeoutHeight:    clienttypes.ZeroHeight(),
+		TimeoutTimestamp: uint64(timeoutTimestamp),
 		Memo:             memo,
 	}
 

@@ -1,8 +1,6 @@
 package types
 
 import (
-	time "time"
-
 	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -39,15 +37,9 @@ func (m MsgSendQueryIbcDenomTWAP) ValidateBasic() error {
 	return nil
 }
 
-func NewMsgSendQueryIbcDenomTWAP(
-	fromAddr sdk.AccAddress,
-	denom string,
-	startTime time.Time,
-) *MsgSendQueryIbcDenomTWAP {
+func NewMsgSendQueryIbcDenomTWAP(fromAddr sdk.AccAddress) *MsgSendQueryIbcDenomTWAP {
 	return &MsgSendQueryIbcDenomTWAP{
 		FromAddress: fromAddr.String(),
-		IbcDenom:    denom,
-		StartTime:   startTime,
 	}
 }
 
@@ -82,8 +74,9 @@ func (m MsgSwapCrossChain) ValidateBasic() error {
 	return nil
 }
 
-func NewMsgSwapCrossChain(fromAddr sdk.AccAddress) *MsgSwapCrossChain {
+func NewMsgSwapCrossChain(fromAddr sdk.AccAddress, ibcDenom string) *MsgSwapCrossChain {
 	return &MsgSwapCrossChain{
 		FromAddress: fromAddr.String(),
+		IbcDenom:    ibcDenom,
 	}
 }

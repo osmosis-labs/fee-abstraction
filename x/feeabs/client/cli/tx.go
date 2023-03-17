@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"time"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
@@ -31,8 +29,8 @@ func NewTxCmd() *cobra.Command {
 
 func NewQueryOsmosisTWAPCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "query-osmosis-twap [ibc-denom] [start-time]",
-		Args: cobra.ExactArgs(2),
+		Use:  "query-osmosis-twap",
+		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -42,9 +40,7 @@ func NewQueryOsmosisTWAPCmd() *cobra.Command {
 				return err
 			}
 
-			startTime := time.Unix(1676778631, 0)
-
-			msg := types.NewMsgSendQueryIbcDenomTWAP(clientCtx.GetFromAddress(), args[0], startTime)
+			msg := types.NewMsgSendQueryIbcDenomTWAP(clientCtx.GetFromAddress())
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 
 		},
@@ -56,14 +52,14 @@ func NewQueryOsmosisTWAPCmd() *cobra.Command {
 
 func NewSwapOverChainCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "swap",
-		Args: cobra.ExactArgs(0),
+		Use:  "swap [ibc-denom]",
+		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
-			msg := types.NewMsgSwapCrossChain(clientCtx.GetFromAddress())
+			msg := types.NewMsgSwapCrossChain(clientCtx.GetFromAddress(), args[0])
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 
 		},
@@ -79,7 +75,7 @@ func NewCmdSubmitAddHostZoneProposal() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		Short: "Submit an add host zone proposal",
 		Long: "Submit an add host zone proposal along with an initial deposit.\n" +
-			"Please specify a IBC denom identifier you want to use as abtraction fee..\n",
+			"Please specify a IBC denom identifier you want to use as abstraction fee..\n",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -91,6 +87,86 @@ func NewCmdSubmitAddHostZoneProposal() *cobra.Command {
 			}
 
 			content := types.NewAddHostZoneProposal(
+				proposal.Title, proposal.Description, proposal.HostChainFeeAbsConfig,
+			)
+
+			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)
+			if err != nil {
+				return err
+			}
+
+			from := clientCtx.GetFromAddress()
+			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
+			if err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+
+		},
+	}
+
+	return cmd
+}
+
+func NewCmdSubmitDeleteHostZoneProposal() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "delete-hostzone-config [proposal-file]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Submit an delete host zone proposal",
+		Long: "Submit an delete host zone proposal\n" +
+			"Please specify a IBC denom identifier you want to use as abstraction fee..\n",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			proposal, err := ParseDeleteHostZoneProposalJSON(clientCtx.LegacyAmino, args[0])
+			if err != nil {
+				return err
+			}
+
+			content := types.NewDeleteHostZoneProposal(
+				proposal.Title, proposal.Description, proposal.HostChainFeeAbsConfig,
+			)
+
+			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)
+			if err != nil {
+				return err
+			}
+
+			from := clientCtx.GetFromAddress()
+			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
+			if err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+
+		},
+	}
+
+	return cmd
+}
+
+func NewCmdSubmitSetHostZoneProposal() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "set-hostzone-config [proposal-file]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Submit an change host zone proposal",
+		Long: "Submit an change host zone proposal\n" +
+			"Please specify a IBC denom identifier you want to use as abstraction fee..\n",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			proposal, err := ParseSetHostZoneProposalJSON(clientCtx.LegacyAmino, args[0])
+			if err != nil {
+				return err
+			}
+
+			content := types.NewSetHostZoneProposal(
 				proposal.Title, proposal.Description, proposal.HostChainFeeAbsConfig,
 			)
 

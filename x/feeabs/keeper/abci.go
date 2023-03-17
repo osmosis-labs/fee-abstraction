@@ -80,7 +80,7 @@ func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
 
 		if err != nil {
 			k.Logger(ctx).Error(fmt.Sprintf("Failed to transfer IBC token %s", err.Error()))
-			err = k.FronzenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+			err = k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 			if err != nil {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozem host zone %s", err.Error()))
 			}

@@ -53,6 +53,7 @@ func (q Querier) FeeabsModuleBalances(goCtx context.Context, req *types.QueryFee
 
 	return &types.QueryFeeabsModuleBalacesResponse{
 		Balances: moduleBalances,
+		Address:  moduleAddress.String(),
 	}, nil
 }
 
@@ -70,5 +71,22 @@ func (q Querier) HostChainConfig(goCtx context.Context, req *types.QueryHostChai
 
 	return &types.QueryHostChainConfigRespone{
 		HostChainConfig: hostChainConfig,
+	}, nil
+}
+
+func (q Querier) AllHostChainConfig(goCtx context.Context, req *types.AllQueryHostChainConfigRequest) (*types.AllQueryHostChainConfigRespone, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "empty request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	allHostChainConfig, err := q.GetAllHostZoneConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.AllQueryHostChainConfigRespone{
+		AllHostChainConfig: allHostChainConfig,
 	}, nil
 }

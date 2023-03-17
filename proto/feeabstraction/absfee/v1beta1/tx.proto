@@ -18,13 +18,7 @@ service Msg {
 }
 // Params defines the parameters for the feeabs module.
 message MsgSendQueryIbcDenomTWAP {
-  string from_address = 1;
-  string ibc_denom = 2;
-  google.protobuf.Timestamp start_time = 3 [
-    (gogoproto.nullable) = false,
-    (gogoproto.stdtime) = true,
-    (gogoproto.moretags) = "yaml:\"start_time\""
-  ];
+    string from_address = 1;
 }
 message MsgSendQueryIbcDenomTWAPResponse {}
 

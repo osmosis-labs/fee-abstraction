@@ -24,11 +24,11 @@ echo "decorate bright ozone fork gallery riot bus exhaust worth way bone indoor 
 update_genesis '.app_state["staking"]["params"]["bond_denom"]="uosmo"'
 
 # osmo1ekqk6ms4fqf2mfeazju4pcu3jq93lcdsfl0tah
-osmosisd add-genesis-account $(osmosisd keys show alice -a --keyring-backend=test ) 100000000000uosmo,100000000000stake,100000000000uatom,2000000uakt 
-osmosisd add-genesis-account $(osmosisd keys show deployer -a --keyring-backend=test ) 100000000000uosmo,100000000000stake,100000000000uatom,2000000uakt 
+osmosisd add-genesis-account $(osmosisd keys show alice -a --keyring-backend=test ) 1000000000000uosmo,100000000000stake,100000000000uatom,2000000uakt 
+osmosisd add-genesis-account $(osmosisd keys show deployer -a --keyring-backend=test ) 1000000000000uosmo,100000000000stake,100000000000uatom,2000000uakt 
 
 # create validator node with tokens to transfer to the three other nodes
-osmosisd add-genesis-account $(osmosisd keys show validator1 -a --keyring-backend=test ) 100000000000uosmo,100000000000stake,100000000000uatom,2000000uakt 
+osmosisd add-genesis-account $(osmosisd keys show validator1 -a --keyring-backend=test ) 1000000000000uosmo,100000000000stake,100000000000uatom,2000000uakt 
 osmosisd gentx validator1 500000000uosmo --keyring-backend=test  --chain-id=testing
 osmosisd collect-gentxs 
 
@@ -67,7 +67,7 @@ update_genesis '.app_state["mint"]["params"]["epoch_identifier"]="day"'
 update_genesis '.app_state["gamm"]["params"]["pool_creation_fee"][0]["denom"]="uosmo"'
 
 # update interchainquery genesis
-update_genesis '.app_state["interchainquery"]["params"]["allow_queries"][0]="/cosmos.bank.v1beta1.Query/AllBalances"'
+update_genesis '.app_state["interchainquery"]["params"]["allow_queries"][0]="/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow"'
 
 
 # port key (validator1 uses default ports)
@@ -80,8 +80,10 @@ VALIDATOR1_CONFIG=$HOME/.osmosisd/config/config.toml
 
 # validator1
 sed -i -E 's|allow_duplicate_ip = false|allow_duplicate_ip = true|g' $VALIDATOR1_CONFIG
+sed -i -E 's|tcp://127.0.0.1:26658|tcp://0.0.0.0:26658|g' $VALIDATOR1_CONFIG
+sed -i -E 's|tcp://127.0.0.1:26657|tcp://0.0.0.0:26657|g' $VALIDATOR1_CONFIG
 
 # start all three validators
-osmosisd start 
+osmosisd start
 
 echo "1 Validators are up and running!"
