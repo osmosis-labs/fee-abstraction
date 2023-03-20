@@ -7,8 +7,16 @@ echo $VALIDATOR=$(osmosisd keys show validator1 -a --keyring-backend test )
 export OWNER=$(osmosisd keys show deployer -a --keyring-backend test )
 echo $OWNER=$(osmosisd keys show deployer -a --keyring-backend test )
 
-hermes --config scripts/relayer_hermes/config.toml create channel --a-chain testing --b-chain feeappd-t1 --a-port transfer --b-port transfer --new-client-connection --yes
-#hermes --config scripts/relayer_hermes/config.toml create channel --a-chain testing --b-chain feeappd-t1 --a-port icqhost --b-port feeabs --new-client-connection --yes
+hermes --config scripts/relayer_hermes/config_feeabs_osmosis.toml create channel --a-chain testing --b-chain feeappd-t1 --a-port transfer --b-port transfer --new-client-connection --yes
+#hermes --config scripts/relayer_hermes/config_feeabs_gaia.toml create channel --a-chain gaiad-t1 --b-chain feeappd-t1 --a-port transfer --b-port transfer --new-client-connection --yes
+#hermes --config scripts/relayer_hermes/config_osmosis_gaia.toml create channel --a-chain gaiad-t1 --b-chain testing --a-port transfer --b-port transfer --new-client-connection --yes
+#hermes --config scripts/relayer_hermes/config_feeabs_osmosis.toml create channel --a-chain testing --b-chain feeappd-t1 --a-port icqhost --b-port feeabs --new-client-connection --yes
+#feeabs - osmo: channel-0 channel-0
+#feeabs - osmo: (feeabs - icqhost) channel-1 channel-1
+#feeabs - gaia: channel-2 channel-0
+#osmo   - gaia: channel-2 channel-1
+#
+#
 
 feeappd tx ibc-transfer transfer transfer $CHANNEL_ID "$VALIDATOR" 1000000000000stake --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
 sleep 20 
@@ -21,8 +29,8 @@ echo ============DENOM==============
 
 cat > sample_pool.json <<EOF
 {
-        "weights": "1${DENOM},1uosmo",
-        "initial-deposit": "500000000000${DENOM},100000000000uosmo",
+        "weights": "1ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E,1ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
+        "initial-deposit": "500000000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E,100000000000ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
         "swap-fee": "0.01",
         "exit-fee": "0.01",
         "future-governor": "168h"
@@ -43,13 +51,13 @@ SWAPROUTER_CODE_ID=$(osmosisd query wasm list-code -o json | jq -r '.code_infos[
 INIT_SWAPROUTER='{"owner":"'$OWNER'"}'
 osmosisd tx wasm instantiate $SWAPROUTER_CODE_ID "$INIT_SWAPROUTER" --keyring-backend=test --home=$HOME/.osmosisd --from deployer --chain-id testing --label "test" --no-admin --yes --fees 5000stake
 sleep 5
-SWAPROUTER_ADDRESS=$(osmosisd query wasm list-contract-by-code "$SWAPROUTER_CODE_ID" -o json | jq -r '.contracts | [last][0]')
+SWAPROUTER_ADDRESS=osmo14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sq2r9g9
 echo $SWAPROUTER_ADDRESS
 
 # Configure the swaprouter
 #CONFIG_SWAPROUTER='{"set_route":{"input_denom":"uosmo","output_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878","pool_route":[{"pool_id":"1","token_out_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878"}]}}'
 
-CONFIG_SWAPROUTER='{"set_route":{"input_denom":"uosmo","output_denom":"'$DENOM'","pool_route":[{"pool_id":"1","token_out_denom":"'$DENOM'"}]}}'
+CONFIG_SWAPROUTER='{"set_route":{"input_denom":"ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E","output_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878","pool_route":[{"pool_id":"1","token_out_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878"}]}}'
 
 echo ==========================
 echo $CONFIG_SWAPROUTER

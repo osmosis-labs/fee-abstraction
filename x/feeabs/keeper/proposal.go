@@ -6,10 +6,10 @@ import (
 )
 
 func (k Keeper) AddHostZoneProposal(ctx sdk.Context, p *types.AddHostZoneProposal) error {
-	config, _ := k.GetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom)
-	if (config != types.HostChainFeeAbsConfig{}) {
-		return types.ErrDuplicateHostZoneConfig
-	}
+	// config, _ := k.GetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom)
+	// if (config != types.HostChainFeeAbsConfig{}) {
+	// 	return types.ErrDuplicateHostZoneConfig
+	// }
 
 	err := k.SetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom, *p.HostChainConfig)
 	if err != nil {
