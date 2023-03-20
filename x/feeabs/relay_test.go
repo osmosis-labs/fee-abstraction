@@ -107,46 +107,6 @@ func TestFromIBCTransferToContract(t *testing.T) {
 	}
 }
 
-var _ wasmtesting.IBCContractCallbacks = &queryFeeabsContract{}
-
-// contract that acts as the receiving side for a query feeabs
-type queryFeeabsContract struct {
-	contractStub
-	t     *testing.T
-	chain *wasmibctesting.TestChain
-}
-
-func (c *queryFeeabsContract) IBCPacketReceive(
-	codeID wasmvm.Checksum,
-	env wasmvmtypes.Env,
-	msg wasmvmtypes.IBCPacketReceiveMsg,
-	store wasmvm.KVStore,
-	goapi wasmvm.GoAPI,
-	querier wasmvm.Querier,
-	gasMeter wasmvm.GasMeter,
-	gasLimit uint64,
-	deserCost wasmvmtypes.UFraction,
-) (*wasmvmtypes.IBCReceiveResult, uint64, error) {
-	result := `{"responses":[{"success":true,"data":"eyJhcml0aG1ldGljX3R3YXAiOiIyLjAwMDAwMDAwMDAwMDAwMDAwMCJ9"}]}`
-	ack := channeltypes.NewResultAcknowledgement([]byte(result)).Acknowledgement()
-	var log []wasmvmtypes.EventAttribute
-	return &wasmvmtypes.IBCReceiveResult{Ok: &wasmvmtypes.IBCReceiveResponse{Acknowledgement: ack, Attributes: log}}, 0, nil
-}
-
-func (c *queryFeeabsContract) IBCPacketAck(
-	codeID wasmvm.Checksum,
-	env wasmvmtypes.Env,
-	msg wasmvmtypes.IBCPacketAckMsg,
-	store wasmvm.KVStore,
-	goapi wasmvm.GoAPI,
-	querier wasmvm.Querier,
-	gasMeter wasmvm.GasMeter,
-	gasLimit uint64,
-	deserCost wasmvmtypes.UFraction,
-) (*wasmvmtypes.IBCBasicResponse, uint64, error) {
-	return &wasmvmtypes.IBCBasicResponse{}, 0, nil
-}
-
 var _ wasmtesting.IBCContractCallbacks = &ackReceiverContract{}
 
 // contract that acts as the receiving side for an ics-20 transfer.
