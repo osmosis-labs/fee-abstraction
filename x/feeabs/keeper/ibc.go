@@ -13,7 +13,6 @@ import (
 	host "github.com/cosmos/ibc-go/v4/modules/core/24-host"
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
 	abci "github.com/tendermint/tendermint/abci/types"
-	abcitypes "github.com/tendermint/tendermint/abci/types"
 )
 
 // GetPort returns the portID for the module. Used in ExportGenesis.
@@ -58,9 +57,9 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Cap
 func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryArithmeticTwapToNowRequest, sourcePort, sourceChannel string) error {
 	path := "/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow" // hard code for now should add to params
 
-	IcqReqs := make([]abcitypes.RequestQuery, len(twapReqs))
+	IcqReqs := make([]abci.RequestQuery, len(twapReqs))
 	for i, req := range twapReqs {
-		IcqReqs[i] = abcitypes.RequestQuery{
+		IcqReqs[i] = abci.RequestQuery{
 			Path: path,
 			Data: k.cdc.MustMarshal(&req),
 		}
@@ -77,7 +76,7 @@ func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryA
 // Send request for query state over IBC
 func (k Keeper) SendInterchainQuery(
 	ctx sdk.Context,
-	reqs []abcitypes.RequestQuery,
+	reqs []abci.RequestQuery,
 	sourcePort string,
 	sourceChannel string,
 ) (uint64, error) {
