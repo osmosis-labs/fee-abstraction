@@ -38,7 +38,7 @@ func TestParseProposal(t *testing.T) {
 			"pool_id": "1",
 			"is_osmosis": false,
 			"frozen": false,
-			"OsmosisQueryChannel":"channel-3"
+			"osmosis_query_channel": "channel-3"
 
 		},
 	"deposit": "1000stake"
