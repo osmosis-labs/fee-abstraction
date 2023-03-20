@@ -32,6 +32,21 @@ type TwapRouter struct {
 	WindowSeconds      uint64 `json:"window_seconds"`
 }
 
+type PacketMetadata struct {
+	Forward *ForwardMetadata `json:"forward"`
+}
+
+type ForwardMetadata struct {
+	Receiver string        `json:"receiver,omitempty"`
+	Port     string        `json:"port,omitempty"`
+	Channel  string        `json:"channel,omitempty"`
+	Timeout  time.Duration `json:"timeout,omitempty"`
+	Retries  *uint8        `json:"retries,omitempty"`
+
+	// Memo for the cross-chain-swap contract
+	Next string `json:"next,omitempty"`
+}
+
 func NewOsmosisSwapMsg(inputCoin sdk.Coin, outputDenom string, slippagePercentage string, windowSeconds uint64, receiver string) OsmosisSwapMsg {
 	swap := Swap{
 		InputCoin:   inputCoin,
@@ -90,21 +105,6 @@ func BuildPacketMiddlewareMemo(inputToken sdk.Coin, outputDenom string, receiver
 	}
 	// TODO: need to validate the msg && contract address.
 	return BuildForwardMetaMemo(packetMetadata)
-}
-
-type PacketMetadata struct {
-	Forward *ForwardMetadata `json:"forward"`
-}
-
-type ForwardMetadata struct {
-	Receiver string        `json:"receiver,omitempty"`
-	Port     string        `json:"port,omitempty"`
-	Channel  string        `json:"channel,omitempty"`
-	Timeout  time.Duration `json:"timeout,omitempty"`
-	Retries  *uint8        `json:"retries,omitempty"`
-
-	// Memo for the cross-chain-swap contract
-	Next string `json:"next,omitempty"`
 }
 
 // TODO: write test for this
