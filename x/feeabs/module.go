@@ -164,6 +164,7 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 // BeginBlock returns the begin blocker for the feeabs module.
 // TODO: implement if needed
 func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
+	am.keeper.BeginBlocker(ctx)
 }
 
 // EndBlock returns the end blocker for the feeabs module. It returns no validator
