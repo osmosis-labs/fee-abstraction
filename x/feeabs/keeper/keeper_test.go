@@ -6,6 +6,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	"github.com/notional-labs/feeabstraction/v1/app"
 	apphelpers "github.com/notional-labs/feeabstraction/v1/app/helpers"
 	"github.com/notional-labs/feeabstraction/v1/x/feeabs/keeper"
@@ -21,6 +22,7 @@ type KeeperTestSuite struct {
 	ctx          sdk.Context
 	feeAbsApp    *app.FeeAbs
 	feeAbsKeeper keeper.Keeper
+	govKeeper    govkeeper.Keeper
 	queryClient  types.QueryClient
 	msgServer    types.MsgServer
 }
@@ -32,6 +34,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 		Height:  1,
 	})
 	suite.feeAbsKeeper = suite.feeAbsApp.FeeabsKeeper
+	suite.govKeeper = suite.feeAbsApp.GovKeeper
 
 	queryHelper := baseapp.NewQueryServerTestHelper(suite.ctx, suite.feeAbsApp.InterfaceRegistry())
 	types.RegisterQueryServer(queryHelper, keeper.NewQuerier(suite.feeAbsKeeper))
