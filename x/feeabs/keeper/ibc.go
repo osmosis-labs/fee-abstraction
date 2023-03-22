@@ -55,12 +55,11 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Cap
 
 // Send request for query EstimateSwapExactAmountIn over IBC. Move to use TWAP.
 func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryArithmeticTwapToNowRequest, sourcePort, sourceChannel string) error {
-	path := "/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow" // hard code for now should add to params
-
+	params := k.GetParams(ctx)
 	IcqReqs := make([]abci.RequestQuery, len(twapReqs))
 	for i, req := range twapReqs {
 		IcqReqs[i] = abci.RequestQuery{
-			Path: path,
+			Path: params.OsmosisQueryTwapPath,
 			Data: k.cdc.MustMarshal(&req),
 		}
 	}
@@ -325,10 +324,16 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 
 }
 
-// TODO: use TWAP instead of spotprice
 func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
-	// TODO: `time.Minute * 5` it should be a chain param
-	startTime := ctx.BlockTime().Add(-time.Minute * 5)
+	hasQueryEpochInfo := k.HasEpochInfo(ctx, types.DefaultQueryEpochIdentifier)
+	if !hasQueryEpochInfo {
+		k.Logger(ctx).Error(fmt.Sprintf("Don't have query epoch information: %s", types.DefaultQueryEpochIdentifier))
+		return nil
+	}
+
+	// set startTime for query twap
+	queryTwapEpochInfo := k.GetEpochInfo(ctx, types.DefaultQueryEpochIdentifier)
+	startTime := ctx.BlockTime().Add(-queryTwapEpochInfo.Duration)
 	k.Logger(ctx).Info(fmt.Sprintf("Start time: %v", startTime.Unix()))
 
 	params := k.GetParams(ctx)

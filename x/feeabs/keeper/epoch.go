@@ -11,6 +11,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+// HasEpochInfo return true if has epoch info
+func (k Keeper) HasEpochInfo(ctx sdk.Context, identifier string) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(append(types.KeyPrefixEpoch, []byte(identifier)...))
+}
+
 // GetEpochInfo returns epoch info by identifier.
 func (k Keeper) GetEpochInfo(ctx sdk.Context, identifier string) types.EpochInfo {
 	epoch := types.EpochInfo{}
