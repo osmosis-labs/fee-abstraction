@@ -62,7 +62,6 @@ func (keeper Keeper) IteratorHostZone(ctx sdk.Context) sdk.Iterator {
 }
 
 // IterateHostZone iterates over the hostzone .
-// TODO: write test for this .
 func (keeper Keeper) IterateHostZone(ctx sdk.Context, cb func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool)) {
 	store := ctx.KVStore(keeper.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.KeyHostChainChainConfig)
