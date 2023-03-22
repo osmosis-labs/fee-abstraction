@@ -31,5 +31,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations(
 		(*govtypes.Content)(nil),
 		&AddHostZoneProposal{},
+		&DeleteHostZoneProposal{},
+		&SetHostZoneProposal{},
 	)
 }

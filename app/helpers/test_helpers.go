@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -98,4 +99,17 @@ func setup(withGenesis bool, invCheckPeriod uint) (*feeapp.FeeAbs, feeapp.Genesi
 	}
 
 	return app, feeapp.GenesisState{}
+}
+
+func AddHostZoneProposalFixture(mutators ...func(*types.AddHostZoneProposal)) *types.AddHostZoneProposal {
+	p := &types.AddHostZoneProposal{
+		Title:           "Title",
+		Description:     "Description",
+		HostChainConfig: &types.HostChainFeeAbsConfig{},
+	}
+	for _, m := range mutators {
+		m(p)
+	}
+
+	return p
 }
