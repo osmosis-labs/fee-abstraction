@@ -64,7 +64,7 @@ type (
 	DeleteHostZoneProposalJSON struct {
 		Title       string `json:"title" yaml:"title"`
 		Description string `json:"description" yaml:"description"`
-		IbcDenom    string `json:"ibc_denom" yaml:"ibc_denom`
+		IbcDenom    string `json:"ibc_denom" yaml:"ibc_denom"`
 		Deposit     string `json:"deposit" yaml:"deposit"`
 	}
 	SetHostZoneProposalJSON struct {
