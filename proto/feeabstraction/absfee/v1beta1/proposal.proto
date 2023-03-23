@@ -56,8 +56,8 @@ message DeleteHostZoneProposal {
 	string title = 1;
 	// the description of the proposal
 	string description = 2;
-	// the host chain config
-	HostChainFeeAbsConfig host_chain_config = 3;
+	// the  ibc denom of this token
+	string ibc_denom = 3;
 }
 
 message SetHostZoneProposal {
