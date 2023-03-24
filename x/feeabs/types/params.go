@@ -47,7 +47,7 @@ func (p Params) Validate() error {
 	return nil
 }
 
-func validateOsmosisQueryTwapPath(i interface{}) error { //nolint:deadcode,unused
+func validateOsmosisQueryTwapPath(i interface{}) error {
 	_, ok := i.(string)
 	if !ok {
 		return fmt.Errorf("invalid parameter type OsmosisQueryTwapPath: %T", i)
