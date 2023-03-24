@@ -1,0 +1,18 @@
+{
+	"title": "Add Fee Abbtraction Host Zone Proposal",
+	"description": "Add Fee Abbtraction Host Zone",
+	"host_chain_fee_abs_config": 
+		{
+			"ibc_denom": "ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E",
+			"osmosis_pool_token_denom_in": "ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E",
+			"middleware_address": "cosmos1alc8mjana7ssgeyffvlfza08gu6rtav8rmj6nv",
+			"ibc_transfer_channel":"channel-2",
+			"host_zone_ibc_transfer_channel":"channel-1",
+			"crosschain_swap_address":"osmo1nc5tatafv6eyq7llkr2gv50ff9e22mnf70qgjlv737ktmt4eswrqvlx82r",
+			"pool_id": "1",
+			"is_osmosis": false,
+			"frozen": false,
+			"osmosis_query_channel": "channel-1"
+		},
+	"deposit": "100000000stake"
+}
