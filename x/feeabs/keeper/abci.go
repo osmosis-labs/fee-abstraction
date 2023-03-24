@@ -37,8 +37,10 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 			epochInfo.CurrentEpochStartTime = epochInfo.StartTime
 			logger.Info(fmt.Sprintf("Starting new epoch with identifier %s epoch number %d", epochInfo.Identifier, epochInfo.CurrentEpoch))
 		} else {
-			k.executeAllHostChainTWAPQuery(ctx)
-			k.executeAllHostChainSwap(ctx)
+			k.AfterEpochEnd(ctx, epochInfo.Identifier)
+			epochInfo.CurrentEpoch += 1
+			epochInfo.CurrentEpochStartTime = epochInfo.CurrentEpochStartTime.Add(epochInfo.Duration)
+			logger.Info(fmt.Sprintf("Starting epoch with identifier %s epoch number %d", epochInfo.Identifier, epochInfo.CurrentEpoch))
 		}
 
 		// emit new epoch start event, set epoch info, and run BeforeEpochStart hook

@@ -115,3 +115,16 @@ func (k Keeper) NumBlocksSinceEpochStart(ctx sdk.Context, identifier string) (in
 	}
 	return ctx.BlockHeight() - epoch.CurrentEpochStartHeight, nil
 }
+
+func (k Keeper) AfterEpochEnd(ctx sdk.Context, epochIdentifier string) {
+	switch epochIdentifier {
+	case types.DefaultQueryEpochIdentifier:
+		k.Logger(ctx).Info("Epoch interchain query TWAP")
+		k.executeAllHostChainTWAPQuery(ctx)
+	case types.DefaultSwapEpochIdentifier:
+		k.Logger(ctx).Info("Epoch cross chain swap")
+		k.executeAllHostChainSwap(ctx)
+	default:
+		k.Logger(ctx).Error(fmt.Sprintf("Unknown epoch %s", epochIdentifier))
+	}
+}
