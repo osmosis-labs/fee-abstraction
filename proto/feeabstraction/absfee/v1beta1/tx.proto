@@ -13,33 +13,32 @@ option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
 
 // Msg is the cosmos.group.v1 Msg service.
 service Msg {
-    rpc SendQueryIbcDenomTWAP(MsgSendQueryIbcDenomTWAP) returns (MsgSendQueryIbcDenomTWAPResponse);
-    rpc SwapCrossChain(MsgSwapCrossChain) returns (MsgSwapCrossChainResponse);
-    rpc FundFeeAbsModuleAccount(MsgFundFeeAbsModuleAccount) returns (MsgFundFeeAbsModuleAccountResponse);
+  rpc SendQueryIbcDenomTWAP(MsgSendQueryIbcDenomTWAP)
+      returns (MsgSendQueryIbcDenomTWAPResponse);
+  rpc SwapCrossChain(MsgSwapCrossChain) returns (MsgSwapCrossChainResponse);
+  rpc FundFeeAbsModuleAccount(MsgFundFeeAbsModuleAccount)
+      returns (MsgFundFeeAbsModuleAccountResponse);
 }
 
 // Msg fund module account
 message MsgFundFeeAbsModuleAccount {
-    string from_address = 1;
-    repeated cosmos.base.v1beta1.Coin amount = 2 [
-      (gogoproto.nullable)     = false,
-      (gogoproto.moretags)     = "yaml:\"amount\"",
-      (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
-    ];
+  string from_address = 1;
+  repeated cosmos.base.v1beta1.Coin amount = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"amount\"",
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
 }
 
-message MsgFundFeeAbsModuleAccountResponse{}
+message MsgFundFeeAbsModuleAccountResponse {}
 
 // Params defines the parameters for the feeabs module.
-message MsgSendQueryIbcDenomTWAP {
-    string from_address = 1;
-}
-message MsgSendQueryIbcDenomTWAPResponse{}
+message MsgSendQueryIbcDenomTWAP { string from_address = 1; }
+message MsgSendQueryIbcDenomTWAPResponse {}
 
 // Params defines the parameters for the feeabs module.
 message MsgSwapCrossChain {
-    string from_address = 1;
-    string ibc_denom = 2;
+  string from_address = 1;
+  string ibc_denom = 2;
 }
-message MsgSwapCrossChainResponse{
-}
+message MsgSwapCrossChainResponse {}
