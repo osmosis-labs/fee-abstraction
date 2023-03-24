@@ -8,8 +8,8 @@ import (
 	_ "github.com/cosmos/cosmos-sdk/types/query"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	_ "github.com/gogo/protobuf/types"
+	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	io "io"
 	math "math"
@@ -35,7 +35,8 @@ type Params struct {
 	NativeIbcedInOsmosis string `protobuf:"bytes,1,opt,name=native_ibced_in_osmosis,json=nativeIbcedInOsmosis,proto3" json:"native_ibced_in_osmosis,omitempty"`
 	// we'll update the fee rate each `osmosis_exchange_rate_update_period`
 	OsmosisExchangeRateUpdatePeriod time.Duration `protobuf:"bytes,2,opt,name=osmosis_exchange_rate_update_period,json=osmosisExchangeRateUpdatePeriod,proto3,stdduration" json:"osmosis_exchange_rate_update_period"`
-	// we'll swap our accumulated osmosis fee to native token each `accumulated_osmosis_fee_swap_period`
+	// we'll swap our accumulated osmosis fee to native token each
+	// `accumulated_osmosis_fee_swap_period`
 	AccumulatedOsmosisFeeSwapPeriod time.Duration `protobuf:"bytes,3,opt,name=accumulated_osmosis_fee_swap_period,json=accumulatedOsmosisFeeSwapPeriod,proto3,stdduration" json:"accumulated_osmosis_fee_swap_period"`
 }
 
