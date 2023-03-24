@@ -241,7 +241,8 @@ func (m *InterchainQueryPacketData) GetMemo() string {
 	return ""
 }
 
-// InterchainQueryPacketAck is comprised of an ABCI query response with non-deterministic fields left empty (e.g. Codespace, Log, Info and ...).
+// InterchainQueryPacketAck is comprised of an ABCI query response with
+// non-deterministic fields left empty (e.g. Codespace, Log, Info and ...).
 type InterchainQueryPacketAck struct {
 	Data []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 }
@@ -330,7 +331,8 @@ func (m *InterchainQueryRequestPacket) GetRequests() []InterchainQueryRequest {
 	return nil
 }
 
-// CosmosQuery contains a list of tendermint ABCI query requests. It should be used when sending queries to an SDK host chain.
+// CosmosQuery contains a list of tendermint ABCI query requests. It should be
+// used when sending queries to an SDK host chain.
 type CosmosQuery struct {
 	Requests []types1.RequestQuery `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests"`
 }
@@ -375,7 +377,8 @@ func (m *CosmosQuery) GetRequests() []types1.RequestQuery {
 	return nil
 }
 
-// CosmosResponse contains a list of tendermint ABCI query responses. It should be used when receiving responses from an SDK host chain.
+// CosmosResponse contains a list of tendermint ABCI query responses. It should
+// be used when receiving responses from an SDK host chain.
 type CosmosResponse struct {
 	Responses []types1.ResponseQuery `protobuf:"bytes,1,rep,name=responses,proto3" json:"responses"`
 }
