@@ -5,6 +5,13 @@ import (
 	"time"
 )
 
+const (
+	DefaultSwapPeriod           time.Duration = time.Minute * 180
+	DefaultQueryPeriod          time.Duration = time.Minute * 60
+	DefaultSwapEpochIdentifier  string        = "swap"
+	DefaultQueryEpochIdentifier string        = "query"
+)
+
 func KeyPrefix(p string) []byte {
 	return []byte(p)
 }

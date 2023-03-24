@@ -12,18 +12,7 @@ import (
 
 var now = time.Now().UTC()
 
-var testGenesis = types.GenesisState{
-	Params: types.Params{
-		OsmosisExchangeRateUpdatePeriod: types.DefaultQueryPeriod,
-		AccumulatedOsmosisFeeSwapPeriod: types.DefaultSwapPeriod,
-		NativeIbcedInOsmosis:            "ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
-	},
-	Epochs: []types.EpochInfo{
-		types.NewGenesisEpochInfo("query", types.DefaultQueryPeriod),
-		types.NewGenesisEpochInfo("swap", types.DefaultSwapPeriod),
-	},
-	PortId: types.IBCPortID,
-}
+var testGenesis = types.DefaultGenesis()
 
 func TestInitGenesis(t *testing.T) {
 	app := apphelpers.Setup(t, false, 1)
