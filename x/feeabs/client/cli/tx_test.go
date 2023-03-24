@@ -20,6 +20,7 @@ func TestParseProposal(t *testing.T) {
 		PoolId:                     1,
 		IsOsmosis:                  false,
 		Frozen:                     false,
+		OsmosisQueryChannel:        "channel-3",
 	}
 	cdc := codec.NewLegacyAmino()
 	okJSON := testutil.WriteToNewTempFile(t, `
@@ -36,7 +37,9 @@ func TestParseProposal(t *testing.T) {
 			"crosschain_swap_address":"osmo123456",
 			"pool_id": "1",
 			"is_osmosis": false,
-			"frozen": false
+			"frozen": false,
+			"osmosis_query_channel": "channel-3"
+
 		},
 	"deposit": "1000stake"
 }

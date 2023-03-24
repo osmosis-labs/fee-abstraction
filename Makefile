@@ -99,8 +99,8 @@ build:
 
 protoVer=v0.8
 protoImageName=ghcr.io/notional-labs/fa-proto-gen:$(protoVer)
-containerProtoGen=cosmos-sdk-proto-gen-$(protoVer)
-containerProtoFmt=cosmos-sdk-proto-fmt-$(protoVer)
+containerProtoGen=fa-proto-gen-$(protoVer)
+containerProtoFmt=fa-proto-fmt-$(protoVer)
 
 proto-all: proto-format proto-lint proto-gen
 

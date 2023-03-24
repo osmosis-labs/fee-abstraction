@@ -30,7 +30,7 @@ type HostChainFeeAbsConfig struct {
 	IbcDenom string `protobuf:"bytes,1,opt,name=ibc_denom,json=ibcDenom,proto3" json:"ibc_denom,omitempty" yaml:"allowed_token"`
 	// token_in in cross_chain swap contract.
 	OsmosisPoolTokenDenomIn string `protobuf:"bytes,2,opt,name=osmosis_pool_token_denom_in,json=osmosisPoolTokenDenomIn,proto3" json:"osmosis_pool_token_denom_in,omitempty"`
-	//TODO: middleware address in hostchain, can we refator this logic ?
+	// TODO: middleware address in hostchain, can we refator this logic ?
 	MiddlewareAddress string `protobuf:"bytes,3,opt,name=middleware_address,json=middlewareAddress,proto3" json:"middleware_address,omitempty"`
 	// transfer channel from customer_chain -> host chain
 	IbcTransferChannel string `protobuf:"bytes,4,opt,name=ibc_transfer_channel,json=ibcTransferChannel,proto3" json:"ibc_transfer_channel,omitempty"`

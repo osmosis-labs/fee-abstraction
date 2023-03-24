@@ -34,6 +34,7 @@ message MsgFundFeeAbsModuleAccountResponse {}
 
 // Params defines the parameters for the feeabs module.
 message MsgSendQueryIbcDenomTWAP { string from_address = 1; }
+
 message MsgSendQueryIbcDenomTWAPResponse {}
 
 // Params defines the parameters for the feeabs module.
