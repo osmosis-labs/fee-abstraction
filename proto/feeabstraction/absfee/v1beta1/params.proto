@@ -8,15 +8,11 @@ import "google/protobuf/duration.proto";
 
 option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
 
-
 // Params defines the parameters for the feeabs module.
 message Params {
-    // native ibced in osmosis
-    string native_ibced_in_osmosis = 1;
+  // native ibced in osmosis
+  string native_ibced_in_osmosis = 1;
 
-    // we'll update the fee rate each `osmosis_exchange_rate_update_period`
-    google.protobuf.Duration osmosis_exchange_rate_update_period = 2 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
-    
-    // we'll swap our accumulated osmosis fee to native token each `accumulated_osmosis_fee_swap_period` 
-    google.protobuf.Duration accumulated_osmosis_fee_swap_period = 3 [(gogoproto.nullable) = false, (gogoproto.stdduration) = true];
+  // osmosis query TWAP path
+  string osmosis_query_twap_path = 2;
 }

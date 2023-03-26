@@ -5,12 +5,11 @@ import fmt "fmt"
 // DefaultGenesis returns the incentive module's default genesis state.
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		Params: &Params{
-			OsmosisExchangeRateUpdatePeriod: DefaultQueryPeriod,
-			AccumulatedOsmosisFeeSwapPeriod: DefaultSwapPeriod,
-			NativeIbcedInOsmosis:            "ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
+		Params: Params{
+			OsmosisQueryTwapPath: DefaultOsmosisQueryTwapPath,
+			NativeIbcedInOsmosis: "ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
 		},
-		Epochs: []EpochInfo{NewGenesisEpochInfo("query", DefaultQueryPeriod), NewGenesisEpochInfo("swap", DefaultSwapPeriod)},
+		Epochs: []EpochInfo{NewGenesisEpochInfo(DefaultQueryEpochIdentifier, DefaultQueryPeriod), NewGenesisEpochInfo(DefaultSwapEpochIdentifier, DefaultSwapPeriod)},
 		PortId: IBCPortID,
 	}
 }

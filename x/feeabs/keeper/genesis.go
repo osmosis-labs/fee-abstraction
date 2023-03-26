@@ -9,7 +9,7 @@ import (
 // InitGenesis initializes the incentives module's state from a provided genesis state.
 func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
 	// set Params
-	k.SetParams(ctx, *genState.Params)
+	k.SetParams(ctx, genState.Params)
 	// for IBC
 	k.SetPort(ctx, genState.PortId)
 	// Only try to bind to port if it is not already bound, since we may already own
@@ -38,7 +38,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	params := k.GetParams(ctx)
 
 	return &types.GenesisState{
-		Params: &params,
+		Params: params,
 		Epochs: k.AllEpochInfos(ctx),
 		PortId: k.GetPort(ctx),
 	}

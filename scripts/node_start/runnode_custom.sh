@@ -7,7 +7,7 @@ CHAINID="feeappd-t1"
 MONIKER="localfeeappd"
 KEYALGO="secp256k1"
 KEYRING="test"
-LOGLfeeappdL="info"
+LOGL="info"
 
 feeappd config keyring-backend $KEYRING
 feeappd config chain-id $CHAINID

@@ -119,7 +119,8 @@ func (m *QueryHostChainConfigRespone) GetHostChainConfig() HostChainFeeAbsConfig
 	return HostChainFeeAbsConfig{}
 }
 
-// QueryOsmosisSpotPriceRequest is the request type for the Query/Feeabs RPC method.
+// QueryOsmosisSpotPriceRequest is the request type for the Query/Feeabs RPC
+// method.
 type QueryOsmosisArithmeticTwapRequest struct {
 	IbcDenom string `protobuf:"bytes,1,opt,name=ibc_denom,json=ibcDenom,proto3" json:"ibc_denom,omitempty"`
 }
@@ -201,7 +202,8 @@ func (m *QueryOsmosisArithmeticTwapResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryOsmosisArithmeticTwapResponse proto.InternalMessageInfo
 
-// QueryFeeabsModuleBalacesRequest is the request type for the Query/Feeabs RPC method.
+// QueryFeeabsModuleBalacesRequest is the request type for the Query/Feeabs RPC
+// method.
 type QueryFeeabsModuleBalacesRequest struct {
 }
 

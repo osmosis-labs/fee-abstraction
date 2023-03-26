@@ -32,6 +32,21 @@ type TwapRouter struct {
 	WindowSeconds      uint64 `json:"window_seconds"`
 }
 
+type PacketMetadata struct {
+	Forward *ForwardMetadata `json:"forward"`
+}
+
+type ForwardMetadata struct {
+	Receiver string        `json:"receiver,omitempty"`
+	Port     string        `json:"port,omitempty"`
+	Channel  string        `json:"channel,omitempty"`
+	Timeout  time.Duration `json:"timeout,omitempty"`
+	Retries  *uint8        `json:"retries,omitempty"`
+
+	// Memo for the cross-chain-swap contract
+	Next string `json:"next,omitempty"`
+}
+
 func NewOsmosisSwapMsg(inputCoin sdk.Coin, outputDenom string, slippagePercentage string, windowSeconds uint64, receiver string) OsmosisSwapMsg {
 	swap := Swap{
 		InputCoin:   inputCoin,
@@ -69,15 +84,15 @@ func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string, receiver string) (s
 // TODO: write test for this.
 func BuildPacketMiddlewareMemo(inputToken sdk.Coin, outputDenom string, receiver string, hostChainConfig HostChainFeeAbsConfig) (string, error) {
 	// TODO: this should be chain params.
-	timeOut := time.Duration(1800000)
-	retries := uint8(8)
+	timeOut := 10 * time.Minute
+	retries := uint8(0)
 	nextMemo, err := BuildCrossChainSwapMemo(inputToken, outputDenom, hostChainConfig.CrosschainSwapAddress, receiver)
 	if err != nil {
 		return "", nil
 	}
 
 	metadata := ForwardMetadata{
-		Receiver: hostChainConfig.MiddlewareAddress,
+		Receiver: hostChainConfig.CrosschainSwapAddress,
 		Port:     transfertypes.PortID,
 		Channel:  hostChainConfig.HostZoneIbcTransferChannel,
 		Timeout:  timeOut,
@@ -85,19 +100,11 @@ func BuildPacketMiddlewareMemo(inputToken sdk.Coin, outputDenom string, receiver
 		Next:     nextMemo,
 	}
 
+	packetMetadata := PacketMetadata{
+		Forward: &metadata,
+	}
 	// TODO: need to validate the msg && contract address.
-	return BuildForwardMetaMemo(metadata)
-}
-
-type ForwardMetadata struct {
-	Receiver string        `json:"receiver,omitempty"`
-	Port     string        `json:"port,omitempty"`
-	Channel  string        `json:"channel,omitempty"`
-	Timeout  time.Duration `json:"timeout,omitempty"`
-	Retries  *uint8        `json:"retries,omitempty"`
-
-	// Memo for the cross-chain-swap contract
-	Next string `json:"next,omitempty"`
+	return BuildForwardMetaMemo(packetMetadata)
 }
 
 // TODO: write test for this
@@ -128,8 +135,8 @@ func BuildCrossChainSwapMemo(inputToken sdk.Coin, outputDenom string, contractAd
 }
 
 // TODO: write test for this
-func BuildForwardMetaMemo(forwardMetadata ForwardMetadata) (string, error) {
-	memo_marshalled, err := json.Marshal(&forwardMetadata)
+func BuildForwardMetaMemo(packetMetaData PacketMetadata) (string, error) {
+	memo_marshalled, err := json.Marshal(&packetMetaData)
 	if err != nil {
 		return "", err
 	}
