@@ -151,7 +151,7 @@ func NewCmdSubmitDeleteHostZoneProposal() *cobra.Command {
 			}
 
 			content := types.NewDeleteHostZoneProposal(
-				proposal.Title, proposal.Description, proposal.HostChainFeeAbsConfig,
+				proposal.Title, proposal.Description, proposal.IbcDenom,
 			)
 
 			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)

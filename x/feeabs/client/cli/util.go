@@ -62,10 +62,10 @@ type (
 		Deposit               string                      `json:"deposit" yaml:"deposit"`
 	}
 	DeleteHostZoneProposalJSON struct {
-		Title                 string                      `json:"title" yaml:"title"`
-		Description           string                      `json:"description" yaml:"description"`
-		HostChainFeeAbsConfig types.HostChainFeeAbsConfig `json:"host_chain_fee_abs_config" yaml:"host_chain_fee_abs_config"`
-		Deposit               string                      `json:"deposit" yaml:"deposit"`
+		Title       string `json:"title" yaml:"title"`
+		Description string `json:"description" yaml:"description"`
+		IbcDenom    string `json:"ibc_denom" yaml:"ibc_denom"`
+		Deposit     string `json:"deposit" yaml:"deposit"`
 	}
 	SetHostZoneProposalJSON struct {
 		Title                 string                      `json:"title" yaml:"title"`

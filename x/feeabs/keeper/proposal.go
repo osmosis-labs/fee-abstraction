@@ -20,12 +20,12 @@ func (k Keeper) AddHostZoneProposal(ctx sdk.Context, p *types.AddHostZoneProposa
 }
 
 func (k Keeper) DeleteHostZoneProposal(ctx sdk.Context, p *types.DeleteHostZoneProposal) error {
-	_, err := k.GetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom)
+	_, err := k.GetHostZoneConfig(ctx, p.IbcDenom)
 	if err == nil {
 		return types.ErrHostZoneConfigNotFound
 	}
 
-	err = k.DeleteHostZoneConfig(ctx, p.HostChainConfig.IbcDenom)
+	err = k.DeleteHostZoneConfig(ctx, p.IbcDenom)
 	if err != nil {
 		return err
 	}
