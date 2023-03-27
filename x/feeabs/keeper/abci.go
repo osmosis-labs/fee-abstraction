@@ -37,8 +37,10 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 			epochInfo.CurrentEpochStartTime = epochInfo.StartTime
 			logger.Info(fmt.Sprintf("Starting new epoch with identifier %s epoch number %d", epochInfo.Identifier, epochInfo.CurrentEpoch))
 		} else {
-			k.executeAllHostChainTWAPQuery(ctx)
-			k.executeAllHostChainSwap(ctx)
+			k.AfterEpochEnd(ctx, epochInfo.Identifier)
+			epochInfo.CurrentEpoch += 1
+			epochInfo.CurrentEpochStartTime = epochInfo.CurrentEpochStartTime.Add(epochInfo.Duration)
+			logger.Info(fmt.Sprintf("Starting epoch with identifier %s epoch number %d", epochInfo.Identifier, epochInfo.CurrentEpoch))
 		}
 
 		// emit new epoch start event, set epoch info, and run BeforeEpochStart hook
@@ -50,41 +52,6 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 			),
 		)
 		k.setEpochInfo(ctx, epochInfo)
-
-		return false
-	})
-}
-
-// executeAllHostChainTWAPQuery will iterate all hostZone and send the IBC Query Packet to Osmosis chain.
-func (k Keeper) executeAllHostChainTWAPQuery(ctx sdk.Context) {
-	err := k.handleOsmosisIbcQuery(ctx)
-	if err != nil {
-		k.Logger(ctx).Error(fmt.Sprintf("Error executeAllHostChainTWAPQuery %s", err.Error()))
-	}
-}
-
-// executeAllHostChainTWAPSwap will iterate all hostZone and execute swap over chain.
-func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
-	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-		var err error
-
-		if hostZoneConfig.Frozen {
-			return false
-		}
-
-		if hostZoneConfig.IsOsmosis {
-			err = k.transferIBCTokenToOsmosisChainWithIBCHookMemo(ctx, hostZoneConfig)
-		} else {
-			err = k.transferIBCTokenToHostChainWithMiddlewareMemo(ctx, hostZoneConfig)
-		}
-
-		if err != nil {
-			k.Logger(ctx).Error(fmt.Sprintf("Failed to transfer IBC token %s", err.Error()))
-			err = k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
-			if err != nil {
-				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozem host zone %s", err.Error()))
-			}
-		}
 
 		return false
 	})
