@@ -39,7 +39,7 @@ import (
 	tmversion "github.com/tendermint/tendermint/version"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-	feeabs "github.com/notional-labs/feeabstraction/v1/app"
+	feeabs "github.com/notional-labs/feeabstraction/v2/app"
 )
 
 // TestChain is a testing struct that wraps a simapp with the last TM Header, the current ABCI

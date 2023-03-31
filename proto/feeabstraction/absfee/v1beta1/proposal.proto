@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 
-option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
+option go_package = "github.com/notional-labs/feeabstraction/v2/x/feeabs/types";
 
 message HostChainFeeAbsConfig {
   // ibc token is allowed to be used as fee token

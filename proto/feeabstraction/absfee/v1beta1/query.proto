@@ -8,7 +8,7 @@ import "feeabstraction/absfee/v1beta1/osmosisibc.proto";
 import "feeabstraction/absfee/v1beta1/proposal.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
-option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
+option go_package = "github.com/notional-labs/feeabstraction/v2/x/feeabs/types";
 
 // Query defines the gRPC querier service.
 service Query {

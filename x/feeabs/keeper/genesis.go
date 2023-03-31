@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
+	"github.com/notional-labs/feeabstraction/v2/x/feeabs/types"
 )
 
 // InitGenesis initializes the incentives module's state from a provided genesis state.

@@ -36,8 +36,8 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 
-	feeapp "github.com/notional-labs/feeabstraction/v1/app"
-	"github.com/notional-labs/feeabstraction/v1/app/params"
+	feeapp "github.com/notional-labs/feeabstraction/v2/app"
+	"github.com/notional-labs/feeabstraction/v2/app/params"
 )
 
 // NewRootCmd creates a new root command for simd. It is called once in the

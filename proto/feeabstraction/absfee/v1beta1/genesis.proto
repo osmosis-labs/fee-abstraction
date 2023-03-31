@@ -7,7 +7,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "feeabstraction/absfee/v1beta1/params.proto";
 import "feeabstraction/absfee/v1beta1/epoch.proto";
 
-option go_package = "github.com/notional-labs/feeabstraction/v1/x/feeabs/types";
+option go_package = "github.com/notional-labs/feeabstraction/v2/x/feeabs/types";
 
 // Params defines the parameters for the feeabs module.
 message GenesisState {

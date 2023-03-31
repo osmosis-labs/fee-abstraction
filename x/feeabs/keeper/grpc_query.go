@@ -4,7 +4,7 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
+	"github.com/notional-labs/feeabstraction/v2/x/feeabs/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

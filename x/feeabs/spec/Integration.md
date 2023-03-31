@@ -4,9 +4,9 @@
 // app.go
 import (
     ... 
-    feeabsmodule "github.com/notional-labs/feeabstraction/v1/x/feeabs"
- feeabskeeper "github.com/notional-labs/feeabstraction/v1/x/feeabs/keeper"
- feeabstypes "github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
+    feeabsmodule "github.com/notional-labs/feeabstraction/v2/x/feeabs"
+ feeabskeeper "github.com/notional-labs/feeabstraction/v2/x/feeabs/keeper"
+ feeabstypes "github.com/notional-labs/feeabstraction/v2/x/feeabs/types"
     ...
 
 )

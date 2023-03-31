@@ -7,7 +7,7 @@ import (
 	ibcclienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
 	ibcchanneltypes "github.com/cosmos/ibc-go/v4/modules/core/04-channel/types"
 
-	"github.com/notional-labs/feeabstraction/v1/ante"
+	"github.com/notional-labs/feeabstraction/v2/ante"
 )
 
 func (s *IntegrationTestSuite) TestMempoolFeeDecorator() {

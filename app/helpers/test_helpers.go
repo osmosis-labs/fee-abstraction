@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
+	"github.com/notional-labs/feeabstraction/v2/x/feeabs/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -17,7 +17,7 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	feeapp "github.com/notional-labs/feeabstraction/v1/app"
+	feeapp "github.com/notional-labs/feeabstraction/v2/app"
 )
 
 // SimAppChainID hardcoded chainID for simulation

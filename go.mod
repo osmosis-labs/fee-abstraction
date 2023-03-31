@@ -1,4 +1,4 @@
-module github.com/notional-labs/feeabstraction/v1
+module github.com/notional-labs/feeabstraction/v2
 
 go 1.18
 

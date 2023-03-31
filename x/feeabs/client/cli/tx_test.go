@@ -5,7 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/testutil"
-	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
+	"github.com/notional-labs/feeabstraction/v2/x/feeabs/types"
 	"github.com/stretchr/testify/require"
 )
 
