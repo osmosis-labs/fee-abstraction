@@ -1,4 +1,4 @@
-module github.com/CosmosContracts/juno/tests/interchaintest
+module github.com/notional-labs/fee-abstraction/tests/interchaintest
 
 go 1.18
 
@@ -186,7 +186,7 @@ replace (
 	github.com/ChainSafe/go-schnorrkel/1 => github.com/ChainSafe/go-schnorrkel v1.0.0
 
 	// For this nested module, you always want to replace the parent reference with the current worktree.
-	github.com/CosmosContracts/juno => ../../
+	github.com/notional-labs/fee-abstraction => ../../
 	github.com/btcsuite/btcd => github.com/btcsuite/btcd v0.22.2 //indirect
 
 	// interchaintest supports ICS features so we need this for now
