@@ -11,7 +11,7 @@ import (
 	clienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
 	channeltypes "github.com/cosmos/ibc-go/v4/modules/core/04-channel/types"
 	host "github.com/cosmos/ibc-go/v4/modules/core/24-host"
-	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
+	"github.com/notional-labs/feeabstraction/v2/x/feeabs/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 

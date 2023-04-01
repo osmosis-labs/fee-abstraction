@@ -11,8 +11,8 @@ import (
 	porttypes "github.com/cosmos/ibc-go/v4/modules/core/05-port/types"
 	host "github.com/cosmos/ibc-go/v4/modules/core/24-host"
 	ibcexported "github.com/cosmos/ibc-go/v4/modules/core/exported"
-	"github.com/notional-labs/feeabstraction/v1/x/feeabs/keeper"
-	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
+	"github.com/notional-labs/feeabstraction/v2/x/feeabs/keeper"
+	"github.com/notional-labs/feeabstraction/v2/x/feeabs/types"
 )
 
 // IBCModule implements the ICS26 interface for transfer given the transfer keeper.

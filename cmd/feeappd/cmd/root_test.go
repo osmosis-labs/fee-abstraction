@@ -6,8 +6,8 @@ import (
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	"github.com/stretchr/testify/require"
 
-	app "github.com/notional-labs/feeabstraction/v1/app"
-	"github.com/notional-labs/feeabstraction/v1/cmd/feeappd/cmd"
+	app "github.com/notional-labs/feeabstraction/v2/app"
+	"github.com/notional-labs/feeabstraction/v2/cmd/feeappd/cmd"
 )
 
 func TestRootCmdConfig(t *testing.T) {

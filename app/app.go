@@ -106,11 +106,11 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
-	feeabsmodule "github.com/notional-labs/feeabstraction/v1/x/feeabs"
-	feeabskeeper "github.com/notional-labs/feeabstraction/v1/x/feeabs/keeper"
-	feeabstypes "github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
+	feeabsmodule "github.com/notional-labs/feeabstraction/v2/x/feeabs"
+	feeabskeeper "github.com/notional-labs/feeabstraction/v2/x/feeabs/keeper"
+	feeabstypes "github.com/notional-labs/feeabstraction/v2/x/feeabs/types"
 
-	appparams "github.com/notional-labs/feeabstraction/v1/app/params"
+	appparams "github.com/notional-labs/feeabstraction/v2/app/params"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"

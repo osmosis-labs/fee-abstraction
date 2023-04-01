@@ -1,8 +1,8 @@
 package keeper_test
 
 import (
-	apphelpers "github.com/notional-labs/feeabstraction/v1/app/helpers"
-	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
+	apphelpers "github.com/notional-labs/feeabstraction/v2/app/helpers"
+	"github.com/notional-labs/feeabstraction/v2/x/feeabs/types"
 )
 
 func (suite *KeeperTestSuite) TestAddHostZoneProposal() {

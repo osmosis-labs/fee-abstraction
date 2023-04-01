@@ -6,9 +6,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	apphelpers "github.com/notional-labs/feeabstraction/v1/app/helpers"
-	"github.com/notional-labs/feeabstraction/v1/x/feeabs/keeper"
-	"github.com/notional-labs/feeabstraction/v1/x/feeabs/types"
+	apphelpers "github.com/notional-labs/feeabstraction/v2/app/helpers"
+	"github.com/notional-labs/feeabstraction/v2/x/feeabs/keeper"
+	"github.com/notional-labs/feeabstraction/v2/x/feeabs/types"
 )
 
 func createNHostZone(t *testing.T, keeper *keeper.Keeper, ctx sdk.Context, n int) []types.HostChainFeeAbsConfig {
