@@ -16,8 +16,8 @@ import (
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/notional-labs/feeabstraction/v2/app"
-	apphelpers "github.com/notional-labs/feeabstraction/v2/app/helpers"
+	"github.com/notional-labs/fee-abstraction/v2/app"
+	apphelpers "github.com/notional-labs/fee-abstraction/v2/app/helpers"
 )
 
 type IntegrationTestSuite struct {
