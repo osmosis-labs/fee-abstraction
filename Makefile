@@ -94,6 +94,23 @@ build:
 	go build $(BUILD_FLAGS) -o bin/feeappd ./cmd/feeappd
 
 ###############################################################################
+###                             Interchain test                             ###
+###############################################################################
+
+# Executes basic chain tests via interchaintest
+ictest-basic:
+	cd tests/interchaintest && go test -race -v -run TestBasic .
+
+# Executes IBC tests via interchaintest
+ictest-ibc:
+	cd tests/interchaintest && go test -race -v -run TestJunoGaiaIBCTransfer .
+
+# Executes all tests via interchaintest after compling a local image as juno:local
+ictest-all: ictest-basic ictest-ibc
+
+.PHONY: ictest-basic ictest-ibc ictest-all
+
+###############################################################################
 ###                                  Proto                                  ###
 ###############################################################################
 

@@ -2,19 +2,17 @@ package interchaintest
 
 import (
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
+	feeabstype "github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
 	"github.com/strangelove-ventures/interchaintest/v4/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v4/ibc"
 )
 
 var (
-	FeeabsE2ERepo  = "ghcr.io/notional-labs/fee-abstraction-e2e"
 	FeeabsMainRepo = "ghcr.io/notional-labs/fee-abstraction"
 
-	feeabsRepo, feeabsVersion = GetDockerImageInfo()
-
 	feeabsImage = ibc.DockerImage{
-		Repository: feeabsRepo,
-		Version:    feeabsVersion,
+		Repository: "ghcr.io/notional-labs/fee-abstraction",
+		Version:    "lastest",
 		UidGid:     "1025:1025",
 	}
 
@@ -46,6 +44,9 @@ var (
 // will be supported when writing to the blocksdb sqlite database.
 func feeabsEncoding() *simappparams.EncodingConfig {
 	cfg := cosmos.DefaultEncoding()
+
+	// register custom types
+	feeabstype.RegisterInterfaces(cfg.InterfaceRegistry)
 
 	return &cfg
 }
