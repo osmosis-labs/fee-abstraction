@@ -1,0 +1,26 @@
+{
+    "modify_chain_channel_links": 
+    {
+        "operations": 
+        [
+            {"operation": "set","source_chain": "feeappd-t1","destination_chain": "osmosis","channel_id": "channel-0"},
+            {"operation": "set","source_chain": "osmosis","destination_chain": "feeappd-t1","channel_id": "channel-0"},
+            {"operation": "set","source_chain": "feeappd-t1","destination_chain": "gaiad-t1","channel_id": "channel-2"},
+            {"operation": "set","source_chain": "gaiad-t1","destination_chain": "feeappd-t1","channel_id": "channel-0"},
+            {"operation": "set","source_chain": "osmosis","destination_chain": "gaiad-t1","channel_id": "channel-2"},
+            {"operation": "set","source_chain": "gaiad-t1","destination_chain": "osmosis","channel_id": "channel-1"}
+        ]
+    }
+}
+
+{
+    "modify_bech32_prefixes": 
+    {
+        "operations": 
+        [
+            {"operation": "set", "chain_name": "feeappd-t1", "prefix": "feeabs"},
+            {"operation": "set", "chain_name": "osmosis", "prefix": "osmo"},
+            {"operation": "set", "chain_name": "gaiad-t1", "prefix": "cosmos"}
+        ]
+    }
+}
