@@ -99,11 +99,11 @@ build:
 
 # Executes basic chain tests via interchaintest
 ictest-basic:
-	cd tests/interchaintest && go test -race -v -run TestBasic .
+	cd tests/interchaintest && go test -race -v -run TestStartFeeabs .
 
 # Executes IBC tests via interchaintest
 ictest-ibc:
-	cd tests/interchaintest && go test -race -v -run TestJunoGaiaIBCTransfer .
+	cd tests/interchaintest && go test -race -v -run TestFeeabsGaiaIBCTransfer .
 
 # Executes all tests via interchaintest after compling a local image as juno:local
 ictest-all: ictest-basic ictest-ibc
