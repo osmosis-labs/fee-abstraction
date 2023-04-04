@@ -6,7 +6,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.45.14
 	github.com/cosmos/ibc-go/v4 v4.3.0
 	github.com/notional-labs/fee-abstraction/v2 v2.0.1
-	github.com/strangelove-ventures/interchaintest/v4 v4.0.0-20230316161044-8d8c01f96b4a
+	github.com/strangelove-ventures/interchaintest/v4 v4.0.0-20230331040355-5d08aab13017
 	github.com/stretchr/testify v1.8.2
 	go.uber.org/zap v1.23.0
 )
@@ -165,6 +165,7 @@ require (
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gotest.tools/v3 v3.4.0 // indirect
 	lukechampine.com/blake3 v1.1.6 // indirect
 	lukechampine.com/uint128 v1.1.1 // indirect
 	modernc.org/cc/v3 v3.36.0 // indirect
