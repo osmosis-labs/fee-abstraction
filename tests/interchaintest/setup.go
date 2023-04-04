@@ -36,7 +36,7 @@ var (
 		EncodingConfig:      feeabsEncoding(),
 	}
 
-	pathfeeabsGaia      = "feeabs-gaia"
+	pathFeeabsGaia      = "feeabs-gaia"
 	genesisWalletAmount = int64(10_000_000)
 )
 
