@@ -50,13 +50,13 @@ message AddHostZoneProposal {
 }
 
 message DeleteHostZoneProposal {
-	option (gogoproto.goproto_getters) = false;
-	// the title of the proposal
-	string title = 1;
-	// the description of the proposal
-	string description = 2;
-	// the  ibc denom of this token
-	string ibc_denom = 3;
+  option (gogoproto.goproto_getters) = false;
+  // the title of the proposal
+  string title = 1;
+  // the description of the proposal
+  string description = 2;
+  // the  ibc denom of this token
+  string ibc_denom = 3;
 }
 
 message SetHostZoneProposal {

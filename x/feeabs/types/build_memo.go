@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	fmt "fmt"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -64,8 +65,9 @@ func NewOsmosisSwapMsg(inputCoin sdk.Coin, outputDenom string, slippagePercentag
 }
 
 // ParseMsgToMemo build a memo from msg, contractAddr, compatible with ValidateAndParseMemo in https://github.com/osmosis-labs/osmosis/blob/nicolas/crosschain-swaps-new/x/ibc-hooks/wasm_hook.go
-func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string, receiver string) (string, error) {
+func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string, receiverAddress string, chainName string) (string, error) {
 	// TODO: need to validate the msg && contract address
+	receiver := fmt.Sprintf("%s/%s", chainName, receiverAddress)
 	memo := OsmosisSpecialMemo{
 		Wasm: make(map[string]interface{}),
 	}
@@ -82,11 +84,11 @@ func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string, receiver string) (s
 }
 
 // TODO: write test for this.
-func BuildPacketMiddlewareMemo(inputToken sdk.Coin, outputDenom string, receiver string, hostChainConfig HostChainFeeAbsConfig) (string, error) {
+func BuildPacketMiddlewareMemo(inputToken sdk.Coin, outputDenom string, receiver string, hostChainConfig HostChainFeeAbsConfig, chainName string) (string, error) {
 	// TODO: this should be chain params.
 	timeOut := 10 * time.Minute
 	retries := uint8(0)
-	nextMemo, err := BuildCrossChainSwapMemo(inputToken, outputDenom, hostChainConfig.CrosschainSwapAddress, receiver)
+	nextMemo, err := BuildCrossChainSwapMemo(inputToken, outputDenom, hostChainConfig.CrosschainSwapAddress, receiver, chainName)
 	if err != nil {
 		return "", nil
 	}
@@ -109,9 +111,8 @@ func BuildPacketMiddlewareMemo(inputToken sdk.Coin, outputDenom string, receiver
 
 // TODO: write test for this
 // BuildNextMemo create memo for IBC hook, this execute `CrossChainSwap contract`
-func BuildCrossChainSwapMemo(inputToken sdk.Coin, outputDenom string, contractAddress, receiver string) (string, error) {
+func BuildCrossChainSwapMemo(inputToken sdk.Coin, outputDenom string, contractAddress, receiver string, chainName string) (string, error) {
 	swap := Swap{
-		InputCoin:   inputToken,
 		OutPutDenom: outputDenom,
 		Slippage: Twap{
 			Twap: TwapRouter{
@@ -126,7 +127,7 @@ func BuildCrossChainSwapMemo(inputToken sdk.Coin, outputDenom string, contractAd
 	msgSwap := OsmosisSwapMsg{
 		OsmosisSwap: swap,
 	}
-	nextMemo, err := ParseMsgToMemo(msgSwap, contractAddress, receiver)
+	nextMemo, err := ParseMsgToMemo(msgSwap, contractAddress, receiver, chainName)
 	if err != nil {
 		return "", err
 	}

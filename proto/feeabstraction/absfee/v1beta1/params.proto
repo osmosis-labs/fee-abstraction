@@ -15,4 +15,7 @@ message Params {
 
   // osmosis query TWAP path
   string osmosis_query_twap_path = 2;
+
+  // chain name for ibc path unwinding
+  string chain_name = 3;
 }

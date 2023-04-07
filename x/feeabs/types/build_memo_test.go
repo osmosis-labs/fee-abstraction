@@ -31,7 +31,7 @@ func TestParseMsgToMemo(t *testing.T) {
 	mockReceiver := "cosmos123456789"
 
 	//TODO: need to check assert msg
-	_, err := types.ParseMsgToMemo(msgSwap, mockAddress, mockReceiver)
+	_, err := types.ParseMsgToMemo(msgSwap, mockAddress, mockReceiver, "feeappd-t1")
 	require.NoError(t, err)
 }
 
@@ -44,7 +44,7 @@ func TestParseCrossChainSwapMsgToMemo(t *testing.T) {
 
 	execepted_memo_str := `{"wasm":{"contract":"osmo1c3ljch9dfw5kf52nfwpxd2zmj2ese7agnx0p9tenkrryasrle5sqf3ftpg","msg":{"osmosis_swap":{"input_coin":{"denom":"stake","amount":"123"},"output_denom":"uosmo","slippage":{"twap":{"slippage_percentage":"20","window_seconds":10}},"receiver":"osmo1cd4nn8yzdrrsfqsmmvaafq8r03xn38qgqt8fzh","on_failed_delivery":"do_nothing"}},"receiver":"osmo1cd4nn8yzdrrsfqsmmvaafq8r03xn38qgqt8fzh"}}`
 	//TODO: need to check assert msg
-	memo_str, err := types.BuildCrossChainSwapMemo(inputToken, outPutDenom, contractAddress, mockReceiver)
+	memo_str, err := types.BuildCrossChainSwapMemo(inputToken, outPutDenom, contractAddress, mockReceiver, "feeappd-t1")
 
 	require.NoError(t, err)
 	require.Equal(t, execepted_memo_str, memo_str)
@@ -72,7 +72,7 @@ func TestParsePacketMiddlewareMemoToMemo(t *testing.T) {
 	}
 
 	// TODO: need to check assert msg
-	memo_str, err := types.BuildPacketMiddlewareMemo(inputToken, outputDenom, mockReceiver, config)
+	memo_str, err := types.BuildPacketMiddlewareMemo(inputToken, outputDenom, mockReceiver, config, "feeappd-t1")
 
 	require.NoError(t, err)
 	require.Equal(t, execepted_memo_str, memo_str)
