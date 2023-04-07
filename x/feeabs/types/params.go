@@ -15,9 +15,12 @@ const (
 
 // Parameter keys store keys.
 var (
-	KeyOsmosisQueryTwapPath = []byte("osmosisquerytwappath")
-	KeyNativeIbcedInOsmosis = []byte("nativeibcedinosmosis")
-	KeyChainName            = []byte("chainname")
+	KeyOsmosisQueryTwapPath         = []byte("osmosisquerytwappath")
+	KeyNativeIbcedInOsmosis         = []byte("nativeibcedinosmosis")
+	KeyChainName                    = []byte("chainname")
+	KeyIbcTransferChannel           = []byte("ibctransferchannel")
+	KeyIbcQueryIcqChannel           = []byte("ibcqueryicqchannel")
+	KeyOsmosisCrosschainSwapAddress = []byte("osmosiscrosschainswapaddress")
 
 	_ paramtypes.ParamSet = &Params{}
 )
@@ -30,47 +33,32 @@ func ParamKeyTable() paramtypes.KeyTable {
 // Implements params.ParamSet.
 func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
-		paramtypes.NewParamSetPair(KeyOsmosisQueryTwapPath, &p.OsmosisQueryTwapPath, validateOsmosisQueryTwapPath),
-		paramtypes.NewParamSetPair(KeyNativeIbcedInOsmosis, &p.NativeIbcedInOsmosis, validateNativeIbcedInOsmosis),
-		paramtypes.NewParamSetPair(KeyChainName, &p.ChainName, validateChainName),
+		paramtypes.NewParamSetPair(KeyOsmosisQueryTwapPath, &p.OsmosisQueryTwapPath, validateString),
+		paramtypes.NewParamSetPair(KeyNativeIbcedInOsmosis, &p.NativeIbcedInOsmosis, validateString),
+		paramtypes.NewParamSetPair(KeyChainName, &p.ChainName, validateString),
+		paramtypes.NewParamSetPair(KeyIbcTransferChannel, &p.IbcTransferChannel, validateString),
+		paramtypes.NewParamSetPair(KeyIbcQueryIcqChannel, &p.IbcQueryIcqChannel, validateString),
+		paramtypes.NewParamSetPair(KeyOsmosisCrosschainSwapAddress, &p.OsmosisCrosschainSwapAddress, validateString),
 	}
 }
 
 // Validate also validates params info.
 func (p Params) Validate() error {
 
-	if err := validateOsmosisQueryTwapPath(p.OsmosisQueryTwapPath); err != nil {
+	if err := validateString(p.OsmosisQueryTwapPath); err != nil {
 		return err
 	}
-	if err := validateNativeIbcedInOsmosis(p.NativeIbcedInOsmosis); err != nil {
+	if err := validateString(p.NativeIbcedInOsmosis); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func validateOsmosisQueryTwapPath(i interface{}) error {
+func validateString(i interface{}) error {
 	_, ok := i.(string)
 	if !ok {
-		return fmt.Errorf("invalid parameter type OsmosisQueryTwapPath: %T", i)
-	}
-
-	return nil
-}
-
-func validateNativeIbcedInOsmosis(i interface{}) error {
-	_, ok := i.(string)
-	if !ok {
-		return fmt.Errorf("invalid parameter type NativeIbcedInOsmosis: %T", i)
-	}
-
-	return nil
-}
-
-func validateChainName(i interface{}) error {
-	_, ok := i.(string)
-	if !ok {
-		return fmt.Errorf("invalid parameter type ChainName: %T", i)
+		return fmt.Errorf("invalid parameter type string: %T", i)
 	}
 
 	return nil

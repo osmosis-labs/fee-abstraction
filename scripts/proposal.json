@@ -12,6 +12,21 @@
         "subspace": "feeabs",
         "key": "chainname",
         "value": "feeappd-t1"
+      },
+      {
+        "subspace": "feeabs",
+        "key": "ibctransferchannel",
+        "value": "channel-0"
+      },
+      {
+        "subspace": "feeabs",
+        "key": "ibcqueryicqchannel",
+        "value": "channel-1"
+      },
+      {
+        "subspace": "feeabs",
+        "key": "osmosiscrosschainswapaddress",
+        "value": "osmo17p9rzwnnfxcjp32un9ug7yhhzgtkhvl9jfksztgw5uh69wac2pgs5yczr8"
       }
     ],
     "deposit": "10000000000stake"

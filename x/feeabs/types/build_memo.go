@@ -6,7 +6,6 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	transfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
 )
 
 type OsmosisSpecialMemo struct {
@@ -81,32 +80,6 @@ func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string, receiverAddress str
 	return string(memo_marshalled), nil
 }
 
-// TODO: write test for this.
-func BuildPacketMiddlewareMemo(outputDenom string, receiver string, hostChainConfig HostChainFeeAbsConfig, chainName string) (string, error) {
-	// TODO: this should be chain params.
-	timeOut := 10 * time.Minute
-	retries := uint8(0)
-	nextMemo, err := BuildCrossChainSwapMemo(outputDenom, hostChainConfig.CrosschainSwapAddress, receiver, chainName)
-	if err != nil {
-		return "", nil
-	}
-
-	metadata := ForwardMetadata{
-		Receiver: hostChainConfig.CrosschainSwapAddress,
-		Port:     transfertypes.PortID,
-		Channel:  hostChainConfig.HostZoneIbcTransferChannel,
-		Timeout:  timeOut,
-		Retries:  &retries,
-		Next:     nextMemo,
-	}
-
-	packetMetadata := PacketMetadata{
-		Forward: &metadata,
-	}
-	// TODO: need to validate the msg && contract address.
-	return BuildForwardMetaMemo(packetMetadata)
-}
-
 // TODO: write test for this
 // BuildNextMemo create memo for IBC hook, this execute `CrossChainSwap contract`
 func BuildCrossChainSwapMemo(outputDenom string, contractAddress, receiver string, chainName string) (string, error) {
@@ -131,13 +104,4 @@ func BuildCrossChainSwapMemo(outputDenom string, contractAddress, receiver strin
 	}
 
 	return nextMemo, nil
-}
-
-// TODO: write test for this
-func BuildForwardMetaMemo(packetMetaData PacketMetadata) (string, error) {
-	memo_marshalled, err := json.Marshal(&packetMetaData)
-	if err != nil {
-		return "", err
-	}
-	return string(memo_marshalled), nil
 }
