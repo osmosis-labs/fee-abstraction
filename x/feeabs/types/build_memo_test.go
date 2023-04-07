@@ -3,7 +3,6 @@ package types_test
 import (
 	"testing"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
@@ -17,7 +16,6 @@ func TestParseMsgToMemo(t *testing.T) {
 	}
 
 	swap := types.Swap{
-		InputCoin:   sdk.NewCoin("khanhyeungan", sdk.NewInt(123)),
 		OutPutDenom: "khanhyeuchau",
 		Slippage:    types.Twap{Twap: twapRouter},
 		Receiver:    "123456",
@@ -37,14 +35,13 @@ func TestParseMsgToMemo(t *testing.T) {
 
 // TODO: need to refactor this test, use driven table
 func TestParseCrossChainSwapMsgToMemo(t *testing.T) {
-	inputToken := sdk.NewCoin("stake", sdk.NewInt(123))
 	outPutDenom := "uosmo"
 	contractAddress := "osmo1c3ljch9dfw5kf52nfwpxd2zmj2ese7agnx0p9tenkrryasrle5sqf3ftpg"
 	mockReceiver := "osmo1cd4nn8yzdrrsfqsmmvaafq8r03xn38qgqt8fzh"
 
 	execepted_memo_str := `{"wasm":{"contract":"osmo1c3ljch9dfw5kf52nfwpxd2zmj2ese7agnx0p9tenkrryasrle5sqf3ftpg","msg":{"osmosis_swap":{"input_coin":{"denom":"stake","amount":"123"},"output_denom":"uosmo","slippage":{"twap":{"slippage_percentage":"20","window_seconds":10}},"receiver":"osmo1cd4nn8yzdrrsfqsmmvaafq8r03xn38qgqt8fzh","on_failed_delivery":"do_nothing"}},"receiver":"osmo1cd4nn8yzdrrsfqsmmvaafq8r03xn38qgqt8fzh"}}`
 	//TODO: need to check assert msg
-	memo_str, err := types.BuildCrossChainSwapMemo(inputToken, outPutDenom, contractAddress, mockReceiver, "feeappd-t1")
+	memo_str, err := types.BuildCrossChainSwapMemo(outPutDenom, contractAddress, mockReceiver, "feeappd-t1")
 
 	require.NoError(t, err)
 	require.Equal(t, execepted_memo_str, memo_str)
@@ -52,7 +49,6 @@ func TestParseCrossChainSwapMsgToMemo(t *testing.T) {
 
 // TODO: need to refactor this test, use driven table
 func TestParsePacketMiddlewareMemoToMemo(t *testing.T) {
-	inputToken := sdk.NewCoin("stake", sdk.NewInt(123))
 	outputDenom := "uosmo"
 	contractAddress := "osmo1c3ljch9dfw5kf52nfwpxd2zmj2ese7agnx0p9tenkrryasrle5sqf3ftpg"
 	mockReceiver := "osmo1cd4nn8yzdrrsfqsmmvaafq8r03xn38qgqt8fzh"
@@ -72,7 +68,7 @@ func TestParsePacketMiddlewareMemoToMemo(t *testing.T) {
 	}
 
 	// TODO: need to check assert msg
-	memo_str, err := types.BuildPacketMiddlewareMemo(inputToken, outputDenom, mockReceiver, config, "feeappd-t1")
+	memo_str, err := types.BuildPacketMiddlewareMemo(outputDenom, mockReceiver, config, "feeappd-t1")
 
 	require.NoError(t, err)
 	require.Equal(t, execepted_memo_str, memo_str)

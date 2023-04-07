@@ -9,14 +9,15 @@ import (
 // Feeabs params default values .
 const (
 	DefaultOsmosisQueryTwapPath = "/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow"
-
-	DefaultContractAddress string = ""
+	DefaultChainName            = "feeappd-t1"
+	DefaultContractAddress      = ""
 )
 
 // Parameter keys store keys.
 var (
 	KeyOsmosisQueryTwapPath = []byte("osmosisquerytwappath")
 	KeyNativeIbcedInOsmosis = []byte("nativeibcedinosmosis")
+	KeyChainName            = []byte("chainname")
 
 	_ paramtypes.ParamSet = &Params{}
 )
@@ -31,6 +32,7 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
 		paramtypes.NewParamSetPair(KeyOsmosisQueryTwapPath, &p.OsmosisQueryTwapPath, validateOsmosisQueryTwapPath),
 		paramtypes.NewParamSetPair(KeyNativeIbcedInOsmosis, &p.NativeIbcedInOsmosis, validateNativeIbcedInOsmosis),
+		paramtypes.NewParamSetPair(KeyChainName, &p.ChainName, validateChainName),
 	}
 }
 
@@ -60,6 +62,15 @@ func validateNativeIbcedInOsmosis(i interface{}) error {
 	_, ok := i.(string)
 	if !ok {
 		return fmt.Errorf("invalid parameter type NativeIbcedInOsmosis: %T", i)
+	}
+
+	return nil
+}
+
+func validateChainName(i interface{}) error {
+	_, ok := i.(string)
+	if !ok {
+		return fmt.Errorf("invalid parameter type ChainName: %T", i)
 	}
 
 	return nil

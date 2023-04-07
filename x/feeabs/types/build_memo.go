@@ -17,11 +17,10 @@ type OsmosisSwapMsg struct {
 	OsmosisSwap Swap `json:"osmosis_swap"`
 }
 type Swap struct {
-	InputCoin        sdk.Coin `json:"input_coin"`
-	OutPutDenom      string   `json:"output_denom"`
-	Slippage         Twap     `json:"slippage"`
-	Receiver         string   `json:"receiver"`
-	OnFailedDelivery string   `json:"on_failed_delivery"`
+	OutPutDenom      string `json:"output_denom"`
+	Slippage         Twap   `json:"slippage"`
+	Receiver         string `json:"receiver"`
+	OnFailedDelivery string `json:"on_failed_delivery"`
 }
 
 type Twap struct {
@@ -50,7 +49,6 @@ type ForwardMetadata struct {
 
 func NewOsmosisSwapMsg(inputCoin sdk.Coin, outputDenom string, slippagePercentage string, windowSeconds uint64, receiver string) OsmosisSwapMsg {
 	swap := Swap{
-		InputCoin:   inputCoin,
 		OutPutDenom: outputDenom,
 		Slippage: Twap{
 			Twap: TwapRouter{SlippagePercentage: slippagePercentage,
@@ -84,11 +82,11 @@ func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string, receiverAddress str
 }
 
 // TODO: write test for this.
-func BuildPacketMiddlewareMemo(inputToken sdk.Coin, outputDenom string, receiver string, hostChainConfig HostChainFeeAbsConfig, chainName string) (string, error) {
+func BuildPacketMiddlewareMemo(outputDenom string, receiver string, hostChainConfig HostChainFeeAbsConfig, chainName string) (string, error) {
 	// TODO: this should be chain params.
 	timeOut := 10 * time.Minute
 	retries := uint8(0)
-	nextMemo, err := BuildCrossChainSwapMemo(inputToken, outputDenom, hostChainConfig.CrosschainSwapAddress, receiver, chainName)
+	nextMemo, err := BuildCrossChainSwapMemo(outputDenom, hostChainConfig.CrosschainSwapAddress, receiver, chainName)
 	if err != nil {
 		return "", nil
 	}
@@ -111,7 +109,7 @@ func BuildPacketMiddlewareMemo(inputToken sdk.Coin, outputDenom string, receiver
 
 // TODO: write test for this
 // BuildNextMemo create memo for IBC hook, this execute `CrossChainSwap contract`
-func BuildCrossChainSwapMemo(inputToken sdk.Coin, outputDenom string, contractAddress, receiver string, chainName string) (string, error) {
+func BuildCrossChainSwapMemo(outputDenom string, contractAddress, receiver string, chainName string) (string, error) {
 	swap := Swap{
 		OutPutDenom: outputDenom,
 		Slippage: Twap{

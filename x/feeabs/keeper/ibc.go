@@ -241,6 +241,47 @@ func (k Keeper) GetDecTWAPFromBytes(bz []byte) (sdk.Dec, error) {
 	return ibcTokenTwap.ArithmeticTwap, nil
 }
 
+// TODO: don't use if/else logic.
+func (k Keeper) transferOsmosisCrosschainSwap(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
+	moduleAccountAddress := k.GetFeeAbsModuleAddress()
+	token := k.bk.GetBalance(ctx, moduleAccountAddress, hostChainConfig.IbcDenom)
+	params := k.GetParams(ctx)
+	nativeDenomIBCedInOsmosis := params.NativeIbcedInOsmosis
+	chainName := params.ChainName
+
+	// TODO: don't use it in product version.
+	if sdk.NewInt(1).GTE(token.Amount) {
+		return nil
+	}
+
+	memo, err := types.BuildCrossChainSwapMemo(nativeDenomIBCedInOsmosis, hostChainConfig.CrosschainSwapAddress, moduleAccountAddress.String(), chainName)
+	if err != nil {
+		return err
+	}
+
+	k.Logger(ctx).Error(fmt.Sprintf("Memo: %s", memo))
+
+	timeoutTimestamp := ctx.BlockTime().Add(time.Minute * 5).UnixNano()
+
+	transferMsg := transfertypes.MsgTransfer{
+		SourcePort:       transfertypes.PortID,
+		SourceChannel:    hostChainConfig.IbcTransferChannel,
+		Token:            token,
+		Sender:           moduleAccountAddress.String(),
+		Receiver:         hostChainConfig.CrosschainSwapAddress,
+		TimeoutHeight:    clienttypes.ZeroHeight(),
+		TimeoutTimestamp: uint64(timeoutTimestamp),
+		Memo:             memo,
+	}
+
+	_, err = k.executeTransferMsg(ctx, &transferMsg)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (k Keeper) transferIBCTokenToHostChainWithMiddlewareMemo(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
 	moduleAccountAddress := k.GetFeeAbsModuleAddress()
 	token := k.bk.GetBalance(ctx, moduleAccountAddress, hostChainConfig.IbcDenom)
@@ -253,8 +294,7 @@ func (k Keeper) transferIBCTokenToHostChainWithMiddlewareMemo(ctx sdk.Context, h
 		return nil
 	}
 
-	inputToken := sdk.NewCoin(hostChainConfig.OsmosisPoolTokenDenomIn, token.Amount)
-	memo, err := types.BuildPacketMiddlewareMemo(inputToken, nativeDenomIBCedInOsmosis, moduleAccountAddress.String(), hostChainConfig, chainName)
+	memo, err := types.BuildPacketMiddlewareMemo(nativeDenomIBCedInOsmosis, moduleAccountAddress.String(), hostChainConfig, chainName)
 	if err != nil {
 		return err
 	}
@@ -293,8 +333,7 @@ func (k Keeper) transferIBCTokenToOsmosisChainWithIBCHookMemo(ctx sdk.Context, h
 		return nil
 	}
 
-	inputToken := sdk.NewCoin(hostChainConfig.OsmosisPoolTokenDenomIn, token.Amount)
-	memo, err := types.BuildCrossChainSwapMemo(inputToken, nativeDenomIBCedInOsmosis, hostChainConfig.CrosschainSwapAddress, moduleAccountAddress.String(), chainName)
+	memo, err := types.BuildCrossChainSwapMemo(nativeDenomIBCedInOsmosis, hostChainConfig.CrosschainSwapAddress, moduleAccountAddress.String(), chainName)
 	if err != nil {
 		return err
 	}
