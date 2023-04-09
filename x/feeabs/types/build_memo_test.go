@@ -27,9 +27,10 @@ func TestParseMsgToMemo(t *testing.T) {
 
 	mockAddress := "cosmos123456789"
 	mockReceiver := "cosmos123456789"
+	chainName := "feeappd-t1"
 
 	//TODO: need to check assert msg
-	_, err := types.ParseMsgToMemo(msgSwap, mockAddress, mockReceiver, "feeappd-t1")
+	_, err := types.ParseMsgToMemo(msgSwap, mockAddress, mockReceiver, chainName)
 	require.NoError(t, err)
 }
 
@@ -38,10 +39,11 @@ func TestParseCrossChainSwapMsgToMemo(t *testing.T) {
 	outPutDenom := "uosmo"
 	contractAddress := "osmo1c3ljch9dfw5kf52nfwpxd2zmj2ese7agnx0p9tenkrryasrle5sqf3ftpg"
 	mockReceiver := "osmo1cd4nn8yzdrrsfqsmmvaafq8r03xn38qgqt8fzh"
+	chainName := "feeappd-t1"
 
-	execepted_memo_str := `{"wasm":{"contract":"osmo1c3ljch9dfw5kf52nfwpxd2zmj2ese7agnx0p9tenkrryasrle5sqf3ftpg","msg":{"osmosis_swap":{"input_coin":{"denom":"stake","amount":"123"},"output_denom":"uosmo","slippage":{"twap":{"slippage_percentage":"20","window_seconds":10}},"receiver":"osmo1cd4nn8yzdrrsfqsmmvaafq8r03xn38qgqt8fzh","on_failed_delivery":"do_nothing"}},"receiver":"osmo1cd4nn8yzdrrsfqsmmvaafq8r03xn38qgqt8fzh"}}`
+	execepted_memo_str := `{"wasm":{"contract":"osmo1c3ljch9dfw5kf52nfwpxd2zmj2ese7agnx0p9tenkrryasrle5sqf3ftpg","msg":{"osmosis_swap":{"output_denom":"uosmo","slippage":{"twap":{"slippage_percentage":"20","window_seconds":10}},"receiver":"osmo1cd4nn8yzdrrsfqsmmvaafq8r03xn38qgqt8fzh","on_failed_delivery":"do_nothing"}},"receiver":"feeappd-t1/osmo1cd4nn8yzdrrsfqsmmvaafq8r03xn38qgqt8fzh"}}`
 	//TODO: need to check assert msg
-	memo_str, err := types.BuildCrossChainSwapMemo(outPutDenom, contractAddress, mockReceiver, "feeappd-t1")
+	memo_str, err := types.BuildCrossChainSwapMemo(outPutDenom, contractAddress, mockReceiver, chainName)
 
 	require.NoError(t, err)
 	require.Equal(t, execepted_memo_str, memo_str)
