@@ -258,8 +258,6 @@ func (k Keeper) transferOsmosisCrosschainSwap(ctx sdk.Context, hostChainConfig t
 		return err
 	}
 
-	k.Logger(ctx).Error(fmt.Sprintf("Memo: %s", memo))
-
 	timeoutTimestamp := ctx.BlockTime().Add(time.Minute * 5).UnixNano()
 
 	transferMsg := transfertypes.MsgTransfer{
