@@ -58,13 +58,9 @@ func (suite *KeeperTestSuite) TestHostChainConfig() {
 	suite.SetupTest()
 
 	chainConfig := types.HostChainFeeAbsConfig{
-		IbcDenom:                   randStringRunes(10),
-		OsmosisPoolTokenDenomIn:    randStringRunes(10),
-		MiddlewareAddress:          randStringRunes(10),
-		IbcTransferChannel:         randStringRunes(10),
-		HostZoneIbcTransferChannel: randStringRunes(10),
-		CrosschainSwapAddress:      randStringRunes(10),
-		PoolId:                     randUint64Num(),
+		IbcDenom:                randStringRunes(10),
+		OsmosisPoolTokenDenomIn: randStringRunes(10),
+		PoolId:                  randUint64Num(),
 	}
 
 	err := suite.feeAbsKeeper.SetHostZoneConfig(suite.ctx, chainConfig.IbcDenom, chainConfig)

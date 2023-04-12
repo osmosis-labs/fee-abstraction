@@ -15,4 +15,16 @@ message Params {
 
   // osmosis query TWAP path
   string osmosis_query_twap_path = 2;
+
+  // chain name for ibc path unwinding
+  string chain_name = 3;
+
+  // transfer channel for cross chain swap with osmosis
+  string ibc_transfer_channel = 4;
+
+  // query twap price icq channel with osmosis
+  string ibc_query_icq_channel = 5;
+
+  // osmosis crosschain swap contract address
+  string osmosis_crosschain_swap_address = 6;
 }

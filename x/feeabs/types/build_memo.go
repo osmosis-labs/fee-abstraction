@@ -2,10 +2,10 @@ package types
 
 import (
 	"encoding/json"
+	fmt "fmt"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	transfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
 )
 
 type OsmosisSpecialMemo struct {
@@ -16,11 +16,10 @@ type OsmosisSwapMsg struct {
 	OsmosisSwap Swap `json:"osmosis_swap"`
 }
 type Swap struct {
-	InputCoin        sdk.Coin `json:"input_coin"`
-	OutPutDenom      string   `json:"output_denom"`
-	Slippage         Twap     `json:"slippage"`
-	Receiver         string   `json:"receiver"`
-	OnFailedDelivery string   `json:"on_failed_delivery"`
+	OutPutDenom      string `json:"output_denom"`
+	Slippage         Twap   `json:"slippage"`
+	Receiver         string `json:"receiver"`
+	OnFailedDelivery string `json:"on_failed_delivery"`
 }
 
 type Twap struct {
@@ -49,7 +48,6 @@ type ForwardMetadata struct {
 
 func NewOsmosisSwapMsg(inputCoin sdk.Coin, outputDenom string, slippagePercentage string, windowSeconds uint64, receiver string) OsmosisSwapMsg {
 	swap := Swap{
-		InputCoin:   inputCoin,
 		OutPutDenom: outputDenom,
 		Slippage: Twap{
 			Twap: TwapRouter{SlippagePercentage: slippagePercentage,
@@ -64,8 +62,9 @@ func NewOsmosisSwapMsg(inputCoin sdk.Coin, outputDenom string, slippagePercentag
 }
 
 // ParseMsgToMemo build a memo from msg, contractAddr, compatible with ValidateAndParseMemo in https://github.com/osmosis-labs/osmosis/blob/nicolas/crosschain-swaps-new/x/ibc-hooks/wasm_hook.go
-func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string, receiver string) (string, error) {
+func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string, receiverAddress string, chainName string) (string, error) {
 	// TODO: need to validate the msg && contract address
+	receiver := fmt.Sprintf("%s/%s", chainName, receiverAddress)
 	memo := OsmosisSpecialMemo{
 		Wasm: make(map[string]interface{}),
 	}
@@ -81,37 +80,10 @@ func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string, receiver string) (s
 	return string(memo_marshalled), nil
 }
 
-// TODO: write test for this.
-func BuildPacketMiddlewareMemo(inputToken sdk.Coin, outputDenom string, receiver string, hostChainConfig HostChainFeeAbsConfig) (string, error) {
-	// TODO: this should be chain params.
-	timeOut := 10 * time.Minute
-	retries := uint8(0)
-	nextMemo, err := BuildCrossChainSwapMemo(inputToken, outputDenom, hostChainConfig.CrosschainSwapAddress, receiver)
-	if err != nil {
-		return "", nil
-	}
-
-	metadata := ForwardMetadata{
-		Receiver: hostChainConfig.CrosschainSwapAddress,
-		Port:     transfertypes.PortID,
-		Channel:  hostChainConfig.HostZoneIbcTransferChannel,
-		Timeout:  timeOut,
-		Retries:  &retries,
-		Next:     nextMemo,
-	}
-
-	packetMetadata := PacketMetadata{
-		Forward: &metadata,
-	}
-	// TODO: need to validate the msg && contract address.
-	return BuildForwardMetaMemo(packetMetadata)
-}
-
 // TODO: write test for this
 // BuildNextMemo create memo for IBC hook, this execute `CrossChainSwap contract`
-func BuildCrossChainSwapMemo(inputToken sdk.Coin, outputDenom string, contractAddress, receiver string) (string, error) {
+func BuildCrossChainSwapMemo(outputDenom string, contractAddress, receiver string, chainName string) (string, error) {
 	swap := Swap{
-		InputCoin:   inputToken,
 		OutPutDenom: outputDenom,
 		Slippage: Twap{
 			Twap: TwapRouter{
@@ -126,19 +98,10 @@ func BuildCrossChainSwapMemo(inputToken sdk.Coin, outputDenom string, contractAd
 	msgSwap := OsmosisSwapMsg{
 		OsmosisSwap: swap,
 	}
-	nextMemo, err := ParseMsgToMemo(msgSwap, contractAddress, receiver)
+	nextMemo, err := ParseMsgToMemo(msgSwap, contractAddress, receiver, chainName)
 	if err != nil {
 		return "", err
 	}
 
 	return nextMemo, nil
-}
-
-// TODO: write test for this
-func BuildForwardMetaMemo(packetMetaData PacketMetadata) (string, error) {
-	memo_marshalled, err := json.Marshal(&packetMetaData)
-	if err != nil {
-		return "", err
-	}
-	return string(memo_marshalled), nil
 }
