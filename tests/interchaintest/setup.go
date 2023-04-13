@@ -37,6 +37,8 @@ var (
 	}
 
 	pathFeeabsGaia      = "feeabs-gaia"
+	pathFeeabsOsmosis   = "feeabs-osmosis"
+	pathOsmosisGaia     = "osmosis-gaia"
 	genesisWalletAmount = int64(10_000_000)
 )
 
