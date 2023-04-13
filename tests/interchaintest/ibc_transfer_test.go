@@ -43,83 +43,35 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 			NumValidators: &numVals,
 			NumFullNodes:  &numFullNodes,
 		},
-		{
-			Name:          "osmosis",
-			Version:       "v15.0.0",
-			NumValidators: &numVals,
-			NumFullNodes:  &numFullNodes,
-		},
 	})
 
 	// Get chains from the chain factory
 	chains, err := cf.Chains(t.Name())
 	require.NoError(t, err)
 
-	feeabs, gaia, osmosis := chains[0].(*cosmos.CosmosChain), chains[1].(*cosmos.CosmosChain), chains[2].(*cosmos.CosmosChain)
+	feeabs, gaia := chains[0].(*cosmos.CosmosChain), chains[1].(*cosmos.CosmosChain)
 
 	// Create relayer factory to utilize the go-relayer
 	client, network := interchaintest.DockerSetup(t)
 
-	r1 := interchaintest.NewBuiltinRelayerFactory(ibc.CosmosRly, zaptest.NewLogger(t)).Build(t, client, network)
-	r2 := interchaintest.NewBuiltinRelayerFactory(ibc.CosmosRly, zaptest.NewLogger(t)).Build(t, client, network)
-	r3 := interchaintest.NewBuiltinRelayerFactory(ibc.CosmosRly, zaptest.NewLogger(t)).Build(t, client, network)
+	r := interchaintest.NewBuiltinRelayerFactory(ibc.CosmosRly, zaptest.NewLogger(t)).Build(t, client, network)
+
 	// Create a new Interchain object which describes the chains, relayers, and IBC connections we want to use
-	ic1 := interchaintest.NewInterchain().
+	ic := interchaintest.NewInterchain().
 		AddChain(feeabs).
 		AddChain(gaia).
-		AddRelayer(r1, "rly1").
+		AddRelayer(r, "rly").
 		AddLink(interchaintest.InterchainLink{
 			Chain1:  feeabs,
 			Chain2:  gaia,
-			Relayer: r1,
+			Relayer: r,
 			Path:    pathFeeabsGaia,
 		})
-	ic2 := interchaintest.NewInterchain().
-		AddChain(feeabs).
-		AddChain(osmosis).
-		AddRelayer(r2, "rly2").
-		AddLink(interchaintest.InterchainLink{
-			Chain1:  feeabs,
-			Chain2:  osmosis,
-			Relayer: r2,
-			Path:    pathFeeabsOsmosis,
-		})
-	ic3 := interchaintest.NewInterchain().
-		AddChain(osmosis).
-		AddChain(gaia).
-		AddRelayer(r3, "rly3").
-		AddLink(interchaintest.InterchainLink{
-			Chain1:  osmosis,
-			Chain2:  gaia,
-			Relayer: r3,
-			Path:    pathOsmosisGaia,
-		})
+
 	rep := testreporter.NewNopReporter()
 	eRep := rep.RelayerExecReporter(t)
 
-	err = ic1.Build(ctx, eRep, interchaintest.InterchainBuildOptions{
-		TestName:         t.Name(),
-		Client:           client,
-		NetworkID:        network,
-		SkipPathCreation: false,
-
-		// This can be used to write to the block database which will index all block data e.g. txs, msgs, events, etc.
-		// BlockDatabaseFile: interchaintest.DefaultBlockDatabaseFilepath(),
-	})
-	require.NoError(t, err)
-
-	err = ic2.Build(ctx, eRep, interchaintest.InterchainBuildOptions{
-		TestName:         t.Name(),
-		Client:           client,
-		NetworkID:        network,
-		SkipPathCreation: false,
-
-		// This can be used to write to the block database which will index all block data e.g. txs, msgs, events, etc.
-		// BlockDatabaseFile: interchaintest.DefaultBlockDatabaseFilepath(),
-	})
-	require.NoError(t, err)
-
-	err = ic3.Build(ctx, eRep, interchaintest.InterchainBuildOptions{
+	err = ic.Build(ctx, eRep, interchaintest.InterchainBuildOptions{
 		TestName:         t.Name(),
 		Client:           client,
 		NetworkID:        network,
@@ -131,36 +83,14 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
-		_ = ic1.Close()
-		_ = ic2.Close()
-		_ = ic3.Close()
+		_ = ic.Close()
 	})
 
 	// Start the relayer
-	require.NoError(t, r1.StartRelayer(ctx, eRep, pathFeeabsGaia))
+	require.NoError(t, r.StartRelayer(ctx, eRep, pathFeeabsGaia))
 	t.Cleanup(
 		func() {
-			err := r1.StopRelayer(ctx, eRep)
-			if err != nil {
-				panic(fmt.Errorf("an error occurred while stopping the relayer: %s", err))
-			}
-		},
-	)
-
-	require.NoError(t, r2.StartRelayer(ctx, eRep, pathFeeabsOsmosis))
-	t.Cleanup(
-		func() {
-			err := r2.StopRelayer(ctx, eRep)
-			if err != nil {
-				panic(fmt.Errorf("an error occurred while stopping the relayer: %s", err))
-			}
-		},
-	)
-
-	require.NoError(t, r3.StartRelayer(ctx, eRep, pathOsmosisGaia))
-	t.Cleanup(
-		func() {
-			err := r3.StopRelayer(ctx, eRep)
+			err := r.StopRelayer(ctx, eRep)
 			if err != nil {
 				panic(fmt.Errorf("an error occurred while stopping the relayer: %s", err))
 			}
@@ -168,18 +98,17 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	)
 
 	// Create some user accounts on both chains
-	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), genesisWalletAmount, feeabs, gaia, osmosis)
+	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), genesisWalletAmount, feeabs, gaia)
 
 	// Wait a few blocks for relayer to start and for user accounts to be created
-	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia, osmosis)
+	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia)
 	require.NoError(t, err)
 
 	// Get our Bech32 encoded user addresses
-	feeabsUser, gaiaUser, osmosisUser := users[0], users[1], users[2]
+	feeabsUser, gaiaUser := users[0], users[1]
 
 	feeabsUserAddr := feeabsUser.Bech32Address(feeabs.Config().Bech32Prefix)
 	gaiaUserAddr := gaiaUser.Bech32Address(gaia.Config().Bech32Prefix)
-	osmosisUserAddr := osmosisUser.Bech32Address(osmosis.Config().Bech32Prefix)
 
 	// Get original account balances
 	feeabsOrigBal, err := feeabs.GetBalance(ctx, feeabsUserAddr, feeabs.Config().Denom)
@@ -190,10 +119,6 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, genesisWalletAmount, gaiaOrigBal)
 
-	osmosisOrigBal, err := osmosis.GetBalance(ctx, osmosisUserAddr, osmosis.Config().Denom)
-	require.NoError(t, err)
-	require.Equal(t, genesisWalletAmount, osmosisOrigBal)
-
 	// Compose an IBC transfer and send from feeabs -> Gaia
 	const transferAmount = int64(1_000)
 	transfer := ibc.WalletAmount{
@@ -202,7 +127,7 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 		Amount:  transferAmount,
 	}
 
-	channel, err := ibc.GetTransferChannel(ctx, r1, eRep, feeabs.Config().ChainID, gaia.Config().ChainID)
+	channel, err := ibc.GetTransferChannel(ctx, r, eRep, feeabs.Config().ChainID, gaia.Config().ChainID)
 	require.NoError(t, err)
 
 	transferTx, err := feeabs.SendIBCTransfer(ctx, channel.ChannelID, feeabsUserAddr, transfer, ibc.TransferOptions{})
