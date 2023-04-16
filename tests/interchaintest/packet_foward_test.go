@@ -51,14 +51,20 @@ func TestPacketForwardMiddleware(t *testing.T) {
 			NumFullNodes:  &numFullNodes,
 		},
 		{
-			Name:          "gaia",
-			Version:       "v9.0.2",
+			Name:    "gaia",
+			Version: "v9.0.2",
+			ChainConfig: ibc.ChainConfig{
+				GasPrices: "0.0uatom",
+			},
 			NumValidators: &numVals,
 			NumFullNodes:  &numFullNodes,
 		},
 		{
-			Name:          "osmosis",
-			Version:       "v15.0.0",
+			Name:    "osmosis",
+			Version: "v15.0.0",
+			ChainConfig: ibc.ChainConfig{
+				GasPrices: "0.005uosmo",
+			},
 			NumValidators: &numVals,
 			NumFullNodes:  &numFullNodes,
 		},
@@ -145,8 +151,9 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	feeabsUser, gaiaUser, osmosisUser := users[0], users[1], users[2]
 	_ = feeabsUser
 	_ = gaiaUser
+	_ = osmosisUser
 
-	const transferAmount int64 = 100000
+	// const transferAmount int64 = 100000
 
 	// Compose the prefixed denoms and ibc denom for asserting balances
 	// firstHopDenom := transfertypes.GetPrefixedDenom(gaiafeeabsChannel.PortID, gaiafeeabsChannel.ChannelID, feeabs.Config().Denom)
@@ -167,12 +174,23 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 	t.Run("forward a->b->a", func(t *testing.T) {
 		// Setup contract on Osmosis
-		// Store code
-		crossChainRegistryContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName, "./bytecode/crosschain_registry.wasm")
+		// Store code crosschain Registry
+		crossChainRegistryContractID, err := feeabs.StoreContract(ctx, feeabsUser.KeyName, "./bytecode/crosschain_registry.wasm")
 		require.NoError(t, err)
 		_ = crossChainRegistryContractID
-		// Instatiate
-		// Execute
+		// // Instatiate
+		// owner := feeabsUser.Bech32Address(feeabs.Config().Bech32Prefix)
+		// swapRegistryInitMsg := fmt.Sprintf("{\"owner\":\"%s\"}", owner)
+		// address, err := feeabs.InstantiateContract(ctx, feeabsUser.KeyName, crossChainRegistryContractID, swapRegistryInitMsg, true)
+		// require.NoError(t, err)
+		// feeabs.FullNodes
+		// // Execute
+		// msg := fmt.Sprintf("{\"modify_chain_channel_links\": {\"operations\": [{\"operation\": \"set\",\"source_chain\": \"feeabs\",\"destination_chain\": \"osmosis\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"osmosis\",\"destination_chain\": \"feeabs\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"feeabs\",\"destination_chain\": \"gaia\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"gaia\",\"destination_chain\": \"feeabs\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"osmosis\",\"destination_chain\": \"gaia\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"gaia\",\"destination_chain\": \"osmosis\",\"channel_id\": \"%s\"}]}}", feeabsOsmosisChannel, osmosisFeeabsChannel, feeabsGaiaChannel, gaiaFeeabsChannel, osmosisGaiaChannel, gaiaOsmosisChannel)
+		// txHash, err := feeabs.ExecuteContract(ctx, feeabsUser.KeyName, address, msg)
+		// require.NoError(t, err)
+		// fmt.Printf("Hash----------------: %s", txHash)
+		// tx, err := feeabs.GetTransaction(txHash)
+		// fmt.Printf("tx----------------: %v", tx)
 
 		// Send Gaia uatom to Osmosis
 
