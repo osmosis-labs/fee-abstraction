@@ -3,8 +3,8 @@ package interchaintest
 import (
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	feeabstype "github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
-	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
-	"github.com/strangelove-ventures/interchaintest/v7/ibc"
+	"github.com/strangelove-ventures/interchaintest/v4/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v4/ibc"
 )
 
 var (

@@ -4,9 +4,9 @@ go 1.19
 
 require (
 	github.com/cosmos/cosmos-sdk v0.45.14
-	github.com/cosmos/ibc-go/v7 v7.0.0
+	github.com/cosmos/ibc-go/v4 v4.3.0
 	github.com/notional-labs/fee-abstraction/v2 v2.0.1
-	github.com/strangelove-ventures/interchaintest/v7 v7.0.0
+	github.com/strangelove-ventures/interchaintest/v4 v4.0.0-20230331040355-5d08aab13017
 	github.com/stretchr/testify v1.8.2
 	go.uber.org/zap v1.23.0
 )
@@ -187,9 +187,6 @@ replace (
 	// interchaintest supports ICS features so we need this for now
 	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.45.13-ics
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-
-	// Use folk from notional-labs
-	github.com/strangelove-ventures/interchaintest/v7 v7.0.0 => github.com/notional-labs/interchaintest/v7 v7.0.7
 
 	// For this nested module, you always want to replace the parent reference with the current worktree.
 	github.com/notional-labs/fee-abstraction => ../../
