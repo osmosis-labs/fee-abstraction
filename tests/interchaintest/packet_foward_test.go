@@ -2,6 +2,7 @@ package interchaintest
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v4/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v4/ibc"
 	"github.com/strangelove-ventures/interchaintest/v4/testreporter"
+	"github.com/strangelove-ventures/interchaintest/v4/testutil"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
 )
@@ -63,7 +65,8 @@ func TestPacketForwardMiddleware(t *testing.T) {
 			Name:    "osmosis",
 			Version: "v15.0.0",
 			ChainConfig: ibc.ChainConfig{
-				GasPrices: "0.005uosmo",
+				GasPrices:      "0.005uosmo",
+				EncodingConfig: osmosisEncoding(),
 			},
 			NumValidators: &numVals,
 			NumFullNodes:  &numFullNodes,
@@ -78,6 +81,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	r := interchaintest.NewBuiltinRelayerFactory(
 		ibc.CosmosRly,
 		zaptest.NewLogger(t),
+		// relayer.CustomDockerImage("ghcr.io/cosmos/relayer", "main", rly.RlyDefaultUidGid),
 	).Build(t, client, network)
 
 	ic := interchaintest.NewInterchain().
@@ -110,7 +114,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		NetworkID:         network,
 		BlockDatabaseFile: interchaintest.DefaultBlockDatabaseFilepath(),
 
-		SkipPathCreation: false,
+		SkipPathCreation: true,
 	}))
 	t.Cleanup(func() {
 		_ = ic.Close()
@@ -119,20 +123,150 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	const userFunds = int64(10_000_000_000)
 	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), userFunds, feeabs, gaia, osmosis)
 
-	feeabsGaiaChannel, err := ibc.GetTransferChannel(ctx, r, eRep, feeabs.Config().ChainID, gaia.Config().ChainID)
+	// rly feeabs-osmo
+	// Generate new path
+	err = r.GeneratePath(ctx, eRep, feeabs.Config().ChainID, osmosis.Config().ChainID, pathFeeabsOsmosis)
 	require.NoError(t, err)
-	gaiaFeeabsChannel := feeabsGaiaChannel.Counterparty
-	_ = gaiaFeeabsChannel
+	// Create client
+	err = r.CreateClients(ctx, eRep, pathFeeabsOsmosis, ibc.DefaultClientOpts())
+	require.NoError(t, err)
 
-	feeabsOsmosisChannel, err := ibc.GetTransferChannel(ctx, r, eRep, feeabs.Config().ChainID, osmosis.Config().ChainID)
+	err = testutil.WaitForBlocks(ctx, 5, feeabs, osmosis)
 	require.NoError(t, err)
-	osmosisFeeabsChannel := feeabsOsmosisChannel.Counterparty
-	_ = osmosisFeeabsChannel
 
-	osmosisGaiaChannel, err := ibc.GetTransferChannel(ctx, r, eRep, osmosis.Config().ChainID, gaia.Config().ChainID)
+	// Create connection
+	err = r.CreateConnections(ctx, eRep, pathFeeabsOsmosis)
 	require.NoError(t, err)
-	gaiaOsmosisChannel := osmosisGaiaChannel.Counterparty
-	_ = gaiaOsmosisChannel
+
+	err = testutil.WaitForBlocks(ctx, 5, feeabs, osmosis)
+	require.NoError(t, err)
+	// Create channel
+	err = r.CreateChannel(ctx, eRep, pathFeeabsOsmosis, ibc.CreateChannelOptions{
+		SourcePortName: "transfer",
+		DestPortName:   "transfer",
+		Order:          ibc.Unordered,
+		Version:        "ics20-1",
+	})
+	require.NoError(t, err)
+
+	err = testutil.WaitForBlocks(ctx, 5, feeabs, osmosis)
+	require.NoError(t, err)
+
+	channsFeeabs, err := r.GetChannels(ctx, eRep, feeabs.Config().ChainID)
+	require.NoError(t, err)
+
+	channsOsmosis, err := r.GetChannels(ctx, eRep, osmosis.Config().ChainID)
+	require.NoError(t, err)
+
+	require.Len(t, channsFeeabs, 1)
+	require.Len(t, channsOsmosis, 1)
+
+	channFeeabsOsmosis := channsFeeabs[0]
+	require.NotEmpty(t, channFeeabsOsmosis.ChannelID)
+	channOsmosisFeeabs := channsOsmosis[0]
+	require.NotEmpty(t, channOsmosisFeeabs.ChannelID)
+	// rly feeabs-gaia
+	// Generate new path
+	err = r.GeneratePath(ctx, eRep, feeabs.Config().ChainID, gaia.Config().ChainID, pathFeeabsGaia)
+	require.NoError(t, err)
+	// Create clients
+	err = r.CreateClients(ctx, eRep, pathFeeabsGaia, ibc.DefaultClientOpts())
+	require.NoError(t, err)
+
+	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia)
+	require.NoError(t, err)
+
+	// Create connection
+	err = r.CreateConnections(ctx, eRep, pathFeeabsGaia)
+	require.NoError(t, err)
+
+	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia)
+	require.NoError(t, err)
+
+	//Create channel
+	err = r.CreateChannel(ctx, eRep, pathFeeabsGaia, ibc.CreateChannelOptions{
+		SourcePortName: "transfer",
+		DestPortName:   "transfer",
+		Order:          ibc.Unordered,
+		Version:        "ics20-1",
+	})
+	require.NoError(t, err)
+
+	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia)
+	require.NoError(t, err)
+
+	channsFeeabs, err = r.GetChannels(ctx, eRep, feeabs.Config().ChainID)
+	require.NoError(t, err)
+
+	channsGaia, err := r.GetChannels(ctx, eRep, gaia.Config().ChainID)
+	require.NoError(t, err)
+
+	require.Len(t, channsFeeabs, 2)
+	require.Len(t, channsGaia, 1)
+
+	var channFeeabsGaia ibc.ChannelOutput
+	for _, chann := range channsFeeabs {
+		if chann.ChannelID != channFeeabsOsmosis.ChannelID {
+			channFeeabsGaia = chann
+		}
+	}
+	require.NotEmpty(t, channFeeabsGaia.ChannelID)
+
+	channGaiaFeeabs := channsGaia[0]
+	require.NotEmpty(t, channGaiaFeeabs.ChannelID)
+	//rly osmo-gaia
+	// Generate new path
+	err = r.GeneratePath(ctx, eRep, osmosis.Config().ChainID, gaia.Config().ChainID, pathOsmosisGaia)
+	require.NoError(t, err)
+	// Create clients
+	err = r.CreateClients(ctx, eRep, pathOsmosisGaia, ibc.DefaultClientOpts())
+	require.NoError(t, err)
+
+	err = testutil.WaitForBlocks(ctx, 5, osmosis, gaia)
+	require.NoError(t, err)
+	// Create connection
+	err = r.CreateConnections(ctx, eRep, pathOsmosisGaia)
+	require.NoError(t, err)
+
+	err = testutil.WaitForBlocks(ctx, 5, osmosis, gaia)
+	require.NoError(t, err)
+	// Create channel
+	err = r.CreateChannel(ctx, eRep, pathOsmosisGaia, ibc.CreateChannelOptions{
+		SourcePortName: "transfer",
+		DestPortName:   "transfer",
+		Order:          ibc.Unordered,
+		Version:        "ics20-1",
+	})
+	require.NoError(t, err)
+
+	err = testutil.WaitForBlocks(ctx, 5, osmosis, gaia)
+	require.NoError(t, err)
+
+	channsOsmosis, err = r.GetChannels(ctx, eRep, osmosis.Config().ChainID)
+	require.NoError(t, err)
+
+	channsGaia, err = r.GetChannels(ctx, eRep, gaia.Config().ChainID)
+	require.NoError(t, err)
+
+	require.Len(t, channsOsmosis, 2)
+	require.Len(t, channsGaia, 2)
+
+	var channOsmosisGaia ibc.ChannelOutput
+	var channGaiaOsmosis ibc.ChannelOutput
+
+	for _, chann := range channsOsmosis {
+		if chann.ChannelID != channOsmosisFeeabs.ChannelID {
+			channOsmosisGaia = chann
+		}
+	}
+	require.NotEmpty(t, channOsmosisGaia)
+
+	for _, chann := range channsGaia {
+		if chann.ChannelID != channGaiaFeeabs.ChannelID {
+			channGaiaOsmosis = chann
+		}
+	}
+	require.NotEmpty(t, channGaiaOsmosis)
 
 	// Start the relayer on both paths
 	err = r.StartRelayer(ctx, eRep, pathFeeabsGaia, pathFeeabsOsmosis, pathOsmosisGaia)
@@ -175,22 +309,28 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	t.Run("forward a->b->a", func(t *testing.T) {
 		// Setup contract on Osmosis
 		// Store code crosschain Registry
-		crossChainRegistryContractID, err := feeabs.StoreContract(ctx, feeabsUser.KeyName, "./bytecode/crosschain_registry.wasm")
+		crossChainRegistryContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName, "./bytecode/crosschain_registry.wasm")
 		require.NoError(t, err)
 		_ = crossChainRegistryContractID
 		// // Instatiate
-		// owner := feeabsUser.Bech32Address(feeabs.Config().Bech32Prefix)
-		// swapRegistryInitMsg := fmt.Sprintf("{\"owner\":\"%s\"}", owner)
-		// address, err := feeabs.InstantiateContract(ctx, feeabsUser.KeyName, crossChainRegistryContractID, swapRegistryInitMsg, true)
-		// require.NoError(t, err)
-		// feeabs.FullNodes
-		// // Execute
-		// msg := fmt.Sprintf("{\"modify_chain_channel_links\": {\"operations\": [{\"operation\": \"set\",\"source_chain\": \"feeabs\",\"destination_chain\": \"osmosis\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"osmosis\",\"destination_chain\": \"feeabs\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"feeabs\",\"destination_chain\": \"gaia\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"gaia\",\"destination_chain\": \"feeabs\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"osmosis\",\"destination_chain\": \"gaia\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"gaia\",\"destination_chain\": \"osmosis\",\"channel_id\": \"%s\"}]}}", feeabsOsmosisChannel, osmosisFeeabsChannel, feeabsGaiaChannel, gaiaFeeabsChannel, osmosisGaiaChannel, gaiaOsmosisChannel)
-		// txHash, err := feeabs.ExecuteContract(ctx, feeabsUser.KeyName, address, msg)
-		// require.NoError(t, err)
-		// fmt.Printf("Hash----------------: %s", txHash)
-		// tx, err := feeabs.GetTransaction(txHash)
-		// fmt.Printf("tx----------------: %v", tx)
+		owner := osmosisUser.Bech32Address(osmosis.Config().Bech32Prefix)
+		swapRegistryInitMsg := fmt.Sprintf("{\"owner\":\"%s\"}", owner)
+		address, err := osmosis.InstantiateContract(ctx, osmosisUser.KeyName, crossChainRegistryContractID, swapRegistryInitMsg, true)
+		fmt.Printf("xcrAddress: %s\n", address)
+		require.NoError(t, err)
+		// Execute
+		msg := fmt.Sprintf("{\"modify_chain_channel_links\": {\"operations\": [{\"operation\": \"set\",\"source_chain\": \"feeabs\",\"destination_chain\": \"osmosis\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"osmosis\",\"destination_chain\": \"feeabs\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"feeabs\",\"destination_chain\": \"gaia\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"gaia\",\"destination_chain\": \"feeabs\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"osmosis\",\"destination_chain\": \"gaia\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"gaia\",\"destination_chain\": \"osmosis\",\"channel_id\": \"%s\"}]}}",
+			channFeeabsOsmosis.ChannelID,
+			channOsmosisFeeabs.ChannelID,
+			channFeeabsGaia.ChannelID,
+			channGaiaFeeabs.ChannelID,
+			channOsmosisGaia.ChannelID,
+			channGaiaOsmosis.ChannelID)
+		txHash, err := osmosis.ExecuteContract(ctx, osmosisUser.KeyName, address, msg)
+		require.NoError(t, err)
+		_ = txHash
+		tx, _ := osmosis.GetTransaction(txHash)
+		fmt.Printf("tx----------------: %v", tx)
 
 		// Send Gaia uatom to Osmosis
 
