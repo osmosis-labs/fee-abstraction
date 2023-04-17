@@ -2,6 +2,7 @@ package interchaintest
 
 import (
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
+	balancertypes "github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/balancer"
 	gammtypes "github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/types"
 	feeabstype "github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
 	"github.com/strangelove-ventures/interchaintest/v4/chain/cosmos/wasm"
@@ -58,6 +59,7 @@ func osmosisEncoding() *simappparams.EncodingConfig {
 	cfg := wasm.WasmEncoding()
 
 	gammtypes.RegisterInterfaces(cfg.InterfaceRegistry)
+	balancertypes.RegisterInterfaces(cfg.InterfaceRegistry)
 
 	return cfg
 }
