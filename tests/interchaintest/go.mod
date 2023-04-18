@@ -189,9 +189,9 @@ replace (
 	// interchaintest supports ICS features so we need this for now
 	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.45.13-ics
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-
 	// For this nested module, you always want to replace the parent reference with the current worktree.
 	github.com/notional-labs/fee-abstraction => ../../
+	github.com/strangelove-ventures/interchaintest/v4 => github.com/notional-labs/interchaintest/v4 v4.0.0
 
 	// use informal system fork of tendermint
 	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.26

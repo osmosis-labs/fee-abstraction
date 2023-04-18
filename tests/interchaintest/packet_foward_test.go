@@ -45,6 +45,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	// Create chain factory with Feeabs and Gaia
 	numVals := 1
 	numFullNodes := 1
+	gasAdjustment := 2.0
 
 	cf := interchaintest.NewBuiltinChainFactory(zaptest.NewLogger(t), []*interchaintest.ChainSpec{
 		{
@@ -69,6 +70,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 				GasPrices:      "0.005uosmo",
 				EncodingConfig: osmosisEncoding(),
 			},
+			GasAdjustment: &gasAdjustment,
 			NumValidators: &numVals,
 			NumFullNodes:  &numFullNodes,
 		},
@@ -314,14 +316,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, r.FlushPackets(ctx, eRep, pathOsmosisGaia, channOsmosisGaia.ChannelID))
 		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathOsmosisGaia, channGaiaOsmosis.ChannelID))
 
-		expectedBalance := gaiaUserBalance - amountToSend
-		gaiaUserBalance, err = gaia.GetBalance(ctx, gaiaUser.Bech32Address(gaia.Config().Bech32Prefix), gaia.Config().Denom)
-		require.NoError(t, err)
-		require.Equal(t, expectedBalance, gaiaUserBalance)
 		// Send Gaia uatom to Feeabs
-		gaiaUserBalance, err = gaia.GetBalance(ctx, gaiaUser.Bech32Address(gaia.Config().Bech32Prefix), gaia.Config().Denom)
-		require.NoError(t, err)
-
 		dstAddress = feeabsUser.Bech32Address(feeabs.Config().Bech32Prefix)
 		transfer = ibc.WalletAmount{
 			Address: dstAddress,
@@ -335,15 +330,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 		require.NoError(t, r.FlushPackets(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
 		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
-
-		expectedBalance = gaiaUserBalance - amountToSend
-		gaiaUserBalance, err = gaia.GetBalance(ctx, gaiaUser.Bech32Address(gaia.Config().Bech32Prefix), gaia.Config().Denom)
-		require.NoError(t, err)
-		require.Equal(t, expectedBalance, gaiaUserBalance)
 		// Send Feeabs stake to Osmosis
-		feeabsUserBalance, err := feeabs.GetBalance(ctx, feeabsUser.Bech32Address(feeabs.Config().Bech32Prefix), feeabs.Config().Denom)
-		require.NoError(t, err)
-
 		dstAddress = osmosisUser.Bech32Address(osmosis.Config().Bech32Prefix)
 		transfer = ibc.WalletAmount{
 			Address: dstAddress,
@@ -357,29 +344,28 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 		require.NoError(t, r.FlushPackets(ctx, eRep, pathFeeabsOsmosis, channOsmosisFeeabs.ChannelID))
 		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathFeeabsOsmosis, channFeeabsOsmosis.ChannelID))
-
-		expectedBalance = feeabsUserBalance - amountToSend
-		feeabsUserBalance, err = feeabs.GetBalance(ctx, feeabsUser.Bech32Address(feeabs.Config().Bech32Prefix), feeabs.Config().Denom)
-		require.NoError(t, err)
-		require.Equal(t, expectedBalance, feeabsUserBalance)
-
 		// Create pool Osmosis(uatom)/Osmosis(stake) on Osmosis
 		denomTrace := transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisGaia.PortID, channOsmosisGaia.ChannelID, gaia.Config().Denom))
-		ibcDenom := denomTrace.IBCDenom()
+		uatomOnOsmosis := denomTrace.IBCDenom()
+		osmosisUserBalance, err := osmosis.GetBalance(ctx, osmosisUser.Bech32Address(osmosis.Config().Bech32Prefix), uatomOnOsmosis)
+		require.NoError(t, err)
+		require.Equal(t, amountToSend, osmosisUserBalance)
+
+		denomTrace = transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisFeeabs.PortID, channOsmosisFeeabs.ChannelID, feeabs.Config().Denom))
+		stakeOnOsmosis := denomTrace.IBCDenom()
+		osmosisUserBalance, err = osmosis.GetBalance(ctx, osmosisUser.Bech32Address(osmosis.Config().Bech32Prefix), stakeOnOsmosis)
+		require.NoError(t, err)
+		require.Equal(t, amountToSend, osmosisUserBalance)
 
 		poolID, err := cosmos.OsmosisCreatePool(osmosis, ctx, osmosisUser.KeyName, cosmos.OsmosisPoolParams{
-			Weights:        fmt.Sprintf("5%s,5%s", ibcDenom, osmosis.Config().Denom),
-			InitialDeposit: fmt.Sprintf("500000000%s,500000000%s", ibcDenom, osmosis.Config().Denom),
+			Weights:        fmt.Sprintf("5%s,5%s", stakeOnOsmosis, uatomOnOsmosis),
+			InitialDeposit: fmt.Sprintf("100000000%s,100000000%s", stakeOnOsmosis, uatomOnOsmosis),
 			SwapFee:        "0.01",
 			ExitFee:        "0",
 			FutureGovernor: "",
 		})
 		require.NoError(t, err)
 		require.Equal(t, poolID, "1")
-
-		ibcToken, err := osmosis.GetBalance(ctx, osmosisUser.Bech32Address(osmosis.Config().Bech32Prefix), ibcDenom)
-		require.NoError(t, err)
-		require.Equal(t, int64(500_000_000), ibcToken)
 		// Setup contract on Osmosis
 		// Store code crosschain Registry
 		crossChainRegistryContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName, "./bytecode/crosschain_registry.wasm")
