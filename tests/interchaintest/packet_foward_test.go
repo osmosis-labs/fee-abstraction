@@ -215,6 +215,11 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 	channGaiaFeeabs := channsGaia[0]
 	require.NotEmpty(t, channGaiaFeeabs.ChannelID)
+	fmt.Println("-----------------------------------")
+	fmt.Printf("channFeeabsOsmosis: %s\n", channFeeabsOsmosis.ChannelID)
+	fmt.Printf("channFeeabsGaia: %s\n", channFeeabsGaia.ChannelID)
+	fmt.Printf("channGaiaFeeabs: %s - %s\n", channGaiaFeeabs.ChannelID, channGaiaFeeabs.Counterparty.ChannelID)
+	fmt.Println("-----------------------------------")
 	//rly osmo-gaia
 	// Generate new path
 	err = r.GeneratePath(ctx, eRep, osmosis.Config().ChainID, gaia.Config().ChainID, pathOsmosisGaia)
@@ -288,27 +293,9 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	_ = gaiaUser
 	_ = osmosisUser
 
-	// const transferAmount int64 = 100000
-
-	// Compose the prefixed denoms and ibc denom for asserting balances
-	// firstHopDenom := transfertypes.GetPrefixedDenom(gaiafeeabsChannel.PortID, gaiafeeabsChannel.ChannelID, feeabs.Config().Denom)
-	// secondHopDenom := transfertypes.GetPrefixedDenom(osmosisfeeabsChannel.PortID, osmosisfeeabsChannel.ChannelID, firstHopDenom)
-	// thirdHopDenom := transfertypes.GetPrefixedDenom(gaiaosmosisChannel.PortID, gaiaosmosisChannel.ChannelID, secondHopDenom)
-
-	// firstHopDenomTrace := transfertypes.ParseDenomTrace(firstHopDenom)
-	// secondHopDenomTrace := transfertypes.ParseDenomTrace(secondHopDenom)
-	// thirdHopDenomTrace := transfertypes.ParseDenomTrace(thirdHopDenom)
-
-	// firstHopIBCDenom := firstHopDenomTrace.IBCDenom()
-	// secondHopIBCDenom := secondHopDenomTrace.IBCDenom()
-	// thirdHopIBCDenom := thirdHopDenomTrace.IBCDenom()
-
-	// firstHopEscrowAccount := transfertypes.GetEscrowAddress(feeabsgaiaChannel.PortID, feeabsgaiaChannel.ChannelID).String()
-	// secondHopEscrowAccount := transfertypes.GetEscrowAddress(feeabsosmosisChannel.PortID, feeabsosmosisChannel.ChannelID).String()
-	// thirdHopEscrowAccount := transfertypes.GetEscrowAddress(osmosisgaiaChannel.PortID, osmosisgaiaChannel.ChannelID).String()
+	const amountToSend = int64(1_000_000_000)
 
 	t.Run("xcs", func(t *testing.T) {
-		amountToSend := int64(1_000_000_000)
 		// Send Gaia uatom to Osmosis
 		gaiaUserBalance, err := gaia.GetBalance(ctx, gaiaUser.Bech32Address(gaia.Config().Bech32Prefix), gaia.Config().Denom)
 		require.NoError(t, err)
@@ -332,20 +319,49 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, expectedBalance, gaiaUserBalance)
 		// Send Gaia uatom to Feeabs
+		gaiaUserBalance, err = gaia.GetBalance(ctx, gaiaUser.Bech32Address(gaia.Config().Bech32Prefix), gaia.Config().Denom)
+		require.NoError(t, err)
 
-		// gaiaUserBalance, err = gaia.GetBalance(ctx, gaiaUser.Bech32Address(gaia.Config().Bech32Prefix), gaia.Config().Denom)
-		// require.NoError(t, err)
+		dstAddress = feeabsUser.Bech32Address(feeabs.Config().Bech32Prefix)
+		transfer = ibc.WalletAmount{
+			Address: dstAddress,
+			Denom:   gaia.Config().Denom,
+			Amount:  amountToSend,
+		}
 
-		// dstAddress = feeabsUser.Bech32Address(feeabs.Config().Bech32Prefix)
-		// transfer = ibc.WalletAmount{
-		// 	Address: dstAddress,
-		// 	Denom:   gaia.Config().Denom,
-		// 	Amount:  amountToSend,
-		// }
+		tx, err = gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName, transfer, ibc.TransferOptions{})
+		require.NoError(t, err)
+		require.NoError(t, tx.Validate())
 
-		// tx, err := gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID)
+		require.NoError(t, r.FlushPackets(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
+		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
 
+		expectedBalance = gaiaUserBalance - amountToSend
+		gaiaUserBalance, err = gaia.GetBalance(ctx, gaiaUser.Bech32Address(gaia.Config().Bech32Prefix), gaia.Config().Denom)
+		require.NoError(t, err)
+		require.Equal(t, expectedBalance, gaiaUserBalance)
 		// Send Feeabs stake to Osmosis
+		feeabsUserBalance, err := feeabs.GetBalance(ctx, feeabsUser.Bech32Address(feeabs.Config().Bech32Prefix), feeabs.Config().Denom)
+		require.NoError(t, err)
+
+		dstAddress = osmosisUser.Bech32Address(osmosis.Config().Bech32Prefix)
+		transfer = ibc.WalletAmount{
+			Address: dstAddress,
+			Denom:   feeabs.Config().Denom,
+			Amount:  amountToSend,
+		}
+
+		tx, err = feeabs.SendIBCTransfer(ctx, channFeeabsOsmosis.ChannelID, feeabsUser.KeyName, transfer, ibc.TransferOptions{})
+		require.NoError(t, err)
+		require.NoError(t, tx.Validate())
+
+		require.NoError(t, r.FlushPackets(ctx, eRep, pathFeeabsOsmosis, channOsmosisFeeabs.ChannelID))
+		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathFeeabsOsmosis, channFeeabsOsmosis.ChannelID))
+
+		expectedBalance = feeabsUserBalance - amountToSend
+		feeabsUserBalance, err = feeabs.GetBalance(ctx, feeabsUser.Bech32Address(feeabs.Config().Bech32Prefix), feeabs.Config().Denom)
+		require.NoError(t, err)
+		require.Equal(t, expectedBalance, feeabsUserBalance)
 
 		// Create pool Osmosis(uatom)/Osmosis(stake) on Osmosis
 		denomTrace := transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisGaia.PortID, channOsmosisGaia.ChannelID, gaia.Config().Denom))
