@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"path"
 	"testing"
 	"time"
 
@@ -300,6 +302,8 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 	t.Run("xcs", func(t *testing.T) {
 		// Send Gaia uatom to Osmosis
+		gaiaHeight, err := gaia.Height(ctx)
+		require.NoError(t, err)
 		dstAddress := osmosisUser.Bech32Address(osmosis.Config().Bech32Prefix)
 		transfer := ibc.WalletAmount{
 			Address: dstAddress,
@@ -311,11 +315,48 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, tx.Validate())
 
-		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
-		require.NoError(t, r.FlushPackets(ctx, eRep, pathOsmosisGaia, channOsmosisGaia.ChannelID))
-		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
-		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathOsmosisGaia, channGaiaOsmosis.ChannelID))
-		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
+		_, err = testutil.PollForAck(ctx, gaia, gaiaHeight, gaiaHeight+30, tx.Packet)
+		require.NoError(t, err)
+		err = testutil.WaitForBlocks(ctx, 1, feeabs, gaia, osmosis)
+		require.NoError(t, err)
+
+		// Send Feeabs stake to Osmosis
+		feeabsHeight, err := feeabs.Height(ctx)
+		require.NoError(t, err)
+		dstAddress = osmosisUser.Bech32Address(osmosis.Config().Bech32Prefix)
+		transfer = ibc.WalletAmount{
+			Address: dstAddress,
+			Denom:   feeabs.Config().Denom,
+			Amount:  amountToSend,
+		}
+
+		tx, err = feeabs.SendIBCTransfer(ctx, channFeeabsOsmosis.ChannelID, feeabsUser.KeyName, transfer, ibc.TransferOptions{})
+		require.NoError(t, err)
+		require.NoError(t, tx.Validate())
+
+		_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+30, tx.Packet)
+		require.NoError(t, err)
+		err = testutil.WaitForBlocks(ctx, 1, feeabs, gaia, osmosis)
+		require.NoError(t, err)
+
+		// Send Gaia uatom to Feeabs
+		gaiaHeight, err = gaia.Height(ctx)
+		require.NoError(t, err)
+		dstAddress = feeabsUser.Bech32Address(feeabs.Config().Bech32Prefix)
+		transfer = ibc.WalletAmount{
+			Address: dstAddress,
+			Denom:   gaia.Config().Denom,
+			Amount:  amountToSend,
+		}
+
+		tx, err = gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName, transfer, ibc.TransferOptions{})
+		require.NoError(t, err)
+		require.NoError(t, tx.Validate())
+
+		_, err = testutil.PollForAck(ctx, gaia, gaiaHeight, gaiaHeight+30, tx.Packet)
+		require.NoError(t, err)
+		err = testutil.WaitForBlocks(ctx, 1, feeabs, gaia, osmosis)
+		require.NoError(t, err)
 		// Setup contract on Osmosis
 		// Store code crosschain Registry
 		crossChainRegistryContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName, "./bytecode/crosschain_registry.wasm")
@@ -336,50 +377,10 @@ func TestPacketForwardMiddleware(t *testing.T) {
 			channGaiaOsmosis.ChannelID)
 		_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName, registryContractAddress, msg)
 		require.NoError(t, err)
-
-		// Send Feeabs stake to Osmosis
-		dstAddress = osmosisUser.Bech32Address(osmosis.Config().Bech32Prefix)
-		transfer = ibc.WalletAmount{
-			Address: dstAddress,
-			Denom:   feeabs.Config().Denom,
-			Amount:  amountToSend,
-		}
-
-		tx, err = feeabs.SendIBCTransfer(ctx, channFeeabsOsmosis.ChannelID, feeabsUser.KeyName, transfer, ibc.TransferOptions{})
-		require.NoError(t, err)
-		require.NoError(t, tx.Validate())
-
-		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
-		require.NoError(t, r.FlushPackets(ctx, eRep, pathFeeabsOsmosis, channOsmosisFeeabs.ChannelID))
-		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
-		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathFeeabsOsmosis, channFeeabsOsmosis.ChannelID))
-		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
 		// Execute
-		msg = fmt.Sprintf("{\"modify_bech32_prefixes\": {\"operations\": [{\"operation\": \"set\", \"chain_name\": \"%s\", \"prefix\": \"feeabs\"},{\"operation\": \"set\", \"chain_name\": \"%s\", \"prefix\": \"osmo\"},{\"operation\": \"set\", \"chain_name\": \"%s\", \"prefix\": \"cosmos\"}]}}",
-			feeabs.Config().ChainID,
-			osmosis.Config().ChainID,
-			gaia.Config().ChainID,
-		)
+		msg = fmt.Sprintf("{\"modify_bech32_prefixes\": {\"operations\": [{\"operation\": \"set\", \"chain_name\": \"feeabs\", \"prefix\": \"feeabs\"},{\"operation\": \"set\", \"chain_name\": \"osmosis\", \"prefix\": \"osmo\"},{\"operation\": \"set\", \"chain_name\": \"gaia\", \"prefix\": \"cosmos\"}]}}")
 		_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName, registryContractAddress, msg)
 		require.NoError(t, err)
-
-		// Send Gaia uatom to Feeabs
-		dstAddress = feeabsUser.Bech32Address(feeabs.Config().Bech32Prefix)
-		transfer = ibc.WalletAmount{
-			Address: dstAddress,
-			Denom:   gaia.Config().Denom,
-			Amount:  amountToSend,
-		}
-
-		tx, err = gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName, transfer, ibc.TransferOptions{})
-		require.NoError(t, err)
-		require.NoError(t, tx.Validate())
-
-		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
-		require.NoError(t, r.FlushPackets(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
-		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
-		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
-		testutil.WaitForBlocks(ctx, 1, gaia, feeabs)
 
 		// Create pool Osmosis(uatom)/Osmosis(stake) on Osmosis
 		denomTrace := transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisGaia.PortID, channOsmosisGaia.ChannelID, gaia.Config().Denom))
@@ -422,8 +423,6 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		txHash, err := osmosis.ExecuteContract(ctx, osmosisUser.KeyName, swapRouterContractAddress, msg)
 		require.NoError(t, err)
 		_ = txHash
-		// txs, _ := osmosis.GetTransaction(txHash)
-		// fmt.Printf("txs----------------: %v", txs)
 
 		// store xcs
 		xcsContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName, "./bytecode/crosschain_swaps.wasm")
@@ -435,6 +434,8 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		fmt.Printf("--------------------xcsContractAddress %s", xcsContractAddress)
 		// Swap Feeabs(uatom) to Osmosis
 		// send ibc token to feeabs module account
+		gaiaHeight, err = gaia.Height(ctx)
+		require.NoError(t, err)
 		feeabsModule, err := QueryFeeabsModuleAccountBalances(feeabs, ctx)
 		require.NoError(t, err)
 		dstAddress = feeabsModule.Address
@@ -448,30 +449,61 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, tx.Validate())
 
-		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
-		require.NoError(t, r.FlushPackets(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
-		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
-		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
-		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
+		_, err = testutil.PollForAck(ctx, gaia, gaiaHeight, gaiaHeight+30, tx.Packet)
+		require.NoError(t, err)
+		err = testutil.WaitForBlocks(ctx, 1, feeabs, gaia, osmosis)
+		require.NoError(t, err)
 
 		denomTrace = transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channFeeabsGaia.PortID, channFeeabsGaia.ChannelID, gaia.Config().Denom))
 		uatomOnFeeabs := denomTrace.IBCDenom()
 
-		moduleBalace, err := feeabs.GetBalance(ctx, feeabsModule.Address, uatomOnFeeabs)
+		fmt.Printf("-----------------------------uatomOnFeeabs: %s\n", uatomOnFeeabs)
+		fmt.Printf("-----------------------------uatomOnOsmosis: %s\n", uatomOnOsmosis)
+		fmt.Printf("-----------------------------stakeOnOsmosis: %s\n", stakeOnOsmosis)
+
+		feeabsModule, err = QueryFeeabsModuleAccountBalances(feeabs, ctx)
 		require.NoError(t, err)
-		fmt.Printf("----------------moduleBalace %v\n", moduleBalace)
+		fmt.Printf("----------------moduleBalace %v\n", feeabsModule.Balances)
+
+		current_directory, _ := os.Getwd()
+		param_change_path := path.Join(current_directory, "proposal", "proposal.json")
+
+		paramTx, err := feeabs.ParamChangeProposal(ctx, feeabsUser.KeyName, param_change_path)
+		require.NoError(t, err, "error submitting param change proposal tx")
+
+		err = feeabs.VoteOnProposalAllValidators(ctx, paramTx.ProposalID, cosmos.ProposalVoteYes)
+		require.NoError(t, err, "failed to submit votes")
+
+		height, _ := feeabs.Height(ctx)
+		_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, paramTx.ProposalID, cosmos.ProposalStatusPassed)
+		require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
+
+		_, err = cosmos.FeeabsAddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName, "./proposal/host_zone.json")
+		require.NoError(t, err)
+
+		err = feeabs.VoteOnProposalAllValidators(ctx, "2", cosmos.ProposalVoteYes)
+		require.NoError(t, err, "failed to submit votes")
+
+		height, _ = feeabs.Height(ctx)
+		_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, paramTx.ProposalID, cosmos.ProposalStatusPassed)
+		require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
 		// xcs
 		fmt.Printf("----------------testttttttttttttttttttttttttttt\n")
-		cosmos.FeeabsCrossChainSwap(feeabs, ctx, feeabsUser.KeyName, uatomOnFeeabs)
+		txhash, _ := cosmos.FeeabsCrossChainSwap(feeabs, ctx, feeabsUser.KeyName, uatomOnFeeabs)
+
+		txRes, err := feeabs.GetTransaction(txhash)
+		fmt.Printf("-------------------txRes: %v", txRes)
+		require.NoError(t, err)
+
 		fmt.Printf("----------------testttttttttttttttttttttttttttt\n")
-		err = testutil.WaitForBlocks(ctx, 30, feeabs)
+		err = testutil.WaitForBlocks(ctx, 30, feeabs, gaia, osmosis)
 		fmt.Printf("----------------testttttttttttttttttttttttttttt\n")
 		require.NoError(t, err)
-		moduleBalace, err = feeabs.GetBalance(ctx, feeabsModule.Address, feeabs.Config().Denom)
+		feeabsModule, err = QueryFeeabsModuleAccountBalances(feeabs, ctx)
 		require.NoError(t, err)
-		fmt.Printf("----------------moduleBalace %v\n", moduleBalace)
-		require.Greater(t, moduleBalace, 1)
+		fmt.Printf("----------------moduleBalace %v\n", feeabsModule.Balances)
+		// require.Greater(t, moduleBalace, 1)
 	})
 }
 

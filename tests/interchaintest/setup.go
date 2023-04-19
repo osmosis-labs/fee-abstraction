@@ -6,6 +6,7 @@ import (
 	balancertypes "github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/balancer"
 	gammtypes "github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/types"
 	feeabstype "github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
+	"github.com/strangelove-ventures/interchaintest/v4/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v4/chain/cosmos/wasm"
 	"github.com/strangelove-ventures/interchaintest/v4/ibc"
 )
@@ -14,6 +15,11 @@ type QueryFeeabsModuleBalacesResponse struct {
 	Balances types.Coins
 	Address  string
 }
+
+const (
+	votingPeriod     = "10s"
+	maxDepositPeriod = "10s"
+)
 
 var (
 	FeeabsMainRepo = "ghcr.io/notional-labs/fee-abstraction"
@@ -39,7 +45,7 @@ var (
 		NoHostMount:         false,
 		SkipGenTx:           false,
 		PreGenesis:          nil,
-		ModifyGenesis:       nil,
+		ModifyGenesis:       cosmos.ModifyGenesisProposalTime(votingPeriod, maxDepositPeriod),
 		ConfigFileOverrides: nil,
 		EncodingConfig:      feeabsEncoding(),
 	}
