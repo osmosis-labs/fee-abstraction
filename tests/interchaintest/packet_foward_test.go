@@ -438,7 +438,6 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		// send ibc token to feeabs module account
 		feeabsModule, err := QueryFeeabsModuleAccountBalances(feeabs, ctx)
 		require.NoError(t, err)
-		fmt.Printf("Ibc Denom: %s\n", feeabsModule.Balances[0].Denom)
 		dstAddress = feeabsModule.Address
 		transfer = ibc.WalletAmount{
 			Address: dstAddress,
