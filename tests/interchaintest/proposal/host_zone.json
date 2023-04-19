@@ -3,8 +3,8 @@
 	"description": "Add Fee Abbtraction Host Zone",
 	"host_chain_fee_abs_config": 
 		{
-			"ibc_denom": "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
-			"osmosis_pool_token_denom_in": "uosmo",
+			"ibc_denom": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+			"osmosis_pool_token_denom_in": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
 			"pool_id": "1",
 			"frozen": false
 		},

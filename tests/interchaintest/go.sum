@@ -583,8 +583,8 @@ github.com/naoina/toml v0.1.2-0.20170918210437-9fafd6967416/go.mod h1:NBIhNtsFMo
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/notional-labs/fee-abstraction/v2 v2.0.1 h1:w++wIzSIoMQk5scVGud96ZLU6IJLlectE13dN6eX9AY=
 github.com/notional-labs/fee-abstraction/v2 v2.0.1/go.mod h1:6xlQD2XVfVxYc6xJ9AGFkIE4b/b+cGbs3/D0jHhRyXw=
-github.com/notional-labs/interchaintest/v4 v4.0.1-0.20230419073816-a38fbcca50f2 h1:VUeAkXDqL21yF1mCdTOOYf2E7HYfWXG2T+c9nv09Z30=
-github.com/notional-labs/interchaintest/v4 v4.0.1-0.20230419073816-a38fbcca50f2/go.mod h1:Na9KNE38VWqOKMSTpbIzXCICDkazn+6kFf4BG0ublCk=
+github.com/notional-labs/interchaintest/v4 v4.0.1-0.20230419203226-62f4ab72a646 h1:D6eUZPmagbBFZBbVDCpxcj5M35SNt1GPrrwGkah5oH0=
+github.com/notional-labs/interchaintest/v4 v4.0.1-0.20230419203226-62f4ab72a646/go.mod h1:Na9KNE38VWqOKMSTpbIzXCICDkazn+6kFf4BG0ublCk=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/nxadm/tail v1.4.8 h1:nPr65rt6Y5JFSKQO7qToXr7pePgD6Gwiw05lkbyAQTE=
 github.com/nxadm/tail v1.4.8/go.mod h1:+ncqLTQzXmGhMZNUePPaPqPvBxHAIsmXswZKocGu+AU=

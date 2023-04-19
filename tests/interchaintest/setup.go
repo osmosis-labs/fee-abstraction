@@ -16,6 +16,10 @@ type QueryFeeabsModuleBalacesResponse struct {
 	Address  string
 }
 
+type QueryHostChainConfigRespone struct {
+	HostChainConfig cosmos.HostChainFeeAbsConfig `protobuf:"bytes,1,opt,name=host_chain_config,json=hostChainConfig,proto3" json:"host_chain_config" yaml:"host_chain_config"`
+}
+
 const (
 	votingPeriod     = "10s"
 	maxDepositPeriod = "10s"
