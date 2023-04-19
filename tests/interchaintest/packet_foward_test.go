@@ -311,9 +311,11 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, tx.Validate())
 
+		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
 		require.NoError(t, r.FlushPackets(ctx, eRep, pathOsmosisGaia, channOsmosisGaia.ChannelID))
+		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
 		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathOsmosisGaia, channGaiaOsmosis.ChannelID))
-		testutil.WaitForBlocks(ctx, 5, gaia, osmosis)
+		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
 		// Setup contract on Osmosis
 		// Store code crosschain Registry
 		crossChainRegistryContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName, "./bytecode/crosschain_registry.wasm")
@@ -347,10 +349,11 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, tx.Validate())
 
+		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
 		require.NoError(t, r.FlushPackets(ctx, eRep, pathFeeabsOsmosis, channOsmosisFeeabs.ChannelID))
+		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
 		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathFeeabsOsmosis, channFeeabsOsmosis.ChannelID))
-		testutil.WaitForBlocks(ctx, 5, osmosis, feeabs)
-
+		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
 		// Execute
 		msg = fmt.Sprintf("{\"modify_bech32_prefixes\": {\"operations\": [{\"operation\": \"set\", \"chain_name\": \"%s\", \"prefix\": \"feeabs\"},{\"operation\": \"set\", \"chain_name\": \"%s\", \"prefix\": \"osmo\"},{\"operation\": \"set\", \"chain_name\": \"%s\", \"prefix\": \"cosmos\"}]}}",
 			feeabs.Config().ChainID,
@@ -372,9 +375,11 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, tx.Validate())
 
+		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
 		require.NoError(t, r.FlushPackets(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
+		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
 		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
-		testutil.WaitForBlocks(ctx, 5, gaia, feeabs)
+		testutil.WaitForBlocks(ctx, 1, gaia, feeabs)
 
 		// Create pool Osmosis(uatom)/Osmosis(stake) on Osmosis
 		denomTrace := transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisGaia.PortID, channOsmosisGaia.ChannelID, gaia.Config().Denom))
@@ -443,8 +448,11 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, tx.Validate())
 
+		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
 		require.NoError(t, r.FlushPackets(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
+		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
 		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
+		testutil.WaitForBlocks(ctx, 1, osmosis, feeabs)
 
 		denomTrace = transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channFeeabsGaia.PortID, channFeeabsGaia.ChannelID, gaia.Config().Denom))
 		uatomOnFeeabs := denomTrace.IBCDenom()
