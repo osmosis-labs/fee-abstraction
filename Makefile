@@ -119,7 +119,7 @@ protoImageName=ghcr.io/notional-labs/fa-proto-gen:$(protoVer)
 containerProtoGen=fa-proto-gen-$(protoVer)
 containerProtoFmt=fa-proto-fmt-$(protoVer)
 
-proto-all: proto-format proto-lint proto-gen
+proto-all: proto-format proto-gen
 
 proto-gen:
 	@echo "Generating Protobuf files"

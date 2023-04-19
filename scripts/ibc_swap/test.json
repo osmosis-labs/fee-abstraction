@@ -1,0 +1,51 @@
+{
+    "modify_chain_channel_links": 
+    {
+        "operations": 
+        [
+            {"operation": "set","source_chain": "feeappd-t1","destination_chain": "osmosis","channel_id": "channel-0"},
+            {"operation": "set","source_chain": "osmosis","destination_chain": "feeappd-t1","channel_id": "channel-0"},
+            {"operation": "set","source_chain": "feeappd-t1","destination_chain": "gaiad-t1","channel_id": "channel-2"},
+            {"operation": "set","source_chain": "gaiad-t1","destination_chain": "feeappd-t1","channel_id": "channel-0"},
+            {"operation": "set","source_chain": "osmosis","destination_chain": "gaiad-t1","channel_id": "channel-2"},
+            {"operation": "set","source_chain": "gaiad-t1","destination_chain": "osmosis","channel_id": "channel-1"}
+        ]
+    }
+}
+
+{
+    "modify_bech32_prefixes": 
+    {
+        "operations": 
+        [
+            {"operation": "set", "chain_name": "feeappd-t1", "prefix": "feeabs"},
+            {"operation": "set", "chain_name": "osmosis", "prefix": "osmo"},
+            {"operation": "set", "chain_name": "gaiad-t1", "prefix": "cosmos"}
+        ]
+    }
+}
+
+{
+    "wasm":
+    {
+        "contract":"'$CROSSCHAIN_SWAPS_ADDRESS'",
+        "msg":
+        {
+            "osmosis_swap":
+            {
+                "output_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
+                "slippage":
+                {
+                    "twap":
+                    {
+                        "slippage_percentage":"20",
+                        "window_seconds":10
+                    }
+                },
+                "receiver":"feeappd-t1/feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw",
+                "on_failed_delivery":"do_nothing", 
+                "next_memo":{}
+            }
+        }
+    }
+}
