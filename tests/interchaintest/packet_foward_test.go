@@ -455,8 +455,21 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		testutil.WaitForBlocks(ctx, 1, gaia, feeabs)
 		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
 
+		denomTrace = transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channFeeabsGaia.PortID, channFeeabsGaia.ChannelID, gaia.Config().Denom))
+		uatomOnFeeabs := denomTrace.IBCDenom()
+
+		moduleBalace, err := feeabs.GetBalance(ctx, feeabsModule.Address, uatomOnFeeabs)
+		require.NoError(t, err)
+		fmt.Printf("----------------moduleBalace %v\n", moduleBalace)
+
 		// xcs
 		cosmos.FeeabsCrossChainSwap(feeabs, ctx, feeabsUser.KeyName, feeabsModule.Balances[0].Denom)
+		err = testutil.WaitForBlocks(ctx, 30, feeabs)
+		require.NoError(t, err)
+		moduleBalace, err = feeabs.GetBalance(ctx, feeabsModule.Address, feeabs.Config().Denom)
+		require.NoError(t, err)
+		fmt.Printf("----------------moduleBalace %v\n", moduleBalace)
+		require.Greater(t, moduleBalace, 1)
 	})
 }
 
