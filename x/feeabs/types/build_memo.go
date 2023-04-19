@@ -62,16 +62,14 @@ func NewOsmosisSwapMsg(inputCoin sdk.Coin, outputDenom string, slippagePercentag
 }
 
 // ParseMsgToMemo build a memo from msg, contractAddr, compatible with ValidateAndParseMemo in https://github.com/osmosis-labs/osmosis/blob/nicolas/crosschain-swaps-new/x/ibc-hooks/wasm_hook.go
-func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string, receiverAddress string, chainName string) (string, error) {
+func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string) (string, error) {
 	// TODO: need to validate the msg && contract address
-	receiver := fmt.Sprintf("%s/%s", chainName, receiverAddress)
 	memo := OsmosisSpecialMemo{
 		Wasm: make(map[string]interface{}),
 	}
 
 	memo.Wasm["contract"] = contractAddr
 	memo.Wasm["msg"] = msg
-	memo.Wasm["receiver"] = receiver
 
 	memo_marshalled, err := json.Marshal(&memo)
 	if err != nil {
@@ -82,7 +80,8 @@ func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string, receiverAddress str
 
 // TODO: write test for this
 // BuildNextMemo create memo for IBC hook, this execute `CrossChainSwap contract`
-func BuildCrossChainSwapMemo(outputDenom string, contractAddress, receiver string, chainName string) (string, error) {
+func BuildCrossChainSwapMemo(outputDenom string, contractAddress string, receiverAddress string, chainName string) (string, error) {
+	receiver := fmt.Sprintf("%s/%s", chainName, receiverAddress)
 	swap := Swap{
 		OutPutDenom: outputDenom,
 		Slippage: Twap{
@@ -98,7 +97,7 @@ func BuildCrossChainSwapMemo(outputDenom string, contractAddress, receiver strin
 	msgSwap := OsmosisSwapMsg{
 		OsmosisSwap: swap,
 	}
-	nextMemo, err := ParseMsgToMemo(msgSwap, contractAddress, receiver, chainName)
+	nextMemo, err := ParseMsgToMemo(msgSwap, contractAddress)
 	if err != nil {
 		return "", err
 	}
