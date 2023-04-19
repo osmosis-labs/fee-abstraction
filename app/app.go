@@ -110,10 +110,6 @@ import (
 	feeabskeeper "github.com/notional-labs/fee-abstraction/v2/x/feeabs/keeper"
 	feeabstypes "github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
 
-	"github.com/strangelove-ventures/packet-forward-middleware/v4/router"
-	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v4/router/keeper"
-	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v4/router/types"
-
 	appparams "github.com/notional-labs/fee-abstraction/v2/app/params"
 
 	// unnamed import of statik for swagger UI support
@@ -157,7 +153,6 @@ var (
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		liquidity.AppModuleBasic{},
-		router.AppModuleBasic{},
 		ica.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 		feeabsmodule.AppModuleBasic{},
@@ -227,8 +222,6 @@ type FeeAbs struct { // nolint: golint
 	FeeabsKeeper        feeabskeeper.Keeper
 	WasmKeeper          wasm.Keeper
 
-	RouterKeeper *routerkeeper.Keeper
-
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper      capabilitykeeper.ScopedKeeper
@@ -280,8 +273,7 @@ func NewFeeAbs(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, feeabstypes.StoreKey, wasm.StoreKey,
-		capabilitytypes.StoreKey, feegrant.StoreKey, authzkeeper.StoreKey, routertypes.StoreKey,
-		icahosttypes.StoreKey, icacontrollertypes.StoreKey,
+		capabilitytypes.StoreKey, feegrant.StoreKey, authzkeeper.StoreKey, icahosttypes.StoreKey, icacontrollertypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -409,34 +401,18 @@ func NewFeeAbs(
 		scopedIBCKeeper,
 	)
 
-	// RouterKeeper must be created before TransferKeeper
-	app.RouterKeeper = routerkeeper.NewKeeper(
-		appCodec,
-		app.keys[routertypes.StoreKey],
-		app.GetSubspace(routertypes.ModuleName),
-		app.TransferKeeper,
-		app.IBCKeeper.ChannelKeeper,
-		app.DistrKeeper,
-		app.BankKeeper,
-		app.IBCKeeper.ChannelKeeper,
-	)
-
 	// Create Transfer Keepers
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec,
 		keys[ibctransfertypes.StoreKey],
 		app.GetSubspace(ibctransfertypes.ModuleName),
-		app.RouterKeeper,
+		app.IBCKeeper.ChannelKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		app.AccountKeeper,
 		app.BankKeeper,
 		scopedTransferKeeper,
 	)
-
-	app.RouterKeeper.SetTransferKeeper(app.TransferKeeper)
-	transferModule := transfer.NewAppModule(app.TransferKeeper)
-	routerModule := router.NewAppModule(app.RouterKeeper)
 
 	app.FeeabsKeeper = feeabskeeper.NewKeeper(
 		appCodec,
@@ -465,15 +441,8 @@ func NewFeeAbs(
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
 		AddRoute(feeabstypes.RouterKey, feeabsmodule.NewHostZoneProposal(app.FeeabsKeeper))
 
-	var ibcStack porttypes.IBCModule
-	ibcStack = transfer.NewIBCModule(app.TransferKeeper)
-	ibcStack = router.NewIBCMiddleware(
-		ibcStack,
-		app.RouterKeeper,
-		0,
-		routerkeeper.DefaultForwardTransferPacketTimeoutTimestamp,
-		routerkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
-	)
+	transferModule := transfer.NewAppModule(app.TransferKeeper)
+	transferIBCModule := transfer.NewIBCModule(app.TransferKeeper)
 
 	app.ICAHostKeeper = icahostkeeper.NewKeeper(
 		appCodec,
@@ -541,7 +510,7 @@ func NewFeeAbs(
 
 	ibcRouter.
 		AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper)).
-		AddRoute(ibctransfertypes.ModuleName, ibcStack).
+		AddRoute(ibctransfertypes.ModuleName, transferIBCModule).
 		AddRoute(icahosttypes.SubModuleName, icaHostIBCModule).
 		AddRoute(feeabstypes.ModuleName, feeabsIBCModule)
 
@@ -591,7 +560,6 @@ func NewFeeAbs(
 		icaModule,
 		// interTxModule,
 		feeabsModule,
-		routerModule,
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants), // always be last to make sure that it checks for all invariants and not only part of them
 	)
 
@@ -621,7 +589,6 @@ func NewFeeAbs(
 		ibchost.ModuleName,
 		feeabstypes.ModuleName,
 		icatypes.ModuleName,
-		routertypes.ModuleName,
 		// intertxtypes.ModuleName,
 		wasm.ModuleName,
 	)
@@ -648,7 +615,6 @@ func NewFeeAbs(
 		ibchost.ModuleName,
 		feeabstypes.ModuleName,
 		icatypes.ModuleName,
-		routertypes.ModuleName,
 		// intertxtypes.ModuleName,
 		wasm.ModuleName,
 	)
@@ -682,7 +648,6 @@ func NewFeeAbs(
 		ibchost.ModuleName,
 		feeabstypes.ModuleName,
 		icatypes.ModuleName,
-		routertypes.ModuleName,
 		// intertxtypes.ModuleName,
 		// wasm after ibc transfer
 		wasm.ModuleName,
@@ -985,7 +950,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(crisistypes.ModuleName)
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
-	paramsKeeper.Subspace(routertypes.ModuleName).WithKeyTable(routertypes.ParamKeyTable())
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(feeabstypes.ModuleName)
