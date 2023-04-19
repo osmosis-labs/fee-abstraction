@@ -2,6 +2,7 @@ package interchaintest
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"testing"
 	"time"
@@ -310,7 +311,9 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, tx.Validate())
 
+		testutil.WaitForBlocks(ctx, 1, gaia, feeabs)
 		require.NoError(t, r.FlushPackets(ctx, eRep, pathOsmosisGaia, channOsmosisGaia.ChannelID))
+		testutil.WaitForBlocks(ctx, 1, gaia, feeabs)
 		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathOsmosisGaia, channGaiaOsmosis.ChannelID))
 		testutil.WaitForBlocks(ctx, 5, gaia, osmosis)
 		// Setup contract on Osmosis
@@ -346,7 +349,9 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, tx.Validate())
 
+		testutil.WaitForBlocks(ctx, 1, gaia, feeabs)
 		require.NoError(t, r.FlushPackets(ctx, eRep, pathFeeabsOsmosis, channOsmosisFeeabs.ChannelID))
+		testutil.WaitForBlocks(ctx, 1, gaia, feeabs)
 		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathFeeabsOsmosis, channFeeabsOsmosis.ChannelID))
 		testutil.WaitForBlocks(ctx, 5, osmosis, feeabs)
 
@@ -371,7 +376,9 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, tx.Validate())
 
+		testutil.WaitForBlocks(ctx, 1, gaia, feeabs)
 		require.NoError(t, r.FlushPackets(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
+		testutil.WaitForBlocks(ctx, 1, gaia, feeabs)
 		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
 		testutil.WaitForBlocks(ctx, 5, gaia, feeabs)
 
@@ -416,8 +423,8 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		txHash, err := osmosis.ExecuteContract(ctx, osmosisUser.KeyName, swapRouterContractAddress, msg)
 		require.NoError(t, err)
 		_ = txHash
-		txs, _ := osmosis.GetTransaction(txHash)
-		fmt.Printf("txs----------------: %v", txs)
+		// txs, _ := osmosis.GetTransaction(txHash)
+		// fmt.Printf("txs----------------: %v", txs)
 
 		// store xcs
 		xcsContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName, "./bytecode/crosschain_swaps.wasm")
@@ -428,6 +435,43 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		fmt.Printf("--------------------xcsContractAddress %s", xcsContractAddress)
 		// Swap Feeabs(uatom) to Osmosis
-		// Get feeabs module account
+		// send ibc token to feeabs module account
+		feeabsModule, err := QueryFeeabsModuleAccountBalances(feeabs, ctx)
+		require.NoError(t, err)
+		fmt.Printf("Ibc Denom: %s\n", feeabsModule.Balances[0].Denom)
+		dstAddress = feeabsModule.Address
+		transfer = ibc.WalletAmount{
+			Address: dstAddress,
+			Denom:   gaia.Config().Denom,
+			Amount:  amountToSend,
+		}
+
+		tx, err = gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName, transfer, ibc.TransferOptions{})
+		require.NoError(t, err)
+		require.NoError(t, tx.Validate())
+
+		testutil.WaitForBlocks(ctx, 1, gaia, feeabs)
+		require.NoError(t, r.FlushPackets(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
+		testutil.WaitForBlocks(ctx, 1, gaia, feeabs)
+		require.NoError(t, r.FlushAcknowledgements(ctx, eRep, pathFeeabsGaia, channFeeabsGaia.ChannelID))
+
+		// xcs
+		cosmos.FeeabsCrossChainSwap(feeabs, ctx, feeabsUser.KeyName, feeabsModule.Balances[0].Denom)
 	})
+}
+
+func QueryFeeabsModuleAccountBalances(c *cosmos.CosmosChain, ctx context.Context) (*QueryFeeabsModuleBalacesResponse, error) {
+	cmd := []string{"feeabs", "module-balances"}
+	stdout, _, err := c.ExecQuery(ctx, cmd)
+	if err != nil {
+		return &QueryFeeabsModuleBalacesResponse{}, err
+	}
+
+	var feeabsModule QueryFeeabsModuleBalacesResponse
+	err = json.Unmarshal(stdout, &feeabsModule)
+	if err != nil {
+		return &QueryFeeabsModuleBalacesResponse{}, err
+	}
+
+	return &feeabsModule, nil
 }
