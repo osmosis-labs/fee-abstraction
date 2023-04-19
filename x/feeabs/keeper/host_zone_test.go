@@ -14,10 +14,16 @@ import (
 func createNHostZone(t *testing.T, keeper *keeper.Keeper, ctx sdk.Context, n int) []types.HostChainFeeAbsConfig {
 	var expected []types.HostChainFeeAbsConfig
 	expectedConfig := types.HostChainFeeAbsConfig{
-		IbcDenom:                "ibc/123",
-		OsmosisPoolTokenDenomIn: "ibc/456",
-		PoolId:                  1,
-		Frozen:                  false,
+		IbcDenom:                   "ibc/123",
+		OsmosisPoolTokenDenomIn:    "ibc/456",
+		MiddlewareAddress:          "cosmos123",
+		IbcTransferChannel:         "channel-1",
+		HostZoneIbcTransferChannel: "channel-2",
+		CrosschainSwapAddress:      "osmo123456",
+		PoolId:                     1,
+		IsOsmosis:                  false,
+		Frozen:                     false,
+		OsmosisQueryChannel:        "channel-3",
 	}
 	for i := 0; i < n; i++ {
 		expected = append(expected, expectedConfig)

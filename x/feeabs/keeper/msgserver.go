@@ -49,7 +49,12 @@ func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossCha
 		return nil, err
 	}
 
-	err = k.transferOsmosisCrosschainSwap(ctx, hostChainConfig)
+	// TODO: don't use if/else logic
+	if hostChainConfig.IsOsmosis {
+		err = k.transferIBCTokenToOsmosisChainWithIBCHookMemo(ctx, hostChainConfig)
+	} else {
+		err = k.transferIBCTokenToHostChainWithMiddlewareMemo(ctx, hostChainConfig)
+	}
 
 	if err != nil {
 		return nil, err
