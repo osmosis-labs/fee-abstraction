@@ -502,65 +502,57 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		fmt.Printf("---------------------hostZoneConfig: %v\n", hostZoneConfig)
 		// xcs
-		// memo := `
-		// {
-		// 	"wasm":
-		// 	{
-		// 		"contract":"osmo17p9rzwnnfxcjp32un9ug7yhhzgtkhvl9jfksztgw5uh69wac2pgs5yczr8",
-		// 		"msg":
-		// 		{
-		// 			"osmosis_swap":
-		// 			{
-		// 				"output_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
-		// 				"slippage":
-		// 				{
-		// 					"twap":
-		// 					{
-		// 						"slippage_percentage":"20",
-		// 						"window_seconds":10
-		// 					}
-		// 				},
-		// 				"receiver":"feeabs/feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw",
-		// 				"on_failed_delivery":"do_nothing",
-		// 				"next_memo":{}
-		// 			}
-		// 		}
-		// 	}
-		// }`
-
-		// feeabsHeight, err = feeabs.Height(ctx)
-		// require.NoError(t, err)
-
-		// transfer = ibc.WalletAmount{
-		// 	Address: xcsContractAddress,
-		// 	Denom:   uatomOnFeeabs,
-		// 	Amount:  1_000_000,
-		// }
-
-		// transferTx, err := feeabs.SendIBCTransfer(ctx, channFeeabsOsmosis.ChannelID, feeabsUser.KeyName, transfer, ibc.TransferOptions{Memo: string(memo)})
-		// require.NoError(t, err)
-		// _, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+25, transferTx.Packet)
-		// require.NoError(t, err)
-		// err = testutil.WaitForBlocks(ctx, 1, feeabs)
-		// require.NoError(t, err)
-
-		secondHopDenom := transfertypes.GetPrefixedDenom(channFeeabsOsmosis.PortID, channFeeabsOsmosis.ChannelID, uatomOnFeeabs)
-		secondHopDenomTrace := transfertypes.ParseDenomTrace(secondHopDenom)
-		secondHopIBCDenom := secondHopDenomTrace.IBCDenom()
-
-		contractBalance, err := osmosis.GetBalance(ctx, xcsContractAddress, secondHopIBCDenom)
-		require.NoError(t, err)
-		fmt.Printf("---------------contractBalance %v\n", contractBalance)
-
+		memo := `
+		{
+			"wasm":
+			{
+				"contract":"osmo17p9rzwnnfxcjp32un9ug7yhhzgtkhvl9jfksztgw5uh69wac2pgs5yczr8",
+				"msg":
+				{
+					"osmosis_swap":
+					{
+						"output_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
+						"slippage":
+						{
+							"twap":
+							{
+								"slippage_percentage":"20",
+								"window_seconds":10
+							}
+						},
+						"receiver":"feeabs/feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw",
+						"on_failed_delivery":"do_nothing",
+						"next_memo":{}
+					}
+				}
+			}
+		}`
+		// "next_memo":{}
 		feeabsHeight, err = feeabs.Height(ctx)
 		require.NoError(t, err)
 
-		transferTx, err := cosmos.FeeabsCrossChainSwap(feeabs, ctx, feeabsUser.KeyName, uatomOnFeeabs)
+		transfer = ibc.WalletAmount{
+			Address: xcsContractAddress,
+			Denom:   uatomOnFeeabs,
+			Amount:  1_000_000,
+		}
+
+		transferTx, err := feeabs.SendIBCTransfer(ctx, channFeeabsOsmosis.ChannelID, feeabsUser.KeyName, transfer, ibc.TransferOptions{Memo: string(memo)})
 		require.NoError(t, err)
 		_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+25, transferTx.Packet)
 		require.NoError(t, err)
 		err = testutil.WaitForBlocks(ctx, 1, feeabs)
 		require.NoError(t, err)
+
+		// feeabsHeight, err = feeabs.Height(ctx)
+		// require.NoError(t, err)
+
+		// transferTx, err := cosmos.FeeabsCrossChainSwap(feeabs, ctx, feeabsUser.KeyName, uatomOnFeeabs)
+		// require.NoError(t, err)
+		// _, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+50, transferTx.Packet)
+		// require.NoError(t, err)
+		// err = testutil.WaitForBlocks(ctx, 1, feeabs)
+		// require.NoError(t, err)
 
 		// txRes, err := feeabs.GetTransaction(txhash)
 		// fmt.Printf("-------------------txRes: %v", txRes)
@@ -569,9 +561,13 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		err = testutil.WaitForBlocks(ctx, 50, feeabs, gaia, osmosis)
 		require.NoError(t, err)
 
-		// balace, err := feeabs.GetBalance(ctx, "feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw", feeabs.Config().Denom)
-		// require.NoError(t, err)
-		// fmt.Printf("---------------balace %v\n", balace)
+		// secondHopDenom := transfertypes.GetPrefixedDenom(channFeeabsOsmosis.PortID, channFeeabsOsmosis.ChannelID, uatomOnFeeabs)
+		// secondHopDenomTrace := transfertypes.ParseDenomTrace(secondHopDenom)
+		// secondHopIBCDenom := secondHopDenomTrace.IBCDenom()
+
+		contractBalance, err := feeabs.GetBalance(ctx, "feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw", feeabs.Config().Denom)
+		require.NoError(t, err)
+		fmt.Printf("---------------contractBalance %v\n", contractBalance)
 
 		feeabsModule, err = QueryFeeabsModuleAccountBalances(feeabs, ctx)
 		require.NoError(t, err)
