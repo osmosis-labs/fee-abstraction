@@ -513,7 +513,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 		balance, err := feeabs.GetBalance(ctx, feeabsModule.Address, feeabs.Config().Denom)
 		require.NoError(t, err)
-		require.Greater(t, balance, 1)
+		require.Greater(t, balance, int64(1))
 	})
 }
 
