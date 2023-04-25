@@ -17,7 +17,6 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	"github.com/cosmos/cosmos-sdk/x/staking/teststaking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	clienttypes "github.com/cosmos/ibc-go/v6/modules/core/02-client/types"
@@ -30,6 +29,7 @@ import (
 	ibctmtypes "github.com/cosmos/ibc-go/v6/modules/light-clients/07-tendermint/types"
 	ibctesting "github.com/cosmos/ibc-go/v6/testing"
 	"github.com/cosmos/ibc-go/v6/testing/mock"
+	ibctestingtypes "github.com/cosmos/ibc-go/v6/testing/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto/tmhash"
@@ -570,7 +570,7 @@ func (a TestingAppDecorator) GetBaseApp() *baseapp.BaseApp {
 	return a.TestSupport().GetBaseApp()
 }
 
-func (a TestingAppDecorator) GetStakingKeeper() stakingkeeper.Keeper {
+func (a TestingAppDecorator) GetStakingKeeper() ibctestingtypes.StakingKeeper {
 	return a.TestSupport().StakingKeeper()
 }
 
