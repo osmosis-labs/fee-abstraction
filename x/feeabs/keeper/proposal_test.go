@@ -1,6 +1,10 @@
 package keeper_test
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	v1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+
 	apphelpers "github.com/notional-labs/fee-abstraction/v3/app/helpers"
 	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
 )
@@ -30,13 +34,16 @@ func (suite *KeeperTestSuite) TestAddHostZoneProposal() {
 				p.HostChainConfig = &tc.hostChainConfig
 			})
 
+			legacyProposal, err := v1types.NewLegacyContent(proposal, authtypes.NewModuleAddress(types.ModuleName).String())
+			suite.Require().NoError(err)
+
 			// store proposal
-			storedProposal, err := suite.govKeeper.SubmitProposal(suite.ctx, proposal)
+			_, err = suite.govKeeper.SubmitProposal(suite.ctx, []sdk.Msg{legacyProposal}, "")
 			suite.Require().NoError(err)
 
 			// execute proposal
-			handler := suite.govKeeper.Router().GetRoute(storedProposal.ProposalRoute())
-			err = handler(suite.ctx, storedProposal.GetContent())
+			handler := suite.govKeeper.LegacyRouter().GetRoute(proposal.ProposalRoute())
+			err = handler(suite.ctx, proposal)
 			suite.Require().NoError(err)
 
 			hostChainConfig, err := suite.feeAbsKeeper.GetHostZoneConfig(suite.ctx, tc.hostChainConfig.IbcDenom)
@@ -44,7 +51,7 @@ func (suite *KeeperTestSuite) TestAddHostZoneProposal() {
 			suite.Require().Equal(tc.hostChainConfig, hostChainConfig)
 
 			// store proposal again and it should error
-			_, err = suite.govKeeper.SubmitProposal(suite.ctx, proposal)
+			_, err = suite.govKeeper.SubmitProposal(suite.ctx, []sdk.Msg{legacyProposal}, "")
 			suite.Require().Error(err)
 		})
 	}

@@ -2,7 +2,7 @@ package cli
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	v1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -114,13 +114,18 @@ func NewCmdSubmitAddHostZoneProposal() *cobra.Command {
 				proposal.Title, proposal.Description, proposal.HostChainFeeAbsConfig,
 			)
 
+			from := clientCtx.GetFromAddress()
+			legacyContent, err := v1types.NewLegacyContent(content, from.String())
+			if err != nil {
+				return err
+			}
+
 			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)
 			if err != nil {
 				return err
 			}
 
-			from := clientCtx.GetFromAddress()
-			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
+			msg, err := v1types.NewMsgSubmitProposal([]sdk.Msg{legacyContent}, deposit, from.String(), "")
 			if err != nil {
 				return err
 			}
@@ -154,13 +159,18 @@ func NewCmdSubmitDeleteHostZoneProposal() *cobra.Command {
 				proposal.Title, proposal.Description, proposal.IbcDenom,
 			)
 
+			from := clientCtx.GetFromAddress()
+			legacyContent, err := v1types.NewLegacyContent(content, from.String())
+			if err != nil {
+				return err
+			}
+
 			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)
 			if err != nil {
 				return err
 			}
 
-			from := clientCtx.GetFromAddress()
-			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
+			msg, err := v1types.NewMsgSubmitProposal([]sdk.Msg{legacyContent}, deposit, from.String(), "")
 			if err != nil {
 				return err
 			}
@@ -194,13 +204,18 @@ func NewCmdSubmitSetHostZoneProposal() *cobra.Command {
 				proposal.Title, proposal.Description, proposal.HostChainFeeAbsConfig,
 			)
 
+			from := clientCtx.GetFromAddress()
+			legacyContent, err := v1types.NewLegacyContent(content, from.String())
+			if err != nil {
+				return err
+			}
+
 			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)
 			if err != nil {
 				return err
 			}
 
-			from := clientCtx.GetFromAddress()
-			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
+			msg, err := v1types.NewMsgSubmitProposal([]sdk.Msg{legacyContent}, deposit, from.String(), "")
 			if err != nil {
 				return err
 			}
