@@ -1,6 +1,6 @@
 module github.com/notional-labs/fee-abstraction/v3
 
-go 1.18
+go 1.20
 
 require (
 	github.com/CosmWasm/wasmd v0.30.0
@@ -169,8 +169,6 @@ replace (
 	// use cosmos fork of keyring
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.30.0-sdk46
-	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.46.7
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/tendermint/tendermint => github.com/tendermint/tendermint v0.34.24
 	google.golang.org/grpc => google.golang.org/grpc v1.50.1
 )
