@@ -7,8 +7,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v6/modules/apps/transfer/keeper"
+	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
 	"github.com/tendermint/tendermint/libs/log"
 )
 

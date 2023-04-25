@@ -5,9 +5,9 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	ibctesting "github.com/cosmos/ibc-go/v4/testing"
+	ibctesting "github.com/cosmos/ibc-go/v6/testing"
 	"github.com/golang/protobuf/proto" //nolint
-	feeabs "github.com/notional-labs/fee-abstraction/v2/app"
+	feeabs "github.com/notional-labs/fee-abstraction/v3/app"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/rand"
 )
