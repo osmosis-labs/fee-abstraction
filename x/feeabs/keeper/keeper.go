@@ -35,7 +35,6 @@ func NewKeeper(
 	sk types.StakingKeeper,
 	ak types.AccountKeeper,
 	bk types.BankKeeper,
-	//TODO: need to use expected keeper
 	transferKeeper ibctransferkeeper.Keeper,
 
 	channelKeeper types.ChannelKeeper,

@@ -34,7 +34,6 @@ func (q Querier) OsmosisArithmeticTwap(goCtx context.Context, req *types.QueryOs
 		return nil, err
 	}
 
-	// TODO: move to use TWAP response
 	return &types.QueryOsmosisArithmeticTwapResponse{
 		ArithmeticTwap: twapRate,
 	}, nil
