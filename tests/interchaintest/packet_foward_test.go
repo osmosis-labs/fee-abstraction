@@ -454,7 +454,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		transfer = ibc.WalletAmount{
 			Address: dstAddress,
 			Denom:   gaia.Config().Denom,
-			Amount:  1_000_000,
+			Amount:  1_000_000_000,
 		}
 
 		tx, err = gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName, transfer, ibc.TransferOptions{})
@@ -507,12 +507,9 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 		transferTx, err := cosmos.FeeabsCrossChainSwap(feeabs, ctx, feeabsUser.KeyName, uatomOnFeeabs)
 		require.NoError(t, err)
-		_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+100, transferTx.Packet)
+		_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+25, transferTx.Packet)
 		require.NoError(t, err)
-		err = testutil.WaitForBlocks(ctx, 1, feeabs)
-		require.NoError(t, err)
-
-		err = testutil.WaitForBlocks(ctx, 100, feeabs, gaia, osmosis)
+		err = testutil.WaitForBlocks(ctx, 1, feeabs, gaia, osmosis)
 		require.NoError(t, err)
 
 		feeabsModule, err = QueryFeeabsModuleAccountBalances(feeabs, ctx)
