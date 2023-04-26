@@ -454,7 +454,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		transfer = ibc.WalletAmount{
 			Address: dstAddress,
 			Denom:   gaia.Config().Denom,
-			Amount:  1_000_000_000,
+			Amount:  1_000_000,
 		}
 
 		tx, err = gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName, transfer, ibc.TransferOptions{})
@@ -468,9 +468,6 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 		denomTrace = transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channFeeabsGaia.PortID, channFeeabsGaia.ChannelID, gaia.Config().Denom))
 		uatomOnFeeabs := denomTrace.IBCDenom()
-
-		feeabsModule, err = QueryFeeabsModuleAccountBalances(feeabs, ctx)
-		require.NoError(t, err)
 
 		current_directory, _ := os.Getwd()
 		param_change_path := path.Join(current_directory, "proposal", "proposal.json")
