@@ -501,6 +501,10 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		feeabsHeight, err = feeabs.Height(ctx)
 		require.NoError(t, err)
 
+		feeabsModule, err = QueryFeeabsModuleAccountBalances(feeabs, ctx)
+		require.NoError(t, err)
+		fmt.Printf("Module Account Balances before swap: %v\n", feeabsModule.Balances)
+
 		transferTx, err := cosmos.FeeabsCrossChainSwap(feeabs, ctx, feeabsUser.KeyName, uatomOnFeeabs)
 		require.NoError(t, err)
 		_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+100, transferTx.Packet)
@@ -513,7 +517,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 		feeabsModule, err = QueryFeeabsModuleAccountBalances(feeabs, ctx)
 		require.NoError(t, err)
-		fmt.Printf("Module Account Balances: %v\n", feeabsModule.Balances)
+		fmt.Printf("Module Account Balances after swap: %v\n", feeabsModule.Balances)
 
 		balance, err := feeabs.GetBalance(ctx, feeabsModule.Address, feeabs.Config().Denom)
 		require.NoError(t, err)
