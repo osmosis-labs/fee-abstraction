@@ -511,6 +511,10 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		err = testutil.WaitForBlocks(ctx, 100, feeabs, gaia, osmosis)
 		require.NoError(t, err)
 
+		feeabsModule, err = QueryFeeabsModuleAccountBalances(feeabs, ctx)
+		require.NoError(t, err)
+		fmt.Printf("Module Account Balances: %v\n", feeabsModule.Balances)
+
 		balance, err := feeabs.GetBalance(ctx, feeabsModule.Address, feeabs.Config().Denom)
 		require.NoError(t, err)
 		require.Greater(t, balance, int64(1))
