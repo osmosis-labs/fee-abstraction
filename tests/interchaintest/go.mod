@@ -3,10 +3,10 @@ module github.com/notional-labs/fee-abstraction/tests/interchaintest
 go 1.19
 
 require (
-	github.com/cosmos/cosmos-sdk v0.45.14
-	github.com/cosmos/ibc-go/v4 v4.3.0
-	github.com/notional-labs/fee-abstraction/v2 v2.0.1
-	github.com/strangelove-ventures/interchaintest/v4 v4.0.0-20230331040355-5d08aab13017
+	github.com/cosmos/cosmos-sdk v0.46.7
+	github.com/cosmos/ibc-go/v6 v6.1.0
+	github.com/notional-labs/fee-abstraction/v3 f8f578f
+	github.com/strangelove-ventures/interchaintest/v6 d8e473f
 	github.com/stretchr/testify v1.8.2
 	go.uber.org/zap v1.23.0
 )
@@ -191,8 +191,7 @@ replace (
 	// For this nested module, you always want to replace the parent reference with the current worktree.
 	github.com/notional-labs/fee-abstraction => ../../
 
-	// use informal system fork of tendermint
-	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.26
+	github.com/tendermint/tendermint => github.com/tendermint/tendermint v0.34.24
 
 	github.com/vedhavyas/go-subkey => github.com/strangelove-ventures/go-subkey v1.0.7
 )

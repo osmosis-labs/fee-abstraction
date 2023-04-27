@@ -1,6 +1,6 @@
 module github.com/notional-labs/fee-abstraction/v3
 
-go 1.20
+go 1.19
 
 require (
 	github.com/CosmWasm/wasmd v0.30.0
