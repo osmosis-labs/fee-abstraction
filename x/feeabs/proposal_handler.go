@@ -38,7 +38,6 @@ func NewHostZoneProposal(k keeper.Keeper) govtypes.Handler {
 	}
 }
 
-// TODO : support this @Gnad @Ducnt.
 func emptyRestHandler(client.Context) govrest.ProposalRESTHandler {
 	return govrest.ProposalRESTHandler{
 		SubRoute: "unsupported",
