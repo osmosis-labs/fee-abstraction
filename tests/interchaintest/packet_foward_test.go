@@ -506,7 +506,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+25, transferTx.Packet)
 		require.NoError(t, err)
-		err = testutil.WaitForBlocks(ctx, 1, feeabs, gaia, osmosis)
+		err = testutil.WaitForBlocks(ctx, 25, feeabs, gaia, osmosis)
 		require.NoError(t, err)
 
 		feeabsModule, err = QueryFeeabsModuleAccountBalances(feeabs, ctx)
