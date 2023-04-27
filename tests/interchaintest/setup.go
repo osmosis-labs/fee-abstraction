@@ -3,8 +3,8 @@ package interchaintest
 import (
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	feeabstype "github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
-	"github.com/strangelove-ventures/interchaintest/v4/chain/cosmos"
-	"github.com/strangelove-ventures/interchaintest/v4/ibc"
+	"github.com/strangelove-ventures/interchaintest/v6/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v6/ibc"
 )
 
 var (
@@ -29,8 +29,6 @@ var (
 		GasAdjustment:       1.1,
 		TrustingPeriod:      "112h",
 		NoHostMount:         false,
-		SkipGenTx:           false,
-		PreGenesis:          nil,
 		ModifyGenesis:       nil,
 		ConfigFileOverrides: nil,
 		EncodingConfig:      feeabsEncoding(),
