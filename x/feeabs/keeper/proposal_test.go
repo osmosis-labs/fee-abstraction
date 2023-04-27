@@ -3,6 +3,7 @@ package keeper_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	v1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
 	apphelpers "github.com/notional-labs/fee-abstraction/v3/app/helpers"
@@ -34,7 +35,7 @@ func (suite *KeeperTestSuite) TestAddHostZoneProposal() {
 				p.HostChainConfig = &tc.hostChainConfig
 			})
 
-			legacyProposal, err := v1types.NewLegacyContent(proposal, authtypes.NewModuleAddress(types.ModuleName).String())
+			legacyProposal, err := v1types.NewLegacyContent(proposal, authtypes.NewModuleAddress(govtypes.ModuleName).String())
 			suite.Require().NoError(err)
 
 			// store proposal
