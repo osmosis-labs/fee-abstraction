@@ -35,10 +35,12 @@ func (chain *TestChain) StoreCode(byteCode []byte) types.MsgStoreCodeResponse {
 	r, err := chain.SendMsgs(storeMsg)
 	require.NoError(chain.t, err)
 	protoResult := chain.parseSDKResultData(r)
-	require.Len(chain.t, protoResult.Data, 1)
+	require.Len(chain.t, protoResult.MsgResponses, 1)
+
+	msgResponse := protoResult.MsgResponses[0]
 	// unmarshal protobuf response from data
 	var pInstResp types.MsgStoreCodeResponse
-	require.NoError(chain.t, pInstResp.Unmarshal(protoResult.Data[0].Data))
+	require.NoError(chain.t, pInstResp.Unmarshal(msgResponse.Value))
 	require.NotEmpty(chain.t, pInstResp.CodeID)
 	return pInstResp
 }
@@ -56,10 +58,12 @@ func (chain *TestChain) InstantiateContract(codeID uint64, initMsg []byte) sdk.A
 	r, err := chain.SendMsgs(instantiateMsg)
 	require.NoError(chain.t, err)
 	protoResult := chain.parseSDKResultData(r)
-	require.Len(chain.t, protoResult.Data, 1)
+	require.Len(chain.t, protoResult.MsgResponses, 1)
+
+	msgResponse := protoResult.MsgResponses[0]
 
 	var pExecResp types.MsgInstantiateContractResponse
-	require.NoError(chain.t, pExecResp.Unmarshal(protoResult.Data[0].Data))
+	require.NoError(chain.t, pExecResp.Unmarshal(msgResponse.Value))
 	a, err := sdk.AccAddressFromBech32(pExecResp.Address)
 	require.NoError(chain.t, err)
 	return a
