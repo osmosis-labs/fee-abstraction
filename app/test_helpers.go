@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
-	"cosmossdk.io/math"
 	sdkerrors "cosmossdk.io/errors"
-	
+	"cosmossdk.io/math"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
@@ -62,7 +62,7 @@ var DefaultConsensusParams = &abci.ConsensusParams{
 func setup(t testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Option) (*FeeAbs, GenesisState) {
 	nodeHome := t.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
-	snapshotDB, err := dbm.NewDB("metadata", dbm.MemDBBackend, snapshotDir)
+	snapshotDB, err := dbm.NewGoLevelDB("metadata", snapshotDir)
 	require.NoError(t, err)
 	snapshotStore, err := snapshots.NewStore(snapshotDB, snapshotDir)
 	require.NoError(t, err)
