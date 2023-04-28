@@ -1,8 +1,9 @@
 package feeabs
 
 import (
+	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
 
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	v1beta1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
@@ -29,7 +30,7 @@ func NewHostZoneProposal(k keeper.Keeper) v1beta1types.Handler {
 		case *types.SetHostZoneProposal:
 			return k.SetHostZoneProposal(ctx, c)
 		default:
-			return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized ibc proposal content type: %T", c)
+			return sdkerrors.Wrapf(errorstypes.ErrUnknownRequest, "unrecognized ibc proposal content type: %T", c)
 		}
 	}
 }

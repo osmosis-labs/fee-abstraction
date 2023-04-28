@@ -3,8 +3,9 @@ package ante
 import (
 	"fmt"
 
+	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	feeabskeeper "github.com/notional-labs/fee-abstraction/v3/x/feeabs/keeper"
 	feeabstypes "github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
@@ -29,7 +30,7 @@ func NewFeeAbstractionDeductFeeDecorate(ak AccountKeeper, bk BankKeeper, feeabsK
 func (fadfd FeeAbstractionDeductFeeDecorate) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
 	feeTx, ok := tx.(sdk.FeeTx)
 	if !ok {
-		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
+		return ctx, sdkerrors.Wrap(errorstypes.ErrTxDecode, "Tx must be a FeeTx")
 	}
 
 	fee := feeTx.GetFee()
@@ -62,7 +63,7 @@ func (fadfd FeeAbstractionDeductFeeDecorate) normalDeductFeeAnteHandle(ctx sdk.C
 	// this works with only when feegrant enabled.
 	if feeGranter != nil {
 		if fadfd.feegrantKeeper == nil {
-			return ctx, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "fee grants are not enabled")
+			return ctx, sdkerrors.Wrap(errorstypes.ErrInvalidRequest, "fee grants are not enabled")
 		} else if !feeGranter.Equals(feePayer) {
 			err := fadfd.feegrantKeeper.UseGrantedFees(ctx, feeGranter, feePayer, fee, tx.GetMsgs())
 
@@ -76,7 +77,7 @@ func (fadfd FeeAbstractionDeductFeeDecorate) normalDeductFeeAnteHandle(ctx sdk.C
 
 	deductFeesFromAcc := fadfd.accountKeeper.GetAccount(ctx, deductFeesFrom)
 	if deductFeesFromAcc == nil {
-		return ctx, sdkerrors.Wrapf(sdkerrors.ErrUnknownAddress, "fee payer address: %s does not exist", deductFeesFrom)
+		return ctx, sdkerrors.Wrapf(errorstypes.ErrUnknownAddress, "fee payer address: %s does not exist", deductFeesFrom)
 	}
 
 	// deduct the fees
@@ -105,7 +106,7 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 	// this works with only when feegrant enabled.
 	if feeGranter != nil {
 		if fadfd.feegrantKeeper == nil {
-			return ctx, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "fee grants are not enabled")
+			return ctx, sdkerrors.Wrap(errorstypes.ErrInvalidRequest, "fee grants are not enabled")
 		} else if !feeGranter.Equals(feePayer) {
 			err := fadfd.feegrantKeeper.UseGrantedFees(ctx, feeGranter, feePayer, fee, tx.GetMsgs())
 
@@ -121,13 +122,13 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 	deductFeesFrom := fadfd.feeabsKeeper.GetFeeAbsModuleAddress()
 	deductFeesFromAcc := fadfd.accountKeeper.GetAccount(ctx, deductFeesFrom)
 	if deductFeesFromAcc == nil {
-		return ctx, sdkerrors.Wrapf(sdkerrors.ErrUnknownAddress, "fee abstraction didn't set : %s does not exist", deductFeesFrom)
+		return ctx, sdkerrors.Wrapf(errorstypes.ErrUnknownAddress, "fee abstraction didn't set : %s does not exist", deductFeesFrom)
 	}
 
 	// calculate the native token can be swapped from ibc token
 	ibcFees := feeTx.GetFee()
 	if len(ibcFees) != 1 {
-		return ctx, sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, "invalid ibc token: %s", ibcFees)
+		return ctx, sdkerrors.Wrapf(errorstypes.ErrInvalidCoins, "invalid ibc token: %s", ibcFees)
 	}
 
 	nativeFees, err := fadfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, ibcFees, hostChainConfig)
@@ -160,12 +161,12 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 // DeductFees deducts fees from the given account.
 func DeductFees(bankKeeper types.BankKeeper, ctx sdk.Context, accAddress sdk.AccAddress, fees sdk.Coins) error {
 	if !fees.IsValid() {
-		return sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "invalid fee amount: %s", fees)
+		return sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "invalid fee amount: %s", fees)
 	}
 
 	err := bankKeeper.SendCoinsFromAccountToModule(ctx, accAddress, types.FeeCollectorName, fees)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, err.Error())
+		return sdkerrors.Wrapf(errorstypes.ErrInsufficientFunds, err.Error())
 	}
 
 	return nil
@@ -190,7 +191,7 @@ func NewFeeAbstrationMempoolFeeDecorator(feeabsKeeper feeabskeeper.Keeper) FeeAb
 func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
 	feeTx, ok := tx.(sdk.FeeTx)
 	if !ok {
-		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
+		return ctx, sdkerrors.Wrap(errorstypes.ErrTxDecode, "Tx must be a FeeTx")
 	}
 
 	feeCoins := feeTx.GetFee()
@@ -205,7 +206,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		}
 		feeCoinsLen := feeCoins.Len()
 		if feeCoinsLen == 0 {
-			return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees")
+			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees")
 		}
 
 		feeDenom := feeCoins.GetDenomByIndex(0)
@@ -214,7 +215,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 			hostChainConfig, _ := famfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
 			nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, feeCoins, hostChainConfig)
 			if err != nil {
-				return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees")
+				return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees")
 
 			}
 			feeCoins = nativeCoinsFees
@@ -231,7 +232,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		}
 
 		if !feeCoins.IsAnyGTE(requiredFees) {
-			return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, requiredFees)
+			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, requiredFees)
 		}
 
 	}
