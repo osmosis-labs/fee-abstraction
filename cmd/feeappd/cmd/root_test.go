@@ -6,8 +6,8 @@ import (
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	"github.com/stretchr/testify/require"
 
-	app "github.com/notional-labs/fee-abstraction/v2/app"
-	"github.com/notional-labs/fee-abstraction/v2/cmd/feeappd/cmd"
+	app "github.com/notional-labs/fee-abstraction/v3/app"
+	"github.com/notional-labs/fee-abstraction/v3/cmd/feeappd/cmd"
 )
 
 func TestRootCmdConfig(t *testing.T) {
@@ -18,5 +18,5 @@ func TestRootCmdConfig(t *testing.T) {
 		"test",            // value
 	})
 
-	require.NoError(t, svrcmd.Execute(rootCmd, app.DefaultNodeHome))
+	require.NoError(t, svrcmd.Execute(rootCmd, "", app.DefaultNodeHome))
 }

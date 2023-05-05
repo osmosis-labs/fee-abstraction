@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"testing"
 
-	transfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
-	"github.com/strangelove-ventures/interchaintest/v4"
-	"github.com/strangelove-ventures/interchaintest/v4/chain/cosmos"
-	"github.com/strangelove-ventures/interchaintest/v4/ibc"
-	"github.com/strangelove-ventures/interchaintest/v4/testreporter"
-	"github.com/strangelove-ventures/interchaintest/v4/testutil"
+	transfertypes "github.com/cosmos/ibc-go/v6/modules/apps/transfer/types"
+	"github.com/strangelove-ventures/interchaintest/v6"
+	"github.com/strangelove-ventures/interchaintest/v6/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v6/ibc"
+	"github.com/strangelove-ventures/interchaintest/v6/testreporter"
+	"github.com/strangelove-ventures/interchaintest/v6/testutil"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
 )
@@ -107,8 +107,8 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	// Get our Bech32 encoded user addresses
 	feeabsUser, gaiaUser := users[0], users[1]
 
-	feeabsUserAddr := feeabsUser.Bech32Address(feeabs.Config().Bech32Prefix)
-	gaiaUserAddr := gaiaUser.Bech32Address(gaia.Config().Bech32Prefix)
+	feeabsUserAddr := feeabsUser.FormattedAddress()
+	gaiaUserAddr := gaiaUser.FormattedAddress()
 
 	// Get original account balances
 	feeabsOrigBal, err := feeabs.GetBalance(ctx, feeabsUserAddr, feeabs.Config().Denom)

@@ -3,16 +3,17 @@ package feeabs
 import (
 	"fmt"
 
+	sdkerrors "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	channeltypes "github.com/cosmos/ibc-go/v4/modules/core/04-channel/types"
-	porttypes "github.com/cosmos/ibc-go/v4/modules/core/05-port/types"
-	host "github.com/cosmos/ibc-go/v4/modules/core/24-host"
-	ibcexported "github.com/cosmos/ibc-go/v4/modules/core/exported"
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/keeper"
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
+	channeltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
+	porttypes "github.com/cosmos/ibc-go/v6/modules/core/05-port/types"
+	host "github.com/cosmos/ibc-go/v6/modules/core/24-host"
+	ibcexported "github.com/cosmos/ibc-go/v6/modules/core/exported"
+	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/keeper"
+	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
 )
 
 // IBCModule implements the ICS26 interface for transfer given the transfer keeper.
@@ -131,7 +132,7 @@ func (am IBCModule) OnChanCloseInit(
 	channelID string,
 ) error {
 	// Disallow user-initiated channel closing for channels
-	return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "user cannot close channel")
+	return sdkerrors.Wrap(errorstypes.ErrInvalidRequest, "user cannot close channel")
 }
 
 // OnChanCloseConfirm implements the IBCModule interface.
@@ -165,12 +166,12 @@ func (am IBCModule) OnAcknowledgementPacket(
 ) error {
 	var ack channeltypes.Acknowledgement
 	if err := types.ModuleCdc.UnmarshalJSON(acknowledgement, &ack); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
+		return sdkerrors.Wrapf(errorstypes.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
 	}
 
 	var IcqPacketData types.InterchainQueryPacketData
 	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &IcqPacketData); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %v", err)
+		return sdkerrors.Wrapf(errorstypes.ErrUnknownRequest, "cannot unmarshal packet data: %v", err)
 	}
 
 	IcqReqs, err := types.DeserializeCosmosQuery(IcqPacketData.GetData())
@@ -188,7 +189,7 @@ func (am IBCModule) OnAcknowledgementPacket(
 	)
 
 	if err := am.keeper.OnAcknowledgementPacket(ctx, ack, IcqReqs); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "error OnAcknowledgementPacket: %v", err)
+		return sdkerrors.Wrapf(errorstypes.ErrInvalidRequest, "error OnAcknowledgementPacket: %v", err)
 	}
 	return nil
 }
