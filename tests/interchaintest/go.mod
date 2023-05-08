@@ -3,12 +3,20 @@ module github.com/notional-labs/fee-abstraction/tests/interchaintest
 go 1.19
 
 require (
+	github.com/CosmWasm/wasmd v0.30.0
+	github.com/cosmos/cosmos-proto v1.0.0-alpha8
 	github.com/cosmos/cosmos-sdk v0.46.7
 	github.com/cosmos/ibc-go/v6 v6.1.0
+	github.com/gogo/protobuf v1.3.3
+	github.com/golang/protobuf v1.5.2
+	github.com/grpc-ecosystem/grpc-gateway v1.16.0
+	github.com/icza/dyno v0.0.0-20220812133438-f0b6f8a18845
 	github.com/notional-labs/fee-abstraction/v3 v3.0.0-20230427065305-f8f578f3486b
 	github.com/strangelove-ventures/interchaintest/v6 v6.0.0-20230424212053-d8e473f39379
 	github.com/stretchr/testify v1.8.2
 	go.uber.org/zap v1.24.0
+	google.golang.org/genproto v0.0.0-20230125152338-dcaf20b6aeaa
+	google.golang.org/grpc v1.53.0
 )
 
 require (
@@ -25,6 +33,7 @@ require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/ChainSafe/go-schnorrkel v1.0.0 // indirect
 	github.com/ChainSafe/go-schnorrkel/1 v0.0.0-00010101000000-000000000000 // indirect
+	github.com/CosmWasm/wasmvm v1.1.1 // indirect
 	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/StirlingMarketingGroup/go-namecase v1.0.0 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
@@ -42,7 +51,6 @@ require (
 	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
 	github.com/confio/ics23/go v0.9.0 // indirect
 	github.com/cosmos/btcutil v1.0.5 // indirect
-	github.com/cosmos/cosmos-proto v1.0.0-alpha8 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gogoproto v1.4.6 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
@@ -71,10 +79,8 @@ require (
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/gogo/gateway v1.1.0 // indirect
-	github.com/gogo/protobuf v1.3.3 // indirect
 	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/btree v1.1.2 // indirect
 	github.com/google/flatbuffers v1.12.1 // indirect
@@ -86,7 +92,6 @@ require (
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
-	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/gsterjov/go-libsecret v0.0.0-20161001094733-a6f4afe4910c // indirect
 	github.com/gtank/merlin v0.1.1 // indirect
 	github.com/gtank/ristretto255 v0.1.2 // indirect
@@ -98,7 +103,6 @@ require (
 	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hdevalence/ed25519consensus v0.0.0-20220222234857-c00d1f31bab3 // indirect
-	github.com/icza/dyno v0.0.0-20220812133438-f0b6f8a18845 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/ipfs/go-cid v0.0.7 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
@@ -183,8 +187,6 @@ require (
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/api v0.107.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20230125152338-dcaf20b6aeaa // indirect
-	google.golang.org/grpc v1.53.0 // indirect
 	google.golang.org/protobuf v1.28.2-0.20220831092852-f930b1dc76e8 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
@@ -208,6 +210,7 @@ require (
 replace (
 	github.com/ChainSafe/go-schnorrkel => github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d
 	github.com/ChainSafe/go-schnorrkel/1 => github.com/ChainSafe/go-schnorrkel v1.0.0
+	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.30.0-sdk46
 	github.com/btcsuite/btcd => github.com/btcsuite/btcd v0.22.2 //indirect
 
 	// interchaintest supports ICS features so we need this for now
@@ -216,6 +219,7 @@ replace (
 
 	// For this nested module, you always want to replace the parent reference with the current worktree.
 	github.com/notional-labs/fee-abstraction => ../../
+	github.com/strangelove-ventures/interchaintest/v6 => github.com/notional-labs/interchaintest/v6 v6.0.0-20230505100442-9f1cb0b6b5f1
 
 	github.com/tendermint/tendermint => github.com/tendermint/tendermint v0.34.24
 
