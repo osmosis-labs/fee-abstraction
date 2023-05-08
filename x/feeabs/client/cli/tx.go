@@ -1,12 +1,11 @@
 package cli
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	v1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
 	"github.com/spf13/cobra"
 )
@@ -115,17 +114,13 @@ func NewCmdSubmitAddHostZoneProposal() *cobra.Command {
 			)
 
 			from := clientCtx.GetFromAddress()
-			legacyContent, err := v1types.NewLegacyContent(content, from.String())
-			if err != nil {
-				return err
-			}
 
 			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)
 			if err != nil {
 				return err
 			}
 
-			msg, err := v1types.NewMsgSubmitProposal([]sdk.Msg{legacyContent}, deposit, from.String(), "")
+			msg, err := govv1beta1.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {
 				return err
 			}
@@ -160,17 +155,13 @@ func NewCmdSubmitDeleteHostZoneProposal() *cobra.Command {
 			)
 
 			from := clientCtx.GetFromAddress()
-			legacyContent, err := v1types.NewLegacyContent(content, from.String())
-			if err != nil {
-				return err
-			}
 
 			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)
 			if err != nil {
 				return err
 			}
 
-			msg, err := v1types.NewMsgSubmitProposal([]sdk.Msg{legacyContent}, deposit, from.String(), "")
+			msg, err := govv1beta1.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {
 				return err
 			}
@@ -205,17 +196,13 @@ func NewCmdSubmitSetHostZoneProposal() *cobra.Command {
 			)
 
 			from := clientCtx.GetFromAddress()
-			legacyContent, err := v1types.NewLegacyContent(content, from.String())
-			if err != nil {
-				return err
-			}
 
 			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)
 			if err != nil {
 				return err
 			}
 
-			msg, err := v1types.NewMsgSubmitProposal([]sdk.Msg{legacyContent}, deposit, from.String(), "")
+			msg, err := govv1beta1.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {
 				return err
 			}
