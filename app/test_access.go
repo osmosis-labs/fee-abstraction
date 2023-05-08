@@ -53,7 +53,7 @@ func (s TestSupport) ScopedTransferKeeper() capabilitykeeper.ScopedKeeper {
 }
 
 func (s TestSupport) StakingKeeper() stakingkeeper.Keeper {
-	return s.app.StakingKeeper
+	return *s.app.StakingKeeper
 }
 
 func (s TestSupport) BankKeeper() bankkeeper.Keeper {
