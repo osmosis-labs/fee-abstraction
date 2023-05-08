@@ -6,18 +6,18 @@ import (
 	"testing"
 	"time"
 
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
+	dbm "github.com/cometbft/cometbft-db"
+	abci "github.com/cometbft/cometbft/abci/types"
+	"github.com/cometbft/cometbft/libs/log"
+	tmrand "github.com/cometbft/cometbft/libs/rand"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	tmtypes "github.com/cometbft/cometbft/types"
+	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
 	"github.com/stretchr/testify/require"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tmrand "github.com/tendermint/tendermint/libs/rand"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	tmtypes "github.com/tendermint/tendermint/types"
-	dbm "github.com/tendermint/tm-db"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	feeapp "github.com/notional-labs/fee-abstraction/v2/app"
+	feeapp "github.com/notional-labs/fee-abstraction/v3/app"
 )
 
 // SimAppChainID hardcoded chainID for simulation

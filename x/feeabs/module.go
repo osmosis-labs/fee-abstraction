@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -12,11 +13,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/client/cli"
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/keeper"
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
+	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/client/cli"
+	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/keeper"
+	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
 	"github.com/spf13/cobra"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 var (

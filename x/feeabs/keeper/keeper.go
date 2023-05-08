@@ -3,15 +3,15 @@ package keeper
 import (
 	"fmt"
 
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
-	"github.com/cosmos/ibc-go/v4/modules/core/exported"
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
-	"github.com/tendermint/tendermint/libs/log"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
+	"github.com/cosmos/ibc-go/v7/modules/core/exported"
+	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
 )
 
 type Keeper struct {

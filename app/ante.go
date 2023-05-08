@@ -4,11 +4,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
-	ibcante "github.com/cosmos/ibc-go/v4/modules/core/ante"
-	ibckeeper "github.com/cosmos/ibc-go/v4/modules/core/keeper"
+	ibcante "github.com/cosmos/ibc-go/v7/modules/core/ante"
+	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 
-	feeabsante "github.com/notional-labs/fee-abstraction/v2/x/feeabs/ante"
-	feeabskeeper "github.com/notional-labs/fee-abstraction/v2/x/feeabs/keeper"
+	feeabsante "github.com/notional-labs/fee-abstraction/v3/x/feeabs/ante"
+	feeabskeeper "github.com/notional-labs/fee-abstraction/v3/x/feeabs/keeper"
 )
 
 // HandlerOptions extends the SDK's AnteHandler options by requiring the IBC

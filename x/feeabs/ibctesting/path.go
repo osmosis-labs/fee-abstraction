@@ -1,7 +1,7 @@
 package ibctesting
 
 import (
-	ibctesting "github.com/cosmos/ibc-go/v4/testing"
+	ibctesting "github.com/cosmos/ibc-go/v7/testing"
 )
 
 // Path contains two endpoints representing two chains connected over IBC

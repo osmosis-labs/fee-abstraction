@@ -6,18 +6,17 @@ import (
 	"os"
 	"testing"
 
-	feeapp "github.com/notional-labs/fee-abstraction/v2/app"
+	feeapp "github.com/notional-labs/fee-abstraction/v3/app"
 
-	"github.com/notional-labs/fee-abstraction/v2/app/helpers"
+	dbm "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
+	"github.com/cometbft/cometbft/libs/rand"
+	"github.com/notional-labs/fee-abstraction/v3/app/helpers"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/tendermint/libs/log"
-	"github.com/tendermint/tendermint/libs/rand"
-	dbm "github.com/tendermint/tm-db"
 
+	"cosmossdk.io/simapp"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/cosmos/cosmos-sdk/store"
 	simulation2 "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 )

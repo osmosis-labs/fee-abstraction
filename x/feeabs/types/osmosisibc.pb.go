@@ -10,7 +10,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	_ "github.com/gogo/protobuf/types"
 	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
-	types1 "github.com/tendermint/tendermint/abci/types"
+	types1 "github.com/cometbft/cometbft/abci/types"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	io "io"
 	math "math"
