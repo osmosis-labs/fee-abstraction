@@ -118,7 +118,7 @@ ictest-all: ictest-basic ictest-ibc ictest-packet-forward
 ###                                  Proto                                  ###
 ###############################################################################
 
-protoVer=v0.8
+protoVer=v0.9
 protoImageName=ghcr.io/notional-labs/fa-proto-gen:$(protoVer)
 containerProtoGen=fa-proto-gen-$(protoVer)
 containerProtoFmt=fa-proto-fmt-$(protoVer)
