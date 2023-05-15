@@ -13,7 +13,7 @@ endif
 
 LEDGER_ENABLED ?= true
 SDK_PACK := $(shell go list -m github.com/cosmos/cosmos-sdk | sed  's/ /\@/g')
-TM_VERSION := $(shell go list -m github.com/tendermint/tendermint | sed 's:.* ::') 
+TM_VERSION := $(shell go list -m github.com/cometbft/cometbft | sed 's:.* ::') 
 DOCKER := $(shell which docker)
 DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace bufbuild/buf:1.0.0-rc8
 BUILDDIR ?= $(CURDIR)/build
@@ -64,7 +64,7 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=feeapp \
 		  -X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 		  -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
 		  -X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
-			-X github.com/tendermint/tendermint/version.TMCoreSemVer=$(TM_VERSION)
+			-X github.com/cometbft/cometbft/version.TMCoreSemVer=$(TM_VERSION)
 
 ifeq (cleveldb,$(findstring cleveldb,$(COSMOS_BUILD_OPTIONS)))
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
@@ -117,7 +117,6 @@ ictest-all: ictest-basic ictest-ibc ictest-packet-forward
 ###############################################################################
 ###                                  Proto                                  ###
 ###############################################################################
-
 protoVer=v0.8
 protoImageName=ghcr.io/notional-labs/fa-proto-gen:$(protoVer)
 containerProtoGen=fa-proto-gen-$(protoVer)
