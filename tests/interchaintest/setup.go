@@ -34,7 +34,7 @@ var (
 
 	feeabsImage = ibc.DockerImage{
 		Repository: "ghcr.io/notional-labs/fee-abstraction",
-		Version:    "3.0.1",
+		Version:    "3.0.3",
 		UidGid:     "1025:1025",
 	}
 
