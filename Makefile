@@ -105,10 +105,14 @@ ictest-basic:
 ictest-ibc:
 	cd tests/interchaintest && go test -race -v -run TestFeeabsGaiaIBCTransfer .
 
-# Executes all tests via interchaintest after compling a local image as juno:local
-ictest-all: ictest-basic ictest-ibc
+# Executes IBC tests via interchaintest
+ictest-packet-forward:
+	cd tests/interchaintest && go test -timeout=25m -race -v -run TestPacketForwardMiddleware .
 
-.PHONY: ictest-basic ictest-ibc ictest-all
+# Executes all tests via interchaintest after compling a local image as juno:local
+ictest-all: ictest-basic ictest-ibc ictest-packet-forward
+
+.PHONY: ictest-basic ictest-ibc ictest-packet-forward ictest-all
 
 ###############################################################################
 ###                                  Proto                                  ###
