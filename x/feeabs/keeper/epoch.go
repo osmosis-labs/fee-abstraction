@@ -61,6 +61,7 @@ func (k Keeper) setEpochInfo(ctx sdk.Context, epoch types.EpochInfo) {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Printf("%v\n--------------", epoch)
 	store.Set(append(types.KeyPrefixEpoch, []byte(epoch.Identifier)...), value)
 }
 

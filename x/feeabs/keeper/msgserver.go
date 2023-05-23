@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -76,4 +77,22 @@ func (k Keeper) FundFeeAbsModuleAccount(
 	}
 
 	return &types.MsgFundFeeAbsModuleAccountResponse{}, nil
+}
+
+func (k Keeper) SetEpochDuration(
+	goCtx context.Context,
+	msg *types.MsgSetEpochDuration,
+) (*types.MsgSetEpochDurationResponse, error) {
+	// Unwrap context
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	// Check sender address
+	if !k.HasEpochInfo(ctx, msg.Identifier) {
+		return nil, fmt.Errorf("Don't have epoch information")
+	}
+
+	epoch := k.GetEpochInfo(ctx, msg.Identifier)
+	epoch.Duration = msg.Duration
+	k.setEpochInfo(ctx, epoch)
+
+	return &types.MsgSetEpochDurationResponse{}, nil
 }

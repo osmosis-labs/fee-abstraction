@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -78,6 +80,45 @@ func NewMsgSwapCrossChain(fromAddr sdk.AccAddress, ibcDenom string) *MsgSwapCros
 	return &MsgSwapCrossChain{
 		FromAddress: fromAddr.String(),
 		IbcDenom:    ibcDenom,
+	}
+}
+
+var _ sdk.Msg = &MsgSetEpochDuration{}
+
+// Route Implements Msg.
+func (m MsgSetEpochDuration) Route() string { return sdk.MsgTypeURL(&m) }
+
+// Type Implements Msg.
+func (m MsgSetEpochDuration) Type() string { return sdk.MsgTypeURL(&m) }
+
+// GetSigners returns the expected signers for a MsgMintAndAllocateExp .
+func (m MsgSetEpochDuration) GetSigners() []sdk.AccAddress {
+	daoAccount, err := sdk.AccAddressFromBech32(m.FromAddress)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{daoAccount}
+}
+
+// GetSignBytes Implements Msg.
+func (m MsgSetEpochDuration) GetSignBytes() []byte {
+	return sdk.MustSortJSON(legacy.Cdc.MustMarshalJSON(&m))
+}
+
+// ValidateBasic does a sanity check on the provided data.
+func (m MsgSetEpochDuration) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(m.FromAddress)
+	if err != nil {
+		return sdkerrors.Wrap(err, "from address must be valid address")
+	}
+	return nil
+}
+
+func NewMsgSetEpochDuration(fromAddr sdk.AccAddress, identifier string, duration time.Duration) *MsgSetEpochDuration {
+	return &MsgSetEpochDuration{
+		FromAddress: fromAddr.String(),
+		Identifier:  identifier,
+		Duration:    duration,
 	}
 }
 

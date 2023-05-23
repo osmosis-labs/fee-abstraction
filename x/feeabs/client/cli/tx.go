@@ -1,6 +1,9 @@
 package cli
 
 import (
+	"strconv"
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
@@ -23,6 +26,7 @@ func NewTxCmd() *cobra.Command {
 
 	txCmd.AddCommand(NewQueryOsmosisTWAPCmd())
 	txCmd.AddCommand(NewSwapOverChainCmd())
+	txCmd.AddCommand(NewSetEpochDuration())
 
 	return txCmd
 }
@@ -60,6 +64,32 @@ func NewSwapOverChainCmd() *cobra.Command {
 				return err
 			}
 			msg := types.NewMsgSwapCrossChain(clientCtx.GetFromAddress(), args[0])
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func NewSetEpochDuration() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:  "set-epoch-duration [identifier] [duration(s)]",
+		Args: cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			sec, err := strconv.ParseInt(args[1], 10, 0)
+			if err != nil {
+				return err
+			}
+
+			duration := time.Second * time.Duration(sec)
+
+			msg := types.NewMsgSetEpochDuration(clientCtx.GetFromAddress(), args[0], duration)
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 
 		},

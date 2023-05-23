@@ -8,6 +8,7 @@ import "feeabstraction/absfee/v1beta1/params.proto";
 import "feeabstraction/absfee/v1beta1/epoch.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
 
 option go_package = "github.com/notional-labs/fee-abstraction/v2/x/feeabs/types";
 
@@ -18,6 +19,8 @@ service Msg {
   rpc SwapCrossChain(MsgSwapCrossChain) returns (MsgSwapCrossChainResponse);
   rpc FundFeeAbsModuleAccount(MsgFundFeeAbsModuleAccount)
       returns (MsgFundFeeAbsModuleAccountResponse);
+  rpc SetEpochDuration(MsgSetEpochDuration)
+      returns (MsgSetEpochDurationResponse);
 }
 
 // Msg fund module account
@@ -42,4 +45,18 @@ message MsgSwapCrossChain {
   string from_address = 1;
   string ibc_denom = 2;
 }
+
 message MsgSwapCrossChainResponse {}
+
+message MsgSetEpochDuration {
+  string from_address = 1;
+  string identifier = 2;
+  google.protobuf.Duration duration = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdduration) = true,
+    (gogoproto.jsontag) = "duration,omitempty",
+    (gogoproto.moretags) = "yaml:\"duration\""
+  ];
+}
+
+message MsgSetEpochDurationResponse {}

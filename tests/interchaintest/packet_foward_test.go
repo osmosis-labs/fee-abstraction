@@ -494,6 +494,8 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 		_, err = QueryFeeabsHostZoneConfig(feeabs, ctx)
 		require.NoError(t, err)
+		// Get TWAP
+
 		// xcs
 		feeabsHeight, err = feeabs.Height(ctx)
 		require.NoError(t, err)
