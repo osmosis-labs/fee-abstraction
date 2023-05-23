@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -29,7 +30,24 @@ func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQ
 	if err != nil {
 		return nil, err
 	}
-	err = k.handleOsmosisIbcQuery(ctx)
+
+	startTime := ctx.BlockTime().Add(-msg.Duration)
+	k.Logger(ctx).Info(fmt.Sprintf("Start time: %v", startTime.Unix()))
+
+	params := k.GetParams(ctx)
+
+	var reqs []types.QueryArithmeticTwapToNowRequest
+	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+		req := types.NewQueryArithmeticTwapToNowRequest(
+			hostZoneConfig.PoolId,
+			params.NativeIbcedInOsmosis,
+			hostZoneConfig.OsmosisPoolTokenDenomIn,
+			startTime,
+		)
+		reqs = append(reqs, req)
+		return false
+	})
+	err = k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)
 	if err != nil {
 		return nil, err
 	}

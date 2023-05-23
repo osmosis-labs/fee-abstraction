@@ -1,6 +1,9 @@
 package cli
 
 import (
+	"strconv"
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
@@ -30,17 +33,20 @@ func NewTxCmd() *cobra.Command {
 func NewQueryOsmosisTWAPCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:  "query-osmosis-twap",
-		Args: cobra.ExactArgs(0),
+		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
+
+			sec, err := strconv.ParseInt(args[0], 10, 0)
 			if err != nil {
 				return err
 			}
+			duration := time.Second * time.Duration(sec)
 
-			msg := types.NewMsgSendQueryIbcDenomTWAP(clientCtx.GetFromAddress())
+			msg := types.NewMsgSendQueryIbcDenomTWAP(clientCtx.GetFromAddress(), duration)
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 
 		},

@@ -8,6 +8,7 @@ import "feeabstraction/absfee/v1beta1/params.proto";
 import "feeabstraction/absfee/v1beta1/epoch.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
 
 option go_package = "github.com/notional-labs/fee-abstraction/v2/x/feeabs/types";
 
@@ -33,7 +34,15 @@ message MsgFundFeeAbsModuleAccount {
 message MsgFundFeeAbsModuleAccountResponse {}
 
 // Params defines the parameters for the feeabs module.
-message MsgSendQueryIbcDenomTWAP { string from_address = 1; }
+message MsgSendQueryIbcDenomTWAP {
+  string from_address = 1;
+  google.protobuf.Duration duration = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdduration) = true,
+    (gogoproto.jsontag) = "duration,omitempty",
+    (gogoproto.moretags) = "yaml:\"duration\""
+  ];
+}
 
 message MsgSendQueryIbcDenomTWAPResponse {}
 

@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -37,9 +39,10 @@ func (m MsgSendQueryIbcDenomTWAP) ValidateBasic() error {
 	return nil
 }
 
-func NewMsgSendQueryIbcDenomTWAP(fromAddr sdk.AccAddress) *MsgSendQueryIbcDenomTWAP {
+func NewMsgSendQueryIbcDenomTWAP(fromAddr sdk.AccAddress, duration time.Duration) *MsgSendQueryIbcDenomTWAP {
 	return &MsgSendQueryIbcDenomTWAP{
 		FromAddress: fromAddr.String(),
+		Duration:    duration,
 	}
 }
 
