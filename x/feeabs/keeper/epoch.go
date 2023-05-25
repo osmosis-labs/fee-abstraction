@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gogo/protobuf/proto"
+	proto "github.com/cosmos/gogoproto/proto"
 
 	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
 
