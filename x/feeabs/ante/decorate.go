@@ -6,8 +6,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	feeabskeeper "github.com/notional-labs/fee-abstraction/v3/x/feeabs/keeper"
-	feeabstypes "github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+	feeabskeeper "github.com/notional-labs/fee-abstraction/v4/x/feeabs/keeper"
+	feeabstypes "github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 type FeeAbstractionDeductFeeDecorate struct {

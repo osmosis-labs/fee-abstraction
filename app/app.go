@@ -112,15 +112,15 @@ import (
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
 
-	feeabsmodule "github.com/notional-labs/fee-abstraction/v3/x/feeabs"
-	feeabskeeper "github.com/notional-labs/fee-abstraction/v3/x/feeabs/keeper"
-	feeabstypes "github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+	feeabsmodule "github.com/notional-labs/fee-abstraction/v4/x/feeabs"
+	feeabskeeper "github.com/notional-labs/fee-abstraction/v4/x/feeabs/keeper"
+	feeabstypes "github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
 
 	"github.com/strangelove-ventures/packet-forward-middleware/v7/router"
 	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v7/router/keeper"
 	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v7/router/types"
 
-	appparams "github.com/notional-labs/fee-abstraction/v3/app/params"
+	appparams "github.com/notional-labs/fee-abstraction/v4/app/params"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"

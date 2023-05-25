@@ -16,8 +16,8 @@ import (
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/notional-labs/fee-abstraction/v3/app"
-	apphelpers "github.com/notional-labs/fee-abstraction/v3/app/helpers"
+	"github.com/notional-labs/fee-abstraction/v4/app"
+	apphelpers "github.com/notional-labs/fee-abstraction/v4/app/helpers"
 )
 
 type IntegrationTestSuite struct {

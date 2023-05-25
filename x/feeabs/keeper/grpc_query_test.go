@@ -5,7 +5,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")

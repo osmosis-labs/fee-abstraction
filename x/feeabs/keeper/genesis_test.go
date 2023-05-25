@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apphelpers "github.com/notional-labs/fee-abstraction/v3/app/helpers"
-	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+	apphelpers "github.com/notional-labs/fee-abstraction/v4/app/helpers"
+	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 var now = time.Now().UTC()

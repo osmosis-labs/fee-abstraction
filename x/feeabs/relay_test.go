@@ -5,7 +5,7 @@ import (
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/CosmWasm/wasmd/x/wasm/keeper/wasmtesting"
-	wasmibctesting "github.com/notional-labs/fee-abstraction/v3/x/feeabs/ibctesting"
+	wasmibctesting "github.com/notional-labs/fee-abstraction/v4/x/feeabs/ibctesting"
 
 	wasmvm "github.com/CosmWasm/wasmvm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"

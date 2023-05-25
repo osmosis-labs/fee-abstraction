@@ -4,7 +4,7 @@ import (
 	"io/ioutil" //nolint:staticcheck
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 // ParseParamChangeProposalJSON reads and parses a ParamChangeProposalJSON from

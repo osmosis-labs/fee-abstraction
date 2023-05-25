@@ -6,12 +6,12 @@ import (
 	"os"
 	"testing"
 
-	feeapp "github.com/notional-labs/fee-abstraction/v3/app"
+	feeapp "github.com/notional-labs/fee-abstraction/v4/app"
 
 	dbm "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cometbft/cometbft/libs/rand"
-	"github.com/notional-labs/fee-abstraction/v3/app/helpers"
+	"github.com/notional-labs/fee-abstraction/v4/app/helpers"
 	"github.com/stretchr/testify/require"
 
 	"github.com/CosmWasm/wasmd/x/wasm"

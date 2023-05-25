@@ -9,10 +9,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
-	"github.com/notional-labs/fee-abstraction/v3/app"
-	apphelpers "github.com/notional-labs/fee-abstraction/v3/app/helpers"
-	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/keeper"
-	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+	"github.com/notional-labs/fee-abstraction/v4/app"
+	apphelpers "github.com/notional-labs/fee-abstraction/v4/app/helpers"
+	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/keeper"
+	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
 	"github.com/stretchr/testify/suite"
 )
 
