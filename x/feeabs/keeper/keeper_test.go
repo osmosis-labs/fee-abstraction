@@ -27,6 +27,8 @@ type KeeperTestSuite struct {
 	msgServer    types.MsgServer
 }
 
+var valTokens = sdk.TokensFromConsensusPower(42, sdk.DefaultPowerReduction)
+
 func (suite *KeeperTestSuite) SetupTest() {
 	suite.feeAbsApp = apphelpers.Setup(suite.T(), false, 1)
 	suite.ctx = suite.feeAbsApp.BaseApp.NewContext(false, tmproto.Header{

@@ -1,17 +1,11 @@
 package feeabs
 
 import (
-	"net/http"
-
-	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/types/rest"
 
-	// "github.com/cosmos/cosmos-sdk/types/rest"
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
-	// govrest "github.com/cosmos/cosmos-sdk/x/gov/client/rest"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	v1beta1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/keeper"
 
 	cli "github.com/notional-labs/fee-abstraction/v4/x/feeabs/client/cli"
@@ -19,14 +13,14 @@ import (
 )
 
 var (
-	UpdateAddHostZoneClientProposalHandler    = govclient.NewProposalHandler(cli.NewCmdSubmitAddHostZoneProposal, emptyRestHandler)
-	UpdateDeleteHostZoneClientProposalHandler = govclient.NewProposalHandler(cli.NewCmdSubmitDeleteHostZoneProposal, emptyRestHandler)
-	UpdateSetHostZoneClientProposalHandler    = govclient.NewProposalHandler(cli.NewCmdSubmitSetHostZoneProposal, emptyRestHandler)
+	UpdateAddHostZoneClientProposalHandler    = govclient.NewProposalHandler(cli.NewCmdSubmitAddHostZoneProposal)
+	UpdateDeleteHostZoneClientProposalHandler = govclient.NewProposalHandler(cli.NewCmdSubmitDeleteHostZoneProposal)
+	UpdateSetHostZoneClientProposalHandler    = govclient.NewProposalHandler(cli.NewCmdSubmitSetHostZoneProposal)
 )
 
 // NewHostZoneProposal defines the add host zone proposal handler
-func NewHostZoneProposal(k keeper.Keeper) govtypes.Handler {
-	return func(ctx sdk.Context, content govtypes.Content) error {
+func NewHostZoneProposal(k keeper.Keeper) v1beta1types.Handler {
+	return func(ctx sdk.Context, content v1beta1types.Content) error {
 		switch c := content.(type) {
 		case *types.AddHostZoneProposal:
 			return k.AddHostZoneProposal(ctx, c)
@@ -37,14 +31,5 @@ func NewHostZoneProposal(k keeper.Keeper) govtypes.Handler {
 		default:
 			return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized ibc proposal content type: %T", c)
 		}
-	}
-}
-
-func emptyRestHandler(client.Context) govrest.ProposalRESTHandler {
-	return govrest.ProposalRESTHandler{
-		SubRoute: "unsupported",
-		Handler: func(w http.ResponseWriter, r *http.Request) {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, "Legacy REST Routes are not supported")
-		},
 	}
 }

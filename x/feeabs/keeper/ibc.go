@@ -79,21 +79,6 @@ func (k Keeper) SendInterchainQuery(
 	sourcePort string,
 	sourceChannel string,
 ) (uint64, error) {
-	sequence, found := k.channelKeeper.GetNextSequenceSend(ctx, sourcePort, sourceChannel)
-	if !found {
-		return 0, sdkerrors.Wrapf(
-			channeltypes.ErrSequenceSendNotFound,
-			"source port: %s, source channel: %s", sourcePort, sourceChannel,
-		)
-	}
-	sourceChannelEnd, found := k.channelKeeper.GetChannel(ctx, sourcePort, sourceChannel)
-	if !found {
-		return 0, sdkerrors.Wrapf(channeltypes.ErrChannelNotFound, "port ID (%s) channel ID (%s)", sourcePort, sourceChannel)
-	}
-
-	destinationPort := sourceChannelEnd.GetCounterparty().GetPortID()
-	destinationChannel := sourceChannelEnd.GetCounterparty().GetChannelID()
-
 	timeoutTimestamp := ctx.BlockTime().Add(time.Minute * 5).UnixNano()
 	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
 	if !ok {
@@ -106,18 +91,8 @@ func (k Keeper) SendInterchainQuery(
 	}
 	icqPacketData := types.NewInterchainQueryPacketData(data, "")
 
-	packet := channeltypes.NewPacket(
-		icqPacketData.GetBytes(),
-		sequence,
-		sourcePort,
-		sourceChannel,
-		destinationPort,
-		destinationChannel,
-		clienttypes.ZeroHeight(),
-		uint64(timeoutTimestamp),
-	)
-
-	if err := k.channelKeeper.SendPacket(ctx, channelCap, packet); err != nil {
+	sequence, err := k.channelKeeper.SendPacket(ctx, channelCap, sourcePort, sourceChannel, clienttypes.ZeroHeight(), uint64(timeoutTimestamp), icqPacketData.GetBytes())
+	if err != nil {
 		return 0, err
 	}
 

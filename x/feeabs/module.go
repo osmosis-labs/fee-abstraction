@@ -120,21 +120,6 @@ func (am AppModule) Name() string {
 // RegisterInvariants registers the feeabs module invariants.
 func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
 
-// Route return feeabs module message routing (not need anymore because using ADR 031)
-func (am AppModule) Route() sdk.Route {
-	return sdk.Route{}
-}
-
-// QueryRouter return feeabs module query routing key
-func (AppModule) QuerierRoute() string {
-	return types.QuerierRoute
-}
-
-// LegacyQuerierHandler returns feeabs legacy querier handler
-func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
-	return nil
-}
-
 // RegisterServices registers a GRPC query service to respond to the
 // module-specific GRPC queries.
 func (am AppModule) RegisterServices(cfg module.Configurator) {
