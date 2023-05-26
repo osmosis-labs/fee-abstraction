@@ -93,6 +93,9 @@ install: go.sum
 build:
 	go build $(BUILD_FLAGS) -o bin/feeappd ./cmd/feeappd
 
+docker-build-debug:
+	@DOCKER_BUILDKIT=1 docker build -t feeapp:debug -f Dockerfile .
+
 ###############################################################################
 ###                             Interchain test                             ###
 ###############################################################################
