@@ -45,11 +45,9 @@ We modified `MempoolFeeDecorator` so that it can handle ibc-osmosis as fee. If t
 We have an account to manage the ibc-osmosis user used to pay for tx fee. The collected osmosis fee is sent to that account instead of community pool account.
 
 #### Swap accumulated ibc-tokens fee
-##### Swap with Osmosis's tokens
-We use osmosis's ibc hook feature to do this. We basically ibc transfer to the osmosis crosschain swap contract with custom memo to swap the osmosis fee back to customer chain's native-token and ibc transfer back to the customer chain.
+Fee-abstraction will use osmosis's Cross chain Swap (XCS) feature to do this. We basically ibc transfer to the osmosis crosschain swap contract with custom memo to swap the osmosis fee back to customer chain's native-token and ibc transfer back to the customer chain.
 
-##### Swap with others ibc-tokens
-We use [``packet-forward-middleware``](https://github.com/strangelove-ventures/packet-forward-middleware) to do this. The ibc-tokens will be transferred to the host chain with the specific MEMO to forwarding transfer to osmosis crosschain swap contract. After that, Osmosis chain will swap to customer chain's native-token and ibc transfer back to the customer chain.
+Current version of fee-abstraction working with XCSv2
 
 ## Resources
  - Main repo: https://github.com/notional-labs/fee-abstraction

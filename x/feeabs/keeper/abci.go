@@ -29,7 +29,6 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 			return false
 		}
 		epochInfo.CurrentEpochStartHeight = ctx.BlockHeight()
-		// TODO: need create function to this
 
 		if shouldInitialEpochStart {
 			epochInfo.EpochCountingStarted = true
