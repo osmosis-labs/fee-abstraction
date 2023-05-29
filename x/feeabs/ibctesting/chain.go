@@ -105,14 +105,14 @@ func NewTestChain(t *testing.T, coord *Coordinator, chainID string, opts ...wasm
 		Address: acc.GetAddress().String(),
 		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, amount)),
 	}
-
-	app := NewTestingAppDecorator(t, feeabs.SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, opts, balance))
+	
+	app := NewTestingAppDecorator(t, feeabs.SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, opts, chainID, balance))
 
 	// create current header and call begin block
 	header := tmproto.Header{
 		ChainID: chainID,
 		Height:  1,
-		Time:    coord.CurrentTime.UTC(),
+		Time:    coord.CurrentTime.UTC(), 
 	}
 
 	txConfig := app.GetTxConfig()

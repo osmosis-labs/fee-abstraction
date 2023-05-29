@@ -11,7 +11,6 @@ import (
 	"testing"
 	"time"
 
-	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -22,6 +21,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/snapshots"
 	"github.com/cosmos/cosmos-sdk/snapshots/types"
+	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
@@ -80,6 +80,33 @@ func setup(t testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Opt
 	return app, GenesisState{}
 }
 
+func setupWithChainID(t testing.TB, withGenesis bool, invCheckPeriod uint, chainID string, opts ...wasm.Option) (*FeeAbs, GenesisState) {
+	nodeHome := t.TempDir()
+	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
+	snapshotDB, err := dbm.NewGoLevelDB("metadata", snapshotDir)
+	require.NoError(t, err)
+	snapshotStore, err := snapshots.NewStore(snapshotDB, snapshotDir)
+	require.NoError(t, err)
+	baseAppOpts := []func(*baseapp.BaseApp){
+		baseapp.SetChainID(chainID),
+		baseapp.SetSnapshot(snapshotStore, types.SnapshotOptions{KeepRecent: 2}),
+	}
+	db := dbm.NewMemDB()
+	app := NewFeeAbs(
+		log.NewNopLogger(),
+		db, nil, true, map[int64]bool{},
+		nodeHome,
+		invCheckPeriod,
+		MakeEncodingConfig(),
+		EmptyBaseAppOptions{},
+		opts,
+		baseAppOpts...)
+	if withGenesis {
+		return app, NewDefaultGenesisState()
+	}
+	return app, GenesisState{}
+}
+
 // SetupWithGenesisValSet initializes a new FeeAbs with a validator set and genesis accounts
 // that also act as delegators. For simplicity, each validator is bonded with a delegation
 // of one consensus engine unit (10^6) in the default token of the FeeAbs from first genesis
@@ -89,9 +116,10 @@ func SetupWithGenesisValSet(
 	valSet *tmtypes.ValidatorSet,
 	genAccs []authtypes.GenesisAccount,
 	opts []wasm.Option,
+	chainID string,
 	balances ...banktypes.Balance,
 ) *FeeAbs {
-	app, genesisState := setup(t, true, 5, opts...)
+	app, genesisState := setupWithChainID(t, true, 5, chainID, opts...)
 	// set genesis accounts
 	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)
 	genesisState[authtypes.ModuleName] = app.appCodec.MustMarshalJSON(authGenesis)
@@ -152,6 +180,7 @@ func SetupWithGenesisValSet(
 			Validators:      []abci.ValidatorUpdate{},
 			ConsensusParams: DefaultConsensusParams,
 			AppStateBytes:   stateBytes,
+			ChainId:         chainID,
 		},
 	)
 
@@ -162,6 +191,7 @@ func SetupWithGenesisValSet(
 		AppHash:            app.LastCommitID().Hash,
 		ValidatorsHash:     valSet.Hash(),
 		NextValidatorsHash: valSet.Hash(),
+		ChainID:            chainID,
 	}})
 
 	return app
