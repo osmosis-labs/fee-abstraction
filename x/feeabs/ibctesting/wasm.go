@@ -7,7 +7,6 @@ import (
 	"github.com/cometbft/cometbft/libs/rand"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	ibctesting "github.com/cosmos/ibc-go/v7/testing"
-	"github.com/golang/protobuf/proto" //nolint
 	feeabs "github.com/notional-labs/fee-abstraction/v4/app"
 	"github.com/stretchr/testify/require"
 )
@@ -34,13 +33,13 @@ func (chain *TestChain) StoreCode(byteCode []byte) types.MsgStoreCodeResponse {
 	}
 	r, err := chain.SendMsgs(storeMsg)
 	require.NoError(chain.t, err)
-	protoResult := chain.parseSDKResultData(r)
-	require.Len(chain.t, protoResult.Data, 1)
+	require.Len(chain.t, r.MsgResponses, 1)
+	require.NotEmpty(chain.t, r.MsgResponses[0].GetCachedValue())
 	// unmarshal protobuf response from data
-	var pInstResp types.MsgStoreCodeResponse
-	require.NoError(chain.t, pInstResp.Unmarshal(protoResult.Data[0].Data))
+	pInstResp := r.MsgResponses[0].GetCachedValue().(*types.MsgStoreCodeResponse)
 	require.NotEmpty(chain.t, pInstResp.CodeID)
-	return pInstResp
+	require.NotEmpty(chain.t, pInstResp.Checksum)
+	return *pInstResp
 }
 
 func (chain *TestChain) InstantiateContract(codeID uint64, initMsg []byte) sdk.AccAddress {
@@ -55,20 +54,13 @@ func (chain *TestChain) InstantiateContract(codeID uint64, initMsg []byte) sdk.A
 
 	r, err := chain.SendMsgs(instantiateMsg)
 	require.NoError(chain.t, err)
-	protoResult := chain.parseSDKResultData(r)
-	require.Len(chain.t, protoResult.Data, 1)
-
-	var pExecResp types.MsgInstantiateContractResponse
-	require.NoError(chain.t, pExecResp.Unmarshal(protoResult.Data[0].Data))
+	require.Len(chain.t, r.MsgResponses, 1)
+	require.NotEmpty(chain.t, r.MsgResponses[0].GetCachedValue())
+	pExecResp := r.MsgResponses[0].GetCachedValue().(*types.MsgInstantiateContractResponse)
 	a, err := sdk.AccAddressFromBech32(pExecResp.Address)
 	require.NoError(chain.t, err)
-	return a
-}
 
-func (chain *TestChain) parseSDKResultData(r *sdk.Result) sdk.TxMsgData {
-	var protoResult sdk.TxMsgData
-	require.NoError(chain.t, proto.Unmarshal(r.Data, &protoResult))
-	return protoResult
+	return a
 }
 
 // ContractInfo is a helper function to returns the ContractInfo for the given contract address
