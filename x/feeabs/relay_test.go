@@ -3,14 +3,16 @@ package feeabs_test
 import (
 	"testing"
 
+	"cosmossdk.io/math"
+
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/CosmWasm/wasmd/x/wasm/keeper/wasmtesting"
 	wasmibctesting "github.com/notional-labs/fee-abstraction/v4/x/feeabs/ibctesting"
 
+	sdkerrors "cosmossdk.io/errors"
 	wasmvm "github.com/CosmWasm/wasmvm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
 	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
@@ -25,12 +27,12 @@ func TestFromIBCTransferToContract(t *testing.T) {
 	//           then the contract can handle the receiving side of an ics20 transfer
 	//           that was started on chain A via ibc transfer module
 
-	transferAmount := sdk.NewInt(1)
+	transferAmount := math.NewInt(1)
 	specs := map[string]struct {
 		contract             wasmtesting.IBCContractCallbacks
 		setupContract        func(t *testing.T, contract wasmtesting.IBCContractCallbacks, chain *wasmibctesting.TestChain)
-		expChainABalanceDiff sdk.Int
-		expChainBBalanceDiff sdk.Int
+		expChainABalanceDiff math.Int
+		expChainBBalanceDiff math.Int
 	}{
 		"ack": {
 			contract: &ackReceiverContract{},

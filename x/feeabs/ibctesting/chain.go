@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	sdkerrors "cosmossdk.io/errors"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/crypto/tmhash"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -18,7 +19,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
@@ -105,14 +105,14 @@ func NewTestChain(t *testing.T, coord *Coordinator, chainID string, opts ...wasm
 		Address: acc.GetAddress().String(),
 		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, amount)),
 	}
-	
+
 	app := NewTestingAppDecorator(t, feeabs.SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, opts, chainID, balance))
 
 	// create current header and call begin block
 	header := tmproto.Header{
 		ChainID: chainID,
 		Height:  1,
-		Time:    coord.CurrentTime.UTC(), 
+		Time:    coord.CurrentTime.UTC(),
 	}
 
 	txConfig := app.GetTxConfig()
