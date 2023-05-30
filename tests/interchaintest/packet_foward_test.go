@@ -9,12 +9,14 @@ import (
 	"testing"
 	"time"
 
-	transfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
-	interchaintest "github.com/strangelove-ventures/interchaintest/v4"
-	"github.com/strangelove-ventures/interchaintest/v4/chain/cosmos"
-	"github.com/strangelove-ventures/interchaintest/v4/ibc"
-	"github.com/strangelove-ventures/interchaintest/v4/testreporter"
-	"github.com/strangelove-ventures/interchaintest/v4/testutil"
+	sdktypes "github.com/cosmos/cosmos-sdk/types"
+
+	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
+	interchaintest "github.com/strangelove-ventures/interchaintest/v7"
+	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v7/ibc"
+	"github.com/strangelove-ventures/interchaintest/v7/testreporter"
+	"github.com/strangelove-ventures/interchaintest/v7/testutil"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
 )
@@ -307,14 +309,14 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		// Send Gaia uatom to Osmosis
 		gaiaHeight, err := gaia.Height(ctx)
 		require.NoError(t, err)
-		dstAddress := osmosisUser.Bech32Address(osmosis.Config().Bech32Prefix)
+		dstAddress := sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
 		transfer := ibc.WalletAmount{
 			Address: dstAddress,
 			Denom:   gaia.Config().Denom,
 			Amount:  amountToSend,
 		}
 
-		tx, err := gaia.SendIBCTransfer(ctx, channGaiaOsmosis.ChannelID, gaiaUser.KeyName, transfer, ibc.TransferOptions{})
+		tx, err := gaia.SendIBCTransfer(ctx, channGaiaOsmosis.ChannelID, gaiaUser.KeyName(), transfer, ibc.TransferOptions{})
 		require.NoError(t, err)
 		require.NoError(t, tx.Validate())
 
@@ -326,14 +328,14 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		// Send Feeabs stake to Osmosis
 		feeabsHeight, err := feeabs.Height(ctx)
 		require.NoError(t, err)
-		dstAddress = osmosisUser.Bech32Address(osmosis.Config().Bech32Prefix)
+		dstAddress =sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
 		transfer = ibc.WalletAmount{
 			Address: dstAddress,
 			Denom:   feeabs.Config().Denom,
 			Amount:  amountToSend,
 		}
 
-		tx, err = feeabs.SendIBCTransfer(ctx, channFeeabsOsmosis.ChannelID, feeabsUser.KeyName, transfer, ibc.TransferOptions{})
+		tx, err = feeabs.SendIBCTransfer(ctx, channFeeabsOsmosis.ChannelID, feeabsUser.KeyName(), transfer, ibc.TransferOptions{})
 		require.NoError(t, err)
 		require.NoError(t, tx.Validate())
 
@@ -345,14 +347,14 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		// Send Gaia uatom to Feeabs
 		gaiaHeight, err = gaia.Height(ctx)
 		require.NoError(t, err)
-		dstAddress = feeabsUser.Bech32Address(feeabs.Config().Bech32Prefix)
+		dstAddress = sdktypes.MustBech32ifyAddressBytes(feeabs.Config().Bech32Prefix, feeabsUser.Address())
 		transfer = ibc.WalletAmount{
 			Address: dstAddress,
 			Denom:   gaia.Config().Denom,
 			Amount:  amountToSend,
 		}
 
-		tx, err = gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName, transfer, ibc.TransferOptions{})
+		tx, err = gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName(), transfer, ibc.TransferOptions{})
 		require.NoError(t, err)
 		require.NoError(t, tx.Validate())
 
@@ -362,13 +364,13 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		// Setup contract on Osmosis
 		// Store code crosschain Registry
-		crossChainRegistryContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName, "./bytecode/crosschain_registry.wasm")
+		crossChainRegistryContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName(), "./bytecode/crosschain_registry.wasm")
 		require.NoError(t, err)
 		_ = crossChainRegistryContractID
 		// // Instatiate
-		owner := osmosisUser.Bech32Address(osmosis.Config().Bech32Prefix)
+		owner := sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
 		initMsg := fmt.Sprintf("{\"owner\":\"%s\"}", owner)
-		registryContractAddress, err := osmosis.InstantiateContract(ctx, osmosisUser.KeyName, crossChainRegistryContractID, initMsg, true)
+		registryContractAddress, err := osmosis.InstantiateContract(ctx, osmosisUser.KeyName(), crossChainRegistryContractID, initMsg, true)
 		require.NoError(t, err)
 		// Execute
 		msg := fmt.Sprintf("{\"modify_chain_channel_links\": {\"operations\": [{\"operation\": \"set\",\"source_chain\": \"feeabs\",\"destination_chain\": \"osmosis\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"osmosis\",\"destination_chain\": \"feeabs\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"feeabs\",\"destination_chain\": \"gaia\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"gaia\",\"destination_chain\": \"feeabs\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"osmosis\",\"destination_chain\": \"gaia\",\"channel_id\": \"%s\"},{\"operation\": \"set\",\"source_chain\": \"gaia\",\"destination_chain\": \"osmosis\",\"channel_id\": \"%s\"}]}}",
@@ -378,7 +380,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 			channGaiaFeeabs.ChannelID,
 			channOsmosisGaia.ChannelID,
 			channGaiaOsmosis.ChannelID)
-		_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName, registryContractAddress, msg)
+		err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddress, msg)
 		require.NoError(t, err)
 		// Execute
 		msg = `{
@@ -392,23 +394,23 @@ func TestPacketForwardMiddleware(t *testing.T) {
 				]
 			}
 		}`
-		_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName, registryContractAddress, msg)
+		err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddress, msg)
 		require.NoError(t, err)
 
 		// Create pool Osmosis(uatom)/Osmosis(stake) on Osmosis
 		denomTrace := transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisGaia.PortID, channOsmosisGaia.ChannelID, gaia.Config().Denom))
 		uatomOnOsmosis := denomTrace.IBCDenom()
-		osmosisUserBalance, err := osmosis.GetBalance(ctx, osmosisUser.Bech32Address(osmosis.Config().Bech32Prefix), uatomOnOsmosis)
+		osmosisUserBalance, err := osmosis.GetBalance(ctx, sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), uatomOnOsmosis)
 		require.NoError(t, err)
 		require.Equal(t, amountToSend, osmosisUserBalance)
 
 		denomTrace = transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisFeeabs.PortID, channOsmosisFeeabs.ChannelID, feeabs.Config().Denom))
 		stakeOnOsmosis := denomTrace.IBCDenom()
-		osmosisUserBalance, err = osmosis.GetBalance(ctx, osmosisUser.Bech32Address(osmosis.Config().Bech32Prefix), stakeOnOsmosis)
+		osmosisUserBalance, err = osmosis.GetBalance(ctx, sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), stakeOnOsmosis)
 		require.NoError(t, err)
 		require.Equal(t, amountToSend, osmosisUserBalance)
 
-		poolID, err := cosmos.OsmosisCreatePool(osmosis, ctx, osmosisUser.KeyName, cosmos.OsmosisPoolParams{
+		poolID, err := cosmos.OsmosisCreatePool(osmosis, ctx, osmosisUser.KeyName(), cosmos.OsmosisPoolParams{
 			Weights:        fmt.Sprintf("5%s,5%s", stakeOnOsmosis, uatomOnOsmosis),
 			InitialDeposit: fmt.Sprintf("1000000000%s,1000000000%s", stakeOnOsmosis, uatomOnOsmosis),
 			SwapFee:        "0.01",
@@ -419,10 +421,10 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.Equal(t, poolID, "1")
 
 		// store swaprouter
-		swapRouterContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName, "./bytecode/swaprouter.wasm")
+		swapRouterContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName(), "./bytecode/swaprouter.wasm")
 		require.NoError(t, err)
 		// instantiate
-		swapRouterContractAddress, err := osmosis.InstantiateContract(ctx, osmosisUser.KeyName, swapRouterContractID, initMsg, true)
+		swapRouterContractAddress, err := osmosis.InstantiateContract(ctx, osmosisUser.KeyName(), swapRouterContractID, initMsg, true)
 		require.NoError(t, err)
 
 		// execute
@@ -432,16 +434,15 @@ func TestPacketForwardMiddleware(t *testing.T) {
 			poolID,
 			stakeOnOsmosis,
 		)
-		txHash, err := osmosis.ExecuteContract(ctx, osmosisUser.KeyName, swapRouterContractAddress, msg)
+		err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), swapRouterContractAddress, msg)
 		require.NoError(t, err)
-		_ = txHash
 
 		// store xcs
-		xcsContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName, "./bytecode/crosschain_swaps.wasm")
+		xcsContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName(), "./bytecode/crosschain_swaps.wasm")
 		require.NoError(t, err)
 		// instantiate
 		initMsg = fmt.Sprintf("{\"swap_contract\":\"%s\",\"governor\": \"%s\"}", swapRouterContractAddress, owner)
-		xcsContractAddress, err := osmosis.InstantiateContract(ctx, osmosisUser.KeyName, xcsContractID, initMsg, true)
+		xcsContractAddress, err := osmosis.InstantiateContract(ctx, osmosisUser.KeyName(), xcsContractID, initMsg, true)
 		_ = xcsContractAddress
 		require.NoError(t, err)
 		// Swap Feeabs(uatom) to Osmosis
@@ -457,7 +458,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 			Amount:  1_000_000,
 		}
 
-		tx, err = gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName, transfer, ibc.TransferOptions{})
+		tx, err = gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName(), transfer, ibc.TransferOptions{})
 		require.NoError(t, err)
 		require.NoError(t, tx.Validate())
 
@@ -472,7 +473,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		current_directory, _ := os.Getwd()
 		param_change_path := path.Join(current_directory, "proposal", "proposal.json")
 
-		paramTx, err := feeabs.ParamChangeProposal(ctx, feeabsUser.KeyName, param_change_path)
+		paramTx, err := feeabs.ParamChangeProposal(ctx, feeabsUser.KeyName(), param_change_path)
 		require.NoError(t, err, "error submitting param change proposal tx")
 
 		err = feeabs.VoteOnProposalAllValidators(ctx, paramTx.ProposalID, cosmos.ProposalVoteYes)
@@ -482,7 +483,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, paramTx.ProposalID, cosmos.ProposalStatusPassed)
 		require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
-		_, err = cosmos.FeeabsAddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName, "./proposal/host_zone.json")
+		_, err = cosmos.FeeabsAddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName(), "./proposal/host_zone.json")
 		require.NoError(t, err)
 
 		err = feeabs.VoteOnProposalAllValidators(ctx, "2", cosmos.ProposalVoteYes)
@@ -502,7 +503,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		fmt.Printf("Module Account Balances before swap: %v\n", feeabsModule.Balances)
 
-		transferTx, err := cosmos.FeeabsCrossChainSwap(feeabs, ctx, feeabsUser.KeyName, uatomOnFeeabs)
+		transferTx, err := cosmos.FeeabsCrossChainSwap(feeabs, ctx, feeabsUser.KeyName(), uatomOnFeeabs)
 		require.NoError(t, err)
 		_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+25, transferTx.Packet)
 		require.NoError(t, err)

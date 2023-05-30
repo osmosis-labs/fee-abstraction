@@ -4,14 +4,13 @@ import (
 	"os"
 	"strings"
 
-	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/cosmos/cosmos-sdk/types"
 	balancertypes "github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/balancer"
 	gammtypes "github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/types"
-	feeabstype "github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
-	"github.com/strangelove-ventures/interchaintest/v4/chain/cosmos"
-	"github.com/strangelove-ventures/interchaintest/v4/chain/cosmos/wasm"
-	"github.com/strangelove-ventures/interchaintest/v4/ibc"
+	feeabstype "github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
+	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
+	// "github.com/strangelove-ventures/interchaintest/v7/chain/cosmos/wasm"
+	"github.com/strangelove-ventures/interchaintest/v7/ibc"
 )
 
 type QueryFeeabsModuleBalacesResponse struct {
@@ -53,8 +52,6 @@ var (
 		GasAdjustment:       1.1,
 		TrustingPeriod:      "112h",
 		NoHostMount:         false,
-		SkipGenTx:           false,
-		PreGenesis:          nil,
 		ModifyGenesis:       cosmos.ModifyGenesisProposalTime(votingPeriod, maxDepositPeriod),
 		ConfigFileOverrides: nil,
 		EncodingConfig:      feeabsEncoding(),
