@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
@@ -12,7 +12,7 @@ import (
 func ParseAddHostZoneProposalJSON(cdc *codec.LegacyAmino, proposalFile string) (AddHostZoneProposalJSON, error) {
 	proposal := AddHostZoneProposalJSON{}
 
-	contents, err := ioutil.ReadFile(proposalFile)
+	contents, err := os.ReadFile(proposalFile)
 	if err != nil {
 		return proposal, err
 	}
@@ -27,7 +27,7 @@ func ParseAddHostZoneProposalJSON(cdc *codec.LegacyAmino, proposalFile string) (
 func ParseDeleteHostZoneProposalJSON(cdc *codec.LegacyAmino, proposalFile string) (DeleteHostZoneProposalJSON, error) {
 	proposal := DeleteHostZoneProposalJSON{}
 
-	contents, err := ioutil.ReadFile(proposalFile)
+	contents, err := os.ReadFile(proposalFile)
 	if err != nil {
 		return proposal, err
 	}
@@ -42,7 +42,7 @@ func ParseDeleteHostZoneProposalJSON(cdc *codec.LegacyAmino, proposalFile string
 func ParseSetHostZoneProposalJSON(cdc *codec.LegacyAmino, proposalFile string) (SetHostZoneProposalJSON, error) {
 	proposal := SetHostZoneProposalJSON{}
 
-	contents, err := ioutil.ReadFile(proposalFile)
+	contents, err := os.ReadFile(proposalFile)
 	if err != nil {
 		return proposal, err
 	}
