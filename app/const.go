@@ -1,6 +1,5 @@
 package app
 
-// nolint: gosec
 const (
 	appName     = "FeeAbs"
 	upgradeName = "v7-Theta"

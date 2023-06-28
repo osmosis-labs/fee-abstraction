@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"io/ioutil" 
+	"io/ioutil"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"

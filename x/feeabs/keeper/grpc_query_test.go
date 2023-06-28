@@ -112,12 +112,12 @@ func randStringRunes(n int) string {
 	rand.Seed(time.Now().UnixNano())
 	b := make([]rune, n)
 	for i := range b {
-		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+		b[i] = letterRunes[rand.Intn(len(letterRunes))] //nolint:gosec // this is a test
 	}
 	return string(b)
 }
 
 func randUint64Num() uint64 {
 	rand.Seed(time.Now().UnixNano())
-	return rand.Uint64()
+	return rand.Uint64() //nolint:gosec // this is a test
 }

@@ -58,6 +58,7 @@ func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryA
 	params := k.GetParams(ctx)
 	IcqReqs := make([]abci.RequestQuery, len(twapReqs))
 	for i, req := range twapReqs {
+		req := req
 		IcqReqs[i] = abci.RequestQuery{
 			Path: params.OsmosisQueryTwapPath,
 			Data: k.cdc.MustMarshal(&req),
@@ -225,7 +226,7 @@ func (k Keeper) getQueryArithmeticTwapToNowRequest(
 	return icqReqData, index, found
 }
 
-func (k Keeper) GetChannelId(ctx sdk.Context) string {
+func (k Keeper) GetChannelID(ctx sdk.Context) string {
 	store := ctx.KVStore(k.storeKey)
 	return string(store.Get(types.KeyChannelID))
 }

@@ -115,7 +115,6 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 		feeAbstractionPayer = feeGranter
 	}
 
-
 	deductFeesFrom := fadfd.feeabsKeeper.GetFeeAbsModuleAddress()
 	deductFeesFromAcc := fadfd.accountKeeper.GetAccount(ctx, deductFeesFrom)
 	if deductFeesFromAcc == nil {

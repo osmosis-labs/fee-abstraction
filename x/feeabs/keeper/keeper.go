@@ -90,8 +90,8 @@ func (k Keeper) CalculateNativeFromIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins,
 	return sdk.NewCoins(nativeFee), nil
 }
 
-func (k Keeper) SendAbstractionFeeToModuleAccount(ctx sdk.Context, IBCcoins, nativeCoins sdk.Coins, feePayer sdk.AccAddress) error {
-	err := k.bk.SendCoinsFromAccountToModule(ctx, feePayer, types.ModuleName, IBCcoins)
+func (k Keeper) SendAbstractionFeeToModuleAccount(ctx sdk.Context, ibcCoins, nativeCoins sdk.Coins, feePayer sdk.AccAddress) error {
+	err := k.bk.SendCoinsFromAccountToModule(ctx, feePayer, types.ModuleName, ibcCoins)
 	if err != nil {
 		return err
 	}
