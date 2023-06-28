@@ -4,7 +4,6 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
 )
 

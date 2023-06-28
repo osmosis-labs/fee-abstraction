@@ -42,7 +42,6 @@ func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
-
 ) Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -91,7 +90,7 @@ func (k Keeper) CalculateNativeFromIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins,
 	return sdk.NewCoins(nativeFee), nil
 }
 
-func (k Keeper) SendAbstractionFeeToModuleAccount(ctx sdk.Context, IBCcoins sdk.Coins, nativeCoins sdk.Coins, feePayer sdk.AccAddress) error {
+func (k Keeper) SendAbstractionFeeToModuleAccount(ctx sdk.Context, IBCcoins, nativeCoins sdk.Coins, feePayer sdk.AccAddress) error {
 	err := k.bk.SendCoinsFromAccountToModule(ctx, feePayer, types.ModuleName, IBCcoins)
 	if err != nil {
 		return err

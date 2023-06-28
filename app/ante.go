@@ -6,7 +6,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	ibcante "github.com/cosmos/ibc-go/v4/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v4/modules/core/keeper"
-
 	feeabsante "github.com/notional-labs/fee-abstraction/v2/x/feeabs/ante"
 	feeabskeeper "github.com/notional-labs/fee-abstraction/v2/x/feeabs/keeper"
 )

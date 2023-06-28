@@ -12,6 +12,8 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
+	// unnamed import of statik for swagger UI support
+	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -95,29 +97,22 @@ import (
 	porttypes "github.com/cosmos/ibc-go/v4/modules/core/05-port/types"
 	ibchost "github.com/cosmos/ibc-go/v4/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v4/modules/core/keeper"
-
 	"github.com/gorilla/mux"
 	"github.com/gravity-devs/liquidity/x/liquidity"
+	appparams "github.com/notional-labs/fee-abstraction/v2/app/params"
+	feeabsmodule "github.com/notional-labs/fee-abstraction/v2/x/feeabs"
+	feeabskeeper "github.com/notional-labs/fee-abstraction/v2/x/feeabs/keeper"
+	feeabstypes "github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
+	"github.com/strangelove-ventures/packet-forward-middleware/v4/router"
+	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v4/router/keeper"
+	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v4/router/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
-
-	feeabsmodule "github.com/notional-labs/fee-abstraction/v2/x/feeabs"
-	feeabskeeper "github.com/notional-labs/fee-abstraction/v2/x/feeabs/keeper"
-	feeabstypes "github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
-
-	"github.com/strangelove-ventures/packet-forward-middleware/v4/router"
-	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v4/router/keeper"
-	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v4/router/types"
-
-	appparams "github.com/notional-labs/fee-abstraction/v2/app/params"
-
-	// unnamed import of statik for swagger UI support
-	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
 )
 
 var (
@@ -191,7 +186,7 @@ var (
 // FeeAbs extends an ABCI application, but with most of its parameters exported.
 // They are exported for convenience in creating helper functions, as object
 // capabilities aren't needed for testing.
-type FeeAbs struct { // nolint: golint
+type FeeAbs struct { //nolint: golint
 	*baseapp.BaseApp
 	legacyAmino       *codec.LegacyAmino
 	appCodec          codec.Codec

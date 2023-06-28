@@ -81,7 +81,7 @@ func NewInterchainQueryPacketData(data []byte, memo string) InterchainQueryPacke
 	}
 }
 
-// GetBytes returns the JSON marshalled interchain query packet data.
+// GetBytes returns the JSON marshaled interchain query packet data.
 func (p InterchainQueryPacketData) GetBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&p))
 }

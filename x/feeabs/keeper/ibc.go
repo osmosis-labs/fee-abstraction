@@ -283,7 +283,6 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 		return nil, fmt.Errorf("bad msg %v", err.Error())
 	}
 	return k.transferKeeper.Transfer(sdk.WrapSDKContext(ctx), transferMsg)
-
 }
 
 func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {

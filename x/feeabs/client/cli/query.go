@@ -113,6 +113,7 @@ func GetCmdQueryHostChainConfig() *cobra.Command {
 
 	return cmd
 }
+
 func GetCmdQueryAllHostChainConfig() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all-host-chain-config [ibc-denom]",

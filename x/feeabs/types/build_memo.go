@@ -46,13 +46,15 @@ type ForwardMetadata struct {
 	Next string `json:"next,omitempty"`
 }
 
-func NewOsmosisSwapMsg(inputCoin sdk.Coin, outputDenom string, slippagePercentage string, windowSeconds uint64, receiver string) OsmosisSwapMsg {
+func NewOsmosisSwapMsg(inputCoin sdk.Coin, outputDenom, slippagePercentage string, windowSeconds uint64, receiver string) OsmosisSwapMsg {
 	swap := Swap{
 		OutPutDenom: outputDenom,
 		Slippage: Twap{
-			Twap: TwapRouter{SlippagePercentage: slippagePercentage,
-				WindowSeconds: windowSeconds,
-			}},
+			Twap: TwapRouter{
+				SlippagePercentage: slippagePercentage,
+				WindowSeconds:      windowSeconds,
+			},
+		},
 		Receiver: receiver,
 	}
 
@@ -71,16 +73,16 @@ func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string) (string, error) {
 	memo.Wasm["contract"] = contractAddr
 	memo.Wasm["msg"] = msg
 
-	memo_marshalled, err := json.Marshal(&memo)
+	memo_marshaled, err := json.Marshal(&memo)
 	if err != nil {
 		return "", err
 	}
-	return string(memo_marshalled), nil
+	return string(memo_marshaled), nil
 }
 
 // TODO: write test for this
 // BuildNextMemo create memo for IBC hook, this execute `CrossChainSwap contract`
-func BuildCrossChainSwapMemo(outputDenom string, contractAddress string, receiverAddress string, chainName string) (string, error) {
+func BuildCrossChainSwapMemo(outputDenom, contractAddress, receiverAddress, chainName string) (string, error) {
 	receiver := fmt.Sprintf("%s/%s", chainName, receiverAddress)
 	swap := Swap{
 		OutPutDenom: outputDenom,

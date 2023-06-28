@@ -29,7 +29,7 @@ type FeegrantKeeper interface {
 	UseGrantedFees(ctx sdk.Context, granter, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) error
 }
 
-// StakingKeeper define the expected interface to retrive staking denom
+// StakingKeeper define the expected interface to retrieve staking denom
 type StakingKeeper interface {
 	// BondDenom - Bondable coin denomination
 	BondDenom(ctx sdk.Context) (res string)
