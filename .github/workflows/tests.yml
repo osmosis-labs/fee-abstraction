@@ -1,22 +1,16 @@
-on:
-  pull_request:
-  push:
-    branches:
-      - main
-      
-name: Tests
-
+# github.com/mvdan/github-actions-golang
+on: [push, pull_request]
+name: Test
 jobs:
   test:
-    runs-on: ubuntu-latest
-    name: test
+    strategy:
+      matrix:
+        go-version: [1.19.x, 1.20.x]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-      - name: Install Go
-        uses: actions/setup-go@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
         with:
-          go-version: 1.19
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Test
-        run: go test ./...
-  
+          go-version: ${{ matrix.go-version }}
+      - run: go test ./...
