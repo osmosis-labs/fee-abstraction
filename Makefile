@@ -17,7 +17,7 @@ TM_VERSION := $(shell go list -m github.com/tendermint/tendermint | sed 's:.* ::
 DOCKER := $(shell which docker)
 DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace bufbuild/buf:1.0.0-rc8
 BUILDDIR ?= $(CURDIR)/build
-HTTPS_GIT := https://github.com/notional-labs/fee-abstraction.git
+HTTPS_GIT := https://github.com/osmosis-labs/fee-abstraction.git
 
 export GO111MODULE = on
 
@@ -122,7 +122,7 @@ ictest-all: ictest-basic ictest-ibc ictest-packet-forward
 ###############################################################################
 
 protoVer=v0.8
-protoImageName=ghcr.io/notional-labs/fa-proto-gen:$(protoVer)
+protoImageName=ghcr.io/osmosis-labs/fee-abstraction/fa-proto-gen:$(protoVer)
 containerProtoGen=fa-proto-gen-$(protoVer)
 containerProtoFmt=fa-proto-fmt-$(protoVer)
 

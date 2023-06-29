@@ -1,4 +1,4 @@
-module github.com/notional-labs/fee-abstraction/tests/interchaintest
+module github.com/osmosis-labs/fee-abstraction/tests/interchaintest
 
 go 1.19
 
@@ -9,7 +9,7 @@ require (
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
-	github.com/notional-labs/fee-abstraction/v2 v2.0.1
+	github.com/osmosis-labs/fee-abstraction/v2 v2.0.1
 	github.com/strangelove-ventures/interchaintest/v4 v4.0.0-20230331040355-5d08aab13017
 	github.com/stretchr/testify v1.8.2
 	go.uber.org/zap v1.23.0
@@ -190,8 +190,8 @@ replace (
 	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.45.13-ics
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	// For this nested module, you always want to replace the parent reference with the current worktree.
-	github.com/notional-labs/fee-abstraction => ../../
-	github.com/strangelove-ventures/interchaintest/v4 => github.com/notional-labs/interchaintest/v4 v4.0.1-0.20230426092153-0a643db3c6b2
+	github.com/osmosis-labs/fee-abstraction => ../../
+	github.com/strangelove-ventures/interchaintest/v4 => github.com/osmosis-labs/interchaintest/v4 v4.0.1-0.20230426092153-0a643db3c6b2
 
 	// use informal system fork of tendermint
 	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.26
