@@ -1,5 +1,5 @@
 # github.com/mvdan/github-actions-golang
-on: [push, pull_request]
+on: [pull_request]
 name: Test
 jobs:
   test:
