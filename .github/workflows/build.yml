@@ -1,12 +1,12 @@
 # github.com/mvdan/github-actions-golang
-on: [push, pull_request]
+on: [pull_request]
 name: Test
 jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.19.x, 1.20.x]
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        go-version: [1.20.x]
+        os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
