@@ -1,5 +1,5 @@
 # Fee Abstraction
-
+## This repo has been moved to https://github.com/osmosis-labs/fee-abstraction
 ## Context 
 
 The concrete use cases which motivated this module include:
@@ -49,6 +49,3 @@ Fee-abstraction will use osmosis's Cross chain Swap (XCS) feature to do this. We
 
 Current version of fee-abstraction working with XCSv2
 
-## Resources
- - Main repo: https://github.com/notional-labs/fee-abstraction
- - Contract repo: https://github.com/notional-labs/feeabstraction-contract
