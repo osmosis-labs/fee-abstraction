@@ -7,7 +7,7 @@ Licensed Work: Fee Abstraction Module
 The Licensed Work is © 2023 Osmosis Foundation Ltd.
 
 ## Additional Use Grant
-Implementation of the Fee Abstraction Module is permitted for production use only when such implementation is integrated exclusively with the Osmosis blockchain protocol. Any other uses must be identified and defined in a governance proposal passed by the Osmosis DAO, which can be found at [https://www.mintscan.io/osmosis/proposals](https://www.mintscan.io/osmosis/proposals) or other blockchain explorer.
+Implementation of the Fee Abstraction Module is permitted for production use only when such implementation interacts exclusively with the Osmosis blockchain protocol. Any other uses must be identified and defined in a governance proposal passed by the Osmosis DAO, which can be found at [https://www.mintscan.io/osmosis/proposals](https://www.mintscan.io/osmosis/proposals) or other blockchain explorer.
 
 ## Change Date
 For the Fee Abstraction Module, the change date is the earlier of two years from the date of adoption of the governance proposal implementing this change by the Osmosis DAO or a date specified by the adoption of a governance proposal setting the change date by the Osmosis DAO, which can be found at [https://www.mintscan.io/osmosis/proposals](https://www.mintscan.io/osmosis/proposals) or other blockchain explorer.
