@@ -20,7 +20,7 @@ The implememtation also uses Osmosis swap router and async-icq module which are 
 Fee-abs mechanism in a nutshell:
  1. Pulling `twap data` and update exchange rate: 
  - Periodically pulling `twap data` from osmosis by ibc-ing to `async-icq` module on Osmosis, this `twap data` will update the exchange rate of osmosis to customer chain's native token. 
- 2. Handling txs with ibc-osmosis fee: 
+ 2. Handling txs with ibc-token fee: 
  - The exchange rate is used to calculate the amount of ibc-token needed for tx fee allowing users to pay ibc-token for tx fee instead of chain's native token.
  3. Swap accumulated ibc-token fee:
  - The collected ibc-token users use for tx fee is periodically swaped back to customer chain's native token using osmosis.
