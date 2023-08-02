@@ -191,7 +191,7 @@ replace (
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	// For this nested module, you always want to replace the parent reference with the current worktree.
 	github.com/osmosis-labs/fee-abstraction => ../../
-	github.com/strangelove-ventures/interchaintest/v4 => github.com/osmosis-labs/interchaintest/v4 v4.0.1-0.20230426092153-0a643db3c6b2
+	github.com/strangelove-ventures/interchaintest/v4 => github.com/notional-labs/interchaintest/v4 v4.0.1-0.20230426092153-0a643db3c6b2
 
 	// use informal system fork of tendermint
 	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.26
