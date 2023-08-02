@@ -10,6 +10,7 @@ import (
 	"time"
 
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
 
 	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 	interchaintest "github.com/strangelove-ventures/interchaintest/v7"
@@ -328,7 +329,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		// Send Feeabs stake to Osmosis
 		feeabsHeight, err := feeabs.Height(ctx)
 		require.NoError(t, err)
-		dstAddress =sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
+		dstAddress = sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
 		transfer = ibc.WalletAmount{
 			Address: dstAddress,
 			Denom:   feeabs.Config().Denom,
@@ -380,7 +381,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 			channGaiaFeeabs.ChannelID,
 			channOsmosisGaia.ChannelID,
 			channGaiaOsmosis.ChannelID)
-		err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddress, msg)
+		_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddress, msg)
 		require.NoError(t, err)
 		// Execute
 		msg = `{
@@ -394,7 +395,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 				]
 			}
 		}`
-		err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddress, msg)
+		_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddress, msg)
 		require.NoError(t, err)
 
 		// Create pool Osmosis(uatom)/Osmosis(stake) on Osmosis
@@ -434,7 +435,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 			poolID,
 			stakeOnOsmosis,
 		)
-		err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), swapRouterContractAddress, msg)
+		_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), swapRouterContractAddress, msg)
 		require.NoError(t, err)
 
 		// store xcs
@@ -473,7 +474,10 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		current_directory, _ := os.Getwd()
 		param_change_path := path.Join(current_directory, "proposal", "proposal.json")
 
-		paramTx, err := feeabs.ParamChangeProposal(ctx, feeabsUser.KeyName(), param_change_path)
+		changeParamProposal, err := paramsutils.ParseParamChangeProposalJSON(feeabs.Config().EncodingConfig.Amino, param_change_path)
+		require.NoError(t, err)
+
+		paramTx, err := feeabs.ParamChangeProposal(ctx, feeabsUser.KeyName(), &changeParamProposal)
 		require.NoError(t, err, "error submitting param change proposal tx")
 
 		err = feeabs.VoteOnProposalAllValidators(ctx, paramTx.ProposalID, cosmos.ProposalVoteYes)

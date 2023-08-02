@@ -1,14 +1,20 @@
 package interchaintest
 
 import (
+	"encoding/json"
+	"fmt"
 	"os"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module/testutil"
+	"github.com/icza/dyno"
 	balancertypes "github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/balancer"
 	gammtypes "github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/types"
 	feeabstype "github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos/wasm"
+
 	// "github.com/strangelove-ventures/interchaintest/v7/chain/cosmos/wasm"
 	"github.com/strangelove-ventures/interchaintest/v7/ibc"
 )
@@ -52,7 +58,7 @@ var (
 		GasAdjustment:       1.1,
 		TrustingPeriod:      "112h",
 		NoHostMount:         false,
-		ModifyGenesis:       cosmos.ModifyGenesisProposalTime(votingPeriod, maxDepositPeriod),
+		ModifyGenesis:       modifyGenesisShortProposals(votingPeriod, maxDepositPeriod),
 		ConfigFileOverrides: nil,
 		EncodingConfig:      feeabsEncoding(),
 	}
@@ -65,7 +71,7 @@ var (
 
 // feeabsEncoding registers the feeabs specific module codecs so that the associated types and msgs
 // will be supported when writing to the blocksdb sqlite database.
-func feeabsEncoding() *simappparams.EncodingConfig {
+func feeabsEncoding() *testutil.TestEncodingConfig {
 	cfg := wasm.WasmEncoding()
 
 	// register custom types
@@ -74,7 +80,7 @@ func feeabsEncoding() *simappparams.EncodingConfig {
 	return cfg
 }
 
-func osmosisEncoding() *simappparams.EncodingConfig {
+func osmosisEncoding() *testutil.TestEncodingConfig {
 	cfg := wasm.WasmEncoding()
 
 	gammtypes.RegisterInterfaces(cfg.InterfaceRegistry)
@@ -98,4 +104,27 @@ func GetDockerImageInfo() (repo, version string) {
 	// github converts / to - for pushed docker images
 	branchVersion = strings.ReplaceAll(branchVersion, "/", "-")
 	return repo, branchVersion
+}
+
+func modifyGenesisShortProposals(votingPeriod string, maxDepositPeriod string) func(ibc.ChainConfig, []byte) ([]byte, error) {
+	return func(chainConfig ibc.ChainConfig, genbz []byte) ([]byte, error) {
+		g := make(map[string]interface{})
+		if err := json.Unmarshal(genbz, &g); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal genesis file: %w", err)
+		}
+		if err := dyno.Set(g, votingPeriod, "app_state", "gov", "voting_params", "voting_period"); err != nil {
+			return nil, fmt.Errorf("failed to set voting period in genesis json: %w", err)
+		}
+		if err := dyno.Set(g, maxDepositPeriod, "app_state", "gov", "deposit_params", "max_deposit_period"); err != nil {
+			return nil, fmt.Errorf("failed to set voting period in genesis json: %w", err)
+		}
+		if err := dyno.Set(g, chainConfig.Denom, "app_state", "gov", "deposit_params", "min_deposit", 0, "denom"); err != nil {
+			return nil, fmt.Errorf("failed to set voting period in genesis json: %w", err)
+		}
+		out, err := json.Marshal(g)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal genesis bytes to json: %w", err)
+		}
+		return out, nil
+	}
 }
