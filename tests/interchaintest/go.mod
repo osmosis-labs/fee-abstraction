@@ -3,7 +3,7 @@ module github.com/osmosis-labs/fee-abstraction/tests/interchaintest
 go 1.19
 
 require (
-	github.com/cosmos/cosmos-proto v1.0.0-beta.2
+	github.com/cosmos/cosmos-proto v1.0.0-alpha8
 	github.com/cosmos/cosmos-sdk v0.45.14
 	github.com/cosmos/ibc-go/v4 v4.3.0
 	github.com/gogo/protobuf v1.3.3
@@ -11,9 +11,9 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/osmosis-labs/fee-abstraction/v2 v2.0.1
 	github.com/strangelove-ventures/interchaintest/v4 v4.0.0-20230331040355-5d08aab13017
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.1
 	go.uber.org/zap v1.23.0
-	google.golang.org/genproto v0.0.0-20230125152338-dcaf20b6aeaa
+	google.golang.org/genproto v0.0.0-20221024183307-1bc688fe9f3e
 	google.golang.org/grpc v1.53.0
 )
 
