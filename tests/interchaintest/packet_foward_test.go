@@ -73,8 +73,8 @@ func TestPacketForwardMiddleware(t *testing.T) {
 			Name:    "osmosis",
 			Version: "v15.0.0",
 			ChainConfig: ibc.ChainConfig{
-				GasPrices:      "0.005uosmo",
-				EncodingConfig: osmosisEncoding(),
+				GasPrices: "0.005uosmo",
+				// EncodingConfig: osmosisEncoding(),
 			},
 			GasAdjustment: &gasAdjustment,
 			NumValidators: &numVals,
