@@ -115,9 +115,9 @@ import (
 	feeabskeeper "github.com/notional-labs/fee-abstraction/v4/x/feeabs/keeper"
 	feeabstypes "github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
 
-	"github.com/strangelove-ventures/packet-forward-middleware/v7/router"
-	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v7/router/keeper"
-	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v7/router/types"
+	"github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router"
+	routerkeeper "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router/keeper"
+	routertypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router/types"
 
 	appparams "github.com/notional-labs/fee-abstraction/v4/app/params"
 
