@@ -2,7 +2,7 @@ package cli
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	govv1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -110,28 +110,22 @@ func NewCmdSubmitAddHostZoneProposal() *cobra.Command {
 				return err
 			}
 
+			from := clientCtx.GetFromAddress()
 			content := types.NewAddHostZoneProposal(
 				proposal.Title, proposal.Description, proposal.HostChainFeeAbsConfig,
 			)
-
-			from := clientCtx.GetFromAddress()
-			legacyContent, err := govv1types.NewLegacyContent(content, from.String())
-			if err != nil {
-				return err
-			}
 
 			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)
 			if err != nil {
 				return err
 			}
 
-			msg, err := govv1types.NewMsgSubmitProposal([]sdk.Msg{legacyContent}, deposit, from.String(), "", "", "")
+			msg, err := govv1beta1.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {
 				return err
 			}
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-
 		},
 	}
 
@@ -155,28 +149,22 @@ func NewCmdSubmitDeleteHostZoneProposal() *cobra.Command {
 				return err
 			}
 
+			from := clientCtx.GetFromAddress()
 			content := types.NewDeleteHostZoneProposal(
 				proposal.Title, proposal.Description, proposal.IbcDenom,
 			)
-
-			from := clientCtx.GetFromAddress()
-			legacyContent, err := govv1types.NewLegacyContent(content, from.String())
-			if err != nil {
-				return err
-			}
 
 			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)
 			if err != nil {
 				return err
 			}
 
-			msg, err := govv1types.NewMsgSubmitProposal([]sdk.Msg{legacyContent}, deposit, from.String(), "", "", "")
+			msg, err := govv1beta1.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {
 				return err
 			}
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-
 		},
 	}
 
@@ -200,28 +188,22 @@ func NewCmdSubmitSetHostZoneProposal() *cobra.Command {
 				return err
 			}
 
+			from := clientCtx.GetFromAddress()
 			content := types.NewSetHostZoneProposal(
 				proposal.Title, proposal.Description, proposal.HostChainFeeAbsConfig,
 			)
-
-			from := clientCtx.GetFromAddress()
-			legacyContent, err := govv1types.NewLegacyContent(content, from.String())
-			if err != nil {
-				return err
-			}
 
 			deposit, err := sdk.ParseCoinsNormalized(proposal.Deposit)
 			if err != nil {
 				return err
 			}
 
-			msg, err := govv1types.NewMsgSubmitProposal([]sdk.Msg{legacyContent}, deposit, from.String(), "", "", "")
+			msg, err := govv1beta1.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {
 				return err
 			}
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-
 		},
 	}
 
