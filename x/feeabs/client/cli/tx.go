@@ -3,6 +3,7 @@ package cli
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govv1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	"github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -125,7 +126,7 @@ func NewCmdSubmitAddHostZoneProposal() *cobra.Command {
 				return err
 			}
 
-			msg, err := govv1types.NewMsgSubmitProposal([]sdk.Msg{legacyContent}, deposit, from.String(), "", "", "")
+			msg, err := v1beta1.NewMsgSubmitProposal([]sdk.Msg{legacyContent}, deposit, from.String(), "", "", "")
 			if err != nil {
 				return err
 			}

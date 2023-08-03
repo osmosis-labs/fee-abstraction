@@ -9,8 +9,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/icza/dyno"
-	balancertypes "github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/balancer"
-	gammtypes "github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/types"
 	feeabstype "github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos/wasm"
@@ -83,8 +81,8 @@ func feeabsEncoding() *testutil.TestEncodingConfig {
 func osmosisEncoding() *testutil.TestEncodingConfig {
 	cfg := wasm.WasmEncoding()
 
-	gammtypes.RegisterInterfaces(cfg.InterfaceRegistry)
-	balancertypes.RegisterInterfaces(cfg.InterfaceRegistry)
+	// gammtypes.RegisterInterfaces(cfg.InterfaceRegistry)
+	// balancertypes.RegisterInterfaces(cfg.InterfaceRegistry)
 
 	return cfg
 }
@@ -112,13 +110,13 @@ func modifyGenesisShortProposals(votingPeriod string, maxDepositPeriod string) f
 		if err := json.Unmarshal(genbz, &g); err != nil {
 			return nil, fmt.Errorf("failed to unmarshal genesis file: %w", err)
 		}
-		if err := dyno.Set(g, votingPeriod, "app_state", "gov", "voting_params", "voting_period"); err != nil {
+		if err := dyno.Set(g, votingPeriod, "app_state", "gov", "params", "voting_period"); err != nil {
 			return nil, fmt.Errorf("failed to set voting period in genesis json: %w", err)
 		}
-		if err := dyno.Set(g, maxDepositPeriod, "app_state", "gov", "deposit_params", "max_deposit_period"); err != nil {
+		if err := dyno.Set(g, maxDepositPeriod, "app_state", "gov", "params", "max_deposit_period"); err != nil {
 			return nil, fmt.Errorf("failed to set voting period in genesis json: %w", err)
 		}
-		if err := dyno.Set(g, chainConfig.Denom, "app_state", "gov", "deposit_params", "min_deposit", 0, "denom"); err != nil {
+		if err := dyno.Set(g, chainConfig.Denom, "app_state", "gov", "params", "min_deposit", 0, "denom"); err != nil {
 			return nil, fmt.Errorf("failed to set voting period in genesis json: %w", err)
 		}
 		out, err := json.Marshal(g)
