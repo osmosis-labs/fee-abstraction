@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -12,11 +13,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/client/cli"
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/keeper"
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
+	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/client/cli"
+	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/keeper"
+	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
 	"github.com/spf13/cobra"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 var (
@@ -80,7 +80,6 @@ func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, serveM
 }
 
 // GetTxCmd returns the feeabs module's root tx command.
-// TODO: need to implement
 func (a AppModuleBasic) GetTxCmd() *cobra.Command {
 	return cli.NewTxCmd()
 }
@@ -120,21 +119,6 @@ func (am AppModule) Name() string {
 // RegisterInvariants registers the feeabs module invariants.
 func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
 
-// Route return feeabs module message routing (not need anymore because using ADR 031)
-func (am AppModule) Route() sdk.Route {
-	return sdk.Route{}
-}
-
-// QueryRouter return feeabs module query routing key
-func (AppModule) QuerierRoute() string {
-	return types.QuerierRoute
-}
-
-// LegacyQuerierHandler returns feeabs legacy querier handler
-func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
-	return nil
-}
-
 // RegisterServices registers a GRPC query service to respond to the
 // module-specific GRPC queries.
 func (am AppModule) RegisterServices(cfg module.Configurator) {
@@ -159,14 +143,12 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 }
 
 // BeginBlock returns the begin blocker for the feeabs module.
-// TODO: implement if needed
 func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 	am.keeper.BeginBlocker(ctx)
 }
 
 // EndBlock returns the end blocker for the feeabs module. It returns no validator
 // updates.
-// TODO: implement if needed
 func (AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
 	return []abci.ValidatorUpdate{}
 }

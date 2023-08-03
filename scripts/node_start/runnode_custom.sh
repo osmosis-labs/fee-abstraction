@@ -2,7 +2,7 @@
 # Run this script to quickly install, setup, and run the current version of juno without docker.
 # ./scripts/test_node.sh [clean|c]
 
-KEY="feeapp1"
+KEY="test"
 CHAINID="feeappd-t1"
 MONIKER="localfeeappd"
 KEYALGO="secp256k1"
@@ -25,7 +25,7 @@ from_scratch () {
   # juno1efd63aw40lxf3n4mhf7dzhjkr453axurv2zdzk
   echo "decorate bright ozone fork gallery riot bus exhaust worth way bone indoor calm squirrel merry zero scheme cotton until shop any excess stage laundry" | feeappd keys add $KEY --keyring-backend $KEYRING --algo $KEYALGO --recover
   # juno1hj5fveer5cjtn4wd6wstzugjfdxzl0xps73ftl
-  echo "wealth flavor believe regret funny network recall kiss grape useless pepper cram hint member few certain unveil rather brick bargain curious require crowd raise" | feeappd keys add feeacc --keyring-backend $KEYRING --algo $KEYALGO --recover
+  echo "wealth flavor believe regret funny network recall kiss grape useless pepper cram hint member few certain unveil rather brick bargain curious require crowd raise" | feeappd keys add myaccount --keyring-backend $KEYRING --algo $KEYALGO --recover
 
   feeappd init $MONIKER --chain-id $CHAINID
 
@@ -37,10 +37,10 @@ from_scratch () {
 
   # Set gas limit in genesis
   update_test_genesis '.consensus_params["block"]["max_gas"]="100000000"'
-  update_test_genesis '.app_state["gov"]["voting_params"]["voting_period"]="45s"'
+  update_test_genesis '.app_state["gov"]["params"]["voting_period"]="45s"'
 
   update_test_genesis '.app_state["staking"]["params"]["bond_denom"]="stake"'
-  update_test_genesis '.app_state["bank"]["params"]["send_enabled"]=[{"denom": "stake","enabled": true}]'
+  #update_test_genesis '.app_state["bank"]["params"]["send_enabled"]=[{"denom": "stake","enabled": true}]'
   # update_test_genesis '.app_state["staking"]["params"]["min_commission_rate"]="0.100000000000000000"' # sdk 46 only
 
   update_test_genesis '.app_state["mint"]["params"]["mint_denom"]="stake"'
@@ -52,10 +52,10 @@ from_scratch () {
   update_test_genesis '.app_state["feeshare"]["params"]["allowed_denoms"]=["stake"]'
 
   # Allocate genesis accounts
-  feeappd add-genesis-account $KEY 10000000000000stake,100000000000000utest --keyring-backend $KEYRING
-  feeappd add-genesis-account feeacc 10000000000000stake,100000000000000utest --keyring-backend $KEYRING
+  feeappd add-genesis-account $KEY 10000000000000000000stake,100000000000000utest --keyring-backend $KEYRING
+  feeappd add-genesis-account myaccount 1000000000stake,100000000000000utest --keyring-backend $KEYRING
 
-  feeappd gentx $KEY 10000000000000stake --keyring-backend $KEYRING --chain-id $CHAINID
+  feeappd gentx $KEY 10000000000000000000stake --keyring-backend $KEYRING --chain-id $CHAINID
 
   # Collect genesis tx
   feeappd collect-gentxs
@@ -76,7 +76,7 @@ echo "Starting node..."
 sed -i '/laddr = "tcp:\/\/127.0.0.1:26657"/c\laddr = "tcp:\/\/0.0.0.0:26657"' ~/.feeappd/config/config.toml
 sed -i 's/cors_allowed_origins = \[\]/cors_allowed_origins = \["\*"\]/g' ~/.feeappd/config/config.toml
 sed -i 's/enable = false/enable = true/g' ~/.feeappd/config/app.toml
-sed -i '/address = "tcp:\/\/0.0.0.0:1317"/c\address = "tcp:\/\/0.0.0.0:1318"' ~/.feeappd/config/app.toml
+sed -i '/address = "tcp:\/\/localhost:1317"/c\address = "tcp:\/\/localhost:1318"' ~/.feeappd/config/app.toml
 
 feeappd config node tcp://0.0.0.0:2241
-feeappd start --pruning=nothing  --minimum-gas-prices=0.0001stake --p2p.laddr tcp://0.0.0.0:2240 --rpc.laddr tcp://0.0.0.0:2241 --grpc.address 0.0.0.0:2242 --grpc-web.address 0.0.0.0:2243
+feeappd start --pruning=nothing  --minimum-gas-prices=0stake --p2p.laddr tcp://0.0.0.0:2240 --rpc.laddr tcp://0.0.0.0:2241 --grpc.address 0.0.0.0:2242 --grpc-web.address 0.0.0.0:2243

@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"testing"
 
+	tmrand "github.com/cometbft/cometbft/libs/rand"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
-	"github.com/notional-labs/fee-abstraction/v2/app"
-	apphelpers "github.com/notional-labs/fee-abstraction/v2/app/helpers"
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/keeper"
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
+	"github.com/notional-labs/fee-abstraction/v4/app"
+	apphelpers "github.com/notional-labs/fee-abstraction/v4/app/helpers"
+	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/keeper"
+	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
 	"github.com/stretchr/testify/suite"
-	tmrand "github.com/tendermint/tendermint/libs/rand"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 
 type KeeperTestSuite struct {
@@ -26,6 +26,8 @@ type KeeperTestSuite struct {
 	queryClient  types.QueryClient
 	msgServer    types.MsgServer
 }
+
+var valTokens = sdk.TokensFromConsensusPower(42, sdk.DefaultPowerReduction)
 
 func (suite *KeeperTestSuite) SetupTest() {
 	suite.feeAbsApp = apphelpers.Setup(suite.T(), false, 1)

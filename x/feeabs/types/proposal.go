@@ -1,13 +1,13 @@
 package types
 
 import (
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	v1beta1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 )
 
 var (
-	_ govtypes.Content = &AddHostZoneProposal{}
-	_ govtypes.Content = &DeleteHostZoneProposal{}
-	_ govtypes.Content = &SetHostZoneProposal{}
+	_ v1beta1types.Content = &AddHostZoneProposal{}
+	_ v1beta1types.Content = &DeleteHostZoneProposal{}
+	_ v1beta1types.Content = &SetHostZoneProposal{}
 )
 
 const (
@@ -18,13 +18,13 @@ const (
 )
 
 func init() {
-	govtypes.RegisterProposalType(ProposalTypeAddHostZone)
-	govtypes.RegisterProposalType(ProposalTypeDeleteHostZone)
-	govtypes.RegisterProposalType(ProposalTypeSetHostZone)
+	v1beta1types.RegisterProposalType(ProposalTypeAddHostZone)
+	v1beta1types.RegisterProposalType(ProposalTypeDeleteHostZone)
+	v1beta1types.RegisterProposalType(ProposalTypeSetHostZone)
 }
 
 // NewClientUpdateProposal creates a new client update proposal.
-func NewAddHostZoneProposal(title, description string, config HostChainFeeAbsConfig) govtypes.Content {
+func NewAddHostZoneProposal(title, description string, config HostChainFeeAbsConfig) v1beta1types.Content {
 	return &AddHostZoneProposal{
 		Title:           title,
 		Description:     description,
@@ -32,7 +32,7 @@ func NewAddHostZoneProposal(title, description string, config HostChainFeeAbsCon
 	}
 }
 
-func NewDeleteHostZoneProposal(title, description, ibc_denom string) govtypes.Content {
+func NewDeleteHostZoneProposal(title, description, ibc_denom string) v1beta1types.Content {
 	return &DeleteHostZoneProposal{
 		Title:       title,
 		Description: description,
@@ -40,7 +40,7 @@ func NewDeleteHostZoneProposal(title, description, ibc_denom string) govtypes.Co
 	}
 }
 
-func NewSetHostZoneProposal(title, description string, config HostChainFeeAbsConfig) govtypes.Content {
+func NewSetHostZoneProposal(title, description string, config HostChainFeeAbsConfig) v1beta1types.Content {
 	return &SetHostZoneProposal{
 		Title:           title,
 		Description:     description,
@@ -62,7 +62,7 @@ func (ahzp *AddHostZoneProposal) ProposalType() string { return ProposalTypeAddH
 
 // ValidateBasic runs basic stateless validity checks
 func (ahzp *AddHostZoneProposal) ValidateBasic() error {
-	err := govtypes.ValidateAbstract(ahzp)
+	err := v1beta1types.ValidateAbstract(ahzp)
 	if err != nil {
 		return err
 	}
@@ -86,7 +86,7 @@ func (dhzp *DeleteHostZoneProposal) ProposalType() string { return ProposalTypeD
 
 // ValidateBasic runs basic stateless validity checks
 func (dhzp *DeleteHostZoneProposal) ValidateBasic() error {
-	err := govtypes.ValidateAbstract(dhzp)
+	err := v1beta1types.ValidateAbstract(dhzp)
 	if err != nil {
 		return err
 	}
@@ -110,7 +110,7 @@ func (shzp *SetHostZoneProposal) ProposalType() string { return ProposalTypeSetH
 
 // ValidateBasic runs basic stateless validity checks
 func (shzp *SetHostZoneProposal) ValidateBasic() error {
-	err := govtypes.ValidateAbstract(shzp)
+	err := v1beta1types.ValidateAbstract(shzp)
 	if err != nil {
 		return err
 	}

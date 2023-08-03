@@ -1,9 +1,9 @@
 package keeper
 
 import (
+	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
+	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 func (keeper Keeper) HasHostZoneConfig(ctx sdk.Context, ibcDenom string) bool {
@@ -94,7 +94,6 @@ func (keeper Keeper) FrozenHostZoneByIBCDenom(ctx sdk.Context, ibcDenom string) 
 func (keeper Keeper) UnFrozenHostZoneByIBCDenom(ctx sdk.Context, ibcDenom string) error {
 	hostChainConfig, err := keeper.GetHostZoneConfig(ctx, ibcDenom)
 	if err != nil {
-		// TODO: registry the error here
 		return sdkerrors.Wrapf(types.ErrHostZoneConfigNotFound, err.Error())
 	}
 	hostChainConfig.Frozen = false

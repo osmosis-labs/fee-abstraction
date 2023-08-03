@@ -2,12 +2,12 @@ package cli
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
+	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
 	"github.com/spf13/cobra"
 )
 
@@ -110,6 +110,7 @@ func NewCmdSubmitAddHostZoneProposal() *cobra.Command {
 				return err
 			}
 
+			from := clientCtx.GetFromAddress()
 			content := types.NewAddHostZoneProposal(
 				proposal.Title, proposal.Description, proposal.HostChainFeeAbsConfig,
 			)
@@ -119,14 +120,12 @@ func NewCmdSubmitAddHostZoneProposal() *cobra.Command {
 				return err
 			}
 
-			from := clientCtx.GetFromAddress()
-			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
+			msg, err := govv1beta1.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {
 				return err
 			}
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-
 		},
 	}
 
@@ -150,6 +149,7 @@ func NewCmdSubmitDeleteHostZoneProposal() *cobra.Command {
 				return err
 			}
 
+			from := clientCtx.GetFromAddress()
 			content := types.NewDeleteHostZoneProposal(
 				proposal.Title, proposal.Description, proposal.IbcDenom,
 			)
@@ -159,14 +159,12 @@ func NewCmdSubmitDeleteHostZoneProposal() *cobra.Command {
 				return err
 			}
 
-			from := clientCtx.GetFromAddress()
-			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
+			msg, err := govv1beta1.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {
 				return err
 			}
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-
 		},
 	}
 
@@ -190,6 +188,7 @@ func NewCmdSubmitSetHostZoneProposal() *cobra.Command {
 				return err
 			}
 
+			from := clientCtx.GetFromAddress()
 			content := types.NewSetHostZoneProposal(
 				proposal.Title, proposal.Description, proposal.HostChainFeeAbsConfig,
 			)
@@ -199,14 +198,12 @@ func NewCmdSubmitSetHostZoneProposal() *cobra.Command {
 				return err
 			}
 
-			from := clientCtx.GetFromAddress()
-			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
+			msg, err := govv1beta1.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {
 				return err
 			}
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-
 		},
 	}
 

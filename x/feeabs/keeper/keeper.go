@@ -3,20 +3,22 @@ package keeper
 import (
 	"fmt"
 
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
-	"github.com/cosmos/ibc-go/v4/modules/core/exported"
-	"github.com/notional-labs/fee-abstraction/v2/x/feeabs/types"
-	"github.com/tendermint/tendermint/libs/log"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
+	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+
+	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 type Keeper struct {
 	cdc            codec.BinaryCodec
-	storeKey       sdk.StoreKey
+	storeKey       storetypes.StoreKey
 	sk             types.StakingKeeper
 	ak             types.AccountKeeper
 	bk             types.BankKeeper
@@ -31,8 +33,8 @@ type Keeper struct {
 
 func NewKeeper(
 	cdc codec.BinaryCodec,
-	storeKey sdk.StoreKey,
-	memKey sdk.StoreKey,
+	storeKey storetypes.StoreKey,
+	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
 	sk types.StakingKeeper,
 	ak types.AccountKeeper,
@@ -128,8 +130,11 @@ func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 }
 
 // OnTimeoutPacket resend packet when timeout
-func (k Keeper) OnTimeoutPacket(ctx sdk.Context, chanCap *capabilitytypes.Capability, packet exported.PacketI) error {
-	return k.channelKeeper.SendPacket(ctx, chanCap, packet)
+func (k Keeper) OnTimeoutPacket(ctx sdk.Context, chanCap *capabilitytypes.Capability, sourcePort string,
+	sourceChannel string, timeoutHeight clienttypes.Height, timeoutTimestamp uint64, packetData []byte) error {
+	_, err := k.channelKeeper.SendPacket(ctx, chanCap, sourcePort, sourceChannel, 
+		timeoutHeight, timeoutTimestamp, packetData)
+	return err
 }
 
 func (k Keeper) GetCapability(ctx sdk.Context, name string) *capabilitytypes.Capability {

@@ -13,7 +13,7 @@ endif
 
 LEDGER_ENABLED ?= true
 SDK_PACK := $(shell go list -m github.com/cosmos/cosmos-sdk | sed  's/ /\@/g')
-TM_VERSION := $(shell go list -m github.com/tendermint/tendermint | sed 's:.* ::') 
+TM_VERSION := $(shell go list -m github.com/cometbft/cometbft | sed 's:.* ::') 
 DOCKER := $(shell which docker)
 DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace bufbuild/buf:1.0.0-rc8
 BUILDDIR ?= $(CURDIR)/build
@@ -64,7 +64,7 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=feeapp \
 		  -X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 		  -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
 		  -X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
-			-X github.com/tendermint/tendermint/version.TMCoreSemVer=$(TM_VERSION)
+			-X github.com/cometbft/cometbft/version.TMCoreSemVer=$(TM_VERSION)
 
 ifeq (cleveldb,$(findstring cleveldb,$(COSMOS_BUILD_OPTIONS)))
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
@@ -93,6 +93,9 @@ install: go.sum
 build:
 	go build $(BUILD_FLAGS) -o bin/feeappd ./cmd/feeappd
 
+docker-build-debug:
+	@DOCKER_BUILDKIT=1 docker build -t feeapp:debug -f Dockerfile .
+
 ###############################################################################
 ###                             Interchain test                             ###
 ###############################################################################
@@ -117,18 +120,13 @@ ictest-all: ictest-basic ictest-ibc ictest-packet-forward
 ###############################################################################
 ###                                  Proto                                  ###
 ###############################################################################
-
-protoVer=0.11.6
-protoImageName=ghcr.io/cosmos/proto-builder:$(protoVer)
-containerProtoGen=fa-proto-gen-$(protoVer)
-containerProtoFmt=fa-proto-fmt-$(protoVer)
+PROTO_BUILDER_IMAGE=ghcr.io/cosmos/proto-builder
 
 proto-all: proto-format proto-gen
 
 proto-gen:
 	@echo "Generating Protobuf files"
-	@if docker ps -a --format '{{.Names}}' | grep -Eq "^${containerProtoGen}$$"; then docker start -a $(containerProtoGen); else docker run --name $(containerProtoGen) -v $(CURDIR):/workspace --workdir /workspace $(protoImageName) \
-		sh ./scripts/protocgen.sh; fi
+	$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(PROTO_BUILDER_IMAGE) sh ./scripts/protocgen.sh
 
 proto-format:
 	@echo "Formatting Protobuf files"
