@@ -93,6 +93,9 @@ install: go.sum
 build:
 	go build $(BUILD_FLAGS) -o bin/feeappd ./cmd/feeappd
 
+docker-build-debug:
+	@DOCKER_BUILDKIT=1 docker build -t feeapp:debug -f Dockerfile .
+
 ###############################################################################
 ###                             Interchain test                             ###
 ###############################################################################
@@ -103,12 +106,16 @@ ictest-basic:
 
 # Executes IBC tests via interchaintest
 ictest-ibc:
-	cd tests/interchaintest && go test -race -v -run TestFeeabsGaiaIBCTransfer .
+	cd tests/interchaintest && go test -timeout=25m -race -v -run TestFeeabsGaiaIBCTransfer .
+
+# Executes IBC tests via interchaintest
+ictest-packet-forward:
+	cd tests/interchaintest && go test -timeout=25m -race -v -run TestPacketForwardMiddleware .
 
 # Executes all tests via interchaintest after compling a local image as juno:local
-ictest-all: ictest-basic ictest-ibc
+ictest-all: ictest-basic ictest-ibc ictest-packet-forward
 
-.PHONY: ictest-basic ictest-ibc ictest-all
+.PHONY: ictest-basic ictest-ibc ictest-packet-forward ictest-all
 
 ###############################################################################
 ###                                  Proto                                  ###

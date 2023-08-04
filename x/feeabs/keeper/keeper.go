@@ -4,11 +4,13 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v6/modules/apps/transfer/keeper"
+	clienttypes "github.com/cosmos/ibc-go/v6/modules/core/02-client/types"
 	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
 	"github.com/tendermint/tendermint/libs/log"
 )
@@ -36,7 +38,6 @@ func NewKeeper(
 	sk types.StakingKeeper,
 	ak types.AccountKeeper,
 	bk types.BankKeeper,
-	//TODO: need to use expected keeper
 	transferKeeper ibctransferkeeper.Keeper,
 
 	channelKeeper types.ChannelKeeper,
@@ -125,4 +126,21 @@ func (k Keeper) GetParams(ctx sdk.Context) (params types.Params) {
 // SetParams sets all of the parameters in the abstraction module.
 func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 	k.paramSpace.SetParamSet(ctx, &params)
+}
+
+// OnTimeoutPacket resend packet when timeout
+func (k Keeper) OnTimeoutPacket(ctx sdk.Context, chanCap *capabilitytypes.Capability, sourcePort string,
+	sourceChannel string, timeoutHeight clienttypes.Height, timeoutTimestamp uint64, packetData []byte) error {
+	_, err := k.channelKeeper.SendPacket(ctx, chanCap, sourcePort, sourceChannel,
+		timeoutHeight, timeoutTimestamp, packetData)
+	return err
+}
+
+func (k Keeper) GetCapability(ctx sdk.Context, name string) *capabilitytypes.Capability {
+	cap, ok := k.scopedKeeper.GetCapability(ctx, name)
+	if !ok {
+		k.Logger(ctx).Error("Error ErrChannelCapabilityNotFound ")
+		return nil
+	}
+	return cap
 }

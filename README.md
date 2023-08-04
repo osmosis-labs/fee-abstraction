@@ -1,5 +1,5 @@
 # Fee Abstraction
-
+## This repo has been moved to https://github.com/osmosis-labs/fee-abstraction
 ## Context 
 
 The concrete use cases which motivated this module include:
@@ -17,15 +17,13 @@ The implememtation also uses Osmosis swap router and async-icq module which are 
 
 ## Prototype
 
-Firstly, we narrow the feature of fee-abs from allowing general ibc token as tx fee to allowing only ibc-ed osmosis as tx fee. If thing goes smoothly , we'll work on developing the full feature of fee-abs.
-
 Fee-abs mechanism in a nutshell:
  1. Pulling `twap data` and update exchange rate: 
  - Periodically pulling `twap data` from osmosis by ibc-ing to `async-icq` module on Osmosis, this `twap data` will update the exchange rate of osmosis to customer chain's native token. 
- 2. Handling txs with ibc-osmosis fee: 
- - The exchange rate is used to calculate the amount of ibc-osmosis needed for tx fee allowing users to pay ibc-osmosis for tx fee instead of chain's native token.
- 3. Swap accumulated ibc-osmosis fee:
- - The collected ibc-osmosis users use for tx fee is periodically swaped back to customer chain's native token using osmosis.
+ 2. Handling txs with ibc-token fee: 
+ - The exchange rate is used to calculate the amount of ibc-token needed for tx fee allowing users to pay ibc-token for tx fee instead of chain's native token.
+ 3. Swap accumulated ibc-token fee:
+ - The collected ibc-token users use for tx fee is periodically swaped back to customer chain's native token using osmosis.
 
 We'll goes into all the details now:
 
@@ -40,17 +38,28 @@ Description :
     For every `update exchange rate period`, at fee-abs `BeginBlocker()` we submit a `InterchainQueryPacketData` which wrapped `QueryArithmeticTwapToNowRequest` to the querying channel on the customer chain's end. Then relayers will submit `MsgReceivePacket` so that our `QueryTwapPacket` which will be routed to `async-icq` module to be processed. `async-icq` module then unpack `InterchainQueryPacketData` and send query to TWAP module. The correspone response will be wrapped in the ibc acknowledgement. Relayers then submit `MsgAcknowledgement` to the customer chain so that the ibc acknowledgement is routed to fee-abs to be processed. Fee-abs then update exchange rate according to the Twap wrapped in the ibc acknowledgement.
 
 #### Handling txs with ibc-token fee
-We modified `MempoolFeeDecorator` so that it can handle ibc-osmosis as fee. If the tx has osmosis fee, we basically replace the ibc-osmosis amount with the equivalent native-token amount which is calculated by `exchange rate` * `ibc-osmosis amount`.
+We modified `MempoolFeeDecorator` so that it can handle ibc-token as fee. If the tx has ibc-token fee, the AnteHandler will first check if that token is allowed (which is setup by Gov) we basically replace the amount of ibc-token with the equivalent native-token amount which is calculated by `exchange rate` * `ibc-token amount`.
 
-We have an account to manage the ibc-osmosis user used to pay for tx fee. The collected osmosis fee is sent to that account instead of community pool account.
+We have an account to manage the ibc-token user used to pay for tx fee. The collected ibc-token fee is sent to that account instead of community pool account.
 
 #### Swap accumulated ibc-tokens fee
-##### Swap with Osmosis's tokens
-We use osmosis's ibc hook feature to do this. We basically ibc transfer to the osmosis crosschain swap contract with custom memo to swap the osmosis fee back to customer chain's native-token and ibc transfer back to the customer chain.
+Fee-abstraction will use osmosis's Cross chain Swap (XCS) feature to do this. We basically ibc transfer to the osmosis crosschain swap contract with custom memo to swap the osmosis fee back to customer chain's native-token and ibc transfer back to the customer chain.
 
-##### Swap with others ibc-tokens
-We use [``packet-forward-middleware``](https://github.com/strangelove-ventures/packet-forward-middleware) to do this. The ibc-tokens will be transferred to the host chain with the specific MEMO to forwarding transfer to osmosis crosschain swap contract. After that, Osmosis chain will swap to customer chain's native-token and ibc transfer back to the customer chain.
+##### How XCS work
+###### Reverse With Path-unwinding to get Ibc-token on Osmosis:
+- Create a ibc transfer message with a specific MEMO to work with ibc [``packet-forward-middleware``](https://github.com/strangelove-ventures/packet-forward-middleware) which is path-unwinding (an ibc feature that allow to automatic define the path and ibc transfer multiple hop follow the defined path)
+- Ibc transfer the created packet to get the fee Ibc-token on Osmosis
 
-## Resources
- - Main repo: https://github.com/notional-labs/fee-abstraction
- - Contract repo: https://github.com/notional-labs/feeabstraction-contract
+Ex: When you sent STARS on Hub to Osmosis, you will get Osmosis(Hub(STARS)) which is different with STARS on Osmosis Osmosis(STARS). It will reverse back Osmosis(Hub(STARS)) to Osmosis(STARS):
+
+![](https://i.imgur.com/D1wSrMm.png)
+
+###### Swap Ibc-token:
+After reverse the ibc-token, XCS will :
+- Swap with the specific pool (which is defined in the transfer packet from Feeabs-chain) to get Feeabs-chain native-token
+- Transfer back Feeabs-chain native-token to Feeabs module account (will use to pay fee for other transaction)
+
+![](https://i.imgur.com/YKOK8mr.png)
+
+Current version of fee-abstraction working with XCSv2
+
