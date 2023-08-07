@@ -29,8 +29,8 @@ const (
 )
 
 var (
-	FeeabsMainRepo   = "ghcr.io/osmosis-labs/fee-abstraction"
-	FeeabsICTestRepo = "ghcr.io/osmosis-labs/fee-abstraction-ictest"
+	FeeabsMainRepo   = "osmolabs/fee-abstraction"
+	FeeabsICTestRepo = "osmolabs/fee-abstraction-ictest"
 
 	repo, version = GetDockerImageInfo()
 
