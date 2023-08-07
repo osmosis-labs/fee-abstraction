@@ -1,5 +1,4 @@
 # Fee Abstraction
-## This repo has been moved to https://github.com/osmosis-labs/fee-abstraction
 ## Context 
 
 The concrete use cases which motivated this module include:
