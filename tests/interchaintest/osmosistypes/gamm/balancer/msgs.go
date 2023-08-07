@@ -2,7 +2,7 @@ package balancer
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/types"
+	"github.com/osmosis-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/types"
 )
 
 const (

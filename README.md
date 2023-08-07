@@ -50,5 +50,5 @@ Fee-abstraction will use osmosis's Cross chain Swap (XCS) feature to do this. We
 Current version of fee-abstraction working with XCSv2
 
 ## Resources
- - Main repo: https://github.com/notional-labs/fee-abstraction
- - Contract repo: https://github.com/notional-labs/feeabstraction-contract
+ - Main repo: https://github.com/osmosis-labs/fee-abstraction
+ - Contract repo: https://github.com/osmosis-labs/feeabstraction-contract
