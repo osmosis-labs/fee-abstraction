@@ -1,9 +1,9 @@
 # This Dockerfile is used for proto generation
 # To build, run `make proto-image-build`
 
-FROM bufbuild/buf:1.7.0 as BUILDER
+FROM bufbuild/buf:1.22.0 as BUILDER
 
-FROM golang:1.19-alpine
+FROM golang:1.20-alpine
 
 
 RUN apk add --no-cache \
