@@ -4,12 +4,14 @@ import (
 	"fmt"
 
 	"github.com/CosmWasm/wasmd/x/wasm/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	ibctesting "github.com/cosmos/ibc-go/v4/testing"
 	"github.com/golang/protobuf/proto" //nolint
-	feeabs "github.com/osmosis-labs/fee-abstraction/v2/app"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/rand"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	feeabs "github.com/osmosis-labs/fee-abstraction/v2/app"
 )
 
 var wasmIdent = []byte("\x00\x61\x73\x6D")

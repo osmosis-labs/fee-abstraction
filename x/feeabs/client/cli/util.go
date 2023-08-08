@@ -1,9 +1,11 @@
 package cli
 
 import (
-	"io/ioutil" //nolint:staticcheck
+	"io/ioutil"
+
 
 	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
 )
 
