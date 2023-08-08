@@ -36,6 +36,7 @@ func TestFromIBCTransferToContract(t *testing.T) {
 		"ack": {
 			contract: &ackReceiverContract{},
 			setupContract: func(t *testing.T, contract wasmtesting.IBCContractCallbacks, chain *wasmibctesting.TestChain) {
+				t.Helper()
 				c := contract.(*ackReceiverContract)
 				c.t = t
 				c.chain = chain
