@@ -92,6 +92,7 @@ func setup(withGenesis bool, invCheckPeriod uint) (*feeapp.FeeAbs, feeapp.Genesi
 		feeapp.DefaultNodeHome,
 		invCheckPeriod,
 		encCdc,
+		feeapp.GetEnabledProposals(),
 		EmptyAppOptions{},
 		emptyWasmOpts,
 	)

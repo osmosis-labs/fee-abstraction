@@ -9,6 +9,7 @@ require (
 	github.com/cosmos/gogoproto v1.4.6
 	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4 v4.1.0
 	github.com/cosmos/ibc-go/v4 v4.4.2
+	github.com/cosmos/interchain-accounts v0.2.6
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.0

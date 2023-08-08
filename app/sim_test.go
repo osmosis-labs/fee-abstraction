@@ -43,7 +43,7 @@ func BenchmarkFullAppSimulation(b *testing.B) {
 	}()
 
 	var emptyWasmOpts []wasm.Option
-	app := feeapp.NewFeeAbs(logger, db, nil, true, map[int64]bool{}, feeapp.DefaultNodeHome, simapp.FlagPeriodValue, feeapp.MakeEncodingConfig(), simapp.EmptyAppOptions{}, emptyWasmOpts, interBlockCacheOpt())
+	app := feeapp.NewFeeAbs(logger, db, nil, true, map[int64]bool{}, feeapp.DefaultNodeHome, simapp.FlagPeriodValue, feeapp.MakeEncodingConfig(), feeapp.GetEnabledProposals(), simapp.EmptyAppOptions{}, emptyWasmOpts, interBlockCacheOpt())
 
 	// Run randomized simulation:w
 	_, simParams, simErr := simulation.SimulateFromSeed(
@@ -107,7 +107,7 @@ func TestAppStateDeterminism(t *testing.T) {
 
 			db := dbm.NewMemDB()
 			var emptyWasmOpts []wasm.Option
-			app := feeapp.NewFeeAbs(logger, db, nil, true, map[int64]bool{}, feeapp.DefaultNodeHome, simapp.FlagPeriodValue, feeapp.MakeEncodingConfig(), simapp.EmptyAppOptions{}, emptyWasmOpts, interBlockCacheOpt())
+			app := feeapp.NewFeeAbs(logger, db, nil, true, map[int64]bool{}, feeapp.DefaultNodeHome, simapp.FlagPeriodValue, feeapp.MakeEncodingConfig(), feeapp.GetEnabledProposals(), simapp.EmptyAppOptions{}, emptyWasmOpts, interBlockCacheOpt())
 
 			fmt.Printf(
 				"running non-determinism simulation; seed %d: %d/%d, attempt: %d/%d\n",
