@@ -489,16 +489,6 @@ func NewFeeAbs(
 		&app.IBCKeeper.PortKeeper, app.AccountKeeper, app.BankKeeper,
 	)
 
-	var ibcStack porttypes.IBCModule
-	ibcStack = transfer.NewIBCModule(app.TransferKeeper)
-	ibcStack = router.NewIBCMiddleware(
-		ibcStack,
-		app.RouterKeeper,
-		0,
-		routerkeeper.DefaultForwardTransferPacketTimeoutTimestamp,
-		routerkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
-	)
-
 	app.ICAHostKeeper = icahostkeeper.NewKeeper(
 		appCodec,
 		keys[icahosttypes.StoreKey],
@@ -573,6 +563,13 @@ func NewFeeAbs(
 	var transferStack porttypes.IBCModule
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
 	transferStack = ibcfee.NewIBCMiddleware(transferStack, app.IBCFeeKeeper)
+	transferStack = router.NewIBCMiddleware(
+		transferStack,
+		app.RouterKeeper,
+		0,
+		routerkeeper.DefaultForwardTransferPacketTimeoutTimestamp,
+		routerkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
+	)
 
 	// Create Interchain Accounts Stack
 	// SendPacket, since it is originating from the application to core IBC:

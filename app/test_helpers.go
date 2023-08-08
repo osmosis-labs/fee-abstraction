@@ -167,8 +167,8 @@ func SetupWithGenesisValSet(
 }
 
 // SetupWithEmptyStore setup a wasmd app instance with empty DB
-func SetupWithEmptyStore(t testing.TB) *FeeAbs {
-	app, _ := setup(t, false, 0)
+func SetupWithEmptyStore(tb testing.TB) *FeeAbs {
+	app, _ := setup(tb, false, 0)
 	return app
 }
 
@@ -293,6 +293,7 @@ func TestAddr(addr string, bech string) (sdk.AccAddress, error) {
 
 // CheckBalance checks the balance of an account.
 func CheckBalance(t *testing.T, app *FeeAbs, addr sdk.AccAddress, balances sdk.Coins) {
+	t.Helper()
 	ctxCheck := app.BaseApp.NewContext(true, tmproto.Header{})
 	require.True(t, balances.IsEqual(app.BankKeeper.GetAllBalances(ctxCheck, addr)))
 }
