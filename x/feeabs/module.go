@@ -17,7 +17,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/client/cli"
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
+	fakeeper "github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
 )
 
@@ -99,13 +99,13 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 type AppModule struct {
 	AppModuleBasic
 
-	keeper keeper.Keeper
+	keeper fakeeper.Keeper
 }
 
 // NewAppModule instantiate AppModule object
 func NewAppModule(
 	cdc codec.Codec,
-	keeper keeper.Keeper,
+	keeper fakeeper.Keeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: NewAppModuleBasic(cdc),
@@ -139,9 +139,9 @@ func (AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Q
 // RegisterServices registers a GRPC query service to respond to the
 // module-specific GRPC queries.
 func (am AppModule) RegisterServices(cfg module.Configurator) {
-	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
+	types.RegisterMsgServer(cfg.MsgServer(), fakeeper.NewMsgServerImpl(am.keeper))
 
-	types.RegisterQueryServer(cfg.QueryServer(), keeper.NewQuerier(am.keeper))
+	types.RegisterQueryServer(cfg.QueryServer(), fakeeper.NewQuerier(am.keeper))
 }
 
 // InitGenesis initial genesis state for feeabs module

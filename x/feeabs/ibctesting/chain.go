@@ -564,8 +564,9 @@ type TestingAppDecorator struct {
 	t *testing.T
 }
 
-func NewTestingAppDecorator(t *testing.T, feeabs *feeabs.FeeAbs) *TestingAppDecorator {
-	return &TestingAppDecorator{FeeAbs: feeabs, t: t}
+func NewTestingAppDecorator(t *testing.T, fa *feeabs.FeeAbs) *TestingAppDecorator {
+	t.Helper()
+	return &TestingAppDecorator{FeeAbs: fa, t: t}
 }
 
 func (a TestingAppDecorator) GetBaseApp() *baseapp.BaseApp {

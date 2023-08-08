@@ -13,18 +13,18 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
+	fakeeper "github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
 )
 
 // IBCModule implements the ICS26 interface for transfer given the transfer keeper.
 type IBCModule struct {
 	cdc    codec.Codec
-	keeper keeper.Keeper
+	keeper fakeeper.Keeper
 }
 
 // NewIBCModule creates a new IBCModule given the keeper
-func NewIBCModule(cdc codec.Codec, k keeper.Keeper) IBCModule {
+func NewIBCModule(cdc codec.Codec, k fakeeper.Keeper) IBCModule {
 	return IBCModule{
 		cdc:    cdc,
 		keeper: k,
@@ -58,7 +58,7 @@ func (am IBCModule) OnChanOpenInit(
 
 func ValidateChannelParams(
 	ctx sdk.Context,
-	keeper keeper.Keeper,
+	keeper fakeeper.Keeper,
 	order channeltypes.Order,
 	portID string,
 	channelID string,
