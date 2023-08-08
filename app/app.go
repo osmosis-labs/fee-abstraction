@@ -612,7 +612,8 @@ func NewFeeAbs(
 		&stakingKeeper,
 		govRouter,
 	)
-	/****  Module Options ****/
+
+	// ****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
 	// we prefer to be more strict in what arguments the modules expect.

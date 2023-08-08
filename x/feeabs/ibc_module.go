@@ -175,7 +175,7 @@ func (am IBCModule) OnAcknowledgementPacket(
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %v", err)
 	}
 
-	IcqReqs, err := types.DeserializeCosmosQuery(icqPacketData.GetData())
+	icqReqs, err := types.DeserializeCosmosQuery(icqPacketData.GetData())
 	if err != nil {
 		am.keeper.Logger(ctx).Error(fmt.Sprintf("Failed to deserialize cosmos query %s", err.Error()))
 		return err
@@ -189,7 +189,7 @@ func (am IBCModule) OnAcknowledgementPacket(
 		),
 	)
 
-	if err := am.keeper.OnAcknowledgementPacket(ctx, ack, IcqReqs); err != nil {
+	if err := am.keeper.OnAcknowledgementPacket(ctx, ack, icqReqs); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "error OnAcknowledgementPacket: %v", err)
 	}
 	return nil

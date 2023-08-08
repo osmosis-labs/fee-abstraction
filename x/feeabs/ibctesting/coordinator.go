@@ -209,7 +209,7 @@ func (coord *Coordinator) CommitNBlocks(chain *TestChain, n uint64) {
 
 // ConnOpenInitOnBothChains initializes a connection on both endpoints with the state INIT
 // using the OpenInit handshake call.
-func (coord *Coordinator) ConnOpenInitOnBothChains(path *Path) error {
+func (*Coordinator) ConnOpenInitOnBothChains(path *Path) error {
 	if err := path.EndpointA.ConnOpenInit(); err != nil {
 		return err
 	}
