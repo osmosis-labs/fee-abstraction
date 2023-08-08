@@ -3,8 +3,8 @@ module github.com/osmosis-labs/fee-abstraction/v2
 go 1.18
 
 require (
-	github.com/CosmWasm/wasmd v0.32.0
-	github.com/CosmWasm/wasmvm v1.2.3
+	github.com/CosmWasm/wasmd v0.33.0
+	github.com/CosmWasm/wasmvm v1.3.0
 	github.com/cosmos/cosmos-sdk v0.45.16
 	github.com/cosmos/gogoproto v1.4.6
 	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4 v4.1.0
@@ -17,7 +17,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/prometheus/client_golang v1.15.0
 	github.com/rakyll/statik v0.1.7
-	github.com/spf13/cast v1.5.0
+	github.com/spf13/cast v1.5.1
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.3
 	github.com/tendermint/tendermint v0.34.27
@@ -112,7 +112,6 @@ require (
 	github.com/minio/highwayhash v1.0.2 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mtibben/percent v0.2.1 // indirect
-	github.com/onsi/ginkgo v1.16.4 // indirect
 	github.com/onsi/gomega v1.18.1 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
