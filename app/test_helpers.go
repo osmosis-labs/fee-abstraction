@@ -55,6 +55,7 @@ var DefaultConsensusParams = &abci.ConsensusParams{
 }
 
 func setup(tb testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Option) (*FeeAbs, GenesisState) {
+	tb.Helper()
 	nodeHome := tb.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
 	snapshotDB, err := sdk.NewLevelDB("metadata", snapshotDir)
@@ -90,6 +91,7 @@ func SetupWithGenesisValSet(
 	opts []wasm.Option,
 	balances ...banktypes.Balance,
 ) *FeeAbs {
+	t.Helper()
 	app, genesisState := setup(t, true, 5, opts...)
 	// set genesis accounts
 	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)
@@ -168,6 +170,7 @@ func SetupWithGenesisValSet(
 
 // SetupWithEmptyStore setup a wasmd app instance with empty DB
 func SetupWithEmptyStore(tb testing.TB) *FeeAbs {
+	tb.Helper()
 	app, _ := setup(tb, false, 0)
 	return app
 }
@@ -308,6 +311,7 @@ func SignCheckDeliver(
 	t *testing.T, txCfg client.TxConfig, app *baseapp.BaseApp, header tmproto.Header, msgs []sdk.Msg,
 	chainID string, accNums, accSeqs []uint64, expSimPass, expPass bool, priv ...cryptotypes.PrivKey,
 ) (sdk.GasInfo, *sdk.Result, error) {
+	t.Helper()
 	tx, err := helpers.GenTx(
 		txCfg,
 		msgs,
@@ -453,7 +457,7 @@ func NewPubKeyFromHex(pk string) (res cryptotypes.PubKey) {
 type EmptyBaseAppOptions struct{}
 
 // Get implements AppOptions
-func (ao EmptyBaseAppOptions) Get(o string) interface{} {
+func (EmptyBaseAppOptions) Get(o string) interface{} {
 	return nil
 }
 

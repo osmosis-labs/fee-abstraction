@@ -24,6 +24,7 @@ type TestSupport struct {
 }
 
 func NewTestSupport(tb testing.TB, app *FeeAbs) *TestSupport {
+	tb.Helper()
 	return &TestSupport{tb: tb, app: app}
 }
 

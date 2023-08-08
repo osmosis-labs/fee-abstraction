@@ -32,6 +32,7 @@ type Coordinator struct {
 
 // NewCoordinator initializes Coordinator with N TestChain's
 func NewCoordinator(t *testing.T, n int, opts ...[]wasmkeeper.Option) *Coordinator {
+	t.Helper()
 	chains := make(map[string]*TestChain)
 	coord := &Coordinator{
 		t:           t,
@@ -230,7 +231,7 @@ func (coord *Coordinator) ConnOpenInitOnBothChains(path *Path) error {
 
 // ChanOpenInitOnBothChains initializes a channel on the source chain and counterparty chain
 // with the state INIT using the OpenInit handshake call.
-func (coord *Coordinator) ChanOpenInitOnBothChains(path *Path) error {
+func (*Coordinator) ChanOpenInitOnBothChains(path *Path) error {
 	// NOTE: only creation of a capability for a transfer or mock port is supported
 	// Other applications must bind to the port in InitGenesis or modify this code.
 

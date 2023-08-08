@@ -92,8 +92,8 @@ func (k Keeper) CalculateNativeFromIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins,
 	return sdk.NewCoins(nativeFee), nil
 }
 
-func (k Keeper) SendAbstractionFeeToModuleAccount(ctx sdk.Context, IBCcoins sdk.Coins, nativeCoins sdk.Coins, feePayer sdk.AccAddress) error {
-	err := k.bk.SendCoinsFromAccountToModule(ctx, feePayer, types.ModuleName, IBCcoins)
+func (k Keeper) SendAbstractionFeeToModuleAccount(ctx sdk.Context, ibcCoins sdk.Coins, nativeCoins sdk.Coins, feePayer sdk.AccAddress) error {
+	err := k.bk.SendCoinsFromAccountToModule(ctx, feePayer, types.ModuleName, ibcCoins)
 	if err != nil {
 		return err
 	}
@@ -134,10 +134,10 @@ func (k Keeper) OnTimeoutPacket(ctx sdk.Context, chanCap *capabilitytypes.Capabi
 }
 
 func (k Keeper) GetCapability(ctx sdk.Context, name string) *capabilitytypes.Capability {
-	cap, ok := k.scopedKeeper.GetCapability(ctx, name)
+	capability, ok := k.scopedKeeper.GetCapability(ctx, name)
 	if !ok {
 		k.Logger(ctx).Error("Error ErrChannelCapabilityNotFound ")
 		return nil
 	}
-	return cap
+	return capability
 }
