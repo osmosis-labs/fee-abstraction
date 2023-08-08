@@ -36,8 +36,8 @@ func TestIntegrationTestSuite(t *testing.T) {
 }
 
 func (s *IntegrationTestSuite) SetupTest() {
-	app := apphelpers.Setup(s.T(), false, 1)
-	ctx := app.BaseApp.NewContext(false, tmproto.Header{
+	feeapp := apphelpers.Setup(s.T(), false, 1)
+	ctx := feeapp.BaseApp.NewContext(false, tmproto.Header{
 		ChainID: fmt.Sprintf("test-chain-%s", tmrand.Str(4)),
 		Height:  1,
 	})
@@ -46,7 +46,7 @@ func (s *IntegrationTestSuite) SetupTest() {
 	encodingConfig.Amino.RegisterConcrete(&testdata.TestMsg{}, "testdata.TestMsg", nil)
 	testdata.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 
-	s.app = app
+	s.app = feeapp
 	s.ctx = ctx
 	s.clientCtx = client.Context{}.WithTxConfig(encodingConfig.TxConfig)
 }
