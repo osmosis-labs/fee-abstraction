@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
 	transfertypes "github.com/cosmos/ibc-go/v6/modules/apps/transfer/types"
 	interchaintest "github.com/strangelove-ventures/interchaintest/v6"
 	"github.com/strangelove-ventures/interchaintest/v6/chain/cosmos"
@@ -471,7 +472,12 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		current_directory, _ := os.Getwd()
 		param_change_path := path.Join(current_directory, "proposal", "proposal.json")
 
-		paramTx, err := feeabs.ParamChangeProposal(ctx, feeabsUser.KeyName(), param_change_path)
+		data, err := os.ReadFile(param_change_path)
+		require.NoError(t, err)
+
+		var proposal *paramsutils.ParamChangeProposalJSON
+		err = json.Unmarshal(data, &proposal)
+		paramTx, err := feeabs.ParamChangeProposal(ctx, feeabsUser.KeyName(), proposal)
 		require.NoError(t, err, "error submitting param change proposal tx")
 
 		err = feeabs.VoteOnProposalAllValidators(ctx, paramTx.ProposalID, cosmos.ProposalVoteYes)
@@ -481,7 +487,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, paramTx.ProposalID, cosmos.ProposalStatusPassed)
 		require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
-		_, err = cosmos.FeeabsAddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName, "./proposal/host_zone.json")
+		_, err = cosmos.FeeabsAddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName(), "./proposal/host_zone.json")
 		require.NoError(t, err)
 
 		err = feeabs.VoteOnProposalAllValidators(ctx, "2", cosmos.ProposalVoteYes)
@@ -501,7 +507,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		fmt.Printf("Module Account Balances before swap: %v\n", feeabsModule.Balances)
 
-		transferTx, err := cosmos.FeeabsCrossChainSwap(feeabs, ctx, feeabsUser.KeyName, uatomOnFeeabs)
+		transferTx, err := cosmos.FeeabsCrossChainSwap(feeabs, ctx, feeabsUser.KeyName(), uatomOnFeeabs)
 		require.NoError(t, err)
 		_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+25, transferTx.Packet)
 		require.NoError(t, err)

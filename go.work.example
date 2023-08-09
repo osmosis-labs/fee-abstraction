@@ -1,0 +1,12 @@
+go 1.18
+
+use (
+	./
+	./tests/interchaintest
+
+)
+
+replace (
+	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.24
+	github.com/cosmos/iavl => github.com/cosmos/iavl v0.19.4
+)

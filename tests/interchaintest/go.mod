@@ -9,6 +9,7 @@ require (
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
+	github.com/icza/dyno v0.0.0-20220812133438-f0b6f8a18845
 	github.com/notional-labs/fee-abstraction/v3 v3.0.0-20230427065305-f8f578f3486b
 	github.com/strangelove-ventures/interchaintest/v6 v6.0.0-20230424212053-d8e473f39379
 	github.com/stretchr/testify v1.8.2
@@ -100,7 +101,6 @@ require (
 	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hdevalence/ed25519consensus v0.0.0-20220222234857-c00d1f31bab3 // indirect
-	github.com/icza/dyno v0.0.0-20220812133438-f0b6f8a18845 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/ipfs/go-cid v0.0.7 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
@@ -215,7 +215,7 @@ replace (
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	// For this nested module, you always want to replace the parent reference with the current worktree.
 	github.com/notional-labs/fee-abstraction => ../../
-	github.com/strangelove-ventures/interchaintest/v4 => github.com/notional-labs/interchaintest/v4 v4.0.1-0.20230426092153-0a643db3c6b2
+	github.com/strangelove-ventures/interchaintest/v6 => github.com/notional-labs/interchaintest/v6 v6.0.0-20230505100442-9f1cb0b6b5f1
 
 	github.com/tendermint/tendermint => github.com/tendermint/tendermint v0.34.24
 
