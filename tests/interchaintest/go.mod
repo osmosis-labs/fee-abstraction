@@ -3,7 +3,8 @@ module github.com/notional-labs/fee-abstraction/tests/interchaintest
 go 1.19
 
 require (
-	github.com/cosmos/cosmos-proto v1.0.0-beta.2
+	github.com/CosmWasm/wasmd v0.30.0
+	github.com/cosmos/cosmos-proto v1.0.0-alpha8
 	github.com/cosmos/cosmos-sdk v0.46.7
 	github.com/cosmos/ibc-go/v6 v6.1.0
 	github.com/gogo/protobuf v1.3.3
@@ -32,6 +33,7 @@ require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/ChainSafe/go-schnorrkel v1.0.0 // indirect
 	github.com/ChainSafe/go-schnorrkel/1 v0.0.0-00010101000000-000000000000 // indirect
+	github.com/CosmWasm/wasmvm v1.1.1 // indirect
 	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/StirlingMarketingGroup/go-namecase v1.0.0 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
@@ -208,15 +210,17 @@ require (
 replace (
 	github.com/ChainSafe/go-schnorrkel => github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d
 	github.com/ChainSafe/go-schnorrkel/1 => github.com/ChainSafe/go-schnorrkel v1.0.0
+	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.30.0-sdk46
 	github.com/btcsuite/btcd => github.com/btcsuite/btcd v0.22.2 //indirect
 
 	// interchaintest supports ICS features so we need this for now
 	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.46.7
+
+	github.com/cosmos/iavl => github.com/cosmos/iavl v0.19.4
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	// For this nested module, you always want to replace the parent reference with the current worktree.
 	github.com/notional-labs/fee-abstraction => ../../
 	github.com/strangelove-ventures/interchaintest/v6 => github.com/notional-labs/interchaintest/v6 v6.0.0-20230505100442-9f1cb0b6b5f1
-
 	github.com/tendermint/tendermint => github.com/tendermint/tendermint v0.34.24
 
 	github.com/vedhavyas/go-subkey => github.com/strangelove-ventures/go-subkey v1.0.7

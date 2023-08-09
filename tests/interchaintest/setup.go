@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/icza/dyno"
@@ -71,6 +72,7 @@ var (
 func feeabsEncoding() *simappparams.EncodingConfig {
 	cfg := cosmos.DefaultEncoding()
 
+	wasmtypes.RegisterInterfaces(cfg.InterfaceRegistry)
 	// register custom types
 	feeabstype.RegisterInterfaces(cfg.InterfaceRegistry)
 
@@ -80,6 +82,7 @@ func feeabsEncoding() *simappparams.EncodingConfig {
 func osmosisEncoding() *simappparams.EncodingConfig {
 	cfg := cosmos.DefaultEncoding()
 
+	wasmtypes.RegisterInterfaces(cfg.InterfaceRegistry)
 	gammtypes.RegisterInterfaces(cfg.InterfaceRegistry)
 	balancertypes.RegisterInterfaces(cfg.InterfaceRegistry)
 

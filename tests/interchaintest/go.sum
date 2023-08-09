@@ -66,6 +66,8 @@ github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d h1:nalkkPQ
 github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d/go.mod h1:URdX5+vg25ts3aCh8H5IFZybJYKWhJHYMTnf+ULtoC4=
 github.com/ChainSafe/go-schnorrkel v1.0.0 h1:3aDA67lAykLaG1y3AOjs88dMxC88PgUuHRrLeDnvGIM=
 github.com/ChainSafe/go-schnorrkel v1.0.0/go.mod h1:dpzHYVxLZcp8pjlV+O+UR8K0Hp/z7vcchBSbMBEhCw4=
+github.com/CosmWasm/wasmvm v1.1.1 h1:0xtdrmmsP9fibe+x42WcMkp5aQ738BICgcH3FNVLzm4=
+github.com/CosmWasm/wasmvm v1.1.1/go.mod h1:ei0xpvomwSdONsxDuONzV7bL1jSET1M8brEx0FCXc+A=
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
 github.com/Microsoft/go-winio v0.6.0 h1:slsWYD/zyx7lCXoZVlvQrj0hPTM1HI4+v1sIda2yDvg=
 github.com/Microsoft/go-winio v0.6.0/go.mod h1:cTAf44im0RAYeL23bpB+fzCyDH2MJiz2BO69KH/soAE=
@@ -139,8 +141,8 @@ github.com/coreos/go-etcd v2.0.0+incompatible/go.mod h1:Jez6KQU2B/sWsbdaef3ED8Nz
 github.com/coreos/go-semver v0.2.0/go.mod h1:nnelYz7RCh+5ahJtPPxZlU+153eP4D4r3EedlOD2RNk=
 github.com/cosmos/btcutil v1.0.5 h1:t+ZFcX77LpKtDBhjucvnOH8C2l2ioGsBNEQ3jef8xFk=
 github.com/cosmos/btcutil v1.0.5/go.mod h1:IyB7iuqZMJlthe2tkIFL33xPyzbFYP0XVdS8P5lUPis=
-github.com/cosmos/cosmos-proto v1.0.0-beta.2 h1:X3OKvWgK9Gsejo0F1qs5l8Qn6xJV/AzgIWR2wZ8Nua8=
-github.com/cosmos/cosmos-proto v1.0.0-beta.2/go.mod h1:+XRCLJ14pr5HFEHIUcn51IKXD1Fy3rkEQqt4WqmN4V0=
+github.com/cosmos/cosmos-proto v1.0.0-alpha8 h1:d3pCRuMYYvGA5bM0ZbbjKn+AoQD4A7dyNG2wzwWalUw=
+github.com/cosmos/cosmos-proto v1.0.0-alpha8/go.mod h1:6/p+Bc4O8JKeZqe0VqUGTX31eoYqemTT4C1hLCWsO7I=
 github.com/cosmos/cosmos-sdk v0.46.7 h1:dkGy9y2ewgqvawrUOuWb2oz3MdotVduokyreXC4bS0s=
 github.com/cosmos/cosmos-sdk v0.46.7/go.mod h1:fqKqz39U5IlEFb4nbQ72951myztsDzFKKDtffYJ63nk=
 github.com/cosmos/go-bip39 v0.0.0-20180819234021-555e2067c45d/go.mod h1:tSxLoYXyBmiFeKpvmq4dzayMdCjCnu8uqmCysIGBT2Y=
@@ -150,8 +152,8 @@ github.com/cosmos/gogoproto v1.4.6 h1:Ee7z15dWJaGlgM2rWrK8N2IX7PQcuccu8oG68jp5RL
 github.com/cosmos/gogoproto v1.4.6/go.mod h1:VS/ASYmPgv6zkPKLjR9EB91lwbLHOzaGCirmKKhncfI=
 github.com/cosmos/gorocksdb v1.2.0 h1:d0l3jJG8M4hBouIZq0mDUHZ+zjOx044J3nGRskwTb4Y=
 github.com/cosmos/gorocksdb v1.2.0/go.mod h1:aaKvKItm514hKfNJpUJXnnOWeBnk2GL4+Qw9NHizILw=
-github.com/cosmos/iavl v0.19.5 h1:rGA3hOrgNxgRM5wYcSCxgQBap7fW82WZgY78V9po/iY=
-github.com/cosmos/iavl v0.19.5/go.mod h1:X9PKD3J0iFxdmgNLa7b2LYWdsGd90ToV5cAONApkEPw=
+github.com/cosmos/iavl v0.19.4 h1:t82sN+Y0WeqxDLJRSpNd8YFX5URIrT+p8n6oJbJ2Dok=
+github.com/cosmos/iavl v0.19.4/go.mod h1:X9PKD3J0iFxdmgNLa7b2LYWdsGd90ToV5cAONApkEPw=
 github.com/cosmos/ibc-go/v6 v6.1.0 h1:o7oXws2vKkKfOFzJI+oNylRn44PCNt5wzHd/zKQKbvQ=
 github.com/cosmos/ibc-go/v6 v6.1.0/go.mod h1:CY3zh2HLfetRiW8LY6kVHMATe90Wj/UOoY8T6cuB0is=
 github.com/cosmos/ledger-cosmos-go v0.12.2 h1:/XYaBlE2BJxtvpkHiBm97gFGSGmYGKunKyF3nNqAXZA=
@@ -501,6 +503,8 @@ github.com/notional-labs/fee-abstraction/v3 v3.0.0-20230427065305-f8f578f3486b h
 github.com/notional-labs/fee-abstraction/v3 v3.0.0-20230427065305-f8f578f3486b/go.mod h1:yVo+j+7EUd6uXZxiIGBHKpyruodoeC86VVp2rbuCoas=
 github.com/notional-labs/interchaintest/v6 v6.0.0-20230505100442-9f1cb0b6b5f1 h1:LsIFpa7USdzQdBsaEntenuyEJlWkNf4EJdntzYOoa48=
 github.com/notional-labs/interchaintest/v6 v6.0.0-20230505100442-9f1cb0b6b5f1/go.mod h1:ja8AvdA1GMOGt0pXUlFNzXHbDgfPidjr5KZUOIxYZ1g=
+github.com/notional-labs/wasmd v0.30.0-sdk46 h1:n8R5WHgjydvLdYpXH9rbHm/9UCFO1PGG8Ug7Yos1S1U=
+github.com/notional-labs/wasmd v0.30.0-sdk46/go.mod h1:nw2EAKcljsu/c1LbJ9KS3HYn+JMbLHnCVza5PiPCLRU=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/nxadm/tail v1.4.8 h1:nPr65rt6Y5JFSKQO7qToXr7pePgD6Gwiw05lkbyAQTE=
 github.com/nxadm/tail v1.4.8/go.mod h1:+ncqLTQzXmGhMZNUePPaPqPvBxHAIsmXswZKocGu+AU=
@@ -1091,7 +1095,7 @@ gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C
 gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
-gotest.tools/v3 v3.4.0 h1:ZazjZUfuVeZGLAmlKKuyv3IKP5orXcwtOwDQH6YVr6o=
+gotest.tools/v3 v3.3.0 h1:MfDY1b1/0xN1CyMlQDac0ziEy9zJQd9CXBRRDHw2jJo=
 honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 honnef.co/go/tools v0.0.0-20190106161140-3f1c8253044a/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 honnef.co/go/tools v0.0.0-20190418001031-e561f6794a2a/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
@@ -1126,7 +1130,7 @@ modernc.org/token v1.0.1 h1:A3qvTqOwexpfZZeyI0FeGPDlSWX5pjZu9hF4lU+EKWg=
 modernc.org/token v1.0.1/go.mod h1:UGzOrNV1mAFSEB63lOFHIpNRUVMvYTc6yu1SMY/XTDM=
 modernc.org/z v1.7.0 h1:xkDw/KepgEjeizO2sNco+hqYkU12taxQFqPEmgm1GWE=
 nhooyr.io/websocket v1.8.6 h1:s+C3xAMLwGmlI31Nyn/eAehUlZPwfYZu2JXM621Q5/k=
-pgregory.net/rapid v0.5.5 h1:jkgx1TjbQPD/feRoK+S/mXw9e1uj6WilpHrXJowi6oA=
+pgregory.net/rapid v0.5.3 h1:163N50IHFqr1phZens4FQOdPgfJscR7a562mjQqeo4M=
 rsc.io/binaryregexp v0.2.0/go.mod h1:qTv7/COck+e2FymRvadv62gMdZztPaShugOCi3I+8D8=
 rsc.io/quote/v3 v3.1.0/go.mod h1:yEA65RcK8LyAZtP9Kv3t0HmxON59tX3rD+tICJqUlj0=
 rsc.io/sampler v1.3.0/go.mod h1:T1hPZKmBbMNahiBKFy5HrXp6adAjACjK9JXDnKaTXpA=

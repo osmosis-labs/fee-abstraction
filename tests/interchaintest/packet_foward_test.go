@@ -472,12 +472,13 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		current_directory, _ := os.Getwd()
 		param_change_path := path.Join(current_directory, "proposal", "proposal.json")
 
-		data, err := os.ReadFile(param_change_path)
+		// changeParamProposal, err := ReadParamChangeProposalFile(param_change_path)
+		// require.NoError(t, err)
+
+		changeParamProposal, err := paramsutils.ParseParamChangeProposalJSON(feeabs.Config().EncodingConfig.Amino, param_change_path)
 		require.NoError(t, err)
 
-		var proposal *paramsutils.ParamChangeProposalJSON
-		err = json.Unmarshal(data, &proposal)
-		paramTx, err := feeabs.ParamChangeProposal(ctx, feeabsUser.KeyName(), proposal)
+		paramTx, err := feeabs.ParamChangeProposal(ctx, feeabsUser.KeyName(), &changeParamProposal)
 		require.NoError(t, err, "error submitting param change proposal tx")
 
 		err = feeabs.VoteOnProposalAllValidators(ctx, paramTx.ProposalID, cosmos.ProposalVoteYes)
