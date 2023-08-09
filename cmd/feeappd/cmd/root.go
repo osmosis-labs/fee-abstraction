@@ -230,7 +230,6 @@ func (ac appCreator) newApp(
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		ac.encCfg,
 		appOpts,
-		wasmOpts,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
 		baseapp.SetHaltHeight(cast.ToUint64(appOpts.Get(server.FlagHaltHeight))),
@@ -264,7 +263,6 @@ func (ac appCreator) appExport(
 		loadLatest = true
 	}
 
-	var emptyWasmOpts []wasm.Option
 	app := feeapp.NewFeeAbs(
 		logger,
 		db,
@@ -275,7 +273,6 @@ func (ac appCreator) appExport(
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		ac.encCfg,
 		appOpts,
-		emptyWasmOpts,
 	)
 
 	if height != -1 {
