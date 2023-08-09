@@ -11,8 +11,6 @@ import (
 	ibctesting "github.com/cosmos/ibc-go/v4/testing"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
-
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 )
 
 const ChainIDPrefix = "testchain"
@@ -32,7 +30,7 @@ type Coordinator struct {
 }
 
 // NewCoordinator initializes Coordinator with N TestChain's
-func NewCoordinator(t *testing.T, n int, opts ...[]wasmkeeper.Option) *Coordinator {
+func NewCoordinator(t *testing.T, n int) *Coordinator {
 	chains := make(map[string]*TestChain)
 	coord := &Coordinator{
 		t:           t,
@@ -41,11 +39,7 @@ func NewCoordinator(t *testing.T, n int, opts ...[]wasmkeeper.Option) *Coordinat
 
 	for i := 0; i < n; i++ {
 		chainID := GetChainID(i)
-		var x []wasmkeeper.Option
-		if len(opts) > i {
-			x = opts[i]
-		}
-		chains[chainID] = NewTestChain(t, coord, chainID, x...)
+		chains[chainID] = NewTestChain(t, coord, chainID)
 	}
 	coord.Chains = chains
 
