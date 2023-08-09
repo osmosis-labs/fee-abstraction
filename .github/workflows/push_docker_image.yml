@@ -56,6 +56,6 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            osmolabs/fee-abstraction:${{ env.MAJOR_VERSION }}
-            osmolabs/fee-abstraction:${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}
-            osmolabs/fee-abstraction:${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.${{ env.PATCH_VERSION }}
+            ghcr.io/osmosis-labs/fee-abstraction:${{ env.MAJOR_VERSION }}
+            ghcr.io/osmosis-labs/fee-abstraction:${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}
+            ghcr.io/osmosis-labs/fee-abstraction:${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.${{ env.PATCH_VERSION }}
