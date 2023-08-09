@@ -24,7 +24,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -54,7 +53,7 @@ var DefaultConsensusParams = &abci.ConsensusParams{
 	},
 }
 
-func setup(t testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Option) (*FeeAbs, GenesisState) {
+func setup(t testing.TB, withGenesis bool, invCheckPeriod uint) (*FeeAbs, GenesisState) {
 	nodeHome := t.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
 	snapshotDB, err := sdk.NewLevelDB("metadata", snapshotDir)
@@ -70,7 +69,6 @@ func setup(t testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Opt
 		invCheckPeriod,
 		MakeEncodingConfig(),
 		EmptyBaseAppOptions{},
-		opts,
 		baseAppOpts...)
 	if withGenesis {
 		return app, NewDefaultGenesisState()
@@ -86,10 +84,9 @@ func SetupWithGenesisValSet(
 	t *testing.T,
 	valSet *tmtypes.ValidatorSet,
 	genAccs []authtypes.GenesisAccount,
-	opts []wasm.Option,
 	balances ...banktypes.Balance,
 ) *FeeAbs {
-	app, genesisState := setup(t, true, 5, opts...)
+	app, genesisState := setup(t, true, 5)
 	// set genesis accounts
 	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)
 	genesisState[authtypes.ModuleName] = app.appCodec.MustMarshalJSON(authGenesis)
