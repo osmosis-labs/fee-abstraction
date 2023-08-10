@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
 
-	"github.com/CosmWasm/wasmd/app/params"
+	"github.com/osmosis-labs/fee-abstraction/v2/app/params"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
@@ -15,8 +15,6 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
 	ibckeeper "github.com/cosmos/ibc-go/v4/modules/core/keeper"
-
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 )
 
 type TestSupport struct {
@@ -30,10 +28,6 @@ func NewTestSupport(t testing.TB, app *FeeAbs) *TestSupport {
 
 func (s TestSupport) IBCKeeper() *ibckeeper.Keeper {
 	return s.app.IBCKeeper
-}
-
-func (s TestSupport) WasmKeeper() wasmkeeper.Keeper {
-	return s.app.WasmKeeper
 }
 
 func (s TestSupport) AppCodec() codec.Codec {
