@@ -7,7 +7,7 @@ import (
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/CosmWasm/wasmd/x/wasm/keeper/wasmtesting"
-	wasmibctesting "github.com/notional-labs/fee-abstraction/v4/x/feeabs/ibctesting"
+	wasmibctesting "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/ibctesting"
 
 	sdkerrors "cosmossdk.io/errors"
 	wasmvm "github.com/CosmWasm/wasmvm"

@@ -1,11 +1,11 @@
 package keeper_test
 
 import (
-	apphelpers "github.com/notional-labs/fee-abstraction/v4/app/helpers"
-	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govv1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1"

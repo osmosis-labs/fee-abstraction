@@ -1,4 +1,4 @@
-module github.com/notional-labs/fee-abstraction/v4
+module github.com/osmosis-labs/fee-abstraction/v4
 
 go 1.18
 
@@ -176,6 +176,5 @@ replace (
 	github.com/cosmos/iavl => github.com/cosmos/iavl v0.20.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	// use notional fork of packet forward middleware
-	// github.com/strangelove-ventures/packet-forward-middleware/v7 => github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7 v7.0.0-20230803181732-7c8f814d3b79
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 )
