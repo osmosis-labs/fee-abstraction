@@ -3,11 +3,12 @@ package cli
 import (
 	"testing"
 
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/testutil"
+
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 func TestParseProposal(t *testing.T) {

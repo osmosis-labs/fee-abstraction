@@ -10,6 +10,7 @@ The concrete use cases which motivated this module include:
 Fee abstraction modules enable users on any Cosmos chain with IBC connections to pay fee using ibc token.
 
 Fee-abs implementation:
- - Fee-abs module imported to the customer chain.
 
-The implememtation also uses Osmosis swap router and async-icq module which are already deployed on Osmosis testnet. 
+- Fee-abs module imported to the customer chain.
+
+The implememtation also uses Osmosis swap router and async-icq module which are already deployed on Osmosis testnet.

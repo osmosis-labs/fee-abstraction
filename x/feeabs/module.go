@@ -7,9 +7,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/client/cli"
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -19,6 +16,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 
 	abci "github.com/cometbft/cometbft/abci/types"
+
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/client/cli"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 var (
@@ -51,7 +52,7 @@ func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 }
 
 // RegisterInterfaces registers the module interface
-func (a AppModuleBasic) RegisterInterfaces(reg cdctypes.InterfaceRegistry) {
+func (AppModuleBasic) RegisterInterfaces(reg cdctypes.InterfaceRegistry) {
 	types.RegisterInterfaces(reg)
 }
 
@@ -82,7 +83,7 @@ func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, serveM
 }
 
 // GetTxCmd returns the feeabs module's root tx command.
-func (a AppModuleBasic) GetTxCmd() *cobra.Command {
+func (AppModuleBasic) GetTxCmd() *cobra.Command {
 	return cli.NewTxCmd()
 }
 
@@ -114,12 +115,12 @@ func NewAppModule(
 }
 
 // Name return the feeabs module name
-func (am AppModule) Name() string {
+func (AppModule) Name() string {
 	return types.ModuleName
 }
 
 // RegisterInvariants registers the feeabs module invariants.
-func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
+func (AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
 
 // RegisterServices registers a GRPC query service to respond to the
 // module-specific GRPC queries.

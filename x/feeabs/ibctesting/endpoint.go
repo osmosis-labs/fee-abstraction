@@ -3,8 +3,6 @@ package ibctesting
 import (
 	"fmt"
 
-	"github.com/stretchr/testify/require"
-
 	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
 	connectiontypes "github.com/cosmos/ibc-go/v7/modules/core/03-connection/types"
 	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
@@ -13,6 +11,7 @@ import (
 	"github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 	ibctesting "github.com/cosmos/ibc-go/v7/testing"
+	"github.com/stretchr/testify/require"
 )
 
 // Endpoint is a which represents a channel endpoint and its associated

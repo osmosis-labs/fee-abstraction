@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
+	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
+	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
 
 	sdkerrors "cosmossdk.io/errors"
 
@@ -13,10 +16,7 @@ import (
 
 	abci "github.com/cometbft/cometbft/abci/types"
 
-	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
-	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
-	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 // GetPort returns the portID for the module. Used in ExportGenesis.
@@ -131,11 +131,11 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 				return false
 			}
 			// Get icq QueryArithmeticTwapToNowRequest response
-			IcqRes := ICQResponses[index]
+			icqRes := ICQResponses[index]
 			index++
 
-			if IcqRes.Code != 0 {
-				k.Logger(ctx).Error(fmt.Sprintf("Failed to send interchain query code %d", IcqRes.Code))
+			if icqRes.Code != 0 {
+				k.Logger(ctx).Error(fmt.Sprintf("Failed to send interchain query code %d", icqRes.Code))
 				err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 				if err != nil {
 					k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
@@ -143,7 +143,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 				return false
 			}
 
-			twapRate, err := k.GetDecTWAPFromBytes(IcqRes.Value)
+			twapRate, err := k.GetDecTWAPFromBytes(icqRes.Value)
 			if err != nil {
 				k.Logger(ctx).Error("Failed to get twap")
 				return false

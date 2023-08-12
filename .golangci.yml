@@ -51,7 +51,7 @@ linters-settings:
       - prefix(cosmossdk.io)
       - prefix(github.com/cosmos/cosmos-sdk)
       - prefix(github.com/cometbft/cometbft)
-      - prefix(github.com/cosmos/ibc-go)
+      - prefix(github.com/osmosis-labs/fee-abstraction)
     custom-order: true
   revive:
     enable-all-rules: true

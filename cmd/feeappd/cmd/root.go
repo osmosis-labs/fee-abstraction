@@ -8,8 +8,8 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	feeapp "github.com/osmosis-labs/fee-abstraction/v7/app"
-	"github.com/osmosis-labs/fee-abstraction/v7/app/params"
+	ibcclienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	ibcchanneltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
@@ -43,8 +43,8 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 	tmtypes "github.com/cometbft/cometbft/types"
 
-	ibcclienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	ibcchanneltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	feeapp "github.com/osmosis-labs/fee-abstraction/v7/app"
+	"github.com/osmosis-labs/fee-abstraction/v7/app/params"
 )
 
 // NewRootCmd creates a new root command for simd. It is called once in the

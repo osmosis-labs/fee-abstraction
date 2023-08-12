@@ -7,7 +7,17 @@ import (
 	"time"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-	feeabs "github.com/osmosis-labs/fee-abstraction/v7/app"
+	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	commitmenttypes "github.com/cosmos/ibc-go/v7/modules/core/23-commitment/types"
+	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
+	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
+	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
+	"github.com/cosmos/ibc-go/v7/modules/core/types"
+	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
+	ibctesting "github.com/cosmos/ibc-go/v7/testing"
+	"github.com/cosmos/ibc-go/v7/testing/mock"
+	ibctestingtypes "github.com/cosmos/ibc-go/v7/testing/types"
 	"github.com/stretchr/testify/require"
 
 	sdkerrors "cosmossdk.io/errors"
@@ -32,17 +42,7 @@ import (
 	tmtypes "github.com/cometbft/cometbft/types"
 	tmversion "github.com/cometbft/cometbft/version"
 
-	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
-	commitmenttypes "github.com/cosmos/ibc-go/v7/modules/core/23-commitment/types"
-	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
-	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
-	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
-	"github.com/cosmos/ibc-go/v7/modules/core/types"
-	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
-	ibctesting "github.com/cosmos/ibc-go/v7/testing"
-	"github.com/cosmos/ibc-go/v7/testing/mock"
-	ibctestingtypes "github.com/cosmos/ibc-go/v7/testing/types"
+	feeabs "github.com/osmosis-labs/fee-abstraction/v7/app"
 )
 
 // TestChain is a testing struct that wraps a simapp with the last TM Header, the current ABCI
@@ -86,6 +86,7 @@ type PacketAck struct {
 // Time management is handled by the Coordinator in order to ensure synchrony between chains.
 // Each update of any chain increments the block header time for all chains by 5 seconds.
 func NewTestChain(t *testing.T, coord *Coordinator, chainID string, opts ...wasm.Option) *TestChain {
+	t.Helper()
 	// generate validator private/public key
 	privVal := mock.NewPV()
 	pubKey, err := privVal.GetPubKey()

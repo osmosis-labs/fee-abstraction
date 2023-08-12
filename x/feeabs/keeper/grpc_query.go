@@ -3,11 +3,12 @@ package keeper
 import (
 	"context"
 
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 var _ types.QueryServer = Querier{}

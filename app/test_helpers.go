@@ -60,13 +60,14 @@ var DefaultConsensusParams = &tmproto.ConsensusParams{
 	},
 }
 
-func setup(t testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Option) (*FeeAbs, GenesisState) {
-	nodeHome := t.TempDir()
+func setup(tb testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Option) (*FeeAbs, GenesisState) {
+	tb.Helper()
+	nodeHome := tb.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
 	snapshotDB, err := dbm.NewGoLevelDB("metadata", snapshotDir)
-	require.NoError(t, err)
+	require.NoError(tb, err)
 	snapshotStore, err := snapshots.NewStore(snapshotDB, snapshotDir)
-	require.NoError(t, err)
+	require.NoError(tb, err)
 	baseAppOpts := []func(*baseapp.BaseApp){baseapp.SetSnapshot(snapshotStore, types.SnapshotOptions{KeepRecent: 2})}
 	db := dbm.NewMemDB()
 	app := NewFeeAbs(
@@ -84,13 +85,14 @@ func setup(t testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Opt
 	return app, GenesisState{}
 }
 
-func setupWithChainID(t testing.TB, withGenesis bool, invCheckPeriod uint, chainID string, opts ...wasm.Option) (*FeeAbs, GenesisState) {
-	nodeHome := t.TempDir()
+func setupWithChainID(tb testing.TB, withGenesis bool, invCheckPeriod uint, chainID string, opts ...wasm.Option) (*FeeAbs, GenesisState) {
+	tb.Helper()
+	nodeHome := tb.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
 	snapshotDB, err := dbm.NewGoLevelDB("metadata", snapshotDir)
-	require.NoError(t, err)
+	require.NoError(tb, err)
 	snapshotStore, err := snapshots.NewStore(snapshotDB, snapshotDir)
-	require.NoError(t, err)
+	require.NoError(tb, err)
 	baseAppOpts := []func(*baseapp.BaseApp){
 		baseapp.SetChainID(chainID),
 		baseapp.SetSnapshot(snapshotStore, types.SnapshotOptions{KeepRecent: 2}),
@@ -123,6 +125,7 @@ func SetupWithGenesisValSet(
 	chainID string,
 	balances ...banktypes.Balance,
 ) *FeeAbs {
+	t.Helper()
 	app, genesisState := setupWithChainID(t, true, 5, chainID, opts...)
 	// set genesis accounts
 	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)
@@ -202,8 +205,9 @@ func SetupWithGenesisValSet(
 }
 
 // SetupWithEmptyStore setup a wasmd app instance with empty DB
-func SetupWithEmptyStore(t testing.TB) *FeeAbs {
-	app, _ := setup(t, false, 0)
+func SetupWithEmptyStore(tb testing.TB) *FeeAbs {
+	tb.Helper()
+	app, _ := setup(tb, false, 0)
 	return app
 }
 
@@ -328,6 +332,7 @@ func TestAddr(addr string, bech string) (sdk.AccAddress, error) {
 
 // CheckBalance checks the balance of an account.
 func CheckBalance(t *testing.T, app *FeeAbs, addr sdk.AccAddress, balances sdk.Coins) {
+	t.Helper()
 	ctxCheck := app.BaseApp.NewContext(true, tmproto.Header{})
 	require.True(t, balances.IsEqual(app.BankKeeper.GetAllBalances(ctxCheck, addr)))
 }
@@ -491,7 +496,7 @@ func NewPubKeyFromHex(pk string) (res cryptotypes.PubKey) {
 type EmptyBaseAppOptions struct{}
 
 // Get implements AppOptions
-func (ao EmptyBaseAppOptions) Get(o string) interface{} {
+func (EmptyBaseAppOptions) Get(o string) interface{} {
 	return nil
 }
 

@@ -3,12 +3,13 @@ package keeper_test
 import (
 	"testing"
 
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v7/app/helpers"
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	"github.com/stretchr/testify/require"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v7/app/helpers"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 func createNHostZone(t *testing.T, keeper *keeper.Keeper, ctx sdk.Context, n int) []types.HostChainFeeAbsConfig {

@@ -3,7 +3,8 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
+	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
@@ -14,8 +15,7 @@ import (
 
 	"github.com/cometbft/cometbft/libs/log"
 
-	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
-	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 type Keeper struct {
@@ -114,7 +114,7 @@ func (k Keeper) verifyIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins) error {
 	return fmt.Errorf("unallowed %s for tx fee", ibcCoins[0].Denom)
 }
 
-func (k Keeper) Logger(ctx sdk.Context) log.Logger {
+func (Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 

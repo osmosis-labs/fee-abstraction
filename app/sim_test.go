@@ -7,8 +7,6 @@ import (
 	"testing"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-	feeapp "github.com/osmosis-labs/fee-abstraction/v7/app"
-	"github.com/osmosis-labs/fee-abstraction/v7/app/helpers"
 	"github.com/stretchr/testify/require"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -21,6 +19,9 @@ import (
 	dbm "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cometbft/cometbft/libs/rand"
+
+	feeapp "github.com/osmosis-labs/fee-abstraction/v7/app"
+	"github.com/osmosis-labs/fee-abstraction/v7/app/helpers"
 )
 
 func init() {

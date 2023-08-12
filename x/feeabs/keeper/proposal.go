@@ -1,9 +1,9 @@
 package keeper
 
 import (
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 func (k Keeper) AddHostZoneProposal(ctx sdk.Context, p *types.AddHostZoneProposal) error {

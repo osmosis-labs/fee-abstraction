@@ -4,14 +4,14 @@ import (
 	"fmt"
 
 	"github.com/CosmWasm/wasmd/x/wasm/types"
-	feeabs "github.com/osmosis-labs/fee-abstraction/v7/app"
+	ibctesting "github.com/cosmos/ibc-go/v7/testing"
 	"github.com/stretchr/testify/require"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/cometbft/cometbft/libs/rand"
 
-	ibctesting "github.com/cosmos/ibc-go/v7/testing"
+	feeabs "github.com/osmosis-labs/fee-abstraction/v7/app"
 )
 
 var wasmIdent = []byte("\x00\x61\x73\x6D")

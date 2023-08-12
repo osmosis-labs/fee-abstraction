@@ -3,8 +3,10 @@ package feeabs
 import (
 	"fmt"
 
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
+	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	porttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
+	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
+	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 
 	sdkerrors "cosmossdk.io/errors"
 
@@ -13,10 +15,8 @@ import (
 	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 
-	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
-	porttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
-	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
-	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 // IBCModule implements the ICS26 interface for transfer given the transfer keeper.
@@ -109,7 +109,7 @@ func (am IBCModule) OnChanOpenTry(
 }
 
 // OnChanOpenAck implements the IBCModule interface.
-func (am IBCModule) OnChanOpenAck(
+func (IBCModule) OnChanOpenAck(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -120,7 +120,7 @@ func (am IBCModule) OnChanOpenAck(
 }
 
 // OnChanOpenConfirm implements the IBCModule interface.
-func (am IBCModule) OnChanOpenConfirm(
+func (IBCModule) OnChanOpenConfirm(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -129,7 +129,7 @@ func (am IBCModule) OnChanOpenConfirm(
 }
 
 // OnChanCloseInit implements the IBCModule interface.
-func (am IBCModule) OnChanCloseInit(
+func (IBCModule) OnChanCloseInit(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -139,7 +139,7 @@ func (am IBCModule) OnChanCloseInit(
 }
 
 // OnChanCloseConfirm implements the IBCModule interface.
-func (am IBCModule) OnChanCloseConfirm(
+func (IBCModule) OnChanCloseConfirm(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -149,7 +149,7 @@ func (am IBCModule) OnChanCloseConfirm(
 }
 
 // OnRecvPacket implements the IBCModule interface.
-func (am IBCModule) OnRecvPacket(
+func (IBCModule) OnRecvPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
 	relayer sdk.AccAddress,
