@@ -1,4 +1,4 @@
-module github.com/notional-labs/fee-abstraction/v6
+module github.com/osmosis-labs/fee-abstraction/v6
 
 go 1.21
 

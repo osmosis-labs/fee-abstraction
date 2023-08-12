@@ -1,4 +1,4 @@
-module github.com/notional-labs/fee-abstraction/tests/interchaintest
+module github.com/osmosis-labs/fee-abstraction/tests/interchaintest
 
 go 1.21
 
@@ -11,7 +11,7 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/icza/dyno v0.0.0-20220812133438-f0b6f8a18845
-	github.com/notional-labs/fee-abstraction/v6 v3.0.0-20230427065305-f8f578f3486b
+	github.com/osmosis-labs/fee-abstraction/v6 4fdd3ed
 	github.com/strangelove-ventures/interchaintest/v6 v6.0.0-20230424212053-d8e473f39379
 	github.com/stretchr/testify v1.8.2
 	go.uber.org/zap v1.24.0
