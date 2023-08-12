@@ -112,5 +112,4 @@ feeappd query feeabs osmo-arithmetic-twap [ibc-denom] [flags]
 
 ## Resources
 
-- Main repo: https://github.com/notional-labs/fee-abstraction
-- Contract repo: https://github.com/notional-labs/feeabstraction-contract
+- Main repo: https://github.com/osmosis-labs/fee-abstraction

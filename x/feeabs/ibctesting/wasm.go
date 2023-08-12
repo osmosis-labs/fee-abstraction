@@ -7,7 +7,7 @@ import (
 	"github.com/cometbft/cometbft/libs/rand"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	ibctesting "github.com/cosmos/ibc-go/v7/testing"
-	feeabs "github.com/notional-labs/fee-abstraction/v4/app"
+	feeabs "github.com/osmosis-labs/fee-abstraction/v4/app"
 	"github.com/stretchr/testify/require"
 )
 

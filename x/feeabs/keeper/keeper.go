@@ -13,7 +13,7 @@ import (
 	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
 	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
 
-	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 type Keeper struct {
@@ -132,7 +132,7 @@ func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 // OnTimeoutPacket resend packet when timeout
 func (k Keeper) OnTimeoutPacket(ctx sdk.Context, chanCap *capabilitytypes.Capability, sourcePort string,
 	sourceChannel string, timeoutHeight clienttypes.Height, timeoutTimestamp uint64, packetData []byte) error {
-	_, err := k.channelKeeper.SendPacket(ctx, chanCap, sourcePort, sourceChannel, 
+	_, err := k.channelKeeper.SendPacket(ctx, chanCap, sourcePort, sourceChannel,
 		timeoutHeight, timeoutTimestamp, packetData)
 	return err
 }

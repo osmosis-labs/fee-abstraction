@@ -20,12 +20,12 @@ import (
 	tmrand "github.com/cometbft/cometbft/libs/rand"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	tmtypes "github.com/cometbft/cometbft/types"
-	"github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 	"github.com/stretchr/testify/require"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	feeapp "github.com/notional-labs/fee-abstraction/v4/app"
+	feeapp "github.com/osmosis-labs/fee-abstraction/v4/app"
 )
 
 // SimAppChainID hardcoded chainID for simulation

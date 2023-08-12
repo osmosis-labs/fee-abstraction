@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/icza/dyno"
-	feeabstype "github.com/notional-labs/fee-abstraction/v4/x/feeabs/types"
+	feeabstype "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos/wasm"
 
@@ -32,8 +32,8 @@ const (
 )
 
 var (
-	FeeabsMainRepo   = "ghcr.io/notional-labs/fee-abstraction"
-	FeeabsICTestRepo = "ghcr.io/notional-labs/fee-abstraction-ictest"
+	FFeeabsMainRepo  = "osmolabs/fee-abstraction"
+	FeeabsICTestRepo = "osmolabs/fee-abstraction-ictest"
 
 	repo, version = GetDockerImageInfo()
 

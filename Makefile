@@ -17,7 +17,7 @@ TM_VERSION := $(shell go list -m github.com/cometbft/cometbft | sed 's:.* ::')
 DOCKER := $(shell which docker)
 DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace bufbuild/buf:1.0.0-rc8
 BUILDDIR ?= $(CURDIR)/build
-HTTPS_GIT := https://github.com/notional-labs/fee-abstraction.git
+HTTPS_GIT := https://github.com/osmosis-labs/fee-abstraction.git
 
 export GO111MODULE = on
 
