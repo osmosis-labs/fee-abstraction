@@ -61,5 +61,4 @@ After reverse the ibc-token, XCS will :
 ![](https://i.imgur.com/YKOK8mr.png)
 
 Current version of fee-abstraction working with XCSv2
-## Resources
- - Main repo: https://github.com/osmosis-labs/fee-abstraction
+
