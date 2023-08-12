@@ -3,16 +3,17 @@ package keeper
 import (
 	"fmt"
 
+	ibctransferkeeper "github.com/cosmos/ibc-go/v6/modules/apps/transfer/keeper"
+	clienttypes "github.com/cosmos/ibc-go/v6/modules/core/02-client/types"
+	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+	"github.com/tendermint/tendermint/libs/log"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v6/modules/apps/transfer/keeper"
-	clienttypes "github.com/cosmos/ibc-go/v6/modules/core/02-client/types"
-	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
-	"github.com/tendermint/tendermint/libs/log"
 )
 
 type Keeper struct {
@@ -43,7 +44,6 @@ func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
-
 ) Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -130,7 +130,8 @@ func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 
 // OnTimeoutPacket resend packet when timeout
 func (k Keeper) OnTimeoutPacket(ctx sdk.Context, chanCap *capabilitytypes.Capability, sourcePort string,
-	sourceChannel string, timeoutHeight clienttypes.Height, timeoutTimestamp uint64, packetData []byte) error {
+	sourceChannel string, timeoutHeight clienttypes.Height, timeoutTimestamp uint64, packetData []byte,
+) error {
 	_, err := k.channelKeeper.SendPacket(ctx, chanCap, sourcePort, sourceChannel,
 		timeoutHeight, timeoutTimestamp, packetData)
 	return err

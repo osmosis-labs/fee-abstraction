@@ -1,16 +1,16 @@
 package feeabs
 
 import (
+	cli "github.com/notional-labs/fee-abstraction/v3/x/feeabs/client/cli"
+	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/keeper"
+	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+
 	sdkerrors "cosmossdk.io/errors"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
-
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	v1beta1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/keeper"
-
-	cli "github.com/notional-labs/fee-abstraction/v3/x/feeabs/client/cli"
-	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
 )
 
 var (

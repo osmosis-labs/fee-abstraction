@@ -1,10 +1,12 @@
 package ante
 
 import (
+	tmstrings "github.com/tendermint/tendermint/libs/strings"
+
 	sdkerrors "cosmossdk.io/errors"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
-	tmstrings "github.com/tendermint/tendermint/libs/strings"
 )
 
 const maxBypassMinFeeMsgGasUsage = uint64(200_000)

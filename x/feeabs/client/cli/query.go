@@ -3,10 +3,11 @@ package cli
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
 	"github.com/spf13/cobra"
+
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 )
 
 func GetQueryCmd() *cobra.Command {
@@ -113,6 +114,7 @@ func GetCmdQueryHostChainConfig() *cobra.Command {
 
 	return cmd
 }
+
 func GetCmdQueryAllHostChainConfig() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all-host-chain-config [ibc-denom]",

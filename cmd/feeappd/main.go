@@ -3,12 +3,12 @@ package main
 import (
 	"os"
 
-	"github.com/cosmos/cosmos-sdk/server"
-	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
-
 	app "github.com/notional-labs/fee-abstraction/v3/app"
 	"github.com/notional-labs/fee-abstraction/v3/app/params"
 	"github.com/notional-labs/fee-abstraction/v3/cmd/feeappd/cmd"
+
+	"github.com/cosmos/cosmos-sdk/server"
+	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 )
 
 func main() {

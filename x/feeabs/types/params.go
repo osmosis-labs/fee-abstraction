@@ -44,7 +44,6 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 
 // Validate also validates params info.
 func (p Params) Validate() error {
-
 	if err := validateString(p.OsmosisQueryTwapPath); err != nil {
 		return err
 	}

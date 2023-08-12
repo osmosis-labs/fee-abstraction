@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/baseapp"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	"github.com/notional-labs/fee-abstraction/v3/app"
 	apphelpers "github.com/notional-labs/fee-abstraction/v3/app/helpers"
 	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/keeper"
@@ -14,6 +11,10 @@ import (
 	"github.com/stretchr/testify/suite"
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+
+	"github.com/cosmos/cosmos-sdk/baseapp"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 )
 
 type KeeperTestSuite struct {

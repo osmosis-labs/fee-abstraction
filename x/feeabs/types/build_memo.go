@@ -50,9 +50,11 @@ func NewOsmosisSwapMsg(inputCoin sdk.Coin, outputDenom string, slippagePercentag
 	swap := Swap{
 		OutPutDenom: outputDenom,
 		Slippage: Twap{
-			Twap: TwapRouter{SlippagePercentage: slippagePercentage,
-				WindowSeconds: windowSeconds,
-			}},
+			Twap: TwapRouter{
+				SlippagePercentage: slippagePercentage,
+				WindowSeconds:      windowSeconds,
+			},
+		},
 		Receiver: receiver,
 	}
 

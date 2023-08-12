@@ -4,6 +4,12 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/notional-labs/fee-abstraction/v3/app"
+	apphelpers "github.com/notional-labs/fee-abstraction/v3/app/helpers"
+	"github.com/stretchr/testify/suite"
+	tmrand "github.com/tendermint/tendermint/libs/rand"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -12,12 +18,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
-	"github.com/stretchr/testify/suite"
-	tmrand "github.com/tendermint/tendermint/libs/rand"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-
-	"github.com/notional-labs/fee-abstraction/v3/app"
-	apphelpers "github.com/notional-labs/fee-abstraction/v3/app/helpers"
 )
 
 type IntegrationTestSuite struct {

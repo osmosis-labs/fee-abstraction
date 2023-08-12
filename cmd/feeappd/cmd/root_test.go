@@ -3,11 +3,11 @@ package cmd_test
 import (
 	"testing"
 
-	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
-	"github.com/stretchr/testify/require"
-
 	app "github.com/notional-labs/fee-abstraction/v3/app"
 	"github.com/notional-labs/fee-abstraction/v3/cmd/feeappd/cmd"
+	"github.com/stretchr/testify/require"
+
+	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 )
 
 func TestRootCmdConfig(t *testing.T) {
