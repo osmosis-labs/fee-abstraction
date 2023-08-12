@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-	feeapp "github.com/osmosis-labs/fee-abstraction/v4/app"
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+	feeapp "github.com/osmosis-labs/fee-abstraction/v7/app"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	"github.com/stretchr/testify/require"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"

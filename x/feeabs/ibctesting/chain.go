@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-	feeabs "github.com/osmosis-labs/fee-abstraction/v4/app"
+	feeabs "github.com/osmosis-labs/fee-abstraction/v7/app"
 	"github.com/stretchr/testify/require"
 
 	sdkerrors "cosmossdk.io/errors"

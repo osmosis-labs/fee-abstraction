@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/CosmWasm/wasmd/x/wasm/types"
-	feeabs "github.com/osmosis-labs/fee-abstraction/v4/app"
+	feeabs "github.com/osmosis-labs/fee-abstraction/v7/app"
 	"github.com/stretchr/testify/require"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"

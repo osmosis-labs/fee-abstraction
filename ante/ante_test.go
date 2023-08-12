@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/osmosis-labs/fee-abstraction/v4/app"
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
+	"github.com/osmosis-labs/fee-abstraction/v7/app"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v7/app/helpers"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/cosmos/cosmos-sdk/client"

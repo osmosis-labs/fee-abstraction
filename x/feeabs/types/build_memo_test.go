@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	"github.com/stretchr/testify/require"
 )
 

@@ -3,7 +3,7 @@ package keeper
 import (
 	"context"
 
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 

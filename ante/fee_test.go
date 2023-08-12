@@ -1,7 +1,7 @@
 package ante_test
 
 import (
-	"github.com/osmosis-labs/fee-abstraction/v4/ante"
+	"github.com/osmosis-labs/fee-abstraction/v7/ante"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"

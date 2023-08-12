@@ -3,8 +3,7 @@ package cli
 import (
 	"io/ioutil"
 
-
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 )

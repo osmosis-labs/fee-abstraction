@@ -1,9 +1,9 @@
 package feeabs
 
 import (
-	cli "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/client/cli"
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/keeper"
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+	cli "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/client/cli"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 
 	sdkerrors "cosmossdk.io/errors"
 

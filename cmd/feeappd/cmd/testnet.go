@@ -10,7 +10,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/osmosis-labs/fee-abstraction/v4/app/params"
+	"github.com/osmosis-labs/fee-abstraction/v7/app/params"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"

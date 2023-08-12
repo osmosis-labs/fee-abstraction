@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v7/app/helpers"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	"github.com/stretchr/testify/require"
 )
 

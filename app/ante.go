@@ -1,8 +1,8 @@
 package app
 
 import (
-	feeabsante "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/ante"
-	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/keeper"
+	feeabsante "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/ante"
+	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
 
 	sdkerrors "cosmossdk.io/errors"
 

@@ -7,7 +7,7 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm/keeper/wasmtesting"
 	wasmvm "github.com/CosmWasm/wasmvm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
-	wasmibctesting "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/ibctesting"
+	wasmibctesting "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/ibctesting"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
