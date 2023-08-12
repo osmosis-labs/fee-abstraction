@@ -7,10 +7,6 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm/keeper/wasmtesting"
 	wasmvm "github.com/CosmWasm/wasmvm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
-	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
-	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
-	ibctesting "github.com/cosmos/ibc-go/v7/testing"
 	wasmibctesting "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/ibctesting"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -19,6 +15,11 @@ import (
 	"cosmossdk.io/math"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
+	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	ibctesting "github.com/cosmos/ibc-go/v7/testing"
 )
 
 func TestFromIBCTransferToContract(t *testing.T) {

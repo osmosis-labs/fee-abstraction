@@ -1,8 +1,10 @@
 package cli
 
 import (
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 	"io/ioutil"
+
+
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 )

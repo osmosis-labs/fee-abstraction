@@ -3,8 +3,6 @@ package keeper
 import (
 	"fmt"
 
-	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
-	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
 	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -15,6 +13,9 @@ import (
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/cometbft/cometbft/libs/log"
+
+	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
+	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
 )
 
 type Keeper struct {

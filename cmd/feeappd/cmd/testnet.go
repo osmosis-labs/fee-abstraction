@@ -10,8 +10,6 @@ import (
 	"os"
 	"path/filepath"
 
-	ibcclienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	ibcchanneltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 	"github.com/osmosis-labs/fee-abstraction/v4/app/params"
 	"github.com/spf13/cobra"
 
@@ -37,6 +35,9 @@ import (
 	tmrand "github.com/cometbft/cometbft/libs/rand"
 	"github.com/cometbft/cometbft/types"
 	tmtime "github.com/cometbft/cometbft/types/time"
+
+	ibcclienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	ibcchanneltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 )
 
 var (

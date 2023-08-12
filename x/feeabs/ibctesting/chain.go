@@ -7,17 +7,6 @@ import (
 	"time"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
-	commitmenttypes "github.com/cosmos/ibc-go/v7/modules/core/23-commitment/types"
-	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
-	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
-	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
-	"github.com/cosmos/ibc-go/v7/modules/core/types"
-	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
-	ibctesting "github.com/cosmos/ibc-go/v7/testing"
-	"github.com/cosmos/ibc-go/v7/testing/mock"
-	ibctestingtypes "github.com/cosmos/ibc-go/v7/testing/types"
 	feeabs "github.com/osmosis-labs/fee-abstraction/v4/app"
 	"github.com/stretchr/testify/require"
 
@@ -42,6 +31,18 @@ import (
 	tmprotoversion "github.com/cometbft/cometbft/proto/tendermint/version"
 	tmtypes "github.com/cometbft/cometbft/types"
 	tmversion "github.com/cometbft/cometbft/version"
+
+	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	commitmenttypes "github.com/cosmos/ibc-go/v7/modules/core/23-commitment/types"
+	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
+	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
+	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
+	"github.com/cosmos/ibc-go/v7/modules/core/types"
+	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
+	ibctesting "github.com/cosmos/ibc-go/v7/testing"
+	"github.com/cosmos/ibc-go/v7/testing/mock"
+	ibctestingtypes "github.com/cosmos/ibc-go/v7/testing/types"
 )
 
 // TestChain is a testing struct that wraps a simapp with the last TM Header, the current ABCI

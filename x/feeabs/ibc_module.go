@@ -3,10 +3,6 @@ package feeabs
 import (
 	"fmt"
 
-	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
-	porttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
-	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
-	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 
@@ -16,6 +12,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+
+	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	porttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
+	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
+	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 )
 
 // IBCModule implements the ICS26 interface for transfer given the transfer keeper.

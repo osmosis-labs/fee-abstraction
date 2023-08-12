@@ -4,10 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
-	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
-	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
 	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 
 	sdkerrors "cosmossdk.io/errors"
@@ -16,6 +12,11 @@ import (
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 
 	abci "github.com/cometbft/cometbft/abci/types"
+
+	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
+	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
 )
 
 // GetPort returns the portID for the module. Used in ExportGenesis.

@@ -32,11 +32,11 @@ func NewAddHostZoneProposal(title, description string, config HostChainFeeAbsCon
 	}
 }
 
-func NewDeleteHostZoneProposal(title, description, ibc_denom string) v1beta1types.Content {
+func NewDeleteHostZoneProposal(title, description, ibcDenom string) v1beta1types.Content {
 	return &DeleteHostZoneProposal{
 		Title:       title,
 		Description: description,
-		IbcDenom:    ibc_denom,
+		IbcDenom:    ibcDenom,
 	}
 }
 
