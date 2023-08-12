@@ -11,12 +11,12 @@ The concrete use cases which motivated this module include:
 
 This repository is branched by the cosmos-sdk versions and ibc-go versions used.  Currently fee abstraction supports:
 
-- SDK v0.47.x
-  - branch: release/v4.0.x
+- SDK v0.47.x & IBC-go v7.*
+  - branch: release/v7.0.x
 - SDK v0.46.x
-  - branch: release/v3.0.x
+  - branch: release/v6.0.x
 - SDK v0.45.x
-  - branch: release/v2.0.x
+  - branch: release/v4.0.x
 
 ## Description
 
