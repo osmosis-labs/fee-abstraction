@@ -41,7 +41,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
-	feeabs "github.com/osmosis-labs/fee-abstraction/v4/app"
+	feeabs "github.com/osmosis-labs/fee-abstraction/v7/app"
 )
 
 // TestChain is a testing struct that wraps a simapp with the last TM Header, the current ABCI

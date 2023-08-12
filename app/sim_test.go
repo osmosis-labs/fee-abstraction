@@ -6,12 +6,12 @@ import (
 	"os"
 	"testing"
 
-	feeapp "github.com/osmosis-labs/fee-abstraction/v4/app"
+	feeapp "github.com/osmosis-labs/fee-abstraction/v7/app"
 
 	dbm "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cometbft/cometbft/libs/rand"
-	"github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
+	"github.com/osmosis-labs/fee-abstraction/v7/app/helpers"
 	"github.com/stretchr/testify/require"
 
 	"github.com/CosmWasm/wasmd/x/wasm"

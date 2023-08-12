@@ -7,8 +7,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/keeper"
-	feeabstypes "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 type FeeAbstractionDeductFeeDecorate struct {

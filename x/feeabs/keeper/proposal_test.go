@@ -1,8 +1,8 @@
 package keeper_test
 
 import (
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v7/app/helpers"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
