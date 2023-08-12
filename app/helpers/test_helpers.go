@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	"github.com/cosmos/cosmos-sdk/testutil/mock"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -24,8 +24,8 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	feeapp "github.com/notional-labs/fee-abstraction/v3/app"
-	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+	feeapp "github.com/notional-labs/fee-abstraction/v6/app"
+	"github.com/notional-labs/fee-abstraction/v6/x/feeabs/types"
 )
 
 // SimAppChainID hardcoded chainID for simulation

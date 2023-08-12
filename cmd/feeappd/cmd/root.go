@@ -38,8 +38,8 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 
-	feeapp "github.com/notional-labs/fee-abstraction/v3/app"
-	"github.com/notional-labs/fee-abstraction/v3/app/params"
+	feeapp "github.com/notional-labs/fee-abstraction/v6/app"
+	"github.com/notional-labs/fee-abstraction/v6/app/params"
 )
 
 // NewRootCmd creates a new root command for simd. It is called once in the
@@ -255,7 +255,7 @@ func (ac appCreator) newApp(
 		baseapp.SetTrace(cast.ToBool(appOpts.Get(server.FlagTrace))),
 		baseapp.SetIndexEvents(cast.ToStringSlice(appOpts.Get(server.FlagIndexEvents))),
 		baseapp.SetSnapshot(snapshotStore, snapshotstypes.SnapshotOptions{
-			Interval: cast.ToUint64(appOpts.Get(server.FlagStateSyncSnapshotInterval)),
+			Interval:   cast.ToUint64(appOpts.Get(server.FlagStateSyncSnapshotInterval)),
 			KeepRecent: cast.ToUint32(appOpts.Get(server.FlagStateSyncSnapshotKeepRecent)),
 		}),
 	)

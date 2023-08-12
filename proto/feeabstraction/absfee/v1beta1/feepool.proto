@@ -6,4 +6,4 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "feeabstraction/absfee/v1beta1/params.proto";
 
-option go_package = "github.com/notional-labs/fee-abstraction/v3/x/feeabs/types";
+option go_package = "github.com/notional-labs/fee-abstraction/v6/x/feeabs/types";

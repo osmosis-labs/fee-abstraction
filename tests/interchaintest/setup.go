@@ -12,7 +12,7 @@ import (
 	"github.com/icza/dyno"
 	balancertypes "github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/balancer"
 	gammtypes "github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/types"
-	feeabstype "github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+	feeabstype "github.com/notional-labs/fee-abstraction/v6/x/feeabs/types"
 	"github.com/strangelove-ventures/interchaintest/v6/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v6/ibc"
 )

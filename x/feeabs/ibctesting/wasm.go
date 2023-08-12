@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	ibctesting "github.com/cosmos/ibc-go/v6/testing"
 	"github.com/golang/protobuf/proto" //nolint
-	feeabs "github.com/notional-labs/fee-abstraction/v3/app"
+	feeabs "github.com/notional-labs/fee-abstraction/v6/app"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/rand"
 )

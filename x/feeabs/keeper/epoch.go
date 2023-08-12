@@ -6,7 +6,7 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+	"github.com/notional-labs/fee-abstraction/v6/x/feeabs/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
