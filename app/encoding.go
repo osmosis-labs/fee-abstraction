@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/notional-labs/fee-abstraction/v6/app/params"
+	"github.com/osmosis-labs/fee-abstraction/v6/app/params"
 
 	"github.com/cosmos/cosmos-sdk/std"
 )

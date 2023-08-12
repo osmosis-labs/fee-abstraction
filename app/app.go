@@ -111,15 +111,15 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
-	feeabsmodule "github.com/notional-labs/fee-abstraction/v6/x/feeabs"
-	feeabskeeper "github.com/notional-labs/fee-abstraction/v6/x/feeabs/keeper"
-	feeabstypes "github.com/notional-labs/fee-abstraction/v6/x/feeabs/types"
+	feeabsmodule "github.com/osmosis-labs/fee-abstraction/v6/x/feeabs"
+	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v6/x/feeabs/keeper"
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v6/x/feeabs/types"
 
 	"github.com/strangelove-ventures/packet-forward-middleware/v6/router"
 	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v6/router/keeper"
 	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v6/router/types"
 
-	appparams "github.com/notional-labs/fee-abstraction/v6/app/params"
+	appparams "github.com/osmosis-labs/fee-abstraction/v6/app/params"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"

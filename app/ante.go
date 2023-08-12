@@ -8,8 +8,8 @@ import (
 	ibcante "github.com/cosmos/ibc-go/v6/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v6/modules/core/keeper"
 
-	feeabsante "github.com/notional-labs/fee-abstraction/v6/x/feeabs/ante"
-	feeabskeeper "github.com/notional-labs/fee-abstraction/v6/x/feeabs/keeper"
+	feeabsante "github.com/osmosis-labs/fee-abstraction/v6/x/feeabs/ante"
+	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v6/x/feeabs/keeper"
 )
 
 // HandlerOptions extends the SDK's AnteHandler options by requiring the IBC

@@ -10,9 +10,9 @@ import (
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/icza/dyno"
-	balancertypes "github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/balancer"
-	gammtypes "github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/types"
-	feeabstype "github.com/notional-labs/fee-abstraction/v6/x/feeabs/types"
+	balancertypes "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/balancer"
+	gammtypes "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/types"
+	feeabstype "github.com/osmosis-labs/fee-abstraction/v6/x/feeabs/types"
 	"github.com/strangelove-ventures/interchaintest/v6/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v6/ibc"
 )
@@ -32,8 +32,8 @@ const (
 )
 
 var (
-	FeeabsMainRepo   = "ghcr.io/notional-labs/fee-abstraction"
-	FeeabsICTestRepo = "ghcr.io/notional-labs/fee-abstraction-ictest"
+	FeeabsMainRepo   = "ghcr.io/osmosis-labs/fee-abstraction"
+	FeeabsICTestRepo = "ghcr.io/osmosis-labs/fee-abstraction-ictest"
 
 	repo, version = GetDockerImageInfo()
 
