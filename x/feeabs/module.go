@@ -106,11 +106,11 @@ type AppModule struct {
 // NewAppModule instantiate AppModule object
 func NewAppModule(
 	cdc codec.Codec,
-	keeper keeper.Keeper,
+	feeabskeeper keeper.Keeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: NewAppModuleBasic(cdc),
-		keeper:         keeper,
+		keeper:         feeabskeeper,
 	}
 }
 

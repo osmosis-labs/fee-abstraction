@@ -15,18 +15,18 @@ import (
 	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
+	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 // IBCModule implements the ICS26 interface for transfer given the transfer keeper.
 type IBCModule struct {
 	cdc    codec.Codec
-	keeper keeper.Keeper
+	keeper feeabskeeper.Keeper
 }
 
 // NewIBCModule creates a new IBCModule given the keeper
-func NewIBCModule(cdc codec.Codec, k keeper.Keeper) IBCModule {
+func NewIBCModule(cdc codec.Codec, k feeabskeeper.Keeper) IBCModule {
 	return IBCModule{
 		cdc:    cdc,
 		keeper: k,
@@ -60,7 +60,7 @@ func (am IBCModule) OnChanOpenInit(
 
 func ValidateChannelParams(
 	ctx sdk.Context,
-	keeper keeper.Keeper,
+	keeper feeabskeeper.Keeper,
 	order channeltypes.Order,
 	portID string,
 	channelID string,
@@ -172,12 +172,12 @@ func (am IBCModule) OnAcknowledgementPacket(
 		return sdkerrors.Wrapf(errorstypes.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
 	}
 
-	var IcqPacketData types.InterchainQueryPacketData
-	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &IcqPacketData); err != nil {
+	var icqPacketData types.InterchainQueryPacketData
+	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &icqPacketData); err != nil {
 		return sdkerrors.Wrapf(errorstypes.ErrUnknownRequest, "cannot unmarshal packet data: %v", err)
 	}
 
-	IcqReqs, err := types.DeserializeCosmosQuery(IcqPacketData.GetData())
+	icqReqs, err := types.DeserializeCosmosQuery(icqPacketData.GetData())
 	if err != nil {
 		am.keeper.Logger(ctx).Error(fmt.Sprintf("Failed to deserialize cosmos query %s", err.Error()))
 		return err
@@ -191,7 +191,7 @@ func (am IBCModule) OnAcknowledgementPacket(
 		),
 	)
 
-	if err := am.keeper.OnAcknowledgementPacket(ctx, ack, IcqReqs); err != nil {
+	if err := am.keeper.OnAcknowledgementPacket(ctx, ack, icqReqs); err != nil {
 		return sdkerrors.Wrapf(errorstypes.ErrInvalidRequest, "error OnAcknowledgementPacket: %v", err)
 	}
 	return nil

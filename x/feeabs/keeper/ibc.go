@@ -62,6 +62,7 @@ func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryA
 	params := k.GetParams(ctx)
 	icqReqs := make([]abci.RequestQuery, len(twapReqs))
 	for i, req := range twapReqs {
+		req := req
 		icqReqs[i] = abci.RequestQuery{
 			Path: params.OsmosisQueryTwapPath,
 			Data: k.cdc.MustMarshal(&req),
