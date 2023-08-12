@@ -3,12 +3,14 @@ package ante
 import (
 	"fmt"
 
+	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/keeper"
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+
 	sdkerrors "cosmossdk.io/errors"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/keeper"
-	feeabstypes "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 type FeeAbstractionDeductFeeDecorate struct {
@@ -66,7 +68,6 @@ func (fadfd FeeAbstractionDeductFeeDecorate) normalDeductFeeAnteHandle(ctx sdk.C
 			return ctx, sdkerrors.Wrap(errorstypes.ErrInvalidRequest, "fee grants are not enabled")
 		} else if !feeGranter.Equals(feePayer) {
 			err := fadfd.feegrantKeeper.UseGrantedFees(ctx, feeGranter, feePayer, fee, tx.GetMsgs())
-
 			if err != nil {
 				return ctx, sdkerrors.Wrapf(err, "%s not allowed to pay fees from %s", feeGranter, feePayer)
 			}
@@ -109,7 +110,6 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 			return ctx, sdkerrors.Wrap(errorstypes.ErrInvalidRequest, "fee grants are not enabled")
 		} else if !feeGranter.Equals(feePayer) {
 			err := fadfd.feegrantKeeper.UseGrantedFees(ctx, feeGranter, feePayer, fee, tx.GetMsgs())
-
 			if err != nil {
 				return ctx, sdkerrors.Wrapf(err, "%s not allowed to pay fees from %s", feeGranter, feePayer)
 			}
@@ -118,7 +118,6 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 		feeAbstractionPayer = feeGranter
 	}
 
-	//fee abstraction deduct logic
 	deductFeesFrom := fadfd.feeabsKeeper.GetFeeAbsModuleAddress()
 	deductFeesFromAcc := fadfd.accountKeeper.GetAccount(ctx, deductFeesFrom)
 	if deductFeesFromAcc == nil {
@@ -155,7 +154,6 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 	ctx.EventManager().EmitEvents(events)
 
 	return next(ctx, tx, simulate)
-
 }
 
 // DeductFees deducts fees from the given account.
@@ -216,7 +214,6 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 			nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, feeCoins, hostChainConfig)
 			if err != nil {
 				return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees")
-
 			}
 			feeCoins = nativeCoinsFees
 		}

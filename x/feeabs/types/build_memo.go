@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	fmt "fmt"
 	"time"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 type OsmosisSpecialMemo struct {
@@ -46,13 +44,15 @@ type ForwardMetadata struct {
 	Next string `json:"next,omitempty"`
 }
 
-func NewOsmosisSwapMsg(inputCoin sdk.Coin, outputDenom string, slippagePercentage string, windowSeconds uint64, receiver string) OsmosisSwapMsg {
+func NewOsmosisSwapMsg(outputDenom string, slippagePercentage string, windowSeconds uint64, receiver string) OsmosisSwapMsg {
 	swap := Swap{
 		OutPutDenom: outputDenom,
 		Slippage: Twap{
-			Twap: TwapRouter{SlippagePercentage: slippagePercentage,
-				WindowSeconds: windowSeconds,
-			}},
+			Twap: TwapRouter{
+				SlippagePercentage: slippagePercentage,
+				WindowSeconds:      windowSeconds,
+			},
+		},
 		Receiver: receiver,
 	}
 

@@ -5,7 +5,6 @@ import (
 	"time"
 
 	proto "github.com/cosmos/gogoproto/proto"
-
 	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"

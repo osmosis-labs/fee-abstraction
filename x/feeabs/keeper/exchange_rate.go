@@ -1,9 +1,11 @@
 package keeper
 
 import (
-	sdkerrors "cosmossdk.io/errors"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+
+	sdkerrors "cosmossdk.io/errors"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // GetTwapRate return Twap Price of ibcDenom

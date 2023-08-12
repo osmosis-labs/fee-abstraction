@@ -4,9 +4,10 @@ import (
 	"strconv"
 	"strings"
 
-	abci "github.com/cometbft/cometbft/abci/types"
 	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
 	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+
+	abci "github.com/cometbft/cometbft/abci/types"
 )
 
 func getSendPackets(evts []abci.Event) []channeltypes.Packet {
@@ -59,8 +60,8 @@ func parsePacketFromEvent(evt abci.Event) channeltypes.Packet {
 // return the value for the attribute with the given name
 func getField(evt abci.Event, key string) string {
 	for _, attr := range evt.Attributes {
-		if string(attr.Key) == key {
-			return string(attr.Value)
+		if attr.Key == key {
+			return attr.Value
 		}
 	}
 	return ""

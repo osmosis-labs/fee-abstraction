@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	tmrand "github.com/cometbft/cometbft/libs/rand"
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	"github.com/osmosis-labs/fee-abstraction/v4/app"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
+	"github.com/stretchr/testify/suite"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -14,10 +16,9 @@ import (
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
-	"github.com/stretchr/testify/suite"
 
-	"github.com/osmosis-labs/fee-abstraction/v4/app"
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
+	tmrand "github.com/cometbft/cometbft/libs/rand"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 )
 
 type IntegrationTestSuite struct {

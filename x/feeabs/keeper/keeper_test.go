@@ -4,16 +4,18 @@ import (
 	"fmt"
 	"testing"
 
-	tmrand "github.com/cometbft/cometbft/libs/rand"
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/baseapp"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v4/app"
 	apphelpers "github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
 	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/cosmos/cosmos-sdk/baseapp"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
+
+	tmrand "github.com/cometbft/cometbft/libs/rand"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 )
 
 type KeeperTestSuite struct {

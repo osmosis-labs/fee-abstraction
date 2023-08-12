@@ -4,10 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/require"
-
 	apphelpers "github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
 	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+	"github.com/stretchr/testify/require"
 )
 
 var now = time.Now().UTC()
