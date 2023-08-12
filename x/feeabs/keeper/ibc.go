@@ -4,15 +4,17 @@ import (
 	"fmt"
 	"time"
 
-	sdkerrors "cosmossdk.io/errors"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	transfertypes "github.com/cosmos/ibc-go/v6/modules/apps/transfer/types"
 	clienttypes "github.com/cosmos/ibc-go/v6/modules/core/02-client/types"
 	channeltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
 	host "github.com/cosmos/ibc-go/v6/modules/core/24-host"
 	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	sdkerrors "cosmossdk.io/errors"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 )
 
 // GetPort returns the portID for the module. Used in ExportGenesis.
@@ -258,7 +260,6 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 		return nil, fmt.Errorf("bad msg %v", err.Error())
 	}
 	return k.transferKeeper.Transfer(sdk.WrapSDKContext(ctx), transferMsg)
-
 }
 
 func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {

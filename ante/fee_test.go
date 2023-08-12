@@ -1,13 +1,13 @@
 package ante_test
 
 import (
+	ibcclienttypes "github.com/cosmos/ibc-go/v6/modules/core/02-client/types"
+	ibcchanneltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
+	"github.com/notional-labs/fee-abstraction/v3/ante"
+
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	ibcclienttypes "github.com/cosmos/ibc-go/v6/modules/core/02-client/types"
-	ibcchanneltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
-
-	"github.com/notional-labs/fee-abstraction/v3/ante"
 )
 
 func (s *IntegrationTestSuite) TestMempoolFeeDecorator() {

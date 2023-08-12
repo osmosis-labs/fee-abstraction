@@ -2,6 +2,7 @@ package params
 
 import (
 	sdkerrors "cosmossdk.io/errors"
+
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"

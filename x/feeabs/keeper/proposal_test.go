@@ -1,13 +1,13 @@
 package keeper_test
 
 import (
+	apphelpers "github.com/notional-labs/fee-abstraction/v3/app/helpers"
+	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	v1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-
-	apphelpers "github.com/notional-labs/fee-abstraction/v3/app/helpers"
-	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
 )
 
 func (suite *KeeperTestSuite) TestAddHostZoneProposal() {

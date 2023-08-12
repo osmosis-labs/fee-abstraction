@@ -4,10 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/require"
-
 	apphelpers "github.com/notional-labs/fee-abstraction/v3/app/helpers"
 	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+	"github.com/stretchr/testify/require"
 )
 
 var now = time.Now().UTC()

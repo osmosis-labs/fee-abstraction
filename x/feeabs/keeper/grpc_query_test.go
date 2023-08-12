@@ -4,8 +4,9 @@ import (
 	"math/rand"
 	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
