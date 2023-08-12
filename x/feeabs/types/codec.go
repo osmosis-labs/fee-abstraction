@@ -36,14 +36,14 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgSwapCrossChain{},
 	)
 
-	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
-
 	registry.RegisterImplementations(
 		(*v1beta1types.Content)(nil),
 		&AddHostZoneProposal{},
 		&DeleteHostZoneProposal{},
 		&SetHostZoneProposal{},
 	)
+
+	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 
 func init() {

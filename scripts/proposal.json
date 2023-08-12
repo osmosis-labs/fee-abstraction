@@ -2,7 +2,11 @@
     "title": "Enable Fee Abtraction",
     "description": "Change params for enable fee abstraction",
     "changes": [
-
+      {
+        "subspace": "feeabs",
+        "key": "chainname",
+        "value": "feeabs"
+      },
       {
         "subspace": "feeabs",
         "key": "nativeibcedinosmosis",
@@ -11,7 +15,7 @@
       {
         "subspace": "feeabs",
         "key": "chainname",
-        "value": "feeappd-t1"
+        "value": "feeabs-2"
       },
       {
         "subspace": "feeabs",

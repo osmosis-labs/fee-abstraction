@@ -54,7 +54,7 @@ require (
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gogoproto v1.4.6 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
-	github.com/cosmos/iavl v0.19.4 // indirect
+	github.com/cosmos/iavl v0.19.5 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.12.2 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -110,6 +110,7 @@ require (
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/klauspost/compress v1.15.11 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.3 // indirect
+	github.com/kr/pretty v0.3.1 // indirect
 	github.com/libp2p/go-buffer-pool v0.1.0 // indirect
 	github.com/libp2p/go-libp2p-core v0.15.1 // indirect
 	github.com/libp2p/go-openssl v0.0.7 // indirect
@@ -192,7 +193,6 @@ require (
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gotest.tools/v3 v3.4.0 // indirect
 	lukechampine.com/blake3 v1.1.6 // indirect
 	lukechampine.com/uint128 v1.2.0 // indirect
 	modernc.org/cc/v3 v3.40.0 // indirect
@@ -215,12 +215,12 @@ replace (
 
 	// interchaintest supports ICS features so we need this for now
 	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.46.7
-	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
+	github.com/cosmos/iavl => github.com/cosmos/iavl v0.19.4
+	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	// For this nested module, you always want to replace the parent reference with the current worktree.
 	github.com/notional-labs/fee-abstraction => ../../
 	github.com/strangelove-ventures/interchaintest/v6 => github.com/notional-labs/interchaintest/v6 v6.0.0-20230505100442-9f1cb0b6b5f1
-
 	github.com/tendermint/tendermint => github.com/tendermint/tendermint v0.34.24
 
 	github.com/vedhavyas/go-subkey => github.com/strangelove-ventures/go-subkey v1.0.7

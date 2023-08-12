@@ -3,6 +3,8 @@ package interchaintest
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"strings"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
@@ -30,11 +32,14 @@ const (
 )
 
 var (
-	FeeabsMainRepo = "ghcr.io/notional-labs/fee-abstraction"
+	FeeabsMainRepo   = "ghcr.io/notional-labs/fee-abstraction"
+	FeeabsICTestRepo = "ghcr.io/notional-labs/fee-abstraction-ictest"
+
+	repo, version = GetDockerImageInfo()
 
 	feeabsImage = ibc.DockerImage{
-		Repository: "ghcr.io/notional-labs/fee-abstraction",
-		Version:    "3.0.3",
+		Repository: repo,
+		Version:    version,
 		UidGid:     "1025:1025",
 	}
 
@@ -82,6 +87,23 @@ func osmosisEncoding() *simappparams.EncodingConfig {
 	balancertypes.RegisterInterfaces(cfg.InterfaceRegistry)
 
 	return &cfg
+}
+
+// GetDockerImageInfo returns the appropriate repo and branch version string for integration with the CI pipeline.
+// The remote runner sets the BRANCH_CI env var. If present, interchaintest will use the docker image pushed up to the repo.
+// If testing locally, user should run `make docker-build-debug` and interchaintest will use the local image.
+func GetDockerImageInfo() (repo, version string) {
+	branchVersion, found := os.LookupEnv("BRANCH_CI")
+	repo = FeeabsICTestRepo
+	if !found {
+		// make local-image
+		repo = "feeapp"
+		branchVersion = "debug"
+	}
+
+	// github converts / to - for pushed docker images
+	branchVersion = strings.ReplaceAll(branchVersion, "/", "-")
+	return repo, branchVersion
 }
 
 func modifyGenesisShortProposals(votingPeriod string, maxDepositPeriod string) func(ibc.ChainConfig, []byte) ([]byte, error) {

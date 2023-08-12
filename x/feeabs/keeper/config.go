@@ -94,7 +94,6 @@ func (keeper Keeper) FrozenHostZoneByIBCDenom(ctx sdk.Context, ibcDenom string) 
 func (keeper Keeper) UnFrozenHostZoneByIBCDenom(ctx sdk.Context, ibcDenom string) error {
 	hostChainConfig, err := keeper.GetHostZoneConfig(ctx, ibcDenom)
 	if err != nil {
-		// TODO: registry the error here
 		return sdkerrors.Wrapf(types.ErrHostZoneConfigNotFound, err.Error())
 	}
 	hostChainConfig.Frozen = false
