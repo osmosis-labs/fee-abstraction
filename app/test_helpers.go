@@ -232,9 +232,16 @@ func createIncrementalAccounts(accNum int) []sdk.AccAddress {
 	// start at 100 so we can make up to 999 test addresses with valid test addresses
 	for i := 100; i < (accNum + 100); i++ {
 		numString := strconv.Itoa(i)
-		buffer.WriteString("A58856F0FD53BF058B4909A21AEC019107BA6") // base address string
+		_, err := buffer.WriteString("A58856F0FD53BF058B4909A21AEC019107BA6") // base address string
+		if err != nil {
+			panic(err)
+		}
 
-		buffer.WriteString(numString) // adding on final two digits to make addresses unique
+		_, err = buffer.WriteString(numString) // adding on final two digits to make addresses unique
+		if err != nil {
+			panic(err)
+		}
+
 		res, err := sdk.AccAddressFromHexUnsafe(buffer.String())
 		if err != nil {
 			panic(err)
@@ -471,8 +478,16 @@ func CreateTestPubKeys(numPubKeys int) []cryptotypes.PubKey {
 	// start at 10 to avoid changing 1 to 01, 2 to 02, etc
 	for i := 100; i < (numPubKeys + 100); i++ {
 		numString := strconv.Itoa(i)
-		buffer.WriteString("0B485CFC0EECC619440448436F8FC9DF40566F2369E72400281454CB552AF") // base pubkey string
-		buffer.WriteString(numString)                                                       // adding on final two digits to make pubkeys unique
+		_, err := buffer.WriteString("0B485CFC0EECC619440448436F8FC9DF40566F2369E72400281454CB552AF") // base pubkey string
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = buffer.WriteString(numString) // adding on final two digits to make pubkeys unique
+		if err != nil {
+			panic(err)
+		}
+
 		publicKeys = append(publicKeys, NewPubKeyFromHex(buffer.String()))
 		buffer.Reset()
 	}

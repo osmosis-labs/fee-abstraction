@@ -11,9 +11,9 @@ import (
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
-func (suite *KeeperTestSuite) TestAddHostZoneProposal() {
-	suite.SetupTest()
-	addrs := simtestutil.AddTestAddrs(suite.feeAbsApp.BankKeeper, suite.feeAbsApp.StakingKeeper, suite.ctx, 10, valTokens)
+func (s *KeeperTestSuite) TestAddHostZoneProposal() {
+	s.SetupTest()
+	addrs := simtestutil.AddTestAddrs(s.feeAbsApp.BankKeeper, s.feeAbsApp.StakingKeeper, s.ctx, 10, valTokens)
 
 	for _, tc := range []struct {
 		desc            string
@@ -32,30 +32,30 @@ func (suite *KeeperTestSuite) TestAddHostZoneProposal() {
 		},
 	} {
 		tc := tc
-		suite.Run(tc.desc, func() {
+		s.Run(tc.desc, func() {
 			proposal := apphelpers.AddHostZoneProposalFixture(func(p *types.AddHostZoneProposal) {
 				p.HostChainConfig = &tc.hostChainConfig
 			})
 
 			legacyProposal, err := govv1types.NewLegacyContent(proposal, authtypes.NewModuleAddress(govtypes.ModuleName).String())
-			suite.Require().NoError(err)
+			s.Require().NoError(err)
 
 			// store proposal
-			_, err = suite.govKeeper.SubmitProposal(suite.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0])
-			suite.Require().NoError(err)
+			_, err = s.govKeeper.SubmitProposal(s.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0])
+			s.Require().NoError(err)
 
 			// execute proposal
-			handler := suite.govKeeper.LegacyRouter().GetRoute(proposal.ProposalRoute())
-			err = handler(suite.ctx, proposal)
-			suite.Require().NoError(err)
+			handler := s.govKeeper.LegacyRouter().GetRoute(proposal.ProposalRoute())
+			err = handler(s.ctx, proposal)
+			s.Require().NoError(err)
 
-			hostChainConfig, err := suite.feeAbsKeeper.GetHostZoneConfig(suite.ctx, tc.hostChainConfig.IbcDenom)
-			suite.Require().NoError(err)
-			suite.Require().Equal(tc.hostChainConfig, hostChainConfig)
+			hostChainConfig, err := s.feeAbsKeeper.GetHostZoneConfig(s.ctx, tc.hostChainConfig.IbcDenom)
+			s.Require().NoError(err)
+			s.Require().Equal(tc.hostChainConfig, hostChainConfig)
 
 			// store proposal again and it should error
-			_, err = suite.govKeeper.SubmitProposal(suite.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0])
-			suite.Require().Error(err)
+			_, err = s.govKeeper.SubmitProposal(s.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0])
+			s.Require().Error(err)
 		})
 	}
 }

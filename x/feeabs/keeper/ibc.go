@@ -60,15 +60,15 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Cap
 // Send request for query EstimateSwapExactAmountIn over IBC. Move to use TWAP.
 func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryArithmeticTwapToNowRequest, sourcePort, sourceChannel string) error {
 	params := k.GetParams(ctx)
-	IcqReqs := make([]abci.RequestQuery, len(twapReqs))
+	icqReqs := make([]abci.RequestQuery, len(twapReqs))
 	for i, req := range twapReqs {
-		IcqReqs[i] = abci.RequestQuery{
+		icqReqs[i] = abci.RequestQuery{
 			Path: params.OsmosisQueryTwapPath,
 			Data: k.cdc.MustMarshal(&req),
 		}
 	}
 
-	_, err := k.SendInterchainQuery(ctx, IcqReqs, sourcePort, sourceChannel)
+	_, err := k.SendInterchainQuery(ctx, icqReqs, sourcePort, sourceChannel)
 	if err != nil {
 		return err
 	}
@@ -111,7 +111,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			return sdkerrors.Wrap(err, "failed to unmarshal interchain query packet ack")
 		}
 
-		ICQResponses, err := types.DeserializeCosmosResponse(ackData.Data)
+		icqResponses, err := types.DeserializeCosmosResponse(ackData.Data)
 		if err != nil {
 			return sdkerrors.Wrap(err, "could not deserialize data to cosmos response")
 		}
@@ -131,7 +131,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 				return false
 			}
 			// Get icq QueryArithmeticTwapToNowRequest response
-			icqRes := ICQResponses[index]
+			icqRes := icqResponses[index]
 			index++
 
 			if icqRes.Code != 0 {
@@ -204,7 +204,7 @@ func (k Keeper) getQueryArithmeticTwapToNowRequest(
 	return icqReqData, index, found
 }
 
-func (k Keeper) GetChannelId(ctx sdk.Context) string {
+func (k Keeper) GetChannelID(ctx sdk.Context) string {
 	store := ctx.KVStore(k.storeKey)
 	return string(store.Get(types.KeyChannelID))
 }
