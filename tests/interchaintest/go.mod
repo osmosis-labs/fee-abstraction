@@ -1,4 +1,4 @@
-module github.com/notional-labs/fee-abstraction/tests/interchaintest
+module github.com/osmosis-labs/fee-abstraction/tests/interchaintest
 
 go 1.21
 
