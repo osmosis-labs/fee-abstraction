@@ -10,7 +10,7 @@ require (
 	github.com/golang/protobuf v1.5.3
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/icza/dyno v0.0.0-20220812133438-f0b6f8a18845
-	github.com/osmosis-labs/fee-abstraction/v4 v4.0.0
+	github.com/osmosis-labs/fee-abstraction/v7 v7.0.0-20230812065609-e9c8580974c2
 	github.com/strangelove-ventures/interchaintest/v7 v7.1.2
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/zap v1.24.0
@@ -241,7 +241,7 @@ replace (
 	github.com/cosmos/iavl => github.com/cosmos/iavl v0.20.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	// For this nested module, you always want to replace the parent reference with the current worktree.
-	github.com/osmosis-labs/fee-abstraction/v4 => ../../
+	github.com/osmosis-labs/fee-abstraction/v7 => ../../
 	github.com/strangelove-ventures/interchaintest/v7 => github.com/notional-labs/interchaintest/v7 v7.0.0-20230803100453-9e61f78e0e8c
 
 	github.com/vedhavyas/go-subkey => github.com/strangelove-ventures/go-subkey v1.0.7

@@ -111,15 +111,15 @@ import (
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
 
-	feeabsmodule "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs"
-	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/keeper"
-	feeabstypes "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+	feeabsmodule "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs"
+	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 
 	"github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router"
 	routerkeeper "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router/keeper"
 	routertypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router/types"
 
-	appparams "github.com/osmosis-labs/fee-abstraction/v4/app/params"
+	appparams "github.com/osmosis-labs/fee-abstraction/v7/app/params"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"

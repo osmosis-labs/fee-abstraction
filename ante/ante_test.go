@@ -16,8 +16,8 @@ import (
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/osmosis-labs/fee-abstraction/v4/app"
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
+	"github.com/osmosis-labs/fee-abstraction/v7/app"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v7/app/helpers"
 )
 
 type IntegrationTestSuite struct {

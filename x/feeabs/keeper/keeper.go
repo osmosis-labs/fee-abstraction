@@ -13,7 +13,7 @@ import (
 	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
 	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
 
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 type Keeper struct {
