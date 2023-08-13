@@ -3,8 +3,6 @@ package app
 import (
 	"testing"
 
-	"github.com/CosmWasm/wasmd/app/params"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 
@@ -15,6 +13,7 @@ import (
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 
+	"github.com/osmosis-labs/fee-abstraction/v7/app/params"
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
 )
 
@@ -32,16 +31,8 @@ func (s TestSupport) IBCKeeper() *ibckeeper.Keeper {
 	return s.app.IBCKeeper
 }
 
-func (s TestSupport) WasmKeeper() wasmkeeper.Keeper {
-	return s.app.WasmKeeper
-}
-
 func (s TestSupport) AppCodec() codec.Codec {
 	return s.app.appCodec
-}
-
-func (s TestSupport) ScopedWasmIBCKeeper() capabilitykeeper.ScopedKeeper {
-	return s.app.ScopedWasmKeeper
 }
 
 func (s TestSupport) ScopeIBCKeeper() capabilitykeeper.ScopedKeeper {

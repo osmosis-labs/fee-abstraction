@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
 	ibctesting "github.com/cosmos/ibc-go/v7/testing"
@@ -32,7 +31,7 @@ type Coordinator struct {
 }
 
 // NewCoordinator initializes Coordinator with N TestChain's
-func NewCoordinator(t *testing.T, n int, opts ...[]wasmkeeper.Option) *Coordinator {
+func NewCoordinator(t *testing.T, n int) *Coordinator {
 	t.Helper()
 	chains := make(map[string]*TestChain)
 	coord := &Coordinator{
@@ -42,11 +41,7 @@ func NewCoordinator(t *testing.T, n int, opts ...[]wasmkeeper.Option) *Coordinat
 
 	for i := 0; i < n; i++ {
 		chainID := GetChainID(i)
-		var x []wasmkeeper.Option
-		if len(opts) > i {
-			x = opts[i]
-		}
-		chains[chainID] = NewTestChain(t, coord, chainID, x...)
+		chains[chainID] = NewTestChain(t, coord, chainID)
 	}
 	coord.Chains = chains
 
