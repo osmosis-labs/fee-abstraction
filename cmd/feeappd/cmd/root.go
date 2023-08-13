@@ -33,8 +33,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
-	feeapp "github.com/osmosis-labs/fee-abstraction/v2/app"
-	"github.com/osmosis-labs/fee-abstraction/v2/app/params"
+	feeapp "github.com/osmosis-labs/fee-abstraction/v4/app"
+	"github.com/osmosis-labs/fee-abstraction/v4/app/params"
 )
 
 // NewRootCmd creates a new root command for simd. It is called once in the

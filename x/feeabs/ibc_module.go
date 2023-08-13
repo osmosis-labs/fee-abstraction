@@ -13,8 +13,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/keeper"
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 // IBCModule implements the ICS26 interface for transfer given the transfer keeper.

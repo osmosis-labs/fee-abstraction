@@ -17,8 +17,8 @@ import (
 	simulation2 "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	feeapp "github.com/osmosis-labs/fee-abstraction/v2/app"
-	"github.com/osmosis-labs/fee-abstraction/v2/app/helpers"
+	feeapp "github.com/osmosis-labs/fee-abstraction/v4/app"
+	"github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
 )
 
 func init() {

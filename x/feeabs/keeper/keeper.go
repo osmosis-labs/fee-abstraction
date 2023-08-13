@@ -13,7 +13,7 @@ import (
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 type Keeper struct {

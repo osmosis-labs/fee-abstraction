@@ -111,10 +111,10 @@ import (
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	appparams "github.com/osmosis-labs/fee-abstraction/v2/app/params"
-	feeabsmodule "github.com/osmosis-labs/fee-abstraction/v2/x/feeabs"
-	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
-	feeabstypes "github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
+	appparams "github.com/osmosis-labs/fee-abstraction/v4/app/params"
+	feeabsmodule "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs"
+	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/keeper"
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 var (

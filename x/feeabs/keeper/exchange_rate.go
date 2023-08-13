@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 // GetTwapRate return Twap Price of ibcDenom

@@ -39,7 +39,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking/teststaking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	feeabs "github.com/osmosis-labs/fee-abstraction/v2/app"
+	feeabs "github.com/osmosis-labs/fee-abstraction/v4/app"
 )
 
 // TestChain is a testing struct that wraps a simapp with the last TM Header, the current ABCI

@@ -5,7 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 // ParseParamChangeProposalJSON reads and parses a ParamChangeProposalJSON from

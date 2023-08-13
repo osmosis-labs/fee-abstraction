@@ -9,7 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 // NewTxCmd returns a root CLI command handler for all x/exp transaction commands.

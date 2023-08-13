@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/osmosis-labs/fee-abstraction/v2/ante"
+	"github.com/osmosis-labs/fee-abstraction/v4/ante"
 )
 
 func (s *IntegrationTestSuite) TestMempoolFeeDecorator() {

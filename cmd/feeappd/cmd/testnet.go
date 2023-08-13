@@ -36,7 +36,7 @@ import (
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"github.com/osmosis-labs/fee-abstraction/v2/app/params"
+	"github.com/osmosis-labs/fee-abstraction/v4/app/params"
 )
 
 var (

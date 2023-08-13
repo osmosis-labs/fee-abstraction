@@ -16,8 +16,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	feeapp "github.com/osmosis-labs/fee-abstraction/v2/app"
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
+	feeapp "github.com/osmosis-labs/fee-abstraction/v4/app"
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 // SimAppChainID hardcoded chainID for simulation

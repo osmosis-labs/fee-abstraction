@@ -12,10 +12,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 
-	"github.com/osmosis-labs/fee-abstraction/v2/app"
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v2/app/helpers"
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v4/app"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/keeper"
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 type KeeperTestSuite struct {
