@@ -10,8 +10,6 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router"
 	routerkeeper "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router/keeper"
 	routertypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router/types"
@@ -172,7 +170,6 @@ var (
 		vesting.AppModuleBasic{},
 		router.AppModuleBasic{},
 		ica.AppModuleBasic{},
-		wasm.AppModuleBasic{},
 		solomachine.AppModuleBasic{},
 		feeabsmodule.AppModuleBasic{},
 	)
