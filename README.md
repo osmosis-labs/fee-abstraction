@@ -81,7 +81,6 @@ Ex: When you sent STARS on Hub to Osmosis, you will get Osmosis(Hub(STARS)) whic
 
 ![Diagram of the process of swapping accumulated ibc-tokens fee](https://i.imgur.com/D1wSrMm.png "Diagram of the process of swapping accumulated ibc-tokens fee")
 
-###### Swap Ibc-token
 
 ###### Swap Ibc-token
 
@@ -93,3 +92,14 @@ After reverse the ibc-token, XCS will :
 ![Diagram of the process of swapping accumulated ibc-tokens fee](https://i.imgur.com/YKOK8mr.png "Diagram of the process of swapping accumulated ibc-tokens fee")
 
 Current version of fee-abstraction working with XCSv2
+
+
+
+## Acknowledgements
+
+* cosmos-sdk:
+  * many developers :)
+* interchaintest and packet-forward-middleware:
+  * strangelove ventures
+* ideation
+  * osmosis grants program 
