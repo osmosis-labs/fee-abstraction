@@ -7,6 +7,20 @@ The concrete use cases which motivated this module include:
 - The desire to use IBC token as transaction fees on any chain instead of having to use native token as fee.
 - To fully take advantage of the newly represented Osmosis [``swap router``](https://github.com/osmosis-labs/osmosis/tree/main/cosmwasm/contracts) with the [``ibc-hooks``](https://github.com/osmosis-labs/osmosis/tree/main/x/ibc-hooks) module and the [``async-icq``](https://github.com/strangelove-ventures/async-icq) module.
 
+## Repository Structure
+
+This repository is branched by the cosmos-sdk versions and ibc-go versions used.  Currently fee abstraction supports:
+
+- SDK v0.47.x & IBC-go v7.*
+  - branch: release/v7.0.x
+  - path: github.com/osmosis-labs/fee-abstraction/v7
+- SDK v0.46.x
+  - branch: release/v6.0.x
+  - path: github.com/osmosis-labs/fee-abstraction/v6
+- SDK v0.45.x
+  - branch: release/v4.0.x
+  - path: github.com/osmosis-labs/fee-abstraction/v4
+
 ## Description
 
 Fee abstraction modules enable users on any Cosmos chain with IBC connections to pay fee using ibc token.
@@ -35,7 +49,7 @@ Fee-abs mechanism in a nutshell:
 
 We'll goes into all the details now:
 
-### Pulling `twap data` and update exchange rate
+#### Pulling `twap data` and update exchange rate
 
 For this to work, we first has to set up an ibc channel from `feeabs` to `async-icq`. This channel set-up process can be done by anyone, just like setting up an ibc transfer channel. Once that ibc channel is there, we'll use that channel to ibc-query Twap data. Let's call this the querying channel.
 
@@ -69,6 +83,8 @@ Ex: When you sent STARS on Hub to Osmosis, you will get Osmosis(Hub(STARS)) whic
 
 ###### Swap Ibc-token
 
+###### Swap Ibc-token
+
 After reverse the ibc-token, XCS will :
 
 - Swap with the specific pool (which is defined in the transfer packet from Feeabs-chain) to get Feeabs-chain native-token
@@ -76,14 +92,4 @@ After reverse the ibc-token, XCS will :
 
 ![Diagram of the process of swapping accumulated ibc-tokens fee](https://i.imgur.com/YKOK8mr.png "Diagram of the process of swapping accumulated ibc-tokens fee")
 
-## Resources
-
-- Main repo: <https://github.com/osmosis-labs/fee-abstraction>
-
-## Resources
-
-- Main repo: <https://github.com/osmosis-labs/fee-abstraction>
-
-## Resources
-
-- Main repo: <https://github.com/osmosis-labs/fee-abstraction>
+Current version of fee-abstraction working with XCSv2
