@@ -6,11 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	ibcclienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
 	ibcchanneltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 
@@ -241,11 +238,6 @@ func (ac appCreator) newApp(
 		panic(err)
 	}
 
-	var wasmOpts []wasm.Option
-	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
-		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
-	}
-
 	homeDir := cast.ToString(appOpts.Get(flags.FlagHome))
 	chainID := cast.ToString(appOpts.Get(flags.FlagChainID))
 	if chainID == "" {
@@ -263,7 +255,6 @@ func (ac appCreator) newApp(
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		ac.encCfg,
 		appOpts,
-		wasmOpts,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
 		baseapp.SetHaltHeight(cast.ToUint64(appOpts.Get(server.FlagHaltHeight))),
@@ -308,7 +299,6 @@ func (ac appCreator) appExport(
 		loadLatest = true
 	}
 
-	var emptyWasmOpts []wasm.Option
 	app := feeapp.NewFeeAbs(
 		logger,
 		db,
@@ -319,7 +309,6 @@ func (ac appCreator) appExport(
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		ac.encCfg,
 		appOpts,
-		emptyWasmOpts,
 	)
 
 	if height != -1 {
