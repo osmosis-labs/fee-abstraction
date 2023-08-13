@@ -9,7 +9,7 @@ require (
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.3
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
-	github.com/osmosis-labs/fee-abstraction/v4 v4.0.0-00010101000000-000000000000
+	github.com/osmosis-labs/fee-abstraction/v4 v4.0.0-20230813150234-372727ea3395
 	github.com/strangelove-ventures/interchaintest/v4 v4.0.0-20230811171218-1d88910b4bc0
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/zap v1.24.0
@@ -174,8 +174,6 @@ replace (
 	// interchaintest supports ICS features so we need this for now
 	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.45.16-ics
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	// For this nested module, you always want to replace the parent reference with the current worktree.
-	github.com/osmosis-labs/fee-abstraction/v4 => ../../
 
 	// use informal system fork of tendermint
 	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.29
