@@ -1,9 +1,9 @@
 package app
 
 import (
-	"github.com/osmosis-labs/fee-abstraction/v2/app/params"
-
 	"github.com/cosmos/cosmos-sdk/std"
+
+	"github.com/osmosis-labs/fee-abstraction/v2/app/params"
 )
 
 // MakeEncodingConfig creates an EncodingConfig for testing

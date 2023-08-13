@@ -3,15 +3,17 @@ package keeper
 import (
 	"fmt"
 
+	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
+	"github.com/cosmos/ibc-go/v4/modules/core/exported"
+	"github.com/tendermint/tendermint/libs/log"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
-	"github.com/cosmos/ibc-go/v4/modules/core/exported"
+
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
-	"github.com/tendermint/tendermint/libs/log"
 )
 
 type Keeper struct {
@@ -42,7 +44,6 @@ func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
-
 ) Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {

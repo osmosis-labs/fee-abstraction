@@ -4,6 +4,7 @@ import (
 	"io/ioutil" //nolint:staticcheck
 
 	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
 )
 

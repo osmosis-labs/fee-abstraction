@@ -6,9 +6,9 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
 )
 
 // HasEpochInfo return true if has epoch info

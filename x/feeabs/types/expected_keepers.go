@@ -1,12 +1,13 @@
 package types
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	connectiontypes "github.com/cosmos/ibc-go/v4/modules/core/03-connection/types"
 	channeltypes "github.com/cosmos/ibc-go/v4/modules/core/04-channel/types"
 	ibcexported "github.com/cosmos/ibc-go/v4/modules/core/exported"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 )
 
 // AccountKeeper defines the expected account keeper used for simulations (noalias)
@@ -29,7 +30,7 @@ type FeegrantKeeper interface {
 	UseGrantedFees(ctx sdk.Context, granter, grantee sdk.AccAddress, fee sdk.Coins, msgs []sdk.Msg) error
 }
 
-// StakingKeeper define the expected interface to retrive staking denom
+// StakingKeeper define the expected interface to retrieve staking denom
 type StakingKeeper interface {
 	// BondDenom - Bondable coin denomination
 	BondDenom(ctx sdk.Context) (res string)
