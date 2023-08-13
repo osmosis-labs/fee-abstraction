@@ -11,7 +11,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/stretchr/testify/require"
 
 	sdkerrors "cosmossdk.io/errors"
@@ -60,7 +59,7 @@ var DefaultConsensusParams = &tmproto.ConsensusParams{
 	},
 }
 
-func setup(tb testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Option) (*FeeAbs, GenesisState) {
+func setup(tb testing.TB, withGenesis bool, invCheckPeriod uint) (*FeeAbs, GenesisState) {
 	tb.Helper()
 	nodeHome := tb.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
@@ -77,7 +76,6 @@ func setup(tb testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Op
 		invCheckPeriod,
 		MakeEncodingConfig(),
 		EmptyBaseAppOptions{},
-		opts,
 		baseAppOpts...)
 	if withGenesis {
 		return app, NewDefaultGenesisState()
@@ -85,7 +83,7 @@ func setup(tb testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Op
 	return app, GenesisState{}
 }
 
-func setupWithChainID(tb testing.TB, withGenesis bool, invCheckPeriod uint, chainID string, opts ...wasm.Option) (*FeeAbs, GenesisState) {
+func setupWithChainID(tb testing.TB, withGenesis bool, invCheckPeriod uint, chainID string) (*FeeAbs, GenesisState) {
 	tb.Helper()
 	nodeHome := tb.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
@@ -105,7 +103,6 @@ func setupWithChainID(tb testing.TB, withGenesis bool, invCheckPeriod uint, chai
 		invCheckPeriod,
 		MakeEncodingConfig(),
 		EmptyBaseAppOptions{},
-		opts,
 		baseAppOpts...)
 	if withGenesis {
 		return app, NewDefaultGenesisState()
@@ -121,12 +118,11 @@ func SetupWithGenesisValSet(
 	t *testing.T,
 	valSet *tmtypes.ValidatorSet,
 	genAccs []authtypes.GenesisAccount,
-	opts []wasm.Option,
 	chainID string,
 	balances ...banktypes.Balance,
 ) *FeeAbs {
 	t.Helper()
-	app, genesisState := setupWithChainID(t, true, 5, chainID, opts...)
+	app, genesisState := setupWithChainID(t, true, 5, chainID)
 	// set genesis accounts
 	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)
 	genesisState[authtypes.ModuleName] = app.appCodec.MustMarshalJSON(authGenesis)
@@ -204,7 +200,7 @@ func SetupWithGenesisValSet(
 	return app
 }
 
-// SetupWithEmptyStore setup a wasmd app instance with empty DB
+// SetupWithEmptyStore setup a app instance with empty DB
 func SetupWithEmptyStore(tb testing.TB) *FeeAbs {
 	tb.Helper()
 	app, _ := setup(tb, false, 0)
@@ -259,7 +255,7 @@ func createIncrementalAccounts(accNum int) []sdk.AccAddress {
 	return addresses
 }
 
-// AddTestAddrsFromPubKeys adds the addresses into the WasmApp providing only the public keys.
+// AddTestAddrsFromPubKeys adds the addresses into the App providing only the public keys.
 func AddTestAddrsFromPubKeys(app *FeeAbs, ctx sdk.Context, pubKeys []cryptotypes.PubKey, accAmt math.Int) {
 	initCoins := sdk.NewCoins(sdk.NewCoin(app.StakingKeeper.BondDenom(ctx), accAmt))
 
