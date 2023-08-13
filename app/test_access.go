@@ -3,20 +3,19 @@ package app
 import (
 	"testing"
 
+	"github.com/CosmWasm/wasmd/app/params"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
+	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
-
-	"github.com/CosmWasm/wasmd/app/params"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
-	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
 )
 
 type TestSupport struct {
@@ -24,8 +23,9 @@ type TestSupport struct {
 	app *FeeAbs
 }
 
-func NewTestSupport(t testing.TB, app *FeeAbs) *TestSupport {
-	return &TestSupport{t: t, app: app}
+func NewTestSupport(tb testing.TB, app *FeeAbs) *TestSupport {
+	tb.Helper()
+	return &TestSupport{t: tb, app: app}
 }
 
 func (s TestSupport) IBCKeeper() *ibckeeper.Keeper {
@@ -72,6 +72,6 @@ func (s TestSupport) GetBaseApp() *baseapp.BaseApp {
 	return s.app.BaseApp
 }
 
-func (s TestSupport) GetTxConfig() client.TxConfig {
+func (TestSupport) GetTxConfig() client.TxConfig {
 	return params.MakeEncodingConfig().TxConfig
 }

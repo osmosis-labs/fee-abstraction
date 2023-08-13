@@ -1,6 +1,6 @@
 module github.com/osmosis-labs/fee-abstraction/v7
 
-go 1.18
+go 1.21
 
 require (
 	cosmossdk.io/errors v1.0.0
