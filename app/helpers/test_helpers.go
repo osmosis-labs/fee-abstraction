@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/stretchr/testify/require"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -115,7 +114,7 @@ func SetupWithGenesisValSet(t *testing.T,
 	return app
 }
 
-func setup(withGenesis bool, invCheckPeriod uint, wasmOpts ...wasm.Option) (*feeapp.FeeAbs, feeapp.GenesisState) {
+func setup(withGenesis bool, invCheckPeriod uint) (*feeapp.FeeAbs, feeapp.GenesisState) {
 	db := dbm.NewMemDB()
 	encCdc := feeapp.MakeEncodingConfig()
 	app := feeapp.NewFeeAbs(
@@ -128,7 +127,6 @@ func setup(withGenesis bool, invCheckPeriod uint, wasmOpts ...wasm.Option) (*fee
 		invCheckPeriod,
 		encCdc,
 		EmptyAppOptions{},
-		wasmOpts,
 	)
 	if withGenesis {
 		return app, feeapp.NewDefaultGenesisState()
