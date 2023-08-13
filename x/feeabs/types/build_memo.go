@@ -73,11 +73,11 @@ func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string) (string, error) {
 	memo.Wasm["contract"] = contractAddr
 	memo.Wasm["msg"] = msg
 
-	memo_marshalled, err := json.Marshal(&memo)
+	memoMarshalled, err := json.Marshal(&memo)
 	if err != nil {
 		return "", err
 	}
-	return string(memo_marshalled), nil
+	return string(memoMarshalled), nil
 }
 
 // TODO: write test for this

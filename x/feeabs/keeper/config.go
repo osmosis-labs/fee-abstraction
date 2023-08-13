@@ -24,7 +24,7 @@ func (keeper Keeper) GetHostZoneConfig(ctx sdk.Context, ibcDenom string) (chainC
 		return types.HostChainFeeAbsConfig{}, err
 	}
 
-	return
+	return chainConfig, nil
 }
 
 func (keeper Keeper) SetHostZoneConfig(ctx sdk.Context, ibcDenom string, chainConfig types.HostChainFeeAbsConfig) error {

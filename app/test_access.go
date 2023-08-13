@@ -22,8 +22,9 @@ type TestSupport struct {
 	app *FeeAbs
 }
 
-func NewTestSupport(t testing.TB, app *FeeAbs) *TestSupport {
-	return &TestSupport{t: t, app: app}
+func NewTestSupport(tb testing.TB, app *FeeAbs) *TestSupport {
+	tb.Helper()
+	return &TestSupport{t: tb, app: app}
 }
 
 func (s TestSupport) IBCKeeper() *ibckeeper.Keeper {
@@ -66,6 +67,6 @@ func (s TestSupport) GetBaseApp() *baseapp.BaseApp {
 	return s.app.BaseApp
 }
 
-func (s TestSupport) GetTxConfig() client.TxConfig {
+func (TestSupport) GetTxConfig() client.TxConfig {
 	return params.MakeEncodingConfig().TxConfig
 }

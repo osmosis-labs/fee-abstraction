@@ -27,6 +27,7 @@ linters:
     - tenv
     - unconvert
     - unused
+    - unparam
     - misspell
 
 issues:
