@@ -1,6 +1,7 @@
 # Test feeabs and osmosis Interchain Query for spot price
 
 ## Setup
+
 ```
 # Deploy chains
 ./scripts/node_start/runnode_custom.sh c
@@ -14,13 +15,15 @@
 ```
 
 ## Test
+
 ```
 feeappd tx feeabs queryomosis --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes
 # Wait for about 10 sec
 feeappd q feeabs osmo-spot-price
 ```
 
-The result looks like this 
+The result looks like this
+
 ```
 base_asset: osmo
 quote_asset: stake
