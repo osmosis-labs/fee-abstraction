@@ -14,7 +14,6 @@ require (
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
-	github.com/prometheus/client_golang v1.14.0
 	github.com/rakyll/statik v0.1.7
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/cobra v1.6.1
@@ -22,6 +21,8 @@ require (
 	google.golang.org/genproto v0.0.0-20230216225411-c8e22ba71e44
 	google.golang.org/grpc v1.54.0
 )
+
+require github.com/prometheus/client_golang v1.14.0 // indirect
 
 require (
 	cloud.google.com/go v0.110.0 // indirect
