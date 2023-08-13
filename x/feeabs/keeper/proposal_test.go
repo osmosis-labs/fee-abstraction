@@ -5,8 +5,8 @@ import (
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
 )
 
-func (suite *KeeperTestSuite) TestAddHostZoneProposal() {
-	suite.SetupTest()
+func (s *KeeperTestSuite) TestAddHostZoneProposal() {
+	s.SetupTest()
 
 	for _, tc := range []struct {
 		desc            string
@@ -25,27 +25,27 @@ func (suite *KeeperTestSuite) TestAddHostZoneProposal() {
 		},
 	} {
 		tc := tc
-		suite.Run(tc.desc, func() {
+		s.Run(tc.desc, func() {
 			proposal := apphelpers.AddHostZoneProposalFixture(func(p *types.AddHostZoneProposal) {
 				p.HostChainConfig = &tc.hostChainConfig
 			})
 
 			// store proposal
-			storedProposal, err := suite.govKeeper.SubmitProposal(suite.ctx, proposal)
-			suite.Require().NoError(err)
+			storedProposal, err := s.govKeeper.SubmitProposal(s.ctx, proposal)
+			s.Require().NoError(err)
 
 			// execute proposal
-			handler := suite.govKeeper.Router().GetRoute(storedProposal.ProposalRoute())
-			err = handler(suite.ctx, storedProposal.GetContent())
-			suite.Require().NoError(err)
+			handler := s.govKeeper.Router().GetRoute(storedProposal.ProposalRoute())
+			err = handler(s.ctx, storedProposal.GetContent())
+			s.Require().NoError(err)
 
-			hostChainConfig, err := suite.feeAbsKeeper.GetHostZoneConfig(suite.ctx, tc.hostChainConfig.IbcDenom)
-			suite.Require().NoError(err)
-			suite.Require().Equal(tc.hostChainConfig, hostChainConfig)
+			hostChainConfig, err := s.feeAbsKeeper.GetHostZoneConfig(s.ctx, tc.hostChainConfig.IbcDenom)
+			s.Require().NoError(err)
+			s.Require().Equal(tc.hostChainConfig, hostChainConfig)
 
 			// store proposal again and it should error
-			_, err = suite.govKeeper.SubmitProposal(suite.ctx, proposal)
-			suite.Require().Error(err)
+			_, err = s.govKeeper.SubmitProposal(s.ctx, proposal)
+			s.Require().Error(err)
 		})
 	}
 }

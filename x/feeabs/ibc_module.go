@@ -58,7 +58,7 @@ func (am IBCModule) OnChanOpenInit(
 
 func ValidateChannelParams(
 	ctx sdk.Context,
-	keeper keeper.Keeper,
+	feeabskeeper keeper.Keeper,
 	order channeltypes.Order,
 	portID string,
 	channelID string,
@@ -68,7 +68,7 @@ func ValidateChannelParams(
 	}
 
 	// Require portID is the portID profiles module is bound to
-	boundPort := keeper.GetPort(ctx)
+	boundPort := feeabskeeper.GetPort(ctx)
 	if boundPort != portID {
 		return sdkerrors.Wrapf(porttypes.ErrInvalidPort, "invalid port: %s, expected %s", portID, boundPort)
 	}
