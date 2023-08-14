@@ -1,8 +1,6 @@
 module github.com/notional-labs/fee-abstraction/tests/interchaintest
 
-go 1.21
-
-toolchain go1.21.0
+go 1.20
 
 require (
 	github.com/cosmos/cosmos-proto v1.0.0-beta.2
