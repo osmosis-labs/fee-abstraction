@@ -102,4 +102,6 @@ Current version of fee-abstraction working with XCSv2
 * interchaintest and packet-forward-middleware:
   * strangelove ventures
 * ideation
-  * osmosis grants program 
+  * osmosis grants program
+* mergify configuration and branching strategy
+  * ibc-go 
