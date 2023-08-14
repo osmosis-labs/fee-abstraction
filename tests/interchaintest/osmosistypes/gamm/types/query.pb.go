@@ -14,7 +14,7 @@ import (
 	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
-	types2 "github.com/notional-labs/fee-abstraction/tests/interchaintest/osmosistypes/poolmanager/types"
+	types2 "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/osmosistypes/poolmanager/types"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"

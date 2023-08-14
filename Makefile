@@ -120,7 +120,7 @@ ictest-all: ictest-basic ictest-ibc ictest-packet-forward
 ###############################################################################
 ###                                  Proto                                  ###
 ###############################################################################
-PROTO_BUILDER_IMAGE=ghcr.io/cosmos/proto-builder
+PROTO_BUILDER_IMAGE=ghcr.io/cosmos/proto-builder:0.13.5
 
 proto-all: proto-format proto-gen
 
