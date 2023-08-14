@@ -1,8 +1,6 @@
 module github.com/osmosis-labs/fee-abstraction/tests/interchaintest
 
-go 1.21
-
-toolchain go1.21.0
+go 1.19
 
 require (
 	github.com/cosmos/cosmos-proto v1.0.0-beta.2
@@ -12,8 +10,8 @@ require (
 	github.com/golang/protobuf v1.5.3
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/icza/dyno v0.0.0-20220812133438-f0b6f8a18845
-	github.com/osmosis-labs/fee-abstraction/v7 v7.0.0-20230813135450-389d80f273ec
-	github.com/strangelove-ventures/interchaintest/v7 v7.0.0-20230810233557-5fdb1e8a62e5
+	github.com/osmosis-labs/fee-abstraction/v7 v7.0.0-20230812065609-e9c8580974c2
+	github.com/strangelove-ventures/interchaintest/v7 v7.1.2
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/zap v1.24.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20230629202037-9506855d4529
@@ -30,7 +28,6 @@ require (
 	cosmossdk.io/core v0.5.1 // indirect
 	cosmossdk.io/depinject v1.0.0-alpha.3 // indirect
 	cosmossdk.io/errors v1.0.0 // indirect
-	cosmossdk.io/log v1.1.1-0.20230704160919-88f2c830b0ca // indirect
 	cosmossdk.io/math v1.0.1 // indirect
 	cosmossdk.io/tools/rosetta v0.2.1 // indirect
 	filippo.io/edwards25519 v1.0.0 // indirect
@@ -91,13 +88,10 @@ require (
 	github.com/ethereum/go-ethereum v1.10.20 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
-	github.com/gin-gonic/gin v1.8.1 // indirect
 	github.com/go-kit/kit v0.12.0 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
-	github.com/go-playground/validator/v10 v10.11.1 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
-	github.com/goccy/go-json v0.9.11 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/gogo/googleapis v1.4.1 // indirect
 	github.com/golang/glog v1.1.0 // indirect
@@ -122,7 +116,6 @@ require (
 	github.com/hashicorp/go-getter v1.7.1 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
-	github.com/hashicorp/go-uuid v1.0.2 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
@@ -143,7 +136,6 @@ require (
 	github.com/linxGnu/grocksdb v1.7.16 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/manifoldco/promptui v0.9.0 // indirect
-	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mattn/go-pointer v0.0.1 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
@@ -179,7 +171,6 @@ require (
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rs/cors v1.8.3 // indirect
-	github.com/rs/zerolog v1.29.1 // indirect
 	github.com/sasha-s/go-deadlock v0.3.1 // indirect
 	github.com/spacemonkeygo/spacelog v0.0.0-20180420211403-2296661a0572 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
@@ -211,7 +202,6 @@ require (
 	golang.org/x/sys v0.10.0 // indirect
 	golang.org/x/term v0.10.0 // indirect
 	golang.org/x/text v0.11.0 // indirect
-	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.11.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/api v0.126.0 // indirect
@@ -244,9 +234,15 @@ replace (
 
 	github.com/ChainSafe/go-schnorrkel => github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d
 	github.com/ChainSafe/go-schnorrkel/1 => github.com/ChainSafe/go-schnorrkel v1.0.0
+	github.com/btcsuite/btcd => github.com/btcsuite/btcd v0.22.2 //indirect
 
+	// interchaintest supports ICS features so we need this for now
+	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.47.0
+	github.com/cosmos/iavl => github.com/cosmos/iavl v0.20.0
+	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	// For this nested module, you always want to replace the parent reference with the current worktree.
 	github.com/osmosis-labs/fee-abstraction/v7 => ../../
+	github.com/strangelove-ventures/interchaintest/v7 => github.com/notional-labs/interchaintest/v7 v7.0.0-20230803100453-9e61f78e0e8c
 
 	github.com/vedhavyas/go-subkey => github.com/strangelove-ventures/go-subkey v1.0.7
 )
