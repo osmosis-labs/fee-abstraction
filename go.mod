@@ -1,6 +1,6 @@
 module github.com/osmosis-labs/fee-abstraction/v7
 
-go 1.21
+go 1.20
 
 require (
 	cosmossdk.io/errors v1.0.0-beta.7
@@ -10,7 +10,6 @@ require (
 	github.com/cosmos/gogoproto v1.4.6
 	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7 v7.0.0-20230803181732-7c8f814d3b79
 	github.com/cosmos/ibc-go/v7 v7.0.0
-	github.com/gogo/protobuf v1.3.2
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
@@ -22,7 +21,10 @@ require (
 	google.golang.org/grpc v1.54.0
 )
 
-require github.com/prometheus/client_golang v1.14.0 // indirect
+require (
+	github.com/gogo/protobuf v1.3.2 // indirect
+	github.com/prometheus/client_golang v1.14.0 // indirect
+)
 
 require (
 	cloud.google.com/go v0.110.0 // indirect
@@ -157,7 +159,7 @@ require (
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/api v0.110.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/protobuf v1.30.0 // indirect
+	google.golang.org/protobuf v1.30.0
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
