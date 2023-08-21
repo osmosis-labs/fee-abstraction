@@ -3,17 +3,19 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/cometbft/cometbft/libs/log"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
+	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
-	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
 
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+	"github.com/cometbft/cometbft/libs/log"
+
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 type Keeper struct {
@@ -34,7 +36,6 @@ type Keeper struct {
 func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey storetypes.StoreKey,
-	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
 	sk types.StakingKeeper,
 	ak types.AccountKeeper,
@@ -44,7 +45,6 @@ func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
-
 ) Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -93,8 +93,9 @@ func (k Keeper) CalculateNativeFromIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins,
 	return sdk.NewCoins(nativeFee), nil
 }
 
-func (k Keeper) SendAbstractionFeeToModuleAccount(ctx sdk.Context, IBCcoins sdk.Coins, nativeCoins sdk.Coins, feePayer sdk.AccAddress) error {
-	err := k.bk.SendCoinsFromAccountToModule(ctx, feePayer, types.ModuleName, IBCcoins)
+// SendAbstractionFeeToModuleAccount send IBC token to module account
+func (k Keeper) SendAbstractionFeeToModuleAccount(ctx sdk.Context, ibcCoins sdk.Coins, nativeCoins sdk.Coins, feePayer sdk.AccAddress) error {
+	err := k.bk.SendCoinsFromAccountToModule(ctx, feePayer, types.ModuleName, ibcCoins)
 	if err != nil {
 		return err
 	}
@@ -114,7 +115,7 @@ func (k Keeper) verifyIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins) error {
 	return fmt.Errorf("unallowed %s for tx fee", ibcCoins[0].Denom)
 }
 
-func (k Keeper) Logger(ctx sdk.Context) log.Logger {
+func (Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
@@ -131,17 +132,18 @@ func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 
 // OnTimeoutPacket resend packet when timeout
 func (k Keeper) OnTimeoutPacket(ctx sdk.Context, chanCap *capabilitytypes.Capability, sourcePort string,
-	sourceChannel string, timeoutHeight clienttypes.Height, timeoutTimestamp uint64, packetData []byte) error {
+	sourceChannel string, timeoutHeight clienttypes.Height, timeoutTimestamp uint64, packetData []byte,
+) error {
 	_, err := k.channelKeeper.SendPacket(ctx, chanCap, sourcePort, sourceChannel,
 		timeoutHeight, timeoutTimestamp, packetData)
 	return err
 }
 
 func (k Keeper) GetCapability(ctx sdk.Context, name string) *capabilitytypes.Capability {
-	cap, ok := k.scopedKeeper.GetCapability(ctx, name)
+	capability, ok := k.scopedKeeper.GetCapability(ctx, name)
 	if !ok {
 		k.Logger(ctx).Error("Error ErrChannelCapabilityNotFound ")
 		return nil
 	}
-	return cap
+	return capability
 }

@@ -3,27 +3,30 @@ package feeabs
 import (
 	"fmt"
 
-	sdkerrors "cosmossdk.io/errors"
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 	porttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
 	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/keeper"
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+
+	sdkerrors "cosmossdk.io/errors"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+
+	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 // IBCModule implements the ICS26 interface for transfer given the transfer keeper.
 type IBCModule struct {
 	cdc    codec.Codec
-	keeper keeper.Keeper
+	keeper feeabskeeper.Keeper
 }
 
 // NewIBCModule creates a new IBCModule given the keeper
-func NewIBCModule(cdc codec.Codec, k keeper.Keeper) IBCModule {
+func NewIBCModule(cdc codec.Codec, k feeabskeeper.Keeper) IBCModule {
 	return IBCModule{
 		cdc:    cdc,
 		keeper: k,
@@ -57,7 +60,7 @@ func (am IBCModule) OnChanOpenInit(
 
 func ValidateChannelParams(
 	ctx sdk.Context,
-	keeper keeper.Keeper,
+	keeper feeabskeeper.Keeper,
 	order channeltypes.Order,
 	portID string,
 	channelID string,
@@ -106,7 +109,7 @@ func (am IBCModule) OnChanOpenTry(
 }
 
 // OnChanOpenAck implements the IBCModule interface.
-func (am IBCModule) OnChanOpenAck(
+func (IBCModule) OnChanOpenAck(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -117,7 +120,7 @@ func (am IBCModule) OnChanOpenAck(
 }
 
 // OnChanOpenConfirm implements the IBCModule interface.
-func (am IBCModule) OnChanOpenConfirm(
+func (IBCModule) OnChanOpenConfirm(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -126,7 +129,7 @@ func (am IBCModule) OnChanOpenConfirm(
 }
 
 // OnChanCloseInit implements the IBCModule interface.
-func (am IBCModule) OnChanCloseInit(
+func (IBCModule) OnChanCloseInit(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -136,7 +139,7 @@ func (am IBCModule) OnChanCloseInit(
 }
 
 // OnChanCloseConfirm implements the IBCModule interface.
-func (am IBCModule) OnChanCloseConfirm(
+func (IBCModule) OnChanCloseConfirm(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -146,7 +149,7 @@ func (am IBCModule) OnChanCloseConfirm(
 }
 
 // OnRecvPacket implements the IBCModule interface.
-func (am IBCModule) OnRecvPacket(
+func (IBCModule) OnRecvPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
 	relayer sdk.AccAddress,
@@ -169,12 +172,12 @@ func (am IBCModule) OnAcknowledgementPacket(
 		return sdkerrors.Wrapf(errorstypes.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
 	}
 
-	var IcqPacketData types.InterchainQueryPacketData
-	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &IcqPacketData); err != nil {
+	var icqPacketData types.InterchainQueryPacketData
+	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &icqPacketData); err != nil {
 		return sdkerrors.Wrapf(errorstypes.ErrUnknownRequest, "cannot unmarshal packet data: %v", err)
 	}
 
-	IcqReqs, err := types.DeserializeCosmosQuery(IcqPacketData.GetData())
+	icqReqs, err := types.DeserializeCosmosQuery(icqPacketData.GetData())
 	if err != nil {
 		am.keeper.Logger(ctx).Error(fmt.Sprintf("Failed to deserialize cosmos query %s", err.Error()))
 		return err
@@ -188,7 +191,7 @@ func (am IBCModule) OnAcknowledgementPacket(
 		),
 	)
 
-	if err := am.keeper.OnAcknowledgementPacket(ctx, ack, IcqReqs); err != nil {
+	if err := am.keeper.OnAcknowledgementPacket(ctx, ack, icqReqs); err != nil {
 		return sdkerrors.Wrapf(errorstypes.ErrInvalidRequest, "error OnAcknowledgementPacket: %v", err)
 	}
 	return nil

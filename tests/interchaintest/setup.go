@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/icza/dyno"
-	feeabstype "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+	feeabstype "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos/wasm"
 

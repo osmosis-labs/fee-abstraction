@@ -2,15 +2,15 @@ package feeabs
 
 import (
 	sdkerrors "cosmossdk.io/errors"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
-
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	v1beta1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/keeper"
 
-	cli "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/client/cli"
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+	cli "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/client/cli"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 var (

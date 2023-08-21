@@ -6,21 +6,21 @@ import (
 	"os"
 	"testing"
 
-	feeapp "github.com/osmosis-labs/fee-abstraction/v4/app"
-
-	dbm "github.com/cometbft/cometbft-db"
-	"github.com/cometbft/cometbft/libs/log"
-	"github.com/cometbft/cometbft/libs/rand"
-	"github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
 	"github.com/stretchr/testify/require"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/store"
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	simulation2 "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	simcli "github.com/cosmos/cosmos-sdk/x/simulation/client/cli"
+
+	dbm "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
+	"github.com/cometbft/cometbft/libs/rand"
+
+	feeapp "github.com/osmosis-labs/fee-abstraction/v7/app"
+	"github.com/osmosis-labs/fee-abstraction/v7/app/helpers"
 )
 
 func init() {
@@ -49,8 +49,7 @@ func BenchmarkFullAppSimulation(b *testing.B) {
 		}
 	}()
 
-	var emptyWasmOpts []wasm.Option
-	app := feeapp.NewFeeAbs(logger, db, nil, true, map[int64]bool{}, feeapp.DefaultNodeHome, simcli.FlagPeriodValue, feeapp.MakeEncodingConfig(), simtestutil.EmptyAppOptions{}, emptyWasmOpts, interBlockCacheOpt())
+	app := feeapp.NewFeeAbs(logger, db, nil, true, map[int64]bool{}, feeapp.DefaultNodeHome, simcli.FlagPeriodValue, feeapp.MakeEncodingConfig(), simtestutil.EmptyAppOptions{}, interBlockCacheOpt())
 
 	// Run randomized simulation:w
 	_, simParams, simErr := simulation.SimulateFromSeed(
@@ -113,8 +112,7 @@ func TestAppStateDeterminism(t *testing.T) {
 			}
 
 			db := dbm.NewMemDB()
-			var emptyWasmOpts []wasm.Option
-			app := feeapp.NewFeeAbs(logger, db, nil, true, map[int64]bool{}, feeapp.DefaultNodeHome, simcli.FlagPeriodValue, feeapp.MakeEncodingConfig(), simtestutil.EmptyAppOptions{}, emptyWasmOpts, interBlockCacheOpt())
+			app := feeapp.NewFeeAbs(logger, db, nil, true, map[int64]bool{}, feeapp.DefaultNodeHome, simcli.FlagPeriodValue, feeapp.MakeEncodingConfig(), simtestutil.EmptyAppOptions{}, interBlockCacheOpt())
 
 			fmt.Printf(
 				"running non-determinism simulation; seed %d: %d/%d, attempt: %d/%d\n",
