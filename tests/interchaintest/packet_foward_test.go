@@ -191,7 +191,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia)
 	require.NoError(t, err)
 
-	//Create channel
+	// Create channel
 	err = r.CreateChannel(ctx, eRep, pathFeeabsGaia, ibc.CreateChannelOptions{
 		SourcePortName: "transfer",
 		DestPortName:   "transfer",
@@ -222,7 +222,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 	channGaiaFeeabs := channsGaia[0]
 	require.NotEmpty(t, channGaiaFeeabs.ChannelID)
-	//rly osmo-gaia
+	// rly osmo-gaia
 	// Generate new path
 	err = r.GeneratePath(ctx, eRep, osmosis.Config().ChainID, gaia.Config().ChainID, pathOsmosisGaia)
 	require.NoError(t, err)
@@ -293,7 +293,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		func() {
 			err := r.StopRelayer(ctx, eRep)
 			if err != nil {
-				t.Logf("an error occured while stopping the relayer: %s", err)
+				t.Logf("an error occurred while stopping the relayer: %s", err)
 			}
 		},
 	)

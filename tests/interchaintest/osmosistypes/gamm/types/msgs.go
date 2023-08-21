@@ -107,6 +107,7 @@ func (msg MsgJoinPool) ValidateBasic() error { return nil }
 func (msg MsgJoinPool) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
 }
+
 func (msg MsgJoinPool) GetSigners() []sdk.AccAddress {
 	sender, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
