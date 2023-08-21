@@ -146,6 +146,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			}
 			k.Logger(ctx).Info(fmt.Sprintf("TwapRate %v", twapRate))
 			k.SetTwapRate(ctx, hostZoneConfig.IbcDenom, twapRate)
+			k.UnFrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 
 			return false
 		})
