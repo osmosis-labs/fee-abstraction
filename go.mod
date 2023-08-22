@@ -1,4 +1,4 @@
-module github.com/osmosis-labs/fee-abstraction/v2
+module github.com/osmosis-labs/fee-abstraction/v4
 
 go 1.18
 

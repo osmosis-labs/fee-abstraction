@@ -9,7 +9,7 @@ require (
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
-	github.com/osmosis-labs/fee-abstraction/v2 v2.0.0-20230802181656-70ce7e7591ef
+	github.com/osmosis-labs/fee-abstraction/v4 v2.0.0-20230802181656-70ce7e7591ef
 	github.com/strangelove-ventures/interchaintest/v4 v4.0.0-20230331040355-5d08aab13017
 	github.com/stretchr/testify v1.8.2
 	go.uber.org/zap v1.23.0

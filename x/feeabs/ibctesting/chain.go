@@ -38,7 +38,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	tmversion "github.com/tendermint/tendermint/version"
 
-	feeabs "github.com/osmosis-labs/fee-abstraction/v2/app"
+	feeabs "github.com/osmosis-labs/fee-abstraction/v4/app"
 )
 
 // TestChain is a testing struct that wraps a simapp with the last TM Header, the current ABCI
