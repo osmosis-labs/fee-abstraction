@@ -152,6 +152,11 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			k.Logger(ctx).Info(fmt.Sprintf("TwapRate %v", twapRate))
 			k.SetTwapRate(ctx, hostZoneConfig.IbcDenom, twapRate)
 
+			err = k.UnFrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+			if err != nil {
+				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
+				return false
+			}
 			return false
 		})
 
