@@ -435,7 +435,6 @@ func NewFeeAbs(
 	app.FeeabsKeeper = feeabskeeper.NewKeeper(
 		appCodec,
 		keys[feeabstypes.StoreKey],
-		keys[feeabstypes.MemStoreKey],
 		app.GetSubspace(feeabstypes.ModuleName),
 		app.StakingKeeper,
 		app.AccountKeeper,
