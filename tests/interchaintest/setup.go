@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types"
 	balancertypes "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/balancer"
 	gammtypes "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/osmosistypes/gamm/types"
-	feeabstype "github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
+	feeabstype "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 	"github.com/strangelove-ventures/interchaintest/v4/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v4/chain/cosmos/wasm"
 	"github.com/strangelove-ventures/interchaintest/v4/ibc"
