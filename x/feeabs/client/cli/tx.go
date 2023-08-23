@@ -22,9 +22,51 @@ func NewTxCmd() *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
+	txCmd.AddCommand(NewQueryOsmosisTWAPCmd())
+	txCmd.AddCommand(NewSwapOverChainCmd())
 	txCmd.AddCommand(NewFundFeeAbsModuleAccount())
 
 	return txCmd
+}
+
+func NewQueryOsmosisTWAPCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:  "query-osmosis-twap",
+		Args: cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgSendQueryIbcDenomTWAP(clientCtx.GetFromAddress())
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func NewSwapOverChainCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:  "swap [ibc-denom]",
+		Args: cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			msg := types.NewMsgSwapCrossChain(clientCtx.GetFromAddress(), args[0])
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
 }
 
 func NewFundFeeAbsModuleAccount() *cobra.Command {

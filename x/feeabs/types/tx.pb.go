@@ -120,9 +120,183 @@ func (m *MsgFundFeeAbsModuleAccountResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgFundFeeAbsModuleAccountResponse proto.InternalMessageInfo
 
+// Params defines the parameters for the feeabs module.
+type MsgSendQueryIbcDenomTWAP struct {
+	FromAddress string `protobuf:"bytes,1,opt,name=from_address,json=fromAddress,proto3" json:"from_address,omitempty"`
+}
+
+func (m *MsgSendQueryIbcDenomTWAP) Reset()         { *m = MsgSendQueryIbcDenomTWAP{} }
+func (m *MsgSendQueryIbcDenomTWAP) String() string { return proto.CompactTextString(m) }
+func (*MsgSendQueryIbcDenomTWAP) ProtoMessage()    {}
+func (*MsgSendQueryIbcDenomTWAP) Descriptor() ([]byte, []int) {
+	return fileDescriptor_84c172c34645b936, []int{2}
+}
+func (m *MsgSendQueryIbcDenomTWAP) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSendQueryIbcDenomTWAP) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSendQueryIbcDenomTWAP.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSendQueryIbcDenomTWAP) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSendQueryIbcDenomTWAP.Merge(m, src)
+}
+func (m *MsgSendQueryIbcDenomTWAP) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSendQueryIbcDenomTWAP) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSendQueryIbcDenomTWAP.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSendQueryIbcDenomTWAP proto.InternalMessageInfo
+
+func (m *MsgSendQueryIbcDenomTWAP) GetFromAddress() string {
+	if m != nil {
+		return m.FromAddress
+	}
+	return ""
+}
+
+type MsgSendQueryIbcDenomTWAPResponse struct {
+}
+
+func (m *MsgSendQueryIbcDenomTWAPResponse) Reset()         { *m = MsgSendQueryIbcDenomTWAPResponse{} }
+func (m *MsgSendQueryIbcDenomTWAPResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgSendQueryIbcDenomTWAPResponse) ProtoMessage()    {}
+func (*MsgSendQueryIbcDenomTWAPResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_84c172c34645b936, []int{3}
+}
+func (m *MsgSendQueryIbcDenomTWAPResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSendQueryIbcDenomTWAPResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSendQueryIbcDenomTWAPResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSendQueryIbcDenomTWAPResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSendQueryIbcDenomTWAPResponse.Merge(m, src)
+}
+func (m *MsgSendQueryIbcDenomTWAPResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSendQueryIbcDenomTWAPResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSendQueryIbcDenomTWAPResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSendQueryIbcDenomTWAPResponse proto.InternalMessageInfo
+
+// Params defines the parameters for the feeabs module.
+type MsgSwapCrossChain struct {
+	FromAddress string `protobuf:"bytes,1,opt,name=from_address,json=fromAddress,proto3" json:"from_address,omitempty"`
+	IbcDenom    string `protobuf:"bytes,2,opt,name=ibc_denom,json=ibcDenom,proto3" json:"ibc_denom,omitempty"`
+}
+
+func (m *MsgSwapCrossChain) Reset()         { *m = MsgSwapCrossChain{} }
+func (m *MsgSwapCrossChain) String() string { return proto.CompactTextString(m) }
+func (*MsgSwapCrossChain) ProtoMessage()    {}
+func (*MsgSwapCrossChain) Descriptor() ([]byte, []int) {
+	return fileDescriptor_84c172c34645b936, []int{4}
+}
+func (m *MsgSwapCrossChain) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSwapCrossChain) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSwapCrossChain.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSwapCrossChain) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSwapCrossChain.Merge(m, src)
+}
+func (m *MsgSwapCrossChain) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSwapCrossChain) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSwapCrossChain.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSwapCrossChain proto.InternalMessageInfo
+
+func (m *MsgSwapCrossChain) GetFromAddress() string {
+	if m != nil {
+		return m.FromAddress
+	}
+	return ""
+}
+
+func (m *MsgSwapCrossChain) GetIbcDenom() string {
+	if m != nil {
+		return m.IbcDenom
+	}
+	return ""
+}
+
+type MsgSwapCrossChainResponse struct {
+}
+
+func (m *MsgSwapCrossChainResponse) Reset()         { *m = MsgSwapCrossChainResponse{} }
+func (m *MsgSwapCrossChainResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgSwapCrossChainResponse) ProtoMessage()    {}
+func (*MsgSwapCrossChainResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_84c172c34645b936, []int{5}
+}
+func (m *MsgSwapCrossChainResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgSwapCrossChainResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgSwapCrossChainResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgSwapCrossChainResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSwapCrossChainResponse.Merge(m, src)
+}
+func (m *MsgSwapCrossChainResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgSwapCrossChainResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSwapCrossChainResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgSwapCrossChainResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgFundFeeAbsModuleAccount)(nil), "feeabstraction.absfee.v1beta1.MsgFundFeeAbsModuleAccount")
 	proto.RegisterType((*MsgFundFeeAbsModuleAccountResponse)(nil), "feeabstraction.absfee.v1beta1.MsgFundFeeAbsModuleAccountResponse")
+	proto.RegisterType((*MsgSendQueryIbcDenomTWAP)(nil), "feeabstraction.absfee.v1beta1.MsgSendQueryIbcDenomTWAP")
+	proto.RegisterType((*MsgSendQueryIbcDenomTWAPResponse)(nil), "feeabstraction.absfee.v1beta1.MsgSendQueryIbcDenomTWAPResponse")
+	proto.RegisterType((*MsgSwapCrossChain)(nil), "feeabstraction.absfee.v1beta1.MsgSwapCrossChain")
+	proto.RegisterType((*MsgSwapCrossChainResponse)(nil), "feeabstraction.absfee.v1beta1.MsgSwapCrossChainResponse")
 }
 
 func init() {
@@ -130,32 +304,40 @@ func init() {
 }
 
 var fileDescriptor_84c172c34645b936 = []byte{
-	// 394 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x92, 0xb1, 0x8e, 0xd3, 0x40,
-	0x10, 0x86, 0xbd, 0x9c, 0x74, 0x12, 0x3e, 0x68, 0x2c, 0x24, 0x0e, 0x4b, 0xd8, 0x87, 0x85, 0x50,
-	0x40, 0xca, 0xae, 0xee, 0x28, 0xd0, 0xd1, 0xf9, 0x90, 0xae, 0x4b, 0x13, 0x3a, 0x1a, 0xb4, 0x6b,
-	0x8f, 0x7d, 0x16, 0x5e, 0x8f, 0xe5, 0x59, 0x47, 0xc9, 0x5b, 0xd0, 0x51, 0xd2, 0xd3, 0xf3, 0x0e,
-	0x29, 0x53, 0x52, 0x05, 0x94, 0xbc, 0x01, 0x4f, 0x80, 0xec, 0x75, 0x44, 0x28, 0x92, 0x82, 0xca,
-	0xde, 0xd9, 0x6f, 0x66, 0xfe, 0xf9, 0x67, 0xdd, 0x17, 0x19, 0x80, 0x54, 0x64, 0x1a, 0x99, 0x98,
-	0x02, 0x2b, 0x21, 0x15, 0x65, 0x00, 0x62, 0x76, 0xa9, 0xc0, 0xc8, 0x4b, 0x61, 0xe6, 0xbc, 0x6e,
-	0xd0, 0xa0, 0xf7, 0xf4, 0x5f, 0x8e, 0x5b, 0x8e, 0x0f, 0x9c, 0xff, 0x28, 0xc7, 0x1c, 0x7b, 0x52,
-	0x74, 0x7f, 0x36, 0xc9, 0x7f, 0x75, 0xbc, 0x78, 0x2d, 0x1b, 0xa9, 0x69, 0x60, 0x5f, 0x1e, 0x67,
-	0xa1, 0xc6, 0xe4, 0x6e, 0x40, 0x83, 0x04, 0x49, 0x23, 0x09, 0x25, 0xe9, 0x2f, 0x90, 0x60, 0x51,
-	0x0d, 0xf7, 0x61, 0x8e, 0x98, 0x97, 0x20, 0xfa, 0x93, 0x6a, 0x33, 0x61, 0x0a, 0x0d, 0x64, 0xa4,
-	0xae, 0x2d, 0x10, 0x7d, 0x67, 0xae, 0x3f, 0xa1, 0xfc, 0xb6, 0xad, 0xd2, 0x5b, 0x80, 0x58, 0xd1,
-	0x04, 0xd3, 0xb6, 0x84, 0x38, 0x49, 0xb0, 0xad, 0x8c, 0xf7, 0xcc, 0x7d, 0x90, 0x35, 0xa8, 0x3f,
-	0xca, 0x34, 0x6d, 0x80, 0xe8, 0x9c, 0x5d, 0xb0, 0xd1, 0xfd, 0xe9, 0x59, 0x17, 0x8b, 0x6d, 0xc8,
-	0x33, 0xee, 0xa9, 0xd4, 0x1d, 0x7c, 0x7e, 0xef, 0xe2, 0x64, 0x74, 0x76, 0xf5, 0x84, 0x5b, 0x4d,
-	0xbc, 0xd3, 0xb4, 0x73, 0x85, 0xbf, 0xc3, 0xa2, 0xba, 0x89, 0x97, 0xeb, 0xd0, 0xf9, 0xbd, 0x0e,
-	0x1f, 0x2e, 0xa4, 0x2e, 0xdf, 0x46, 0x36, 0x2d, 0xfa, 0xf6, 0x33, 0x1c, 0xe5, 0x85, 0xb9, 0x6b,
-	0x15, 0x4f, 0x50, 0x8b, 0x61, 0x22, 0xfb, 0x19, 0x53, 0xfa, 0x49, 0x98, 0x45, 0x0d, 0xd4, 0x57,
-	0xa0, 0xe9, 0xd0, 0x2b, 0x7a, 0xee, 0x46, 0x87, 0x65, 0x4f, 0x81, 0x6a, 0xac, 0x08, 0xae, 0xbe,
-	0x32, 0xf7, 0x64, 0x42, 0xb9, 0xf7, 0x85, 0xb9, 0x8f, 0x0f, 0x8d, 0x78, 0xcd, 0x8f, 0xee, 0x93,
-	0x1f, 0x6e, 0xe3, 0xc7, 0xff, 0x9d, 0xba, 0x53, 0x78, 0xf3, 0x7e, 0xb9, 0x09, 0xd8, 0x6a, 0x13,
-	0xb0, 0x5f, 0x9b, 0x80, 0x7d, 0xde, 0x06, 0xce, 0x6a, 0x1b, 0x38, 0x3f, 0xb6, 0x81, 0xf3, 0xe1,
-	0x7a, 0xcf, 0x93, 0xde, 0x8b, 0x82, 0xc6, 0xa5, 0x54, 0x24, 0x32, 0x80, 0xf1, 0xfe, 0xf3, 0x98,
-	0xbd, 0x11, 0x73, 0x61, 0x85, 0x58, 0xab, 0xd4, 0x69, 0xbf, 0xdb, 0xd7, 0x7f, 0x02, 0x00, 0x00,
-	0xff, 0xff, 0xe0, 0x55, 0xdd, 0x68, 0xd2, 0x02, 0x00, 0x00,
+	// 516 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x94, 0xcf, 0x6e, 0xd3, 0x40,
+	0x10, 0xc6, 0xe3, 0x46, 0xaa, 0xe8, 0x16, 0x90, 0x88, 0x40, 0xa4, 0xae, 0x70, 0x82, 0x85, 0x50,
+	0x40, 0x8a, 0x97, 0x96, 0x43, 0x29, 0x12, 0x42, 0x6e, 0x50, 0x25, 0x0e, 0x91, 0x20, 0x41, 0x42,
+	0xe2, 0x52, 0xed, 0xda, 0x13, 0xc7, 0x22, 0xf6, 0x58, 0x9e, 0x75, 0x69, 0x24, 0x1e, 0x02, 0x4e,
+	0xbc, 0x03, 0x37, 0x0e, 0xbc, 0x43, 0x8f, 0x3d, 0x72, 0x2a, 0x28, 0x79, 0x03, 0x9e, 0x00, 0xf9,
+	0x4f, 0x4a, 0x0b, 0x38, 0xa4, 0x3d, 0xd9, 0xde, 0xfd, 0x7d, 0xdf, 0x7c, 0xb3, 0x9a, 0x35, 0xbb,
+	0x3b, 0x00, 0x10, 0x92, 0x54, 0x2c, 0x1c, 0xe5, 0x63, 0xc8, 0x85, 0xa4, 0x01, 0x00, 0xdf, 0xdf,
+	0x90, 0xa0, 0xc4, 0x06, 0x57, 0x07, 0x56, 0x14, 0xa3, 0xc2, 0xda, 0xad, 0xb3, 0x9c, 0x95, 0x73,
+	0x56, 0xc1, 0xe9, 0xd7, 0x3d, 0xf4, 0x30, 0x23, 0x79, 0xfa, 0x96, 0x8b, 0xf4, 0xfb, 0xf3, 0xcd,
+	0x23, 0x11, 0x8b, 0x80, 0x0a, 0xf6, 0xde, 0x7c, 0x16, 0x22, 0x74, 0x86, 0x05, 0x6a, 0x38, 0x48,
+	0x01, 0x12, 0x97, 0x82, 0x7e, 0x03, 0x0e, 0xfa, 0x61, 0xb1, 0xdf, 0xf0, 0x10, 0xbd, 0x11, 0xf0,
+	0xec, 0x4b, 0x26, 0x03, 0xae, 0xfc, 0x00, 0x48, 0x89, 0x20, 0xca, 0x01, 0xf3, 0xab, 0xc6, 0xf4,
+	0x2e, 0x79, 0xbb, 0x49, 0xe8, 0xee, 0x02, 0xd8, 0x92, 0xba, 0xe8, 0x26, 0x23, 0xb0, 0x1d, 0x07,
+	0x93, 0x50, 0xd5, 0x6e, 0xb3, 0xcb, 0x83, 0x18, 0x83, 0x3d, 0xe1, 0xba, 0x31, 0x10, 0xd5, 0xb5,
+	0xa6, 0xd6, 0x5a, 0xe9, 0xad, 0xa6, 0x6b, 0x76, 0xbe, 0x54, 0x53, 0x6c, 0x59, 0x04, 0x29, 0x5c,
+	0x5f, 0x6a, 0x56, 0x5b, 0xab, 0x9b, 0x6b, 0x56, 0x9e, 0xc9, 0x4a, 0x33, 0xcd, 0x4e, 0xc5, 0xea,
+	0xa0, 0x1f, 0xee, 0xd8, 0x87, 0xc7, 0x8d, 0xca, 0xcf, 0xe3, 0xc6, 0x95, 0xb1, 0x08, 0x46, 0x8f,
+	0xcd, 0x5c, 0x66, 0x7e, 0xfe, 0xde, 0x68, 0x79, 0xbe, 0x1a, 0x26, 0xd2, 0x72, 0x30, 0xe0, 0x45,
+	0x47, 0xf9, 0xa3, 0x4d, 0xee, 0x5b, 0xae, 0xc6, 0x11, 0x50, 0xe6, 0x40, 0xbd, 0xa2, 0x96, 0x79,
+	0x87, 0x99, 0xe5, 0xb1, 0x7b, 0x40, 0x11, 0x86, 0x04, 0xe6, 0x13, 0x56, 0xef, 0x92, 0xd7, 0x87,
+	0xd0, 0x7d, 0x99, 0x40, 0x3c, 0x7e, 0x2e, 0x9d, 0x67, 0x10, 0x62, 0xf0, 0xea, 0xb5, 0xfd, 0x62,
+	0x81, 0xd6, 0x4c, 0x93, 0x35, 0xcb, 0xe4, 0x27, 0x25, 0xfa, 0xec, 0x5a, 0xca, 0xbc, 0x13, 0x51,
+	0x27, 0x46, 0xa2, 0xce, 0x50, 0xf8, 0xe1, 0x22, 0xc7, 0xb6, 0xce, 0x56, 0x7c, 0xe9, 0xec, 0xb9,
+	0xa9, 0x61, 0x7d, 0x29, 0xdb, 0xbf, 0xe4, 0x17, 0x05, 0xcc, 0x75, 0xb6, 0xf6, 0x97, 0xe9, 0xac,
+	0xe2, 0xe6, 0x97, 0x2a, 0xab, 0x76, 0xc9, 0xab, 0x7d, 0xd4, 0xd8, 0x8d, 0x7f, 0xb7, 0xb6, 0x65,
+	0xcd, 0x1d, 0x51, 0xab, 0xac, 0x29, 0xfd, 0xe9, 0x05, 0x85, 0xb3, 0x6c, 0xb5, 0xf7, 0xec, 0xea,
+	0x1f, 0x47, 0xf1, 0x60, 0x01, 0xcb, 0x33, 0x0a, 0xfd, 0xd1, 0x79, 0x15, 0x27, 0xd5, 0x3f, 0x69,
+	0xec, 0x66, 0xd9, 0x24, 0x6f, 0xff, 0xdf, 0xb5, 0x44, 0xaa, 0xdb, 0x17, 0x96, 0xce, 0x92, 0xed,
+	0xf4, 0x0f, 0x27, 0x86, 0x76, 0x34, 0x31, 0xb4, 0x1f, 0x13, 0x43, 0xfb, 0x30, 0x35, 0x2a, 0x47,
+	0x53, 0xa3, 0xf2, 0x6d, 0x6a, 0x54, 0xde, 0x6c, 0x9f, 0x1a, 0xfd, 0x6c, 0xe4, 0x7d, 0x6a, 0x8f,
+	0x84, 0x24, 0x3e, 0x00, 0x68, 0x9f, 0xfe, 0x0b, 0xec, 0x6f, 0xf1, 0x03, 0x9e, 0x07, 0xc9, 0x6f,
+	0x84, 0x5c, 0xce, 0xae, 0xf0, 0xc3, 0x5f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x0c, 0x77, 0x4e, 0x61,
+	0xb9, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -170,6 +352,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
+	SendQueryIbcDenomTWAP(ctx context.Context, in *MsgSendQueryIbcDenomTWAP, opts ...grpc.CallOption) (*MsgSendQueryIbcDenomTWAPResponse, error)
+	SwapCrossChain(ctx context.Context, in *MsgSwapCrossChain, opts ...grpc.CallOption) (*MsgSwapCrossChainResponse, error)
 	FundFeeAbsModuleAccount(ctx context.Context, in *MsgFundFeeAbsModuleAccount, opts ...grpc.CallOption) (*MsgFundFeeAbsModuleAccountResponse, error)
 }
 
@@ -179,6 +363,24 @@ type msgClient struct {
 
 func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
+}
+
+func (c *msgClient) SendQueryIbcDenomTWAP(ctx context.Context, in *MsgSendQueryIbcDenomTWAP, opts ...grpc.CallOption) (*MsgSendQueryIbcDenomTWAPResponse, error) {
+	out := new(MsgSendQueryIbcDenomTWAPResponse)
+	err := c.cc.Invoke(ctx, "/feeabstraction.absfee.v1beta1.Msg/SendQueryIbcDenomTWAP", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SwapCrossChain(ctx context.Context, in *MsgSwapCrossChain, opts ...grpc.CallOption) (*MsgSwapCrossChainResponse, error) {
+	out := new(MsgSwapCrossChainResponse)
+	err := c.cc.Invoke(ctx, "/feeabstraction.absfee.v1beta1.Msg/SwapCrossChain", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *msgClient) FundFeeAbsModuleAccount(ctx context.Context, in *MsgFundFeeAbsModuleAccount, opts ...grpc.CallOption) (*MsgFundFeeAbsModuleAccountResponse, error) {
@@ -192,6 +394,8 @@ func (c *msgClient) FundFeeAbsModuleAccount(ctx context.Context, in *MsgFundFeeA
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
+	SendQueryIbcDenomTWAP(context.Context, *MsgSendQueryIbcDenomTWAP) (*MsgSendQueryIbcDenomTWAPResponse, error)
+	SwapCrossChain(context.Context, *MsgSwapCrossChain) (*MsgSwapCrossChainResponse, error)
 	FundFeeAbsModuleAccount(context.Context, *MsgFundFeeAbsModuleAccount) (*MsgFundFeeAbsModuleAccountResponse, error)
 }
 
@@ -199,12 +403,54 @@ type MsgServer interface {
 type UnimplementedMsgServer struct {
 }
 
+func (*UnimplementedMsgServer) SendQueryIbcDenomTWAP(ctx context.Context, req *MsgSendQueryIbcDenomTWAP) (*MsgSendQueryIbcDenomTWAPResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendQueryIbcDenomTWAP not implemented")
+}
+func (*UnimplementedMsgServer) SwapCrossChain(ctx context.Context, req *MsgSwapCrossChain) (*MsgSwapCrossChainResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SwapCrossChain not implemented")
+}
 func (*UnimplementedMsgServer) FundFeeAbsModuleAccount(ctx context.Context, req *MsgFundFeeAbsModuleAccount) (*MsgFundFeeAbsModuleAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FundFeeAbsModuleAccount not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
+}
+
+func _Msg_SendQueryIbcDenomTWAP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSendQueryIbcDenomTWAP)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SendQueryIbcDenomTWAP(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/feeabstraction.absfee.v1beta1.Msg/SendQueryIbcDenomTWAP",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SendQueryIbcDenomTWAP(ctx, req.(*MsgSendQueryIbcDenomTWAP))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SwapCrossChain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSwapCrossChain)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SwapCrossChain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/feeabstraction.absfee.v1beta1.Msg/SwapCrossChain",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SwapCrossChain(ctx, req.(*MsgSwapCrossChain))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Msg_FundFeeAbsModuleAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -229,6 +475,14 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "feeabstraction.absfee.v1beta1.Msg",
 	HandlerType: (*MsgServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SendQueryIbcDenomTWAP",
+			Handler:    _Msg_SendQueryIbcDenomTWAP_Handler,
+		},
+		{
+			MethodName: "SwapCrossChain",
+			Handler:    _Msg_SwapCrossChain_Handler,
+		},
 		{
 			MethodName: "FundFeeAbsModuleAccount",
 			Handler:    _Msg_FundFeeAbsModuleAccount_Handler,
@@ -305,6 +559,119 @@ func (m *MsgFundFeeAbsModuleAccountResponse) MarshalToSizedBuffer(dAtA []byte) (
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgSendQueryIbcDenomTWAP) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSendQueryIbcDenomTWAP) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSendQueryIbcDenomTWAP) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.FromAddress) > 0 {
+		i -= len(m.FromAddress)
+		copy(dAtA[i:], m.FromAddress)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.FromAddress)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSendQueryIbcDenomTWAPResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSendQueryIbcDenomTWAPResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSendQueryIbcDenomTWAPResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSwapCrossChain) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSwapCrossChain) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSwapCrossChain) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.IbcDenom) > 0 {
+		i -= len(m.IbcDenom)
+		copy(dAtA[i:], m.IbcDenom)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.IbcDenom)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.FromAddress) > 0 {
+		i -= len(m.FromAddress)
+		copy(dAtA[i:], m.FromAddress)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.FromAddress)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgSwapCrossChainResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgSwapCrossChainResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgSwapCrossChainResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -336,6 +703,54 @@ func (m *MsgFundFeeAbsModuleAccount) Size() (n int) {
 }
 
 func (m *MsgFundFeeAbsModuleAccountResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgSendQueryIbcDenomTWAP) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.FromAddress)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgSendQueryIbcDenomTWAPResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgSwapCrossChain) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.FromAddress)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.IbcDenom)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgSwapCrossChainResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -493,6 +908,302 @@ func (m *MsgFundFeeAbsModuleAccountResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgFundFeeAbsModuleAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSendQueryIbcDenomTWAP) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSendQueryIbcDenomTWAP: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSendQueryIbcDenomTWAP: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FromAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FromAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSendQueryIbcDenomTWAPResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSendQueryIbcDenomTWAPResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSendQueryIbcDenomTWAPResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSwapCrossChain) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSwapCrossChain: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSwapCrossChain: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FromAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FromAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IbcDenom", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.IbcDenom = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgSwapCrossChainResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgSwapCrossChainResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgSwapCrossChainResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
