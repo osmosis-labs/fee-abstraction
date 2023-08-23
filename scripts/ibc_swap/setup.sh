@@ -18,7 +18,7 @@ hermes --config scripts/relayer_hermes/config_osmosis_gaia.toml create channel -
 #
 #
 
-feeappd tx ibc-transfer transfer transfer $CHANNEL_ID "$VALIDATOR" 10000000stake --from myaccount --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
+feeappd tx ibc-transfer transfer transfer $CHANNEL_ID "$VALIDATOR" 1000000000000stake --from myaccount --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
 gaiad tx ibc-transfer transfer transfer channel-1 "$VALIDATOR" 1000000000000uatom --from gnad --keyring-backend test --chain-id gaiad-t1 --yes --fees 5000stake
 gaiad tx ibc-transfer transfer transfer channel-0 feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw 1000000000000uatom --from gnad --keyring-backend test --chain-id gaiad-t1 --yes --fees 5000stake
 sleep 20 
@@ -32,7 +32,7 @@ echo ============DENOM==============
 cat > sample_pool.json <<EOF
 {
         "weights": "1ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E,1ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
-        "initial-deposit": "500000000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E,1000000ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
+        "initial-deposit": "500000000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E,1000000000000ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
         "swap-fee": "0.01",
         "exit-fee": "0",
         "future-governor": "168h"
@@ -102,15 +102,16 @@ echo $CROSSCHAIN_SWAPS_ADDRESS
 
 osmosisd tx ibc-transfer transfer transfer $CHANNEL_ID feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw 100000000000uosmo --from validator1 --keyring-backend test --chain-id testing --yes --fees 5000stake
 #feeappd query bank balances feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw
+#feeappd tx feeabs fund 500000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E --from myaccount --keyring-backend test --chain-id feeappd-t1 -y
 #MEMO='{"wasm":{"contract":"'$CROSSCHAIN_SWAPS_ADDRESS'","msg":{"osmosis_swap":{"output_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878","slippage":{"twap":{"slippage_percentage":"20","window_seconds":10}},"receiver":"feeappd-t1/feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw","on_failed_delivery":"do_nothing", "next_memo":{}}}}}'
 #echo $MEMO
 
-#feeappd tx ibc-transfer transfer transfer channel-0 $CROSSCHAIN_SWAPS_ADDRESS 25000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E --from feeacc --keyring-backend test --chain-id feeappd-t1 -y   --memo "$MEMO"
+#feeappd tx ibc-transfer transfer transfer channel-0 $CROSSCHAIN_SWAPS_ADDRESS 250000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E --from myaccount --keyring-backend test --chain-id feeappd-t1 -y   --memo "$MEMO"
 
-#feeappd tx ibc-transfer transfer transfer channel-0 $CROSSCHAIN_SWAPS_ADDRESS 25000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E --from feeacc --keyring-backend test --chain-id feeappd-t1 -y   --memo "$MEMO"
+#feeappd tx ibc-transfer transfer transfer channel-0 $CROSSCHAIN_SWAPS_ADDRESS 250000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E --from myaccount --keyring-backend test --chain-id feeappd-t1 -y   --memo "$MEMO"
 
 #sleep 20  # wait for the roundtrip
 
-#new_balances=$(feeappd query bank balances "$feeacc" -o json | jq '.balances')
+#new_balances=$(feeappd query bank balances "$myaccount" -o json | jq '.balances')
 #echo "old balances: $balances, new balances: $new_balances"
 
