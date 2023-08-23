@@ -195,6 +195,20 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 
 	feeCoins := feeTx.GetFee()
 	gas := feeTx.GetGas()
+
+	// Check if bypass
+	var byPass bool
+	goCtx := ctx.Context()
+	bp := goCtx.Value(feeabstypes.ByPassMsgKey{})
+	if bp != nil {
+		if pb, ok := bp.(bool); ok {
+			byPass = pb
+		}
+	}
+	if byPass {
+		return next(ctx, tx, simulate)
+	}
+
 	// Ensure that the provided fees meet a minimum threshold for the validator,
 	// if this is a CheckTx. This is only for local mempool purposes, and thus
 	// is only ran on check tx.
