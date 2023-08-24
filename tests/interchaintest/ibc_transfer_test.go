@@ -116,11 +116,11 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	// Get original account balances
 	feeabsOrigBal, err := feeabs.GetBalance(ctx, feeabsUserAddr, feeabs.Config().Denom)
 	require.NoError(t, err)
-	require.Equal(t, genesisWalletAmount, feeabsOrigBal)
+	require.Equal(t, math.NewInt(genesisWalletAmount), feeabsOrigBal)
 
 	gaiaOrigBal, err := gaia.GetBalance(ctx, gaiaUserAddr, gaia.Config().Denom)
 	require.NoError(t, err)
-	require.Equal(t, genesisWalletAmount, gaiaOrigBal)
+	require.Equal(t, math.NewInt(genesisWalletAmount), gaiaOrigBal)
 
 	// Compose an IBC transfer and send from feeabs -> Gaia
 	transferAmount := math.NewInt(1_000)
@@ -180,5 +180,5 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 
 	gaiaUpdateBal, err = gaia.GetBalance(ctx, gaiaUserAddr, feeabsIBCDenom)
 	require.NoError(t, err)
-	require.Equal(t, int64(0), gaiaUpdateBal)
+	require.Equal(t, math.ZeroInt(), gaiaUpdateBal)
 }
