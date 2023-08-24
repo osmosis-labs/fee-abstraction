@@ -193,6 +193,19 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
 	}
 
+	// Check if this is bypass msg
+	var byPass bool
+	goCtx := ctx.Context()
+	bp := goCtx.Value(feeabstypes.ByPassMsgKey{})
+	if bp != nil {
+		if pb, ok := bp.(bool); ok {
+			byPass = pb
+		}
+	}
+	if byPass {
+		return next(ctx, tx, simulate)
+	}
+
 	feeCoins := feeTx.GetFee()
 	gas := feeTx.GetGas()
 	// Ensure that the provided fees meet a minimum threshold for the validator,
