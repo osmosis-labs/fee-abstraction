@@ -19,6 +19,7 @@ hermes --config scripts/relayer_hermes/config_osmosis_gaia.toml create channel -
 #
 
 feeappd tx ibc-transfer transfer transfer $CHANNEL_ID "$VALIDATOR" 1000000000000stake --from myaccount --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
+#feeappd tx ibc-transfer transfer transfer channel-2 cosmos1alc8mjana7ssgeyffvlfza08gu6rtav8rmj6nv 1000000000000stake --from myaccount --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
 gaiad tx ibc-transfer transfer transfer channel-1 "$VALIDATOR" 1000000000000uatom --from gnad --keyring-backend test --chain-id gaiad-t1 --yes --fees 5000stake
 gaiad tx ibc-transfer transfer transfer channel-0 feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw 1000000000000uatom --from gnad --keyring-backend test --chain-id gaiad-t1 --yes --fees 5000stake
 sleep 20 
@@ -63,8 +64,10 @@ osmosisd tx wasm store scripts/bytecode/swaprouter.wasm --keyring-backend=test -
 # get the code id
 sleep 5
 SWAPROUTER_CODE_ID=$(osmosisd query wasm list-code -o json | jq -r '.code_infos[-1].code_id')
+echo $SWAPROUTER_CODE_ID
 # Instantiate the swaprouter contract
 INIT_SWAPROUTER='{"owner":"'$OWNER'"}'
+echo $INIT_SWAPROUTER
 osmosisd tx wasm instantiate 2 "$INIT_SWAPROUTER" --keyring-backend=test --home=$HOME/.osmosisd --from deployer --chain-id testing --label "test" --no-admin --yes --fees 5000stake
 sleep 5
 SWAPROUTER_ADDRESS=osmo1nc5tatafv6eyq7llkr2gv50ff9e22mnf70qgjlv737ktmt4eswrqvlx82r
@@ -87,6 +90,7 @@ osmosisd tx wasm store scripts/bytecode/crosschain_swaps.wasm --keyring-backend=
 # get the code id
 sleep 10
 CROSSCHAIN_SWAPS_CODE_ID=$(osmosisd query wasm list-code -o json | jq -r '.code_infos[-1].code_id')
+echo $CROSSCHAIN_SWAPS_CODE_ID
 # Instantiate the crosschainswap contract
 INIT_CROSSCHAIN_SWAPS='{"swap_contract":"'$SWAPROUTER_ADDRESS'","governor": "'$OWNER'"}'
 echo =========INIT_CROSSCHAIN_SWAPS============
@@ -104,11 +108,12 @@ osmosisd tx ibc-transfer transfer transfer $CHANNEL_ID feeabs1efd63aw40lxf3n4mhf
 #feeappd query bank balances feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw
 #feeappd tx feeabs fund 500000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E --from myaccount --keyring-backend test --chain-id feeappd-t1 -y
 #MEMO='{"wasm":{"contract":"'$CROSSCHAIN_SWAPS_ADDRESS'","msg":{"osmosis_swap":{"output_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878","slippage":{"twap":{"slippage_percentage":"20","window_seconds":10}},"receiver":"feeappd-t1/feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw","on_failed_delivery":"do_nothing", "next_memo":{}}}}}'
+#MEMO='{"wasm":{"contract":"'$CROSSCHAIN_SWAPS_ADDRESS'","msg":{"osmosis_swap":{"output_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878","slippage":{"twap":{"slippage_percentage":"20","window_seconds":10}},"receiver":"gaiad-t1/cosmos1alc8mjana7ssgeyffvlfza08gu6rtav8rmj6nv","on_failed_delivery":"do_nothing", "next_memo":{}}}}}'
 #echo $MEMO
 
-#feeappd tx ibc-transfer transfer transfer channel-0 $CROSSCHAIN_SWAPS_ADDRESS 250000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E --from myaccount --keyring-backend test --chain-id feeappd-t1 -y   --memo "$MEMO"
-
-#feeappd tx ibc-transfer transfer transfer channel-0 $CROSSCHAIN_SWAPS_ADDRESS 250000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E --from myaccount --keyring-backend test --chain-id feeappd-t1 -y   --memo "$MEMO"
+#feeappd tx ibc-transfer transfer transfer channel-0 $CROSSCHAIN_SWAPS_ADDRESS 250000000stake --from myaccount --keyring-backend test --chain-id feeappd-t1 -y   --memo "$MEMO"
+#gaiad tx ibc-transfer transfer transfer channel-1 $CROSSCHAIN_SWAPS_ADDRESS 250000000uatom --from gnad --keyring-backend test --chain-id gaiad-t1 -y   --memo "$MEMO"
+#feeappd tx ibc-transfer transfer transfer channel-0 $CROSSCHAIN_SWAPS_ADDRESS 2500000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E --from myaccount --keyring-backend test --chain-id feeappd-t1 -y   --memo "$MEMO"
 
 #sleep 20  # wait for the roundtrip
 
