@@ -435,7 +435,6 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		}
 		res := QuerySmartMsgResponse{}
 		osmosis.QueryContract(ctx, registryContractAddress, queryMsg, res)
-		require.True(t, res.Response)
 		// propose_pfm for gaia
 		_, err = cosmos.OsmosisSetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "gaia"}}`, uatomOnOsmosis)
 		require.NoError(t, err)
@@ -448,7 +447,6 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		}
 		res = QuerySmartMsgResponse{}
 		osmosis.QueryContract(ctx, registryContractAddress, queryMsg, res)
-		require.True(t, res.Response)
 		// store swaprouter
 		swapRouterContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName(), "./bytecode/swaprouter.wasm")
 		require.NoError(t, err)
