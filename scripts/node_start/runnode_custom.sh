@@ -53,7 +53,7 @@ from_scratch () {
 
   # Allocate genesis accounts
   feeappd add-genesis-account $KEY 10000000000000000000stake,100000000000000utest --keyring-backend $KEYRING
-  feeappd add-genesis-account myaccount 1000000000stake,100000000000000utest --keyring-backend $KEYRING
+  feeappd add-genesis-account myaccount 10000000000000000000stake,100000000000000utest --keyring-backend $KEYRING
 
   feeappd gentx $KEY 10000000000000000000stake --keyring-backend $KEYRING --chain-id $CHAINID
 

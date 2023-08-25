@@ -11,6 +11,9 @@ option go_package = "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types";
 
 // Msg is the cosmos.group.v1 Msg service.
 service Msg {
+  rpc SendQueryIbcDenomTWAP(MsgSendQueryIbcDenomTWAP)
+      returns (MsgSendQueryIbcDenomTWAPResponse);
+  rpc SwapCrossChain(MsgSwapCrossChain) returns (MsgSwapCrossChainResponse);
   rpc FundFeeAbsModuleAccount(MsgFundFeeAbsModuleAccount)
       returns (MsgFundFeeAbsModuleAccountResponse);
 }
@@ -26,3 +29,15 @@ message MsgFundFeeAbsModuleAccount {
 }
 
 message MsgFundFeeAbsModuleAccountResponse {}
+
+// Params defines the parameters for the feeabs module.
+message MsgSendQueryIbcDenomTWAP { string from_address = 1; }
+
+message MsgSendQueryIbcDenomTWAPResponse {}
+
+// Params defines the parameters for the feeabs module.
+message MsgSwapCrossChain {
+  string from_address = 1;
+  string ibc_denom = 2;
+}
+message MsgSwapCrossChainResponse {}

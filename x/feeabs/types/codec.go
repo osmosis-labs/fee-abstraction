@@ -22,6 +22,8 @@ var (
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
+	cdc.RegisterConcrete(&MsgSendQueryIbcDenomTWAP{}, "feeabs/SendQueryIbcDenomTWAP", nil)
+	cdc.RegisterConcrete(&MsgSwapCrossChain{}, "feeabs/SwapCrossChain", nil)
 	cdc.RegisterConcrete(&AddHostZoneProposal{}, "feeabs/AddHostZoneProposal", nil)
 	cdc.RegisterConcrete(&DeleteHostZoneProposal{}, "feeabs/DeleteHostZoneProposal", nil)
 	cdc.RegisterConcrete(&SetHostZoneProposal{}, "feeabs/SetHostZoneProposal", nil)
@@ -30,6 +32,8 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgSendQueryIbcDenomTWAP{},
+		&MsgSwapCrossChain{},
 		&MsgFundFeeAbsModuleAccount{},
 	)
 

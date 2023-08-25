@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"cosmossdk.io/math"
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
 
@@ -62,7 +63,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		},
 		{
 			Name:    "gaia",
-			Version: "v9.0.2",
+			Version: "v12.0.0-rc0",
 			ChainConfig: ibc.ChainConfig{
 				GasPrices: "0.0uatom",
 			},
@@ -71,7 +72,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		},
 		{
 			Name:    "osmosis",
-			Version: "v15.0.0",
+			Version: "v17.0.0",
 			ChainConfig: ibc.ChainConfig{
 				GasPrices:      "0.005uosmo",
 				EncodingConfig: osmosisEncoding(),
@@ -191,7 +192,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia)
 	require.NoError(t, err)
 
-	//Create channel
+	// Create channel
 	err = r.CreateChannel(ctx, eRep, pathFeeabsGaia, ibc.CreateChannelOptions{
 		SourcePortName: "transfer",
 		DestPortName:   "transfer",
@@ -222,7 +223,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 	channGaiaFeeabs := channsGaia[0]
 	require.NotEmpty(t, channGaiaFeeabs.ChannelID)
-	//rly osmo-gaia
+	// rly osmo-gaia
 	// Generate new path
 	err = r.GeneratePath(ctx, eRep, osmosis.Config().ChainID, gaia.Config().ChainID, pathOsmosisGaia)
 	require.NoError(t, err)
@@ -293,7 +294,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		func() {
 			err := r.StopRelayer(ctx, eRep)
 			if err != nil {
-				t.Logf("an error occured while stopping the relayer: %s", err)
+				t.Logf("an error occurred while stopping the relayer: %s", err)
 			}
 		},
 	)
@@ -304,7 +305,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	_ = gaiaUser
 	_ = osmosisUser
 
-	const amountToSend = int64(1_000_000_000)
+	amountToSend := math.NewInt(1_000_000_000)
 
 	t.Run("xcs", func(t *testing.T) {
 		// Send Gaia uatom to Osmosis
@@ -413,7 +414,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 		poolID, err := cosmos.OsmosisCreatePool(osmosis, ctx, osmosisUser.KeyName(), cosmos.OsmosisPoolParams{
 			Weights:        fmt.Sprintf("5%s,5%s", stakeOnOsmosis, uatomOnOsmosis),
-			InitialDeposit: fmt.Sprintf("1000000000%s,1000000000%s", stakeOnOsmosis, uatomOnOsmosis),
+			InitialDeposit: fmt.Sprintf("95000000%s,950000000%s", stakeOnOsmosis, uatomOnOsmosis),
 			SwapFee:        "0.01",
 			ExitFee:        "0",
 			FutureGovernor: "",
@@ -421,6 +422,31 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, poolID, "1")
 
+		// Setup propose_pfm
+		// propose_pfm for feeabs
+		_, err = cosmos.OsmosisSetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "feeabs"}}`, stakeOnOsmosis)
+		require.NoError(t, err)
+		err = testutil.WaitForBlocks(ctx, 15, feeabs, gaia, osmosis)
+		require.NoError(t, err)
+		queryMsg := QuerySmartMsg{
+			Packet: HasPacketForwarding{
+				ChainID: "feeabs",
+			},
+		}
+		res := QuerySmartMsgResponse{}
+		osmosis.QueryContract(ctx, registryContractAddress, queryMsg, res)
+		// propose_pfm for gaia
+		_, err = cosmos.OsmosisSetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "gaia"}}`, uatomOnOsmosis)
+		require.NoError(t, err)
+		err = testutil.WaitForBlocks(ctx, 15, feeabs, gaia, osmosis)
+		require.NoError(t, err)
+		queryMsg = QuerySmartMsg{
+			Packet: HasPacketForwarding{
+				ChainID: "gaia",
+			},
+		}
+		res = QuerySmartMsgResponse{}
+		osmosis.QueryContract(ctx, registryContractAddress, queryMsg, res)
 		// store swaprouter
 		swapRouterContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName(), "./bytecode/swaprouter.wasm")
 		require.NoError(t, err)
@@ -456,7 +482,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		transfer = ibc.WalletAmount{
 			Address: dstAddress,
 			Denom:   gaia.Config().Denom,
-			Amount:  1_000_000,
+			Amount:  math.NewInt(1_000_000),
 		}
 
 		tx, err = gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName(), transfer, ibc.TransferOptions{})
@@ -511,7 +537,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+25, transferTx.Packet)
 		require.NoError(t, err)
-		err = testutil.WaitForBlocks(ctx, 25, feeabs, gaia, osmosis)
+		err = testutil.WaitForBlocks(ctx, 50, feeabs, gaia, osmosis)
 		require.NoError(t, err)
 
 		feeabsModule, err = QueryFeeabsModuleAccountBalances(feeabs, ctx)
@@ -520,7 +546,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 		balance, err := feeabs.GetBalance(ctx, feeabsModule.Address, feeabs.Config().Denom)
 		require.NoError(t, err)
-		require.Greater(t, balance, int64(1))
+		require.True(t, balance.GT(math.NewInt(1)))
 	})
 }
 
