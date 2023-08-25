@@ -193,13 +193,24 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		return ctx, sdkerrors.Wrap(sdkerrors.ErrTxDecode, "Tx must be a FeeTx")
 	}
 
+	// Do not check minimum-gas-prices and global fees during simulations
+	if simulate {
+		return next(ctx, tx, simulate)
+	}
+
 	// Check if this is bypass msg
-	var byPass bool
+	var byPass, byPassNotExceedMaxGasUsage bool
 	goCtx := ctx.Context()
 	bp := goCtx.Value(feeabstypes.ByPassMsgKey{})
+	bpnemgu := goCtx.Value(feeabstypes.ByPassNotExceedMaxGasUsageKey{})
 	if bp != nil {
-		if pb, ok := bp.(bool); ok {
-			byPass = pb
+		if bpb, ok := bp.(bool); ok {
+			byPass = bpb
+		}
+	}
+	if bpnemgu != nil {
+		if bpnemgub, ok := bpnemgu.(bool); ok {
+			byPassNotExceedMaxGasUsage = bpnemgub
 		}
 	}
 	if byPass {
@@ -208,19 +219,46 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 
 	feeCoins := feeTx.GetFee()
 	gas := feeTx.GetGas()
+
 	// Ensure that the provided fees meet a minimum threshold for the validator,
 	// if this is a CheckTx. This is only for local mempool purposes, and thus
 	// is only ran on check tx.
-	if ctx.IsCheckTx() && !simulate {
-		minGasPrices := ctx.MinGasPrices()
-		if minGasPrices.IsZero() {
-			return next(ctx, tx, simulate)
-		}
+	if ctx.IsCheckTx() {
+		feeRequired := GetTxFeeRequired(ctx, int64(gas))
+
+		// split feeRequired into zero and non-zero coins(nonZeroCoinFeesReq, zeroCoinFeesDenomReq), split feeCoins according to
+		// nonZeroCoinFeesReq, zeroCoinFeesDenomReq,
+		// so that feeCoins can be checked separately against them.
+		_, zeroCoinFeesDenomReq := getNonZeroFees(feeRequired)
+
+		// feeCoinsNonZeroDenom contains non-zero denominations from the feeRequired
+		// feeCoinsNonZeroDenom is used to check if the fees meets the requirement imposed by nonZeroCoinFeesReq
+		// when feeCoins does not contain zero coins' denoms in feeRequired
+		_, feeCoinsZeroDenom := splitCoinsByDenoms(feeCoins, zeroCoinFeesDenomReq)
+
 		feeCoinsLen := feeCoins.Len()
+		// if the msg does not satisfy bypass condition and the feeCoins denoms are subset of fezeRequired,
+		// check the feeCoins amount against feeRequired
+		//
+		// when feeCoins=[]
+		// special case: and there is zero coin in fee requirement, pass,
+		// otherwise, err
 		if feeCoinsLen == 0 {
-			return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees")
+			if len(zeroCoinFeesDenomReq) != 0 {
+				return next(ctx, tx, simulate)
+			}
+			return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, feeRequired)
 		}
 
+		// when feeCoins != []
+		// special case: if TX has at least one of the zeroCoinFeesDenomReq, then it should pass
+		if len(feeCoinsZeroDenom) > 0 {
+			return next(ctx, tx, simulate)
+		}
+
+		// Check if feeDenom is defined in feeabs
+		// If so, replace the amount of feeDenom in feeCoins with the
+		// corresponding amount of native denom that allow to pay fee
 		feeDenom := feeCoins.GetDenomByIndex(0)
 		hasHostChainConfig := famfd.feeabsKeeper.HasHostZoneConfig(ctx, feeDenom)
 		if hasHostChainConfig && feeCoinsLen == 1 {
@@ -233,21 +271,35 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 			feeCoins = nativeCoinsFees
 		}
 
-		requiredFees := make(sdk.Coins, len(minGasPrices))
-
-		// Determine the required fees by multiplying each required minimum gas
-		// price by the gas limit, where fee = ceil(minGasPrice * gasLimit).
-		glDec := sdk.NewDec(int64(gas))
-		for i, gp := range minGasPrices {
-			fee := gp.Amount.Mul(glDec)
-			requiredFees[i] = sdk.NewCoin(gp.Denom, fee.Ceil().RoundInt())
-		}
-
-		if !feeCoins.IsAnyGTE(requiredFees) {
-			return ctx, sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, requiredFees)
+		if !feeCoins.IsAnyGTE(feeRequired) {
+			err := sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, feeRequired)
+			if byPassNotExceedMaxGasUsage {
+				err = sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "Insufficient fees; bypass-min-fee-msg-types with gas consumption exceeds the maximum allowed gas value.")
+			}
+			return ctx, err
 		}
 
 	}
 
 	return next(ctx, tx, simulate)
+}
+
+// GetTxFeeRequired returns the required fees for the given FeeTx.
+func GetTxFeeRequired(ctx sdk.Context, gasLimit int64) sdk.Coins {
+	minGasPrices := ctx.MinGasPrices()
+	// special case: if minGasPrices=[], requiredFees=[]
+	if minGasPrices.IsZero() {
+		return sdk.Coins{}
+	}
+
+	requiredFees := make(sdk.Coins, len(minGasPrices))
+	// Determine the required fees by multiplying each required minimum gas
+	// price by the gas limit, where fee = ceil(minGasPrice * gasLimit).
+	glDec := sdk.NewDec(gasLimit)
+	for i, gp := range minGasPrices {
+		fee := gp.Amount.Mul(glDec)
+		requiredFees[i] = sdk.NewCoin(gp.Denom, fee.Ceil().RoundInt())
+	}
+
+	return requiredFees.Sort()
 }
