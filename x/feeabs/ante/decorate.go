@@ -225,6 +225,9 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 	// is only ran on check tx.
 	if ctx.IsCheckTx() {
 		feeRequired := GetTxFeeRequired(ctx, int64(gas))
+		if feeRequired.IsZero() {
+			return next(ctx, tx, simulate)
+		}
 
 		// split feeRequired into zero and non-zero coins(nonZeroCoinFeesReq, zeroCoinFeesDenomReq), split feeCoins according to
 		// nonZeroCoinFeesReq, zeroCoinFeesDenomReq,
