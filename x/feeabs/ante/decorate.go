@@ -197,7 +197,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		return next(ctx, tx, simulate)
 	}
 
-	// Check if this is bypass msg or bypass but not exceed gas useage
+	// Check if this is bypass msg or bypass but not exceed gas usage
 	var byPass, byPassNotExceedMaxGasUsage bool
 	goCtx := ctx.Context()
 	bp := goCtx.Value(feeabstypes.ByPassMsgKey{})
@@ -269,7 +269,6 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 			nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, feeCoins, hostChainConfig)
 			if err != nil {
 				return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees")
-
 			}
 			feeCoins = nativeCoinsFees
 		}
