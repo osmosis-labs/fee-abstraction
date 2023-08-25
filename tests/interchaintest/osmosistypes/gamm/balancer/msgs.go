@@ -10,9 +10,7 @@ const (
 	TypeMsgMigrateShares      = "migrate_shares"
 )
 
-var (
-	_ sdk.Msg = &MsgCreateBalancerPool{}
-)
+var _ sdk.Msg = &MsgCreateBalancerPool{}
 
 func (msg MsgCreateBalancerPool) Route() string        { return types.RouterKey }
 func (msg MsgCreateBalancerPool) Type() string         { return TypeMsgCreateBalancerPool }
