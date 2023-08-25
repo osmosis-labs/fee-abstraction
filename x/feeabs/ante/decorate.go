@@ -198,7 +198,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		return next(ctx, tx, simulate)
 	}
 
-	// Check if this is bypass msg
+	// Check if this is bypass msg or bypass but not exceed gas useage
 	var byPass, byPassNotExceedMaxGasUsage bool
 	goCtx := ctx.Context()
 	bp := goCtx.Value(feeabstypes.ByPassMsgKey{})
@@ -229,7 +229,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		// split feeRequired into zero and non-zero coins(nonZeroCoinFeesReq, zeroCoinFeesDenomReq), split feeCoins according to
 		// nonZeroCoinFeesReq, zeroCoinFeesDenomReq,
 		// so that feeCoins can be checked separately against them.
-		_, zeroCoinFeesDenomReq := getNonZeroFees(feeRequired)
+		nonZeroCoinFeesReq, zeroCoinFeesDenomReq := getNonZeroFees(feeRequired)
 
 		// feeCoinsNonZeroDenom contains non-zero denominations from the feeRequired
 		// feeCoinsNonZeroDenom is used to check if the fees meets the requirement imposed by nonZeroCoinFeesReq
@@ -259,6 +259,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		// Check if feeDenom is defined in feeabs
 		// If so, replace the amount of feeDenom in feeCoins with the
 		// corresponding amount of native denom that allow to pay fee
+		// TODO: Support more fee token in feeRequired for fee-abstraction
 		feeDenom := feeCoins.GetDenomByIndex(0)
 		hasHostChainConfig := famfd.feeabsKeeper.HasHostZoneConfig(ctx, feeDenom)
 		if hasHostChainConfig && feeCoinsLen == 1 {
@@ -271,7 +272,14 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 			feeCoins = nativeCoinsFees
 		}
 
-		if !feeCoins.IsAnyGTE(feeRequired) {
+		// After all the checks, the tx is confirmed:
+		// feeCoins denoms subset off feeRequired (or replaced with fee-abstraction)
+		// Not bypass
+		// feeCoins != []
+		// Not contain zeroCoinFeesDenomReq's denoms
+		//
+		// check if the feeCoins has coins' amount higher/equal to nonZeroCoinFeesReq
+		if !feeCoins.IsAnyGTE(nonZeroCoinFeesReq) {
 			err := sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, feeRequired)
 			if byPassNotExceedMaxGasUsage {
 				err = sdkerrors.Wrapf(sdkerrors.ErrInsufficientFee, "Insufficient fees; bypass-min-fee-msg-types with gas consumption exceeds the maximum allowed gas value.")
