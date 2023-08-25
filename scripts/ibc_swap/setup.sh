@@ -18,8 +18,13 @@ hermes --config scripts/relayer_hermes/config_osmosis_gaia.toml create channel -
 #
 #
 
-feeappd tx ibc-transfer transfer transfer $CHANNEL_ID "$VALIDATOR" 1000000000000stake --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
+
+#osmo1hj5fveer5cjtn4wd6wstzugjfdxzl0xpwhpz63
+feeappd tx ibc-transfer transfer transfer $CHANNEL_ID "$VALIDATOR" 1000000000000stake --from myaccount --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
+#feeappd tx ibc-transfer transfer transfer $CHANNEL_ID osmo1hj5fveer5cjtn4wd6wstzugjfdxzl0xpwhpz63 1000000000000stake --from myaccount --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
+#feeappd tx ibc-transfer transfer transfer channel-2 cosmos1alc8mjana7ssgeyffvlfza08gu6rtav8rmj6nv 1000000000000stake --from myaccount --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
 gaiad tx ibc-transfer transfer transfer channel-1 "$VALIDATOR" 1000000000000uatom --from gnad --keyring-backend test --chain-id gaiad-t1 --yes --fees 5000stake
+#gaiad tx ibc-transfer transfer transfer channel-1 osmo1hj5fveer5cjtn4wd6wstzugjfdxzl0xpwhpz63 1000000000000uatom --from gnad --keyring-backend test --chain-id gaiad-t1 --yes --fees 5000stake
 gaiad tx ibc-transfer transfer transfer channel-0 feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw 1000000000000uatom --from gnad --keyring-backend test --chain-id gaiad-t1 --yes --fees 5000stake
 sleep 20 
 echo $(osmosisd q bank balances "$VALIDATOR")
@@ -32,7 +37,7 @@ echo ============DENOM==============
 cat > sample_pool.json <<EOF
 {
         "weights": "1ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E,1ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
-        "initial-deposit": "500000000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E,100000000000ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
+        "initial-deposit": "500000000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E,1000000000000ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
         "swap-fee": "0.01",
         "exit-fee": "0",
         "future-governor": "168h"
@@ -43,6 +48,7 @@ osmosisd tx gamm create-pool --pool-file sample_pool.json --from validator1 --ke
 sleep 5
 # get the pool id
 POOL_ID=$(osmosisd query gamm pools -o json | jq -r '.pools[-1].id')
+echo $POOL_ID
 
 #store the SetupCrosschainRegistry
 osmosisd tx wasm store scripts/bytecode/crosschain_registry.wasm --keyring-backend=test --home=$HOME/.osmosisd --from deployer --chain-id testing --gas 10000000 --fees 25000stake --yes
@@ -55,7 +61,10 @@ EXE_MSG='{"modify_chain_channel_links": {"operations": [{"operation": "set","sou
 osmosisd tx wasm execute osmo14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sq2r9g9 "$EXE_MSG" --keyring-backend=test --home=$HOME/.osmosisd --from deployer --chain-id testing --yes --fees 5000stake
 PREFIX='{"modify_bech32_prefixes": {"operations": [{"operation": "set", "chain_name": "feeappd-t1", "prefix": "feeabs"},{"operation": "set", "chain_name": "osmosis", "prefix": "osmo"},{"operation": "set", "chain_name": "gaiad-t1", "prefix": "cosmos"}]}}'
 osmosisd tx wasm execute osmo14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sq2r9g9 "$PREFIX" --keyring-backend=test --home=$HOME/.osmosisd --from deployer --chain-id testing --yes --fees 5000stake
-
+FEEABS_PFM='{"propose_pfm":{"chain": "feeappd-t1"}}'
+osmosisd tx wasm execute osmo14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sq2r9g9 "$FEEABS_PFM" --keyring-backend=test --home=$HOME/.osmosisd --from deployer --chain-id testing --yes --fees 5000stake
+GAIA_PFM='{"propose_pfm":{"chain": "gaiad-t1"}}'
+osmosisd tx wasm execute osmo14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sq2r9g9 "$GAIA_PFM" --keyring-backend=test --home=$HOME/.osmosisd --from deployer --chain-id testing --yes --fees 5000stake
 #osmosisd q wasm contract-state smart osmo14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sq2r9g9 '{"get_destination_chain_from_source_chain_via_channel": {"on_chain": "osmosis", "via_channel": "channel-0"}}'
 
 # Store the swaprouter contract
@@ -63,8 +72,10 @@ osmosisd tx wasm store scripts/bytecode/swaprouter.wasm --keyring-backend=test -
 # get the code id
 sleep 5
 SWAPROUTER_CODE_ID=$(osmosisd query wasm list-code -o json | jq -r '.code_infos[-1].code_id')
+echo $SWAPROUTER_CODE_ID
 # Instantiate the swaprouter contract
 INIT_SWAPROUTER='{"owner":"'$OWNER'"}'
+echo $INIT_SWAPROUTER
 osmosisd tx wasm instantiate 2 "$INIT_SWAPROUTER" --keyring-backend=test --home=$HOME/.osmosisd --from deployer --chain-id testing --label "test" --no-admin --yes --fees 5000stake
 sleep 5
 SWAPROUTER_ADDRESS=osmo1nc5tatafv6eyq7llkr2gv50ff9e22mnf70qgjlv737ktmt4eswrqvlx82r
@@ -87,6 +98,7 @@ osmosisd tx wasm store scripts/bytecode/crosschain_swaps.wasm --keyring-backend=
 # get the code id
 sleep 10
 CROSSCHAIN_SWAPS_CODE_ID=$(osmosisd query wasm list-code -o json | jq -r '.code_infos[-1].code_id')
+echo $CROSSCHAIN_SWAPS_CODE_ID
 # Instantiate the crosschainswap contract
 INIT_CROSSCHAIN_SWAPS='{"swap_contract":"'$SWAPROUTER_ADDRESS'","governor": "'$OWNER'"}'
 echo =========INIT_CROSSCHAIN_SWAPS============
@@ -102,15 +114,17 @@ echo $CROSSCHAIN_SWAPS_ADDRESS
 
 osmosisd tx ibc-transfer transfer transfer $CHANNEL_ID feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw 100000000000uosmo --from validator1 --keyring-backend test --chain-id testing --yes --fees 5000stake
 #feeappd query bank balances feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw
+#feeappd tx feeabs fund 500000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E --from myaccount --keyring-backend test --chain-id feeappd-t1 -y
 #MEMO='{"wasm":{"contract":"'$CROSSCHAIN_SWAPS_ADDRESS'","msg":{"osmosis_swap":{"output_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878","slippage":{"twap":{"slippage_percentage":"20","window_seconds":10}},"receiver":"feeappd-t1/feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw","on_failed_delivery":"do_nothing", "next_memo":{}}}}}'
+#MEMO='{"wasm":{"contract":"'$CROSSCHAIN_SWAPS_ADDRESS'","msg":{"osmosis_swap":{"output_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878","slippage":{"twap":{"slippage_percentage":"20","window_seconds":10}},"receiver":"gaiad-t1/cosmos1alc8mjana7ssgeyffvlfza08gu6rtav8rmj6nv","on_failed_delivery":"do_nothing", "next_memo":{}}}}}'
 #echo $MEMO
 
-#feeappd tx ibc-transfer transfer transfer channel-0 $CROSSCHAIN_SWAPS_ADDRESS 25000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E --from feeacc --keyring-backend test --chain-id feeappd-t1 -y   --memo "$MEMO"
-
-#feeappd tx ibc-transfer transfer transfer channel-0 $CROSSCHAIN_SWAPS_ADDRESS 25000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E --from feeacc --keyring-backend test --chain-id feeappd-t1 -y   --memo "$MEMO"
+#feeappd tx ibc-transfer transfer transfer channel-0 $CROSSCHAIN_SWAPS_ADDRESS 250000000stake --from myaccount --keyring-backend test --chain-id feeappd-t1 -y   --memo "$MEMO"
+#gaiad tx ibc-transfer transfer transfer channel-1 $CROSSCHAIN_SWAPS_ADDRESS 250000000uatom --from gnad --keyring-backend test --chain-id gaiad-t1 -y   --memo "$MEMO"
+#feeappd tx ibc-transfer transfer transfer channel-0 $CROSSCHAIN_SWAPS_ADDRESS 2500000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E --from myaccount --keyring-backend test --chain-id feeappd-t1 -y   --memo "$MEMO"
 
 #sleep 20  # wait for the roundtrip
 
-#new_balances=$(feeappd query bank balances "$feeacc" -o json | jq '.balances')
+#new_balances=$(feeappd query bank balances "$myaccount" -o json | jq '.balances')
 #echo "old balances: $balances, new balances: $new_balances"
 

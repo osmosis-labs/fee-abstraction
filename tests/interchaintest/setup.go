@@ -27,6 +27,18 @@ type QueryHostChainConfigRespone struct {
 	HostChainConfig cosmos.HostChainFeeAbsConfig `protobuf:"bytes,1,opt,name=host_chain_config,json=hostChainConfig,proto3" json:"host_chain_config" yaml:"host_chain_config"`
 }
 
+type HasPacketForwarding struct {
+	ChainID string `json:"chain"`
+}
+
+type QuerySmartMsg struct {
+	Packet HasPacketForwarding `json:"has_packet_forwarding"`
+}
+
+type QuerySmartMsgResponse struct {
+	Response bool `json:"data"`
+}
+
 const (
 	votingPeriod     = "10s"
 	maxDepositPeriod = "10s"
