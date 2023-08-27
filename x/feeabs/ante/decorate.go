@@ -198,7 +198,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 	}
 
 	// Check if this is bypass msg or bypass but not exceed gas usage
-	var byPass, byPassNotExceedMaxGasUsage bool
+	var byPass, byPassExceedMaxGasUsage bool
 	goCtx := ctx.Context()
 	bp := goCtx.Value(feeabstypes.ByPassMsgKey{})
 	bpemgu := goCtx.Value(feeabstypes.ByPassExceedMaxGasUsageKey{})
