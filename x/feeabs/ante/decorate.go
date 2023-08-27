@@ -201,15 +201,15 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 	var byPass, byPassNotExceedMaxGasUsage bool
 	goCtx := ctx.Context()
 	bp := goCtx.Value(feeabstypes.ByPassMsgKey{})
-	bpnemgu := goCtx.Value(feeabstypes.ByPassNotExceedMaxGasUsageKey{})
+	bpemgu := goCtx.Value(feeabstypes.ByPassExceedMaxGasUsageKey{})
 	if bp != nil {
 		if bpb, ok := bp.(bool); ok {
 			byPass = bpb
 		}
 	}
-	if bpnemgu != nil {
-		if bpnemgub, ok := bpnemgu.(bool); ok {
-			byPassNotExceedMaxGasUsage = bpnemgub
+	if bpemgu != nil {
+		if bpemgub, ok := bpemgu.(bool); ok {
+			byPassExceedMaxGasUsage = bpemgub
 		}
 	}
 	if byPass {
@@ -282,7 +282,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		// check if the feeCoins has coins' amount higher/equal to nonZeroCoinFeesReq
 		if !feeCoins.IsAnyGTE(nonZeroCoinFeesReq) {
 			err := sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, feeRequired)
-			if byPassNotExceedMaxGasUsage {
+			if byPassExceedMaxGasUsage {
 				err = sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "Insufficient fees; bypass-min-fee-msg-types with gas consumption exceeds the maximum allowed gas value.")
 			}
 			return ctx, err
