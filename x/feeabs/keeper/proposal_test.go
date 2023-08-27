@@ -1,8 +1,8 @@
 package keeper_test
 
 import (
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v2/app/helpers"
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 )
 
 func (suite *KeeperTestSuite) TestAddHostZoneProposal() {

@@ -105,15 +105,15 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
-	feeabsmodule "github.com/osmosis-labs/fee-abstraction/v2/x/feeabs"
-	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
-	feeabstypes "github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
+	feeabsmodule "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs"
+	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/keeper"
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 
-	"github.com/strangelove-ventures/packet-forward-middleware/v4/router"
-	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v4/router/keeper"
-	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v4/router/types"
+	"github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4/router"
+	routerkeeper "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4/router/keeper"
+	routertypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v4/router/types"
 
-	appparams "github.com/osmosis-labs/fee-abstraction/v2/app/params"
+	appparams "github.com/osmosis-labs/fee-abstraction/v4/app/params"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
@@ -435,7 +435,6 @@ func NewFeeAbs(
 	app.FeeabsKeeper = feeabskeeper.NewKeeper(
 		appCodec,
 		keys[feeabstypes.StoreKey],
-		keys[feeabstypes.MemStoreKey],
 		app.GetSubspace(feeabstypes.ModuleName),
 		app.StakingKeeper,
 		app.AccountKeeper,

@@ -16,8 +16,8 @@ import (
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/osmosis-labs/fee-abstraction/v2/app"
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v2/app/helpers"
+	"github.com/osmosis-labs/fee-abstraction/v4/app"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
 )
 
 type IntegrationTestSuite struct {

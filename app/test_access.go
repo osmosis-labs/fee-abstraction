@@ -5,9 +5,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/keeper"
 
-	"github.com/osmosis-labs/fee-abstraction/v2/app/params"
+	"github.com/osmosis-labs/fee-abstraction/v4/app/params"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"

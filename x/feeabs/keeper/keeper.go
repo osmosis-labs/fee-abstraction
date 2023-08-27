@@ -10,7 +10,7 @@ import (
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
 	"github.com/cosmos/ibc-go/v4/modules/core/exported"
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 	"github.com/tendermint/tendermint/libs/log"
 )
 
@@ -32,7 +32,6 @@ type Keeper struct {
 func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey sdk.StoreKey,
-	memKey sdk.StoreKey,
 	ps paramtypes.Subspace,
 	sk types.StakingKeeper,
 	ak types.AccountKeeper,
