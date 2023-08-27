@@ -21,8 +21,8 @@ const (
 )
 
 type (
-	ByPassMsgKey                  struct{}
-	ByPassNotExceedMaxGasUsageKey struct{}
+	ByPassMsgKey               struct{}
+	ByPassExceedMaxGasUsageKey struct{}
 )
 
 var (
