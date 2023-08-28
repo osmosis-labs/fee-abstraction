@@ -190,4 +190,50 @@ Projects that want to integrate the fee-abstraction module onto their Cosmos SDK
      }
     ```
     
-14. Finished! 
+## Fee-abstraction Operation
+### Create IBC interchain-query channel between Feeabs and Osmosis
+
+To allow feeabs retrieve TWAP prices from Osmosis, we need to create a channel between feeabs and icq module on Osmosis.
+
+    hermes create channel --a-chain osmosis --b-chain feeabs --a-port icqhost --b-port feeabs --new-client-connection --yes
+
+### Register chain connection information on Crosschain Registry contract on Osmosis
+In this step, we setup everything that is required for XCSv2 on Osmosis:
+- IBC Channel links: All Ibc channel on feeabs chain. Osmosis will use this information for `path unwinding`
+- Chain - Address perfix pair: Osmosis will use this information to find where the receiver is
+- Propose PFM: Confirm that the propose chain has imported PFM this is necessary for `path unwinding`  
+
+This setup should be supported by Osmosis team
+
+### Update Feeabs Params via Param-change Gov
+```
+type Params struct {
+	NativeIbcedInOsmosis string 
+	OsmosisQueryTwapPath string
+	ChainName string 
+	IbcTransferChannel string 
+	IbcQueryIcqChannel string 
+	OsmosisCrosschainSwapAddress string 
+}
+```
+- `NativeIbcedInOsmosis` is the denom of feeabs's native token on Osmosis. Which feeabs module will swap for
+- `OsmosisQueryTwapPath` is the `ArithmeticTwapToNow` query path on Osmosis. Default `/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow`
+- `ChainName` is the feeabs module chain name. It must be same with the chain name that declare on Osmosis Crosschain Registry Contract
+- `IbcTransferChannel` Transfer channel with Osmosis using for swap ibc-token for native-token
+- `IbcTransferChannel` Interchain query channel with Osmosis
+- `OsmosisCrosschainSwapAddress` XCS contract on Osmosis
+### Add HostZone proposal Gov
+Add hostzone proposal will allow feeabs to paid fee in ibc denom which is defined
+
+```
+type HostChainFeeAbsConfig struct {
+	IbcDenom string 
+	OsmosisPoolTokenDenomIn string
+	PoolId uint64 
+	Frozen bool 
+}
+```
+- `IbcDenom` denom of the ibc token that allow to pay fee
+- `OsmosisPoolTokenDenomIn` denom of `IbcDenom` on Osmosis
+- `PoolId` pool swap between `IbcDenom` and `params.NativeIbcedInOsmosis`
+- `Frozen` this is lock flag for update TWAP price. When Add HostZone proposal, it must be `false`
