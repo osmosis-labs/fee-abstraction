@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	sdkerrors "cosmossdk.io/errors"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
@@ -14,18 +12,17 @@ func (k Keeper) HasHostZoneConfig(ctx sdk.Context, ibcDenom string) bool {
 	return store.Has(key)
 }
 
-func (k Keeper) GetHostZoneConfig(ctx sdk.Context, ibcDenom string) (chainConfig types.HostChainFeeAbsConfig, err error) {
+func (k Keeper) GetHostZoneConfig(ctx sdk.Context, ibcDenom string) (chainConfig types.HostChainFeeAbsConfig, found bool) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.GetKeyHostZoneConfig(ibcDenom)
 
 	bz := store.Get(key)
-	err = k.cdc.Unmarshal(bz, &chainConfig)
-
-	if err != nil {
-		return types.HostChainFeeAbsConfig{}, err
+	if bz == nil {
+		return types.HostChainFeeAbsConfig{}, false
 	}
 
-	return chainConfig, nil
+	k.cdc.MustUnmarshal(bz, &chainConfig)
+	return chainConfig, true
 }
 
 func (k Keeper) SetHostZoneConfig(ctx sdk.Context, ibcDenom string, chainConfig types.HostChainFeeAbsConfig) error {
@@ -79,12 +76,12 @@ func (k Keeper) IterateHostZone(ctx sdk.Context, cb func(hostZoneConfig types.Ho
 }
 
 func (k Keeper) FrozenHostZoneByIBCDenom(ctx sdk.Context, ibcDenom string) error {
-	hostChainConfig, err := k.GetHostZoneConfig(ctx, ibcDenom)
-	if err != nil {
-		return sdkerrors.Wrapf(types.ErrHostZoneConfigNotFound, err.Error())
+	hostChainConfig, found := k.GetHostZoneConfig(ctx, ibcDenom)
+	if !found {
+		return types.ErrHostZoneConfigNotFound
 	}
 	hostChainConfig.Frozen = true
-	err = k.SetHostZoneConfig(ctx, ibcDenom, hostChainConfig)
+	err := k.SetHostZoneConfig(ctx, ibcDenom, hostChainConfig)
 	if err != nil {
 		return err
 	}
@@ -93,12 +90,12 @@ func (k Keeper) FrozenHostZoneByIBCDenom(ctx sdk.Context, ibcDenom string) error
 }
 
 func (k Keeper) UnFrozenHostZoneByIBCDenom(ctx sdk.Context, ibcDenom string) error {
-	hostChainConfig, err := k.GetHostZoneConfig(ctx, ibcDenom)
-	if err != nil {
-		return sdkerrors.Wrapf(types.ErrHostZoneConfigNotFound, err.Error())
+	hostChainConfig, found := k.GetHostZoneConfig(ctx, ibcDenom)
+	if !found {
+		return types.ErrHostZoneConfigNotFound
 	}
 	hostChainConfig.Frozen = false
-	err = k.SetHostZoneConfig(ctx, ibcDenom, hostChainConfig)
+	err := k.SetHostZoneConfig(ctx, ibcDenom, hostChainConfig)
 	if err != nil {
 		return err
 	}

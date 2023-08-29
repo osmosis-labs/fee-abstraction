@@ -7,13 +7,19 @@ import "google/api/annotations.proto";
 
 option go_package = "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types";
 
+message PoolRoute {
+  uint64 pool_id = 1 [ (gogoproto.moretags) = "yaml:\"pool_id\"" ];
+  string token_out_denom = 2
+      [ (gogoproto.moretags) = "yaml:\"token_out_denom\"" ];
+}
+
 message HostChainFeeAbsConfig {
   // ibc token is allowed to be used as fee token
   string ibc_denom = 1 [ (gogoproto.moretags) = "yaml:\"allowed_token\"" ];
   // token_in in cross_chain swap contract.
   string osmosis_pool_token_denom_in = 2;
   // pool id
-  uint64 pool_id = 3;
+  repeated PoolRoute pool_route = 3 [(gogoproto.nullable) = false];
   // Frozen
   bool frozen = 4;
 }
