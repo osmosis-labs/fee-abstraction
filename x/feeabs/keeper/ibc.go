@@ -286,13 +286,13 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 
 	var reqs []types.QueryArithmeticTwapToNowRequest
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-		req := types.NewQueryArithmeticTwapToNowRequest(
-			hostZoneConfig.PoolId,
-			params.NativeIbcedInOsmosis,
-			hostZoneConfig.OsmosisPoolTokenDenomIn,
-			startTime,
-		)
-		reqs = append(reqs, req)
+		// req := types.NewQueryArithmeticTwapToNowRequest(
+		// 	hostZoneConfig.PoolId,
+		// 	params.NativeIbcedInOsmosis,
+		// 	hostZoneConfig.OsmosisPoolTokenDenomIn,
+		// 	startTime,
+		// )
+		// reqs = append(reqs, req)
 		return false
 	})
 	err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)

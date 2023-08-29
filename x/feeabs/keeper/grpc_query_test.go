@@ -61,7 +61,12 @@ func (s *KeeperTestSuite) TestHostChainConfig() {
 	chainConfig := types.HostChainFeeAbsConfig{
 		IbcDenom:                randStringRunes(10),
 		OsmosisPoolTokenDenomIn: randStringRunes(10),
-		PoolId:                  randUint64Num(),
+		PoolRoute: []types.PoolRoute{
+			{
+				PoolId:        randUint64Num(),
+				TokenOutDenom: randStringRunes(10),
+			},
+		},
 	}
 
 	err := s.feeAbsKeeper.SetHostZoneConfig(s.ctx, chainConfig.IbcDenom, chainConfig)
@@ -103,7 +108,7 @@ func (s *KeeperTestSuite) TestHostChainConfig() {
 				s.Require().Equal(tc.res, res)
 			} else {
 				_, err := s.queryClient.HostChainConfig(goCtx, tc.req)
-				s.Require().NoError(err)
+				s.Require().Error(err)
 			}
 		})
 	}

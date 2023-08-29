@@ -18,8 +18,13 @@ func createNHostZone(t *testing.T, keeper *feeabskeeper.Keeper, ctx sdk.Context,
 	expectedConfig := types.HostChainFeeAbsConfig{
 		IbcDenom:                "ibc/123",
 		OsmosisPoolTokenDenomIn: "ibc/456",
-		PoolId:                  1,
-		Frozen:                  false,
+		PoolRoute: []types.PoolRoute{
+			{
+				PoolId:        1,
+				TokenOutDenom: "uosmo",
+			},
+		},
+		Frozen: false,
 	}
 	for i := 0; i < n; i++ {
 		expected = append(expected, expectedConfig)
@@ -34,8 +39,8 @@ func TestHostZoneGet(t *testing.T) {
 	ctx := apphelpers.NewContextForApp(*app)
 	expected := createNHostZone(t, &app.FeeabsKeeper, ctx, 1)
 	for _, item := range expected {
-		got, err := app.FeeabsKeeper.GetHostZoneConfig(ctx, item.IbcDenom)
-		require.NoError(t, err)
+		got, found := app.FeeabsKeeper.GetHostZoneConfig(ctx, item.IbcDenom)
+		require.True(t, found)
 		require.Equal(t, item, got)
 	}
 }
