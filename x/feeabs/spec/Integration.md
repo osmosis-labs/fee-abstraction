@@ -200,10 +200,65 @@ To allow feeabs retrieve TWAP prices from Osmosis, we need to create a channel b
 ### Register chain connection information on Crosschain Registry contract on Osmosis
 In this step, we setup everything that is required for XCSv2 on Osmosis:
 - IBC Channel links: All Ibc channel on feeabs chain. Osmosis will use this information for `path unwinding`
+```
+{
+  "modify_chain_channel_links": {
+		  "operations": [
+			{"operation": "set","source_chain": "chainB","destination_chain": "osmosis","channel_id": "channel-0"},
+			{"operation": "set","source_chain": "osmosis","destination_chain": "chainB","channel_id": "channel-0"},
+			{"operation": "set","source_chain": "chainB","destination_chain": "chainC","channel_id": "channel-1"},
+			{"operation": "set","source_chain": "chainC","destination_chain": "chainB","channel_id": "channel-0"},
+			{"operation": "set","source_chain": "osmosis","destination_chain": "chainC","channel_id": "channel-1"},
+			{"operation": "set","source_chain": "chainC","destination_chain": "osmosis","channel_id": "channel-1"},
+			{"operation": "set","source_chain": "osmosis","destination_chain": "chainB-cw20","channel_id": "channel-2"},
+			{"operation": "set","source_chain": "chainB-cw20","destination_chain": "osmosis","channel_id": "channel-2"}
+		  ]
+  }
+}
+```
 - Chain - Address perfix pair: Osmosis will use this information to find where the receiver is
+```
+{
+  "modify_bech32_prefixes": {
+		  "operations": [
+			{"operation": "set", "chain_name": "osmosis", "prefix": "osmo"},
+			{"operation": "set", "chain_name": "chainB", "prefix": "feeabs"},
+			{"operation": "set", "chain_name": "chainC", "prefix": "cosmos"}
+		  ]
+  }
+}
+```
 - Propose PFM: Confirm that the propose chain has imported PFM this is necessary for `path unwinding`  
+```
+{
+  "propose_pfm": {
+    "chain": "chainB"
+  }
+}
 
-This setup should be supported by Osmosis team
+{
+  "propose_pfm": {
+    "chain": "chainC"
+  }
+}
+```
+- Set swap router
+```
+{
+  "set_route": {
+    "input_denom":"ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E",
+    "output_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
+    "pool_route":[
+      {
+        "pool_id":"1",
+        "token_out_denom":"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878"
+      }
+    ]
+  }
+}
+```
+
+These setup should be supported by Osmosis team
 
 ### Update Feeabs Params via Param-change Gov
 ```
