@@ -292,3 +292,6 @@ type HostChainFeeAbsConfig struct {
 - `OsmosisPoolTokenDenomIn` denom of `IbcDenom` on Osmosis
 - `PoolId` pool swap between `IbcDenom` and `params.NativeIbcedInOsmosis`
 - `Frozen` this is lock flag for update TWAP price. When Add HostZone proposal, it must be `false`
+
+### Fund Fee-abstraction module account
+Fee-abstraction module account must have an initial amount of native token for pay fee so it's need to be funded. Normally, we will use gov and fund from Community Pool
