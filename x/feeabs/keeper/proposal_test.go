@@ -25,8 +25,13 @@ func (s *KeeperTestSuite) TestAddHostZoneProposal() {
 			hostChainConfig: types.HostChainFeeAbsConfig{
 				IbcDenom:                "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
 				OsmosisPoolTokenDenomIn: "ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E",
-				PoolId:                  1,
-				Frozen:                  false,
+				PoolRoute: []types.PoolRoute{
+					{
+						PoolId:        1,
+						TokenOutDenom: "uosmo",
+					},
+				},
+				Frozen: false,
 			},
 			shouldErr: false,
 		},
@@ -49,8 +54,8 @@ func (s *KeeperTestSuite) TestAddHostZoneProposal() {
 			err = handler(s.ctx, proposal)
 			s.Require().NoError(err)
 
-			hostChainConfig, err := s.feeAbsKeeper.GetHostZoneConfig(s.ctx, tc.hostChainConfig.IbcDenom)
-			s.Require().NoError(err)
+			hostChainConfig, found := s.feeAbsKeeper.GetHostZoneConfig(s.ctx, tc.hostChainConfig.IbcDenom)
+			s.Require().True(found)
 			s.Require().Equal(tc.hostChainConfig, hostChainConfig)
 
 			// store proposal again and it should error
