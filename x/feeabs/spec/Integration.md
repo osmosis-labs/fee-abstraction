@@ -242,7 +242,7 @@ In this step, we setup everything that is required for XCSv2 on Osmosis:
   }
 }
 ```
-- Set swap router
+- Set swap router: Declare the swap route for XCS
 ```
 {
   "set_route": {
