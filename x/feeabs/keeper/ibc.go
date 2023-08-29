@@ -58,7 +58,7 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Cap
 }
 
 // Send request for query EstimateSwapExactAmountIn over IBC. Move to use TWAP.
-func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryArithmeticTwapToNowRequest, sourcePort, sourceChannel string) error {
+func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryArithmeticTwapToNowRequest, sourcePort, sourceChannel string) (uint64, error) {
 	params := k.GetParams(ctx)
 	icqReqs := make([]abci.RequestQuery, len(twapReqs))
 	for i, req := range twapReqs {
@@ -69,12 +69,12 @@ func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryA
 		}
 	}
 
-	_, err := k.SendInterchainQuery(ctx, icqReqs, sourcePort, sourceChannel)
+	sequence, err := k.SendInterchainQuery(ctx, icqReqs, sourcePort, sourceChannel)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return sequence, nil
 }
 
 // Send request for query state over IBC
@@ -154,7 +154,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 
 			err = k.UnFrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 			if err != nil {
-				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
+				k.Logger(ctx).Error(fmt.Sprintf("Failed to unfrozen host zone %s", err.Error()))
 				return false
 			}
 			return false
@@ -284,8 +284,9 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 
 	params := k.GetParams(ctx)
 
-	var reqs []types.QueryArithmeticTwapToNowRequest
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+		// Will support pool route in the future so need array of reqs here
+		var reqs []types.QueryArithmeticTwapToNowRequest
 		req := types.NewQueryArithmeticTwapToNowRequest(
 			hostZoneConfig.PoolId,
 			params.NativeIbcedInOsmosis,
@@ -293,12 +294,18 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 			startTime,
 		)
 		reqs = append(reqs, req)
+
+		// send query
+		sequence, err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)
+		if err != nil {
+			k.Logger(ctx).Error(fmt.Sprintf("Failed to query ICQ TWAP %s", err.Error()))
+		}
+
+		// set sequence for ack or timeout
+		k.SetSendingPacketInfo(ctx, sequence, params.IbcQueryIcqChannel, hostZoneConfig)
+
 		return false
 	})
-	err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)
-	if err != nil {
-		return err
-	}
 
 	return nil
 }
