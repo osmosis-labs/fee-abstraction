@@ -134,6 +134,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, packet channeltypes.Pac
 			sequence, err := k.SendInterchainQuery(ctx, packet.GetData(), packet.SourcePort, packet.SourceChannel)
 			if err != nil {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to resend ICQ on Ack result with error response code %s", err.Error()))
+				return err
 			}
 			// set sequence for ack or timeout
 			params := k.GetParams(ctx)
@@ -175,6 +176,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, packet channeltypes.Pac
 		sequence, err := k.SendInterchainQuery(ctx, packet.GetData(), packet.SourcePort, packet.SourceChannel)
 		if err != nil {
 			k.Logger(ctx).Error(fmt.Sprintf("Failed to resend ICQ on Ack Error %s", err.Error()))
+			return err
 		}
 		// set sequence for ack or timeout
 		params := k.GetParams(ctx)
