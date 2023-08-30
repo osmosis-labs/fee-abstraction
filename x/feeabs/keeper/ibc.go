@@ -58,7 +58,7 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Cap
 }
 
 // Send request for query EstimateSwapExactAmountIn over IBC. Move to use TWAP.
-func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryArithmeticTwapToNowRequest, sourcePort, sourceChannel string) error {
+func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryArithmeticTwapToNowRequest, sourcePort, sourceChannel string) (uint64, error) {
 	params := k.GetParams(ctx)
 	icqReqs := make([]abci.RequestQuery, len(twapReqs))
 	for i, req := range twapReqs {
@@ -69,18 +69,24 @@ func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryA
 		}
 	}
 
-	_, err := k.SendInterchainQuery(ctx, icqReqs, sourcePort, sourceChannel)
+	data, err := types.SerializeCosmosQuery(icqReqs)
 	if err != nil {
-		return err
+		return 0, sdkerrors.Wrap(err, "could not serialize reqs into cosmos query")
+	}
+	icqPacketData := types.NewInterchainQueryPacketData(data, "")
+
+	sequence, err := k.SendInterchainQuery(ctx, icqPacketData.GetBytes(), sourcePort, sourceChannel)
+	if err != nil {
+		return 0, err
 	}
 
-	return nil
+	return sequence, nil
 }
 
 // Send request for query state over IBC
 func (k Keeper) SendInterchainQuery(
 	ctx sdk.Context,
-	reqs []abci.RequestQuery,
+	data []byte,
 	sourcePort string,
 	sourceChannel string,
 ) (uint64, error) {
@@ -90,13 +96,7 @@ func (k Keeper) SendInterchainQuery(
 		return 0, sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
 	}
 
-	data, err := types.SerializeCosmosQuery(reqs)
-	if err != nil {
-		return 0, sdkerrors.Wrap(err, "could not serialize reqs into cosmos query")
-	}
-	icqPacketData := types.NewInterchainQueryPacketData(data, "")
-
-	sequence, err := k.channelKeeper.SendPacket(ctx, channelCap, sourcePort, sourceChannel, clienttypes.ZeroHeight(), uint64(timeoutTimestamp), icqPacketData.GetBytes())
+	sequence, err := k.channelKeeper.SendPacket(ctx, channelCap, sourcePort, sourceChannel, clienttypes.ZeroHeight(), uint64(timeoutTimestamp), data)
 	if err != nil {
 		return 0, err
 	}
@@ -104,7 +104,10 @@ func (k Keeper) SendInterchainQuery(
 	return sequence, nil
 }
 
-func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknowledgement, icqReqs []abci.RequestQuery) error {
+func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, packet channeltypes.Packet, ack channeltypes.Acknowledgement) error {
+	// Get hostzone of send request
+	hostZoneConfig := k.GetAndRemoveSendingPacketInfo(ctx, packet.Sequence, packet.SourceChannel)
+
 	switch resp := ack.Response.(type) {
 	case *channeltypes.Acknowledgement_Result:
 		var ackData types.InterchainQueryPacketAck
@@ -117,48 +120,42 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			return sdkerrors.Wrap(err, "could not deserialize data to cosmos response")
 		}
 
-		index := 0
-		k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-			// Get icq data
-			icqReqData, reqPosition, found := k.getQueryArithmeticTwapToNowRequest(ctx, icqReqs, index)
-			// update the index
-			index = reqPosition
-			if !found {
-				// if not found any request, end the iterator
-				return true
-			}
-			// Check if icq TWAP denom match with hostzone denom store
-			if icqReqData.QuoteAsset != hostZoneConfig.OsmosisPoolTokenDenomIn {
-				return false
-			}
-			// Get icq QueryArithmeticTwapToNowRequest response
-			icqRes := icqResponses[index]
-			index++
+		// Current we just query 1 pool so should only have 1 response
+		icqRes := icqResponses[0]
 
-			if icqRes.Code != 0 {
-				k.Logger(ctx).Error(fmt.Sprintf("Failed to send interchain query code %d", icqRes.Code))
-				err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
-				if err != nil {
-					k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
-				}
-				return false
-			}
-
-			twapRate, err := k.GetDecTWAPFromBytes(icqRes.Value)
-			if err != nil {
-				k.Logger(ctx).Error("Failed to get twap")
-				return false
-			}
-			k.Logger(ctx).Info(fmt.Sprintf("TwapRate %v", twapRate))
-			k.SetTwapRate(ctx, hostZoneConfig.IbcDenom, twapRate)
-
-			err = k.UnFrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+		if icqRes.Code != 0 {
+			// Query error
+			k.Logger(ctx).Error(fmt.Sprintf("Failed to send interchain query code %d", icqRes.Code))
+			err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 			if err != nil {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
-				return false
 			}
-			return false
-		})
+			// resend query
+			sequence, err := k.SendInterchainQuery(ctx, packet.GetData(), packet.SourcePort, packet.SourceChannel)
+			if err != nil {
+				k.Logger(ctx).Error(fmt.Sprintf("Failed to resend ICQ on Ack result with error response code %s", err.Error()))
+				return err
+			}
+			// set sequence for ack or timeout
+			params := k.GetParams(ctx)
+			k.SetSendingPacketInfo(ctx, sequence, params.IbcQueryIcqChannel, hostZoneConfig)
+			return nil
+		}
+
+		twapRate, err := k.GetDecTWAPFromBytes(icqRes.Value)
+		if err != nil {
+			k.Logger(ctx).Error("Failed to get twap")
+			return err
+		}
+		k.Logger(ctx).Info(fmt.Sprintf("%v TwapRate %v", hostZoneConfig.IbcDenom, twapRate))
+		k.SetTwapRate(ctx, hostZoneConfig.IbcDenom, twapRate)
+
+		// unfrozen hostzone
+		err = k.UnFrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+		if err != nil {
+			k.Logger(ctx).Error(fmt.Sprintf("Failed to unfrozen host zone %s", err.Error()))
+			return err
+		}
 
 		k.Logger(ctx).Info("packet ICQ request successfully")
 
@@ -169,15 +166,21 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			),
 		)
 	case *channeltypes.Acknowledgement_Error:
-		k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-			err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
-			if err != nil {
-				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
-			}
-
-			return false
-		})
+		// frozen host zone
 		k.Logger(ctx).Error(fmt.Sprintf("failed to send packet ICQ request %v", resp.Error))
+		err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+		if err != nil {
+			k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
+		}
+		// resend query
+		sequence, err := k.SendInterchainQuery(ctx, packet.GetData(), packet.SourcePort, packet.SourceChannel)
+		if err != nil {
+			k.Logger(ctx).Error(fmt.Sprintf("Failed to resend ICQ on Ack Error %s", err.Error()))
+			return err
+		}
+		// set sequence for ack or timeout
+		params := k.GetParams(ctx)
+		k.SetSendingPacketInfo(ctx, sequence, params.IbcQueryIcqChannel, hostZoneConfig)
 
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(
@@ -189,25 +192,20 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 	return nil
 }
 
-func (k Keeper) getQueryArithmeticTwapToNowRequest(
-	ctx sdk.Context,
-	icqReqs []abci.RequestQuery,
-	index int,
-) (types.QueryArithmeticTwapToNowRequest, int, bool) {
-	packetLen := len(icqReqs)
-	found := false
-	var icqReqData types.QueryArithmeticTwapToNowRequest
-	for (index < packetLen) && (!found) {
-		icqReq := icqReqs[index]
-		if err := k.cdc.Unmarshal(icqReq.GetData(), &icqReqData); err != nil {
-			k.Logger(ctx).Error(fmt.Sprintf("Failed to unmarshal icqReqData %s", err.Error()))
-			index++
-		} else {
-			found = true
-		}
+// OnTimeoutPacket resend packet when timeout
+func (k Keeper) OnTimeoutPacket(ctx sdk.Context, packet channeltypes.Packet) error {
+	// Get hostzone of send request
+	hostZoneConfig := k.GetAndRemoveSendingPacketInfo(ctx, packet.Sequence, packet.SourceChannel)
+	// resend query
+	sequence, err := k.SendInterchainQuery(ctx, packet.GetData(), packet.SourcePort, packet.SourceChannel)
+	if err != nil {
+		k.Logger(ctx).Error(fmt.Sprintf("Failed to resend ICQ on Timeout %s", err.Error()))
+		return err
 	}
-
-	return icqReqData, index, found
+	// set sequence for ack or timeout
+	params := k.GetParams(ctx)
+	k.SetSendingPacketInfo(ctx, sequence, params.IbcQueryIcqChannel, hostZoneConfig)
+	return nil
 }
 
 func (k Keeper) GetChannelID(ctx sdk.Context) string {
@@ -284,8 +282,9 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 
 	params := k.GetParams(ctx)
 
-	var reqs []types.QueryArithmeticTwapToNowRequest
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+		// Will support pool route in the future so need array of reqs here
+		var reqs []types.QueryArithmeticTwapToNowRequest
 		req := types.NewQueryArithmeticTwapToNowRequest(
 			hostZoneConfig.PoolId,
 			params.NativeIbcedInOsmosis,
@@ -293,12 +292,17 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 			startTime,
 		)
 		reqs = append(reqs, req)
+		// send query
+		sequence, err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)
+		if err != nil {
+			k.Logger(ctx).Error(fmt.Sprintf("Failed to query ICQ TWAP %s", err.Error()))
+		}
+
+		// set sequence for ack or timeout
+		k.SetSendingPacketInfo(ctx, sequence, params.IbcQueryIcqChannel, hostZoneConfig)
+
 		return false
 	})
-	err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)
-	if err != nil {
-		return err
-	}
 
 	return nil
 }

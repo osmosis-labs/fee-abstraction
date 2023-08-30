@@ -21,11 +21,9 @@ hermes --config scripts/relayer_hermes/config_osmosis_gaia.toml create channel -
 
 #osmo1hj5fveer5cjtn4wd6wstzugjfdxzl0xpwhpz63
 feeappd tx ibc-transfer transfer transfer $CHANNEL_ID "$VALIDATOR" 1000000000000stake --from myaccount --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
-#feeappd tx ibc-transfer transfer transfer $CHANNEL_ID osmo1hj5fveer5cjtn4wd6wstzugjfdxzl0xpwhpz63 1000000000000stake --from myaccount --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
-#feeappd tx ibc-transfer transfer transfer channel-2 cosmos1alc8mjana7ssgeyffvlfza08gu6rtav8rmj6nv 1000000000000stake --from myaccount --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
 gaiad tx ibc-transfer transfer transfer channel-1 "$VALIDATOR" 1000000000000uatom --from gnad --keyring-backend test --chain-id gaiad-t1 --yes --fees 5000stake
-#gaiad tx ibc-transfer transfer transfer channel-1 osmo1hj5fveer5cjtn4wd6wstzugjfdxzl0xpwhpz63 1000000000000uatom --from gnad --keyring-backend test --chain-id gaiad-t1 --yes --fees 5000stake
 gaiad tx ibc-transfer transfer transfer channel-0 feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw 1000000000000uatom --from gnad --keyring-backend test --chain-id gaiad-t1 --yes --fees 5000stake
+#osmosisd tx ibc-transfer transfer transfer channel-0 feeabs1efd63aw40lxf3n4mhf7dzhjkr453axurwrhrrw 100000000uosmo --from validator1 --keyring-backend test --chain-id testing --yes --fees 5000stake
 sleep 20 
 echo $(osmosisd q bank balances "$VALIDATOR")
 
@@ -34,10 +32,20 @@ echo ============DENOM==============
 echo $DENOM
 echo ============DENOM==============
 
+# cat > sample_pool.json <<EOF
+# {
+#         "weights": "1ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E,1ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
+#         "initial-deposit": "500000000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E,1000000000000ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
+#         "swap-fee": "0.01",
+#         "exit-fee": "0",
+#         "future-governor": "168h"
+# }
+# EOF
+
 cat > sample_pool.json <<EOF
 {
-        "weights": "1ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E,1ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
-        "initial-deposit": "500000000000ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E,1000000000000ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
+        "weights": "1uosmo,1ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
+        "initial-deposit": "500000000000uosmo,1000000000000ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
         "swap-fee": "0.01",
         "exit-fee": "0",
         "future-governor": "168h"

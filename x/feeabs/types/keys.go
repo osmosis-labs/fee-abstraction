@@ -1,5 +1,7 @@
 package types
 
+import "encoding/binary"
+
 const (
 	// Module name store the name of the module
 	ModuleName = "feeabs"
@@ -25,7 +27,14 @@ var (
 	KeyChannelID            = []byte{0x02} // Key for IBC channel to osmosis
 	KeyHostChainChainConfig = []byte{0x03} // Key for IBC channel to osmosis
 	KeyPrefixEpoch          = []byte{0x04} // KeyPrefixEpoch defines prefix key for storing epochs.
+	KeyIcqTwapSequence      = []byte{0x05} // Key for icq twap sequence
 )
+
+func GetKeyIcqTwapSequence(sequence uint64, channel string) []byte {
+	sequenceNumberBz := make([]byte, 8)
+	binary.BigEndian.PutUint64(sequenceNumberBz, sequence)
+	return append(sequenceNumberBz, []byte(channel)...)
+}
 
 func GetKeyHostZoneConfig(ibcDenom string) []byte {
 	return append(KeyHostChainChainConfig, []byte(ibcDenom)...)
