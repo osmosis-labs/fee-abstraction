@@ -177,12 +177,6 @@ func (am IBCModule) OnAcknowledgementPacket(
 		return sdkerrors.Wrapf(errorstypes.ErrUnknownRequest, "cannot unmarshal packet data: %v", err)
 	}
 
-	icqReqs, err := types.DeserializeCosmosQuery(icqPacketData.GetData())
-	if err != nil {
-		am.keeper.Logger(ctx).Error(fmt.Sprintf("Failed to deserialize cosmos query %s", err.Error()))
-		return err
-	}
-
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypePacket,
@@ -191,7 +185,7 @@ func (am IBCModule) OnAcknowledgementPacket(
 		),
 	)
 
-	if err := am.keeper.OnAcknowledgementPacket(ctx, ack, icqReqs); err != nil {
+	if err := am.keeper.OnAcknowledgementPacket(ctx, packet, ack); err != nil {
 		return sdkerrors.Wrapf(errorstypes.ErrInvalidRequest, "error OnAcknowledgementPacket: %v", err)
 	}
 	return nil
@@ -205,11 +199,8 @@ func (am IBCModule) OnTimeoutPacket(
 	packet channeltypes.Packet,
 	relayer sdk.AccAddress,
 ) error {
-	params := am.keeper.GetParams(ctx)
-	chancap := am.keeper.GetCapability(ctx, host.ChannelCapabilityPath(types.IBCPortID, params.IbcQueryIcqChannel))
 	// Resend request if timeout
-	err := am.keeper.OnTimeoutPacket(ctx, chancap, packet.SourcePort, packet.SourceChannel,
-		packet.TimeoutHeight, packet.TimeoutTimestamp, packet.Data) // If there is an error here we should still handle the timeout
+	err := am.keeper.OnTimeoutPacket(ctx, packet) // If there is an error here we should still handle the timeout
 	if err != nil {
 		am.keeper.Logger(ctx).Error(fmt.Sprintf("Error OnTimeoutPacket %s", err.Error()))
 		ctx.EventManager().EmitEvent(
