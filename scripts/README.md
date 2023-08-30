@@ -40,6 +40,10 @@ feeappd tx gov vote 1 yes --from test --keyring-backend test --chain-id feeappd-
 feeappd tx gov submit-legacy-proposal add-hostzone-config scripts/host_zone_gaia.json --from myaccount --keyring-backend test --chain-id feeappd-t1 --yes               
 
 feeappd tx gov vote 2 yes --from test --keyring-backend test --chain-id feeappd-t1 --yes
+
+feeappd tx gov submit-legacy-proposal add-hostzone-config scripts/host_zone.json --from myaccount --keyring-backend test --chain-id feeappd-t1 --yes               
+
+feeappd tx gov vote 2 yes --from test --keyring-backend test --chain-id feeappd-t1 --yes
 ```
 
 ```

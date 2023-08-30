@@ -276,7 +276,7 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 	// set startTime for query twap
 	queryTwapEpochInfo := k.GetEpochInfo(ctx, types.DefaultQueryEpochIdentifier)
 	startTime := ctx.BlockTime().Add(-queryTwapEpochInfo.Duration)
-	k.Logger(ctx).Info(fmt.Sprintf("Start time: %v", startTime.Unix()))
+	k.Logger(ctx).Info(fmt.Sprintf("--------------------Start time: %v", startTime.Unix()))
 
 	params := k.GetParams(ctx)
 
@@ -290,7 +290,7 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 			startTime,
 		)
 		reqs = append(reqs, req)
-
+		fmt.Printf("packet %v\n", req)
 		// send query
 		sequence, err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)
 		if err != nil {
