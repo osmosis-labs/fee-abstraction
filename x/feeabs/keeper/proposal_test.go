@@ -6,8 +6,8 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	v1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
-	apphelpers "github.com/notional-labs/fee-abstraction/v3/app/helpers"
-	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+	apphelpers "github.com/notional-labs/fee-abstraction/v6/app/helpers"
+	"github.com/notional-labs/fee-abstraction/v6/x/feeabs/types"
 )
 
 func (suite *KeeperTestSuite) TestAddHostZoneProposal() {

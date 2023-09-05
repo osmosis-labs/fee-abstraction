@@ -7,10 +7,10 @@ import (
 
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	v1beta1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/keeper"
+	"github.com/notional-labs/fee-abstraction/v6/x/feeabs/keeper"
 
-	cli "github.com/notional-labs/fee-abstraction/v3/x/feeabs/client/cli"
-	"github.com/notional-labs/fee-abstraction/v3/x/feeabs/types"
+	cli "github.com/notional-labs/fee-abstraction/v6/x/feeabs/client/cli"
+	"github.com/notional-labs/fee-abstraction/v6/x/feeabs/types"
 )
 
 var (
