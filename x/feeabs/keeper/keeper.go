@@ -11,7 +11,7 @@ import (
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v6/modules/apps/transfer/keeper"
 	clienttypes "github.com/cosmos/ibc-go/v6/modules/core/02-client/types"
-	"github.com/notional-labs/fee-abstraction/v6/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v6/x/feeabs/types"
 	"github.com/tendermint/tendermint/libs/log"
 )
 

@@ -24,8 +24,8 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	feeapp "github.com/notional-labs/fee-abstraction/v6/app"
-	"github.com/notional-labs/fee-abstraction/v6/x/feeabs/types"
+	feeapp "github.com/osmosis-labs/fee-abstraction/v6/app"
+	"github.com/osmosis-labs/fee-abstraction/v6/x/feeabs/types"
 )
 
 // SimAppChainID hardcoded chainID for simulation

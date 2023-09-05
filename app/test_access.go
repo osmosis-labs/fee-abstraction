@@ -5,7 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/notional-labs/fee-abstraction/v6/x/feeabs/keeper"
+	"github.com/osmosis-labs/fee-abstraction/v6/x/feeabs/keeper"
 
 	"github.com/CosmWasm/wasmd/app/params"
 
