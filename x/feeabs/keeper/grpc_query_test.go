@@ -64,7 +64,7 @@ func (s *KeeperTestSuite) TestHostChainConfig() {
 		PoolId:                  randUint64Num(),
 	}
 
-	err := s.feeAbsKeeper.SetHostZoneConfig(s.ctx, chainConfig.IbcDenom, chainConfig)
+	err := s.feeAbsKeeper.SetHostZoneConfig(s.ctx, chainConfig)
 	s.Require().NoError(err)
 
 	for _, tc := range []struct {

@@ -10,13 +10,13 @@ import (
 
 func (k Keeper) HasHostZoneConfig(ctx sdk.Context, ibcDenom string) bool {
 	store := ctx.KVStore(k.storeKey)
-	key := types.GetKeyHostZoneConfig(ibcDenom)
+	key := types.GetKeyHostZoneConfigByFeeabsIBCDenom(ibcDenom)
 	return store.Has(key)
 }
 
 func (k Keeper) GetHostZoneConfig(ctx sdk.Context, ibcDenom string) (chainConfig types.HostChainFeeAbsConfig, err error) {
 	store := ctx.KVStore(k.storeKey)
-	key := types.GetKeyHostZoneConfig(ibcDenom)
+	key := types.GetKeyHostZoneConfigByFeeabsIBCDenom(ibcDenom)
 
 	bz := store.Get(key)
 	err = k.cdc.Unmarshal(bz, &chainConfig)
@@ -28,9 +28,23 @@ func (k Keeper) GetHostZoneConfig(ctx sdk.Context, ibcDenom string) (chainConfig
 	return chainConfig, nil
 }
 
-func (k Keeper) SetHostZoneConfig(ctx sdk.Context, ibcDenom string, chainConfig types.HostChainFeeAbsConfig) error {
+func (k Keeper) GetHostZoneConfigByOsmosisTokenDenom(ctx sdk.Context, osmosisIbcDenom string) (chainConfig types.HostChainFeeAbsConfig, err error) {
 	store := ctx.KVStore(k.storeKey)
-	key := types.GetKeyHostZoneConfig(ibcDenom)
+	key := types.GetKeyHostZoneConfigByOsmosisIBCDenom(osmosisIbcDenom)
+
+	bz := store.Get(key)
+	err = k.cdc.Unmarshal(bz, &chainConfig)
+
+	if err != nil {
+		return types.HostChainFeeAbsConfig{}, err
+	}
+
+	return chainConfig, nil
+}
+
+func (k Keeper) SetHostZoneConfig(ctx sdk.Context, chainConfig types.HostChainFeeAbsConfig) error {
+	store := ctx.KVStore(k.storeKey)
+	key := types.GetKeyHostZoneConfigByFeeabsIBCDenom(chainConfig.IbcDenom)
 
 	bz, err := k.cdc.Marshal(&chainConfig)
 	if err != nil {
@@ -38,12 +52,15 @@ func (k Keeper) SetHostZoneConfig(ctx sdk.Context, ibcDenom string, chainConfig 
 	}
 	store.Set(key, bz)
 
+	key = types.GetKeyHostZoneConfigByOsmosisIBCDenom(chainConfig.OsmosisPoolTokenDenomIn)
+	store.Set(key, bz)
+
 	return nil
 }
 
 func (k Keeper) DeleteHostZoneConfig(ctx sdk.Context, ibcDenom string) error {
 	store := ctx.KVStore(k.storeKey)
-	key := types.GetKeyHostZoneConfig(ibcDenom)
+	key := types.GetKeyHostZoneConfigByFeeabsIBCDenom(ibcDenom)
 	store.Delete(key)
 	return nil
 }
@@ -60,13 +77,13 @@ func (k Keeper) GetAllHostZoneConfig(ctx sdk.Context) (allChainConfigs []types.H
 
 func (k Keeper) IteratorHostZone(ctx sdk.Context) sdk.Iterator {
 	store := ctx.KVStore(k.storeKey)
-	return sdk.KVStorePrefixIterator(store, types.KeyHostChainChainConfig)
+	return sdk.KVStorePrefixIterator(store, types.KeyHostChainChainConfigByFeeAbs)
 }
 
 // IterateHostZone iterates over the hostzone .
 func (k Keeper) IterateHostZone(ctx sdk.Context, cb func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.KeyHostChainChainConfig)
+	iterator := sdk.KVStorePrefixIterator(store, types.KeyHostChainChainConfigByFeeAbs)
 
 	defer iterator.Close()
 	for ; iterator.Valid(); iterator.Next() {
@@ -84,7 +101,7 @@ func (k Keeper) FrozenHostZoneByIBCDenom(ctx sdk.Context, ibcDenom string) error
 		return sdkerrors.Wrapf(types.ErrHostZoneConfigNotFound, err.Error())
 	}
 	hostChainConfig.Frozen = true
-	err = k.SetHostZoneConfig(ctx, ibcDenom, hostChainConfig)
+	err = k.SetHostZoneConfig(ctx, hostChainConfig)
 	if err != nil {
 		return err
 	}
@@ -98,7 +115,7 @@ func (k Keeper) UnFrozenHostZoneByIBCDenom(ctx sdk.Context, ibcDenom string) err
 		return sdkerrors.Wrapf(types.ErrHostZoneConfigNotFound, err.Error())
 	}
 	hostChainConfig.Frozen = false
-	err = k.SetHostZoneConfig(ctx, ibcDenom, hostChainConfig)
+	err = k.SetHostZoneConfig(ctx, hostChainConfig)
 	if err != nil {
 		return err
 	}

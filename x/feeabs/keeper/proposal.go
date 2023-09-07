@@ -12,7 +12,7 @@ func (k Keeper) AddHostZoneProposal(ctx sdk.Context, p *types.AddHostZoneProposa
 		return types.ErrDuplicateHostZoneConfig
 	}
 
-	err := k.SetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom, *p.HostChainConfig)
+	err := k.SetHostZoneConfig(ctx, *p.HostChainConfig)
 	if err != nil {
 		return err
 	}
@@ -40,7 +40,7 @@ func (k Keeper) SetHostZoneProposal(ctx sdk.Context, p *types.SetHostZoneProposa
 		return types.ErrHostZoneConfigNotFound
 	}
 
-	err = k.SetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom, *p.HostChainConfig)
+	err = k.SetHostZoneConfig(ctx, *p.HostChainConfig)
 	if err != nil {
 		return err
 	}

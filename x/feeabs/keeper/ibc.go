@@ -117,48 +117,46 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			return sdkerrors.Wrap(err, "could not deserialize data to cosmos response")
 		}
 
-		index := 0
-		k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-			// Get icq data
-			icqReqData, reqPosition, found := k.getQueryArithmeticTwapToNowRequest(ctx, icqReqs, index)
-			// update the index
-			index = reqPosition
-			if !found {
-				// if not found any request, end the iterator
-				return true
+		for i, icqReq := range icqReqs {
+			var icqReqData types.QueryArithmeticTwapToNowRequest
+			if err := k.cdc.Unmarshal(icqReq.GetData(), &icqReqData); err != nil {
+				k.Logger(ctx).Error(fmt.Sprintf("Failed to unmarshal icqReqData %s", err.Error()))
+				continue
 			}
-			// Check if icq TWAP denom match with hostzone denom store
-			if icqReqData.QuoteAsset != hostZoneConfig.OsmosisPoolTokenDenomIn {
-				return false
+
+			// get chain config
+			hostZoneConfig, err := k.GetHostZoneConfigByOsmosisTokenDenom(ctx, icqReqData.QuoteAsset)
+			if err != nil {
+				k.Logger(ctx).Error(fmt.Sprintf("Error when get host zone by Osmosis denom %s %v", icqReqData.BaseAsset, err))
+				continue
 			}
-			// Get icq QueryArithmeticTwapToNowRequest response
-			icqRes := icqResponses[index]
-			index++
+
+			icqRes := icqResponses[i]
 
 			if icqRes.Code != 0 {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to send interchain query code %d", icqRes.Code))
 				err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 				if err != nil {
+					// should never happen
 					k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
 				}
-				return false
+				continue
 			}
 
 			twapRate, err := k.GetDecTWAPFromBytes(icqRes.Value)
 			if err != nil {
 				k.Logger(ctx).Error("Failed to get twap")
-				return false
+				continue
 			}
 			k.Logger(ctx).Info(fmt.Sprintf("TwapRate %v", twapRate))
 			k.SetTwapRate(ctx, hostZoneConfig.IbcDenom, twapRate)
 
 			err = k.UnFrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 			if err != nil {
+				// should never happen
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
-				return false
 			}
-			return false
-		})
+		}
 
 		k.Logger(ctx).Info("packet ICQ request successfully")
 
