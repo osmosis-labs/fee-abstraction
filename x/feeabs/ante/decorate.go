@@ -236,7 +236,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		// feeCoinsNonZeroDenom contains non-zero denominations from the feeRequired
 		// feeCoinsNonZeroDenom is used to check if the fees meets the requirement imposed by nonZeroCoinFeesReq
 		// when feeCoins does not contain zero coins' denoms in feeRequired
-		_, feeCoinsZeroDenom := splitCoinsByDenoms(feeCoins, zeroCoinFeesDenomReq)
+		feeCoinsNonZeroDenom, feeCoinsZeroDenom := splitCoinsByDenoms(feeCoins, zeroCoinFeesDenomReq)
 
 		feeCoinsLen := feeCoins.Len()
 		// if the msg does not satisfy bypass condition and the feeCoins denoms are subset of fezeRequired,
@@ -262,15 +262,20 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		// If so, replace the amount of feeDenom in feeCoins with the
 		// corresponding amount of native denom that allow to pay fee
 		// TODO: Support more fee token in feeRequired for fee-abstraction
-		feeDenom := feeCoins.GetDenomByIndex(0)
+		feeDenom := feeCoinsNonZeroDenom.GetDenomByIndex(0)
 		hasHostChainConfig := famfd.feeabsKeeper.HasHostZoneConfig(ctx, feeDenom)
-		if hasHostChainConfig && feeCoinsLen == 1 {
+		if hasHostChainConfig && feeCoinsNonZeroDenom.Len() == 1 {
 			hostChainConfig, _ := famfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
 			nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, feeCoins, hostChainConfig)
 			if err != nil {
 				return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees")
 			}
-			feeCoins = nativeCoinsFees
+			feeCoinsNonZeroDenom = nativeCoinsFees
+		}
+
+		// After replace the feeCoins, feeCoins must be in denom subset of nonZeroCoinFeesReq
+		if !feeCoinsNonZeroDenom.DenomsSubsetOf(nonZeroCoinFeesReq) {
+			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "fee is not a subset of required fees; got %s, required: %s", feeCoins.String(), feeRequired.String())
 		}
 
 		// After all the checks, the tx is confirmed:
@@ -280,7 +285,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		// Not contain zeroCoinFeesDenomReq's denoms
 		//
 		// check if the feeCoins has coins' amount higher/equal to nonZeroCoinFeesReq
-		if !feeCoins.IsAnyGTE(nonZeroCoinFeesReq) {
+		if !feeCoinsNonZeroDenom.IsAnyGTE(nonZeroCoinFeesReq) {
 			err := sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, feeRequired)
 			if byPassExceedMaxGasUsage {
 				err = sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "Insufficient fees; bypass-min-fee-msg-types with gas consumption exceeds the maximum allowed gas value.")
