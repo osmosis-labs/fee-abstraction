@@ -187,27 +187,6 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 	return nil
 }
 
-func (k Keeper) getQueryArithmeticTwapToNowRequest(
-	ctx sdk.Context,
-	icqReqs []abci.RequestQuery,
-	index int,
-) (types.QueryArithmeticTwapToNowRequest, int, bool) {
-	packetLen := len(icqReqs)
-	found := false
-	var icqReqData types.QueryArithmeticTwapToNowRequest
-	for (index < packetLen) && (!found) {
-		icqReq := icqReqs[index]
-		if err := k.cdc.Unmarshal(icqReq.GetData(), &icqReqData); err != nil {
-			k.Logger(ctx).Error(fmt.Sprintf("Failed to unmarshal icqReqData %s", err.Error()))
-			index++
-		} else {
-			found = true
-		}
-	}
-
-	return icqReqData, index, found
-}
-
 func (k Keeper) GetChannelID(ctx sdk.Context) string {
 	store := ctx.KVStore(k.storeKey)
 	return string(store.Get(types.KeyChannelID))

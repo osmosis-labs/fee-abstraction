@@ -58,8 +58,10 @@ func TestHostZoneRemove(t *testing.T) {
 	for _, item := range expected {
 		err := app.FeeabsKeeper.DeleteHostZoneConfig(ctx, item.IbcDenom)
 		require.NoError(t, err)
-		got, _ := app.FeeabsKeeper.GetHostZoneConfig(ctx, item.IbcDenom)
-		require.NotEqual(t, item, got)
+		_, found := app.FeeabsKeeper.GetHostZoneConfig(ctx, item.IbcDenom)
+		require.False(t, found)
+		_, found = app.FeeabsKeeper.GetHostZoneConfigByOsmosisTokenDenom(ctx, item.OsmosisPoolTokenDenomIn)
+		require.False(t, found)
 	}
 }
 
