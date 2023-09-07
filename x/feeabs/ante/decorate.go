@@ -259,7 +259,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		}
 
 		// Check if feeDenom is defined in feeabs
-		// If so, replace the amount of feeDenom in feeCoins with the
+		// If so, replace the amount of feeDenom in feeCoinsNonZeroDenom with the
 		// corresponding amount of native denom that allow to pay fee
 		// TODO: Support more fee token in feeRequired for fee-abstraction
 		feeDenom := feeCoinsNonZeroDenom.GetDenomByIndex(0)
@@ -273,7 +273,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 			feeCoinsNonZeroDenom = nativeCoinsFees
 		}
 
-		// After replace the feeCoins, feeCoins must be in denom subset of nonZeroCoinFeesReq
+		// After replace the feeCoinsNonZeroDenom, feeCoinsNonZeroDenom must be in denom subset of nonZeroCoinFeesReq
 		if !feeCoinsNonZeroDenom.DenomsSubsetOf(nonZeroCoinFeesReq) {
 			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "fee is not a subset of required fees; got %s, required: %s", feeCoins.String(), feeRequired.String())
 		}
