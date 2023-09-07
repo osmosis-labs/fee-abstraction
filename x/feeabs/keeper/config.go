@@ -59,9 +59,15 @@ func (k Keeper) SetHostZoneConfig(ctx sdk.Context, chainConfig types.HostChainFe
 }
 
 func (k Keeper) DeleteHostZoneConfig(ctx sdk.Context, ibcDenom string) error {
+	hostZoneConfig, _ := k.GetHostZoneConfig(ctx, ibcDenom)
 	store := ctx.KVStore(k.storeKey)
+
 	key := types.GetKeyHostZoneConfigByFeeabsIBCDenom(ibcDenom)
 	store.Delete(key)
+
+	key = types.GetKeyHostZoneConfigByOsmosisIBCDenom(hostZoneConfig.OsmosisPoolTokenDenomIn)
+	store.Delete(key)
+
 	return nil
 }
 
