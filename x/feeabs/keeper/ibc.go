@@ -125,9 +125,9 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			}
 
 			// get chain config
-			hostZoneConfig, err := k.GetHostZoneConfigByOsmosisTokenDenom(ctx, icqReqData.QuoteAsset)
-			if err != nil {
-				k.Logger(ctx).Error(fmt.Sprintf("Error when get host zone by Osmosis denom %s %v", icqReqData.BaseAsset, err))
+			hostZoneConfig, found := k.GetHostZoneConfigByOsmosisTokenDenom(ctx, icqReqData.QuoteAsset)
+			if !found {
+				k.Logger(ctx).Error(fmt.Sprintf("Error when get host zone by Osmosis denom %s %v not found", icqReqData.BaseAsset, err))
 				continue
 			}
 
