@@ -1,6 +1,7 @@
 package ante
 
 import (
+	"errors"
 	"fmt"
 
 	sdkerrors "cosmossdk.io/errors"
@@ -198,10 +199,11 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 	}
 
 	// Check if this is bypass msg or bypass but not exceed gas useage
-	var byPass, byPassExceedMaxGasUsage bool
+	var byPass, byPassExceedMaxGasUsage, isGlobalFee bool
 	goCtx := ctx.Context()
 	bp := goCtx.Value(feeabstypes.ByPassMsgKey{})
 	bpemgu := goCtx.Value(feeabstypes.ByPassExceedMaxGasUsageKey{})
+	iglbf := goCtx.Value(feeabstypes.GlobalFeeKey{})
 	if bp != nil {
 		if bpb, ok := bp.(bool); ok {
 			byPass = bpb
@@ -212,6 +214,11 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 			byPassExceedMaxGasUsage = bpemgub
 		}
 	}
+	if iglbf != nil {
+		if iglbfb, ok := iglbf.(bool); ok {
+			isGlobalFee = iglbfb
+		}
+	}
 
 	feeCoins := feeTx.GetFee()
 	gas := feeTx.GetGas()
@@ -219,8 +226,11 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 	// Ensure that the provided fees meet a minimum threshold for the validator,
 	// if this is a CheckTx. This is only for local mempool purposes, and thus
 	// is only ran on check tx.
-	if ctx.IsCheckTx() {
-		feeRequired := GetTxFeeRequired(ctx, int64(gas))
+	if ctx.IsCheckTx() || isGlobalFee {
+		feeRequired, err := famfd.GetTxFeeRequired(ctx, int64(gas))
+		if err != nil {
+			return ctx, err
+		}
 
 		// split feeRequired into zero and non-zero coins(nonZeroCoinFeesReq, zeroCoinFeesDenomReq), split feeCoins according to
 		// nonZeroCoinFeesReq, zeroCoinFeesDenomReq,
@@ -271,7 +281,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 			if len(zeroCoinFeesDenomReq) != 0 {
 				return next(ctx, tx, simulate)
 			}
-			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, feeRequired)
+			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees; got: %s required 12: %s", feeCoins, feeRequired)
 		}
 		// when feeCoins != []
 		// special case: if TX has at least one of the zeroCoinFeesDenomReq, then it should pass
@@ -297,9 +307,30 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 	return next(ctx, tx, simulate)
 }
 
+func (famfd FeeAbstrationMempoolFeeDecorator) DefaultZeroFee(ctx sdk.Context) ([]sdk.DecCoin, error) {
+	bondDenom := famfd.feeabsKeeper.GetDefaultBondDenom(ctx)
+	if bondDenom == "" {
+		return nil, errors.New("empty staking bond denomination")
+	}
+
+	return []sdk.DecCoin{sdk.NewDecCoinFromDec(bondDenom, sdk.NewDec(0))}, nil
+}
+
 // GetTxFeeRequired returns the required fees for the given FeeTx.
-func GetTxFeeRequired(ctx sdk.Context, gasLimit int64) sdk.Coins {
-	minGasPrices := ctx.MinGasPrices()
+func (famfd FeeAbstrationMempoolFeeDecorator) GetTxFeeRequired(ctx sdk.Context, gasLimit int64) (sdk.Coins, error) {
+	var (
+		minGasPrices sdk.DecCoins
+		err          error
+	)
+
+	minGasPrices = ctx.MinGasPrices()
+	// if min_gas_prices is empty set, set to 0(bond_denom)
+	if len(minGasPrices) == 0 {
+		minGasPrices, err = famfd.DefaultZeroFee(ctx)
+		if err != nil {
+			return sdk.Coins{}, err
+		}
+	}
 
 	requiredFees := make(sdk.Coins, len(minGasPrices))
 	// Determine the required fees by multiplying each required minimum gas
@@ -310,5 +341,5 @@ func GetTxFeeRequired(ctx sdk.Context, gasLimit int64) sdk.Coins {
 		requiredFees[i] = sdk.NewCoin(gp.Denom, fee.Ceil().RoundInt())
 	}
 
-	return requiredFees.Sort()
+	return requiredFees.Sort(), nil
 }
