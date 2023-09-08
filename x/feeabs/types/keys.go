@@ -23,6 +23,7 @@ const (
 type (
 	ByPassMsgKey               struct{}
 	ByPassExceedMaxGasUsageKey struct{}
+	GlobalFeeKey               struct{}
 )
 
 var (
