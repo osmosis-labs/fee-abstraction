@@ -7,19 +7,6 @@ The concrete use cases which motivated this module include:
 - The desire to use IBC token as transaction fees on any chain instead of having to use native token as fee.
 - To fully take advantage of the newly represented Osmosis [``swap router``](https://github.com/osmosis-labs/osmosis/tree/main/cosmwasm/contracts) with the [``ibc-hooks``](https://github.com/osmosis-labs/osmosis/tree/main/x/ibc-hooks) module and the [``async-icq``](https://github.com/strangelove-ventures/async-icq) module.
 
-## Repository Structure
-
-This repository is branched by the cosmos-sdk versions and ibc-go versions used.  Currently fee abstraction supports:
-
-- SDK v0.47.x & IBC-go v7.*
-  - branch: release/v7.0.x
-  - path: github.com/osmosis-labs/fee-abstraction/v7
-- SDK v0.46.x
-  - branch: release/v6.0.x
-  - path: github.com/osmosis-labs/fee-abstraction/v6
-- SDK v0.45.x
-  - branch: release/v4.0.x
-  - path: github.com/osmosis-labs/fee-abstraction/v4
 
 ## Description
 
@@ -93,3 +80,19 @@ After reverse the ibc-token, XCS will :
 ![Diagram of the process of swapping accumulated ibc-tokens fee](https://i.imgur.com/YKOK8mr.png "Diagram of the process of swapping accumulated ibc-tokens fee")
 
 Current version of fee-abstraction working with XCSv2
+
+
+## Repository Structure
+
+This repository is branched by the cosmos-sdk versions and ibc-go versions used.  Currently fee abstraction supports:
+
+- SDK v0.47.x & IBC-go v7.*
+  - branch: release/v7.0.x
+  - path: github.com/osmosis-labs/fee-abstraction/v7
+- SDK v0.46.x
+  - branch: release/v6.0.x
+  - path: github.com/osmosis-labs/fee-abstraction/v6
+- SDK v0.45.x
+  - branch: release/v4.0.x
+  - path: github.com/osmosis-labs/fee-abstraction/v4
+
