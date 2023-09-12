@@ -9,7 +9,6 @@ import (
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
-	"github.com/cosmos/ibc-go/v4/modules/core/exported"
 	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
 	"github.com/tendermint/tendermint/libs/log"
 )
@@ -128,11 +127,6 @@ func (k Keeper) GetParams(ctx sdk.Context) (params types.Params) {
 // SetParams sets all of the parameters in the abstraction module.
 func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 	k.paramSpace.SetParamSet(ctx, &params)
-}
-
-// OnTimeoutPacket resend packet when timeout
-func (k Keeper) OnTimeoutPacket(ctx sdk.Context, chanCap *capabilitytypes.Capability, packet exported.PacketI) error {
-	return k.channelKeeper.SendPacket(ctx, chanCap, packet)
 }
 
 func (k Keeper) GetCapability(ctx sdk.Context, name string) *capabilitytypes.Capability {
