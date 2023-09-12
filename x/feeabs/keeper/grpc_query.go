@@ -63,9 +63,9 @@ func (q Querier) HostChainConfig(goCtx context.Context, req *types.QueryHostChai
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	hostChainConfig, err := q.GetHostZoneConfig(ctx, req.IbcDenom)
-	if err != nil {
-		return nil, err
+	hostChainConfig, found := q.GetHostZoneConfig(ctx, req.IbcDenom)
+	if !found {
+		return nil, types.ErrHostZoneConfigNotFound
 	}
 
 	return &types.QueryHostChainConfigRespone{
