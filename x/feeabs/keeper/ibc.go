@@ -127,7 +127,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			// get chain config
 			hostZoneConfig, found := k.GetHostZoneConfigByOsmosisTokenDenom(ctx, icqReqData.QuoteAsset)
 			if !found {
-				k.Logger(ctx).Error(fmt.Sprintf("Error when get host zone by Osmosis denom %s %v not found", icqReqData.BaseAsset, err))
+				k.Logger(ctx).Error(fmt.Sprintf("Error when get host zone by Osmosis denom %s %v not found", icqReqData.QuoteAsset, err))
 				continue
 			}
 
@@ -185,6 +185,11 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 		)
 	}
 	return nil
+}
+
+// OnTimeoutPacket resend packet when timeout
+func (k Keeper) OnTimeoutPacket(ctx sdk.Context) error {
+	return k.handleOsmosisIbcQuery(ctx)
 }
 
 func (k Keeper) GetChannelID(ctx sdk.Context) string {
