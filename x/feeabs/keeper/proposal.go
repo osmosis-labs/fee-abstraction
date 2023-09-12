@@ -7,8 +7,8 @@ import (
 )
 
 func (k Keeper) AddHostZoneProposal(ctx sdk.Context, p *types.AddHostZoneProposal) error {
-	config, _ := k.GetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom)
-	if (config != types.HostChainFeeAbsConfig{}) {
+	_, found := k.GetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom)
+	if found {
 		return types.ErrDuplicateHostZoneConfig
 	}
 
