@@ -3,8 +3,6 @@ package ibctesting
 import (
 	"fmt"
 
-	"github.com/stretchr/testify/require"
-
 	clienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
 	connectiontypes "github.com/cosmos/ibc-go/v4/modules/core/03-connection/types"
 	channeltypes "github.com/cosmos/ibc-go/v4/modules/core/04-channel/types"
@@ -13,6 +11,7 @@ import (
 	"github.com/cosmos/ibc-go/v4/modules/core/exported"
 	ibctmtypes "github.com/cosmos/ibc-go/v4/modules/light-clients/07-tendermint/types"
 	ibctesting "github.com/cosmos/ibc-go/v4/testing"
+	"github.com/stretchr/testify/require"
 )
 
 // Endpoint is a which represents a channel endpoint and its associated
@@ -237,7 +236,7 @@ func (endpoint *Endpoint) QueryConnectionHandshakeProof() (
 	connectionKey := host.ConnectionKey(endpoint.Counterparty.ConnectionID)
 	proofConnection, _ = endpoint.Counterparty.QueryProofAtHeight(connectionKey, proofHeight.GetRevisionHeight())
 
-	return
+	return clientState, proofClient, proofConsensus, consensusHeight, proofConnection, proofHeight
 }
 
 // ChanOpenInit will construct and execute a MsgChannelOpenInit on the associated endpoint.

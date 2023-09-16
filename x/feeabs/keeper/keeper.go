@@ -3,15 +3,17 @@ package keeper
 import (
 	"fmt"
 
+	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
+	"github.com/cosmos/ibc-go/v4/modules/core/exported"
+	"github.com/tendermint/tendermint/libs/log"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
-	"github.com/cosmos/ibc-go/v4/modules/core/exported"
+
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
-	"github.com/tendermint/tendermint/libs/log"
 )
 
 type Keeper struct {
@@ -42,7 +44,6 @@ func NewKeeper(
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
 	scopedKeeper types.ScopedKeeper,
-
 ) Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -91,8 +92,8 @@ func (k Keeper) CalculateNativeFromIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins,
 	return sdk.NewCoins(nativeFee), nil
 }
 
-func (k Keeper) SendAbstractionFeeToModuleAccount(ctx sdk.Context, IBCcoins sdk.Coins, nativeCoins sdk.Coins, feePayer sdk.AccAddress) error {
-	err := k.bk.SendCoinsFromAccountToModule(ctx, feePayer, types.ModuleName, IBCcoins)
+func (k Keeper) SendAbstractionFeeToModuleAccount(ctx sdk.Context, ibcCoins sdk.Coins, nativeCoins sdk.Coins, feePayer sdk.AccAddress) error {
+	err := k.bk.SendCoinsFromAccountToModule(ctx, feePayer, types.ModuleName, ibcCoins)
 	if err != nil {
 		return err
 	}
@@ -112,7 +113,7 @@ func (k Keeper) verifyIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins) error {
 	return fmt.Errorf("unallowed %s for tx fee", ibcCoins[0].Denom)
 }
 
-func (k Keeper) Logger(ctx sdk.Context) log.Logger {
+func (Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
@@ -133,10 +134,10 @@ func (k Keeper) OnTimeoutPacket(ctx sdk.Context, chanCap *capabilitytypes.Capabi
 }
 
 func (k Keeper) GetCapability(ctx sdk.Context, name string) *capabilitytypes.Capability {
-	cap, ok := k.scopedKeeper.GetCapability(ctx, name)
+	capability, ok := k.scopedKeeper.GetCapability(ctx, name)
 	if !ok {
 		k.Logger(ctx).Error("Error ErrChannelCapabilityNotFound ")
 		return nil
 	}
-	return cap
+	return capability
 }

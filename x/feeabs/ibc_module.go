@@ -3,14 +3,16 @@ package feeabs
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	channeltypes "github.com/cosmos/ibc-go/v4/modules/core/04-channel/types"
 	porttypes "github.com/cosmos/ibc-go/v4/modules/core/05-port/types"
 	host "github.com/cosmos/ibc-go/v4/modules/core/24-host"
 	ibcexported "github.com/cosmos/ibc-go/v4/modules/core/exported"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
 )
@@ -56,7 +58,7 @@ func (am IBCModule) OnChanOpenInit(
 
 func ValidateChannelParams(
 	ctx sdk.Context,
-	keeper keeper.Keeper,
+	feeabskeeper keeper.Keeper,
 	order channeltypes.Order,
 	portID string,
 	channelID string,
@@ -66,7 +68,7 @@ func ValidateChannelParams(
 	}
 
 	// Require portID is the portID profiles module is bound to
-	boundPort := keeper.GetPort(ctx)
+	boundPort := feeabskeeper.GetPort(ctx)
 	if boundPort != portID {
 		return sdkerrors.Wrapf(porttypes.ErrInvalidPort, "invalid port: %s, expected %s", portID, boundPort)
 	}
@@ -105,7 +107,7 @@ func (am IBCModule) OnChanOpenTry(
 }
 
 // OnChanOpenAck implements the IBCModule interface.
-func (am IBCModule) OnChanOpenAck(
+func (IBCModule) OnChanOpenAck(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -116,7 +118,7 @@ func (am IBCModule) OnChanOpenAck(
 }
 
 // OnChanOpenConfirm implements the IBCModule interface.
-func (am IBCModule) OnChanOpenConfirm(
+func (IBCModule) OnChanOpenConfirm(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -125,7 +127,7 @@ func (am IBCModule) OnChanOpenConfirm(
 }
 
 // OnChanCloseInit implements the IBCModule interface.
-func (am IBCModule) OnChanCloseInit(
+func (IBCModule) OnChanCloseInit(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -135,7 +137,7 @@ func (am IBCModule) OnChanCloseInit(
 }
 
 // OnChanCloseConfirm implements the IBCModule interface.
-func (am IBCModule) OnChanCloseConfirm(
+func (IBCModule) OnChanCloseConfirm(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -145,7 +147,7 @@ func (am IBCModule) OnChanCloseConfirm(
 }
 
 // OnRecvPacket implements the IBCModule interface.
-func (am IBCModule) OnRecvPacket(
+func (IBCModule) OnRecvPacket(
 	ctx sdk.Context,
 	packet channeltypes.Packet,
 	relayer sdk.AccAddress,
@@ -168,12 +170,12 @@ func (am IBCModule) OnAcknowledgementPacket(
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
 	}
 
-	var IcqPacketData types.InterchainQueryPacketData
-	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &IcqPacketData); err != nil {
+	var icqPacketData types.InterchainQueryPacketData
+	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &icqPacketData); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %v", err)
 	}
 
-	IcqReqs, err := types.DeserializeCosmosQuery(IcqPacketData.GetData())
+	icqReqs, err := types.DeserializeCosmosQuery(icqPacketData.GetData())
 	if err != nil {
 		am.keeper.Logger(ctx).Error(fmt.Sprintf("Failed to deserialize cosmos query %s", err.Error()))
 		return err
@@ -187,7 +189,7 @@ func (am IBCModule) OnAcknowledgementPacket(
 		),
 	)
 
-	if err := am.keeper.OnAcknowledgementPacket(ctx, ack, IcqReqs); err != nil {
+	if err := am.keeper.OnAcknowledgementPacket(ctx, ack, icqReqs); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "error OnAcknowledgementPacket: %v", err)
 	}
 	return nil

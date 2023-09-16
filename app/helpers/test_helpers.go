@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -16,7 +15,9 @@ import (
 	dbm "github.com/tendermint/tm-db"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	feeapp "github.com/osmosis-labs/fee-abstraction/v2/app"
+	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
 )
 
 // SimAppChainID hardcoded chainID for simulation

@@ -4,15 +4,17 @@ import (
 	"fmt"
 	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	transfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
 	clienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
 	channeltypes "github.com/cosmos/ibc-go/v4/modules/core/04-channel/types"
 	host "github.com/cosmos/ibc-go/v4/modules/core/24-host"
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+
+	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
 )
 
 // GetPort returns the portID for the module. Used in ExportGenesis.
@@ -56,15 +58,16 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Cap
 // Send request for query EstimateSwapExactAmountIn over IBC. Move to use TWAP.
 func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryArithmeticTwapToNowRequest, sourcePort, sourceChannel string) error {
 	params := k.GetParams(ctx)
-	IcqReqs := make([]abci.RequestQuery, len(twapReqs))
+	icqReqs := make([]abci.RequestQuery, len(twapReqs))
 	for i, req := range twapReqs {
-		IcqReqs[i] = abci.RequestQuery{
+		req := req
+		icqReqs[i] = abci.RequestQuery{
 			Path: params.OsmosisQueryTwapPath,
 			Data: k.cdc.MustMarshal(&req),
 		}
 	}
 
-	_, err := k.SendInterchainQuery(ctx, IcqReqs, sourcePort, sourceChannel)
+	_, err := k.SendInterchainQuery(ctx, icqReqs, sourcePort, sourceChannel)
 	if err != nil {
 		return err
 	}
@@ -132,7 +135,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			return sdkerrors.Wrap(err, "failed to unmarshal interchain query packet ack")
 		}
 
-		ICQResponses, err := types.DeserializeCosmosResponse(ackData.Data)
+		icqResponses, err := types.DeserializeCosmosResponse(ackData.Data)
 		if err != nil {
 			return sdkerrors.Wrap(err, "could not deserialize data to cosmos response")
 		}
@@ -152,11 +155,11 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 				return false
 			}
 			// Get icq QueryArithmeticTwapToNowRequest response
-			IcqRes := ICQResponses[index]
+			icqRes := icqResponses[index]
 			index++
 
-			if IcqRes.Code != 0 {
-				k.Logger(ctx).Error(fmt.Sprintf("Failed to send interchain query code %d", IcqRes.Code))
+			if icqRes.Code != 0 {
+				k.Logger(ctx).Error(fmt.Sprintf("Failed to send interchain query code %d", icqRes.Code))
 				err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 				if err != nil {
 					k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
@@ -164,7 +167,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 				return false
 			}
 
-			twapRate, err := k.GetDecTWAPFromBytes(IcqRes.Value)
+			twapRate, err := k.GetDecTWAPFromBytes(icqRes.Value)
 			if err != nil {
 				k.Logger(ctx).Error("Failed to get twap")
 				return false
@@ -225,7 +228,7 @@ func (k Keeper) getQueryArithmeticTwapToNowRequest(
 	return icqReqData, index, found
 }
 
-func (k Keeper) GetChannelId(ctx sdk.Context) string {
+func (k Keeper) GetChannelID(ctx sdk.Context) string {
 	store := ctx.KVStore(k.storeKey)
 	return string(store.Get(types.KeyChannelID))
 }
@@ -283,7 +286,6 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 		return nil, fmt.Errorf("bad msg %v", err.Error())
 	}
 	return k.transferKeeper.Transfer(sdk.WrapSDKContext(ctx), transferMsg)
-
 }
 
 func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
