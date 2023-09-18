@@ -3,17 +3,15 @@ package keeper_test
 import (
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	apphelpers "github.com/osmosis-labs/fee-abstraction/v2/app/helpers"
-	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
+	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
 )
 
-func createNHostZone(t *testing.T, keeper *feeabskeeper.Keeper, ctx sdk.Context, n int) []types.HostChainFeeAbsConfig {
-	t.Helper()
+func createNHostZone(t *testing.T, keeper *keeper.Keeper, ctx sdk.Context, n int) []types.HostChainFeeAbsConfig {
 	var expected []types.HostChainFeeAbsConfig
 	expectedConfig := types.HostChainFeeAbsConfig{
 		IbcDenom:                "ibc/123",
@@ -28,7 +26,6 @@ func createNHostZone(t *testing.T, keeper *feeabskeeper.Keeper, ctx sdk.Context,
 	}
 	return expected
 }
-
 func TestHostZoneGet(t *testing.T) {
 	app := apphelpers.Setup(t, false, 1)
 	ctx := apphelpers.NewContextForApp(*app)

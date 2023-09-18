@@ -5,16 +5,15 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
 )
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-func (s *KeeperTestSuite) TestOsmosisArithmeticTwap() {
-	s.SetupTest()
+func (suite *KeeperTestSuite) TestOsmosisArithmeticTwap() {
+	suite.SetupTest()
 	twapPrice := sdk.NewDec(1)
-	s.feeAbsKeeper.SetTwapRate(s.ctx, "denom", twapPrice)
+	suite.feeAbsKeeper.SetTwapRate(suite.ctx, "denom", twapPrice)
 
 	for _, tc := range []struct {
 		desc      string
@@ -41,22 +40,22 @@ func (s *KeeperTestSuite) TestOsmosisArithmeticTwap() {
 		},
 	} {
 		tc := tc
-		s.Run(tc.desc, func() {
-			goCtx := sdk.WrapSDKContext(s.ctx)
+		suite.Run(tc.desc, func() {
+			goCtx := sdk.WrapSDKContext(suite.ctx)
 			if !tc.shouldErr {
-				res, err := s.queryClient.OsmosisArithmeticTwap(goCtx, tc.req)
-				s.Require().NoError(err)
-				s.Require().Equal(tc.res, res)
+				res, err := suite.queryClient.OsmosisArithmeticTwap(goCtx, tc.req)
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.res, res)
 			} else {
-				_, err := s.queryClient.OsmosisArithmeticTwap(goCtx, tc.req)
-				s.Require().Error(err)
+				_, err := suite.queryClient.OsmosisArithmeticTwap(goCtx, tc.req)
+				suite.Require().Error(err)
 			}
 		})
 	}
 }
 
-func (s *KeeperTestSuite) TestHostChainConfig() {
-	s.SetupTest()
+func (suite *KeeperTestSuite) TestHostChainConfig() {
+	suite.SetupTest()
 
 	chainConfig := types.HostChainFeeAbsConfig{
 		IbcDenom:                randStringRunes(10),
@@ -64,8 +63,8 @@ func (s *KeeperTestSuite) TestHostChainConfig() {
 		PoolId:                  randUint64Num(),
 	}
 
-	err := s.feeAbsKeeper.SetHostZoneConfig(s.ctx, chainConfig.IbcDenom, chainConfig)
-	s.Require().NoError(err)
+	err := suite.feeAbsKeeper.SetHostZoneConfig(suite.ctx, chainConfig.IbcDenom, chainConfig)
+	suite.Require().NoError(err)
 
 	for _, tc := range []struct {
 		desc      string
@@ -95,15 +94,15 @@ func (s *KeeperTestSuite) TestHostChainConfig() {
 		},
 	} {
 		tc := tc
-		s.Run(tc.desc, func() {
-			goCtx := sdk.WrapSDKContext(s.ctx)
+		suite.Run(tc.desc, func() {
+			goCtx := sdk.WrapSDKContext(suite.ctx)
 			if !tc.shouldErr {
-				res, err := s.queryClient.HostChainConfig(goCtx, tc.req)
-				s.Require().NoError(err)
-				s.Require().Equal(tc.res, res)
+				res, err := suite.queryClient.HostChainConfig(goCtx, tc.req)
+				suite.Require().NoError(err)
+				suite.Require().Equal(tc.res, res)
 			} else {
-				_, err := s.queryClient.HostChainConfig(goCtx, tc.req)
-				s.Require().NoError(err)
+				_, err := suite.queryClient.HostChainConfig(goCtx, tc.req)
+				suite.Require().NoError(err)
 			}
 		})
 	}

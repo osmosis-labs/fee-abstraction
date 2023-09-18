@@ -31,7 +31,6 @@ type Coordinator struct {
 
 // NewCoordinator initializes Coordinator with N TestChain's
 func NewCoordinator(t *testing.T, n int) *Coordinator {
-	t.Helper()
 	chains := make(map[string]*TestChain)
 	coord := &Coordinator{
 		t:           t,
@@ -204,7 +203,7 @@ func (coord *Coordinator) CommitNBlocks(chain *TestChain, n uint64) {
 
 // ConnOpenInitOnBothChains initializes a connection on both endpoints with the state INIT
 // using the OpenInit handshake call.
-func (*Coordinator) ConnOpenInitOnBothChains(path *Path) error {
+func (coord *Coordinator) ConnOpenInitOnBothChains(path *Path) error {
 	if err := path.EndpointA.ConnOpenInit(); err != nil {
 		return err
 	}
@@ -226,7 +225,7 @@ func (*Coordinator) ConnOpenInitOnBothChains(path *Path) error {
 
 // ChanOpenInitOnBothChains initializes a channel on the source chain and counterparty chain
 // with the state INIT using the OpenInit handshake call.
-func (*Coordinator) ChanOpenInitOnBothChains(path *Path) error {
+func (coord *Coordinator) ChanOpenInitOnBothChains(path *Path) error {
 	// NOTE: only creation of a capability for a transfer or mock port is supported
 	// Other applications must bind to the port in InitGenesis or modify this code.
 

@@ -10,9 +10,9 @@ import (
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	govrest "github.com/cosmos/cosmos-sdk/x/gov/client/rest"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
 
 	cli "github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/client/cli"
-	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
 )
 

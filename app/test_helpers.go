@@ -10,16 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/require"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	tmtypes "github.com/tendermint/tendermint/types"
-	dbm "github.com/tendermint/tm-db"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -27,11 +19,19 @@ import (
 	"github.com/cosmos/cosmos-sdk/snapshots"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/stretchr/testify/require"
+	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	tmtypes "github.com/tendermint/tendermint/types"
+	dbm "github.com/tendermint/tm-db"
 )
 
 // DefaultConsensusParams defines the default Tendermint consensus params used in
@@ -53,14 +53,13 @@ var DefaultConsensusParams = &abci.ConsensusParams{
 	},
 }
 
-func setup(tb testing.TB, withGenesis bool, invCheckPeriod uint) (*FeeAbs, GenesisState) {
-	tb.Helper()
-	nodeHome := tb.TempDir()
+func setup(t testing.TB, withGenesis bool, invCheckPeriod uint) (*FeeAbs, GenesisState) {
+	nodeHome := t.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
 	snapshotDB, err := sdk.NewLevelDB("metadata", snapshotDir)
-	require.NoError(tb, err)
+	require.NoError(t, err)
 	snapshotStore, err := snapshots.NewStore(snapshotDB, snapshotDir)
-	require.NoError(tb, err)
+	require.NoError(t, err)
 	baseAppOpts := []func(*baseapp.BaseApp){baseapp.SetSnapshotStore(snapshotStore), baseapp.SetSnapshotKeepRecent(2)}
 	db := dbm.NewMemDB()
 	app := NewFeeAbs(
@@ -87,7 +86,6 @@ func SetupWithGenesisValSet(
 	genAccs []authtypes.GenesisAccount,
 	balances ...banktypes.Balance,
 ) *FeeAbs {
-	t.Helper()
 	app, genesisState := setup(t, true, 5)
 	// set genesis accounts
 	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)
@@ -165,9 +163,8 @@ func SetupWithGenesisValSet(
 }
 
 // SetupWithEmptyStore setup a wasmd app instance with empty DB
-func SetupWithEmptyStore(tb testing.TB) *FeeAbs {
-	tb.Helper()
-	app, _ := setup(tb, false, 0)
+func SetupWithEmptyStore(t testing.TB) *FeeAbs {
+	app, _ := setup(t, false, 0)
 	return app
 }
 
@@ -192,16 +189,9 @@ func createIncrementalAccounts(accNum int) []sdk.AccAddress {
 	// start at 100 so we can make up to 999 test addresses with valid test addresses
 	for i := 100; i < (accNum + 100); i++ {
 		numString := strconv.Itoa(i)
-		_, err := buffer.WriteString("A58856F0FD53BF058B4909A21AEC019107BA6") // base address string
-		if err != nil {
-			panic(err)
-		}
+		buffer.WriteString("A58856F0FD53BF058B4909A21AEC019107BA6") // base address string
 
-		_, err = buffer.WriteString(numString) // adding on final two digits to make addresses unique
-		if err != nil {
-			panic(err)
-		}
-
+		buffer.WriteString(numString) // adding on final two digits to make addresses unique
 		res, err := sdk.AccAddressFromHex(buffer.String())
 		if err != nil {
 			panic(err)
@@ -299,7 +289,6 @@ func TestAddr(addr string, bech string) (sdk.AccAddress, error) {
 
 // CheckBalance checks the balance of an account.
 func CheckBalance(t *testing.T, app *FeeAbs, addr sdk.AccAddress, balances sdk.Coins) {
-	t.Helper()
 	ctxCheck := app.BaseApp.NewContext(true, tmproto.Header{})
 	require.True(t, balances.IsEqual(app.BankKeeper.GetAllBalances(ctxCheck, addr)))
 }
@@ -314,7 +303,6 @@ func SignCheckDeliver(
 	t *testing.T, txCfg client.TxConfig, app *baseapp.BaseApp, header tmproto.Header, msgs []sdk.Msg,
 	chainID string, accNums, accSeqs []uint64, expSimPass, expPass bool, priv ...cryptotypes.PrivKey,
 ) (sdk.GasInfo, *sdk.Result, error) {
-	t.Helper()
 	tx, err := helpers.GenTx(
 		txCfg,
 		msgs,
@@ -364,7 +352,6 @@ func SignAndDeliver(
 	t *testing.T, txCfg client.TxConfig, app *baseapp.BaseApp, header tmproto.Header, msgs []sdk.Msg,
 	chainID string, accNums, accSeqs []uint64, expSimPass, expPass bool, priv ...cryptotypes.PrivKey,
 ) (sdk.GasInfo, *sdk.Result, error) {
-	t.Helper()
 	tx, err := helpers.GenTx(
 		txCfg,
 		msgs,
@@ -435,14 +422,8 @@ func CreateTestPubKeys(numPubKeys int) []cryptotypes.PubKey {
 	// start at 10 to avoid changing 1 to 01, 2 to 02, etc
 	for i := 100; i < (numPubKeys + 100); i++ {
 		numString := strconv.Itoa(i)
-		_, err := buffer.WriteString("0B485CFC0EECC619440448436F8FC9DF40566F2369E72400281454CB552AF") // base pubkey string
-		if err != nil {
-			panic(err)
-		}
-		_, err = buffer.WriteString(numString) // adding on final two digits to make pubkeys unique
-		if err != nil {
-			panic(err)
-		}
+		buffer.WriteString("0B485CFC0EECC619440448436F8FC9DF40566F2369E72400281454CB552AF") // base pubkey string
+		buffer.WriteString(numString)                                                       // adding on final two digits to make pubkeys unique
 		publicKeys = append(publicKeys, NewPubKeyFromHex(buffer.String()))
 		buffer.Reset()
 	}
@@ -466,7 +447,7 @@ func NewPubKeyFromHex(pk string) (res cryptotypes.PubKey) {
 type EmptyBaseAppOptions struct{}
 
 // Get implements AppOptions
-func (EmptyBaseAppOptions) Get(o string) interface{} {
+func (ao EmptyBaseAppOptions) Get(o string) interface{} {
 	return nil
 }
 

@@ -6,7 +6,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
 )
 
@@ -18,7 +17,7 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 
 		// If blocktime < initial epoch start time, return
 		if ctx.BlockTime().Before(epochInfo.StartTime) {
-			return false
+			return
 		}
 		// if epoch counting hasn't started, signal we need to start.
 		shouldInitialEpochStart := !epochInfo.EpochCountingStarted
@@ -38,7 +37,7 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 			logger.Info(fmt.Sprintf("Starting new epoch with identifier %s epoch number %d", epochInfo.Identifier, epochInfo.CurrentEpoch))
 		} else {
 			k.AfterEpochEnd(ctx, epochInfo.Identifier)
-			epochInfo.CurrentEpoch++
+			epochInfo.CurrentEpoch += 1
 			epochInfo.CurrentEpochStartTime = epochInfo.CurrentEpochStartTime.Add(epochInfo.Duration)
 			logger.Info(fmt.Sprintf("Starting epoch with identifier %s epoch number %d", epochInfo.Identifier, epochInfo.CurrentEpoch))
 		}
