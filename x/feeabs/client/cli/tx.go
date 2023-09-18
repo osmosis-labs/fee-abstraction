@@ -1,15 +1,14 @@
 package cli
 
 import (
-	"github.com/spf13/cobra"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
+	"github.com/spf13/cobra"
 )
 
 // NewTxCmd returns a root CLI command handler for all x/exp transaction commands.
@@ -43,6 +42,7 @@ func NewQueryOsmosisTWAPCmd() *cobra.Command {
 
 			msg := types.NewMsgSendQueryIbcDenomTWAP(clientCtx.GetFromAddress())
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -61,6 +61,7 @@ func NewSwapOverChainCmd() *cobra.Command {
 			}
 			msg := types.NewMsgSwapCrossChain(clientCtx.GetFromAddress(), args[0])
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -125,6 +126,7 @@ func NewCmdSubmitAddHostZoneProposal() *cobra.Command {
 			}
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+
 		},
 	}
 
@@ -164,6 +166,7 @@ func NewCmdSubmitDeleteHostZoneProposal() *cobra.Command {
 			}
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+
 		},
 	}
 
@@ -203,6 +206,7 @@ func NewCmdSubmitSetHostZoneProposal() *cobra.Command {
 			}
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+
 		},
 	}
 

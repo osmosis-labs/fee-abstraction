@@ -32,11 +32,11 @@ func NewAddHostZoneProposal(title, description string, config HostChainFeeAbsCon
 	}
 }
 
-func NewDeleteHostZoneProposal(title, description, ibcDenom string) govtypes.Content {
+func NewDeleteHostZoneProposal(title, description, ibc_denom string) govtypes.Content {
 	return &DeleteHostZoneProposal{
 		Title:       title,
 		Description: description,
-		IbcDenom:    ibcDenom,
+		IbcDenom:    ibc_denom,
 	}
 }
 
@@ -55,10 +55,10 @@ func (ahzp *AddHostZoneProposal) GetTitle() string { return ahzp.Title }
 func (ahzp *AddHostZoneProposal) GetDescription() string { return ahzp.Description }
 
 // ProposalRoute returns the routing key of a client update proposal.
-func (*AddHostZoneProposal) ProposalRoute() string { return RouterKey }
+func (ahzp *AddHostZoneProposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns the type of a client update proposal.
-func (*AddHostZoneProposal) ProposalType() string { return ProposalTypeAddHostZone }
+func (ahzp *AddHostZoneProposal) ProposalType() string { return ProposalTypeAddHostZone }
 
 // ValidateBasic runs basic stateless validity checks
 func (ahzp *AddHostZoneProposal) ValidateBasic() error {
@@ -79,10 +79,10 @@ func (dhzp *DeleteHostZoneProposal) GetTitle() string { return dhzp.Title }
 func (dhzp *DeleteHostZoneProposal) GetDescription() string { return dhzp.Description }
 
 // ProposalRoute returns the routing key of a client update proposal.
-func (*DeleteHostZoneProposal) ProposalRoute() string { return RouterKey }
+func (dhzp *DeleteHostZoneProposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns the type of a client update proposal.
-func (*DeleteHostZoneProposal) ProposalType() string { return ProposalTypeDeleteHostZone }
+func (dhzp *DeleteHostZoneProposal) ProposalType() string { return ProposalTypeDeleteHostZone }
 
 // ValidateBasic runs basic stateless validity checks
 func (dhzp *DeleteHostZoneProposal) ValidateBasic() error {
@@ -103,10 +103,10 @@ func (shzp *SetHostZoneProposal) GetTitle() string { return shzp.Title }
 func (shzp *SetHostZoneProposal) GetDescription() string { return shzp.Description }
 
 // ProposalRoute returns the routing key of a client update proposal.
-func (*SetHostZoneProposal) ProposalRoute() string { return RouterKey }
+func (shzp *SetHostZoneProposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns the type of a client update proposal.
-func (*SetHostZoneProposal) ProposalType() string { return ProposalTypeSetHostZone }
+func (shzp *SetHostZoneProposal) ProposalType() string { return ProposalTypeSetHostZone }
 
 // ValidateBasic runs basic stateless validity checks
 func (shzp *SetHostZoneProposal) ValidateBasic() error {

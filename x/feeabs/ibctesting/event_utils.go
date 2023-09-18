@@ -41,7 +41,7 @@ func getAckPackets(evts []abci.Event) []PacketAck {
 //	for _, attr := range evt.Attributes {
 //		fmt.Printf("  %s = %s\n", string(attr.Key), string(attr.Value))
 //	}
-// }
+//}
 
 func parsePacketFromEvent(evt abci.Event) channeltypes.Packet {
 	return channeltypes.Packet{

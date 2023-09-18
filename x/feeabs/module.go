@@ -5,20 +5,18 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/spf13/cobra"
-	abci "github.com/tendermint/tendermint/abci/types"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-
+	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/client/cli"
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v2/x/feeabs/types"
+	"github.com/spf13/cobra"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 var (
@@ -51,7 +49,7 @@ func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 }
 
 // RegisterInterfaces registers the module interface
-func (AppModuleBasic) RegisterInterfaces(reg cdctypes.InterfaceRegistry) {
+func (a AppModuleBasic) RegisterInterfaces(reg cdctypes.InterfaceRegistry) {
 	types.RegisterInterfaces(reg)
 }
 
@@ -82,7 +80,7 @@ func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, serveM
 }
 
 // GetTxCmd returns the feeabs module's root tx command.
-func (AppModuleBasic) GetTxCmd() *cobra.Command {
+func (a AppModuleBasic) GetTxCmd() *cobra.Command {
 	return cli.NewTxCmd()
 }
 
@@ -105,24 +103,24 @@ type AppModule struct {
 // NewAppModule instantiate AppModule object
 func NewAppModule(
 	cdc codec.Codec,
-	feeabskeeper keeper.Keeper,
+	keeper keeper.Keeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: NewAppModuleBasic(cdc),
-		keeper:         feeabskeeper,
+		keeper:         keeper,
 	}
 }
 
 // Name return the feeabs module name
-func (AppModule) Name() string {
+func (am AppModule) Name() string {
 	return types.ModuleName
 }
 
 // RegisterInvariants registers the feeabs module invariants.
-func (AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
+func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
 
 // Route return feeabs module message routing (not need anymore because using ADR 031)
-func (AppModule) Route() sdk.Route {
+func (am AppModule) Route() sdk.Route {
 	return sdk.Route{}
 }
 
@@ -132,7 +130,7 @@ func (AppModule) QuerierRoute() string {
 }
 
 // LegacyQuerierHandler returns feeabs legacy querier handler
-func (AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
+func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
 	return nil
 }
 

@@ -3,9 +3,8 @@ package cmd_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
+	"github.com/stretchr/testify/require"
 
 	app "github.com/osmosis-labs/fee-abstraction/v2/app"
 	"github.com/osmosis-labs/fee-abstraction/v2/cmd/feeappd/cmd"

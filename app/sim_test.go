@@ -6,6 +6,9 @@ import (
 	"os"
 	"testing"
 
+	feeapp "github.com/osmosis-labs/fee-abstraction/v2/app"
+
+	"github.com/osmosis-labs/fee-abstraction/v2/app/helpers"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	"github.com/tendermint/tendermint/libs/rand"
@@ -16,9 +19,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	simulation2 "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
-
-	feeapp "github.com/osmosis-labs/fee-abstraction/v2/app"
-	"github.com/osmosis-labs/fee-abstraction/v2/app/helpers"
 )
 
 func init() {

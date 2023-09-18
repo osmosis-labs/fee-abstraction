@@ -50,11 +50,9 @@ func NewOsmosisSwapMsg(inputCoin sdk.Coin, outputDenom string, slippagePercentag
 	swap := Swap{
 		OutPutDenom: outputDenom,
 		Slippage: Twap{
-			Twap: TwapRouter{
-				SlippagePercentage: slippagePercentage,
-				WindowSeconds:      windowSeconds,
-			},
-		},
+			Twap: TwapRouter{SlippagePercentage: slippagePercentage,
+				WindowSeconds: windowSeconds,
+			}},
 		Receiver: receiver,
 	}
 
@@ -73,11 +71,11 @@ func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string) (string, error) {
 	memo.Wasm["contract"] = contractAddr
 	memo.Wasm["msg"] = msg
 
-	memoMarshalled, err := json.Marshal(&memo)
+	memo_marshalled, err := json.Marshal(&memo)
 	if err != nil {
 		return "", err
 	}
-	return string(memoMarshalled), nil
+	return string(memo_marshalled), nil
 }
 
 // TODO: write test for this
