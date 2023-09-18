@@ -63,7 +63,7 @@ func (suite *KeeperTestSuite) TestHostChainConfig() {
 		PoolId:                  randUint64Num(),
 	}
 
-	err := suite.feeAbsKeeper.SetHostZoneConfig(suite.ctx, chainConfig.IbcDenom, chainConfig)
+	err := suite.feeAbsKeeper.SetHostZoneConfig(suite.ctx, chainConfig)
 	suite.Require().NoError(err)
 
 	for _, tc := range []struct {
@@ -102,7 +102,7 @@ func (suite *KeeperTestSuite) TestHostChainConfig() {
 				suite.Require().Equal(tc.res, res)
 			} else {
 				_, err := suite.queryClient.HostChainConfig(goCtx, tc.req)
-				suite.Require().NoError(err)
+				suite.Require().Error(err)
 			}
 		})
 	}

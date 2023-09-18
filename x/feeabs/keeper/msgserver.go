@@ -40,11 +40,11 @@ func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQ
 // Need to remove this
 func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossChain) (*types.MsgSwapCrossChainResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	hostChainConfig, err := k.GetHostZoneConfig(ctx, msg.IbcDenom)
-	if err != nil {
-		return &types.MsgSwapCrossChainResponse{}, nil
+	hostChainConfig, found := k.GetHostZoneConfig(ctx, msg.IbcDenom)
+	if !found {
+		return &types.MsgSwapCrossChainResponse{}, types.ErrHostZoneConfigNotFound
 	}
-	_, err = sdk.AccAddressFromBech32(msg.FromAddress)
+	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
 	if err != nil {
 		return nil, err
 	}
