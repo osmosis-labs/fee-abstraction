@@ -52,7 +52,7 @@ from_scratch () {
   update_test_genesis '.app_state["feeshare"]["params"]["allowed_denoms"]=["stake"]'
 
   # Allocate genesis accounts
-  feeappd add-genesis-account $KEY 10000000000000stake,100000000000000utest --keyring-backend $KEYRING
+  feeappd add-genesis-account $KEY 100000000000000stake,100000000000000utest --keyring-backend $KEYRING
   feeappd add-genesis-account feeacc 10000000000000stake,100000000000000utest --keyring-backend $KEYRING
 
   feeappd gentx $KEY 10000000000000stake --keyring-backend $KEYRING --chain-id $CHAINID

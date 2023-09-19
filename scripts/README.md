@@ -80,23 +80,24 @@ osmosisd tx gamm create-pool --pool-file sample_pool.json --from validator1 --ke
 ## Gov proposal
 
 ```
-feeappd tx gov submit-proposal param-change scripts/proposal.json --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes
+feeappd tx gov submit-proposal param-change scripts/proposal.json --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
 
-feeappd tx gov vote 1 yes --from feeapp1 --keyring-backend test --chain-id feeappd-t1 --yes
+feeappd tx gov vote 1 yes --from feeapp1 --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
 
-feeappd tx gov submit-proposal add-hostzone-config scripts/host_zone_gaia.json --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes               
+feeappd tx gov submit-proposal add-hostzone-config scripts/host_zone_gaia.json --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake  
 
-feeappd tx gov vote 2 yes --from feeapp1 --keyring-backend test --chain-id feeappd-t1 --yes
+feeappd tx gov vote 2 yes --from feeapp1 --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
 ```
 
 ## Fund module account
+Fund token to feeabs module account for pay fee. Normally, we would use gov to fund feeabs from community pool
 ```
-feeappd tx feeabs fund 500000000stake --from myaccount --keyring-backend test --chain-id feeappd-t1 -y
+feeappd tx bank send feeacc feeabs1hq6049htg8dh9swl5cw6uqqqcasxttdv4ynj83 5000000stake --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
 ```
 
 ## Test
 ```
-feeappd tx feeabs query-osmosis-twap --from myaccount --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
+feeappd tx feeabs query-osmosis-twap --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
 # Wait for about 10 sec
 feeappd q feeabs osmo-arithmetic-twap ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E
 ```
