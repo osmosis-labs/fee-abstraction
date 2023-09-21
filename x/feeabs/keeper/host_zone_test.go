@@ -23,7 +23,7 @@ func createNHostZone(t *testing.T, keeper *feeabskeeper.Keeper, ctx sdk.Context,
 	}
 	for i := 0; i < n; i++ {
 		expected = append(expected, expectedConfig)
-		err := keeper.SetHostZoneConfig(ctx, expectedConfig.IbcDenom, expectedConfig)
+		err := keeper.SetHostZoneConfig(ctx, expectedConfig)
 		require.NoError(t, err)
 	}
 	return expected
@@ -34,8 +34,19 @@ func TestHostZoneGet(t *testing.T) {
 	ctx := apphelpers.NewContextForApp(*app)
 	expected := createNHostZone(t, &app.FeeabsKeeper, ctx, 1)
 	for _, item := range expected {
-		got, err := app.FeeabsKeeper.GetHostZoneConfig(ctx, item.IbcDenom)
-		require.NoError(t, err)
+		got, found := app.FeeabsKeeper.GetHostZoneConfig(ctx, item.IbcDenom)
+		require.True(t, found)
+		require.Equal(t, item, got)
+	}
+}
+
+func TestHostZoneGetByOsmosisDenom(t *testing.T) {
+	app := apphelpers.Setup(t, false, 1)
+	ctx := apphelpers.NewContextForApp(*app)
+	expected := createNHostZone(t, &app.FeeabsKeeper, ctx, 1)
+	for _, item := range expected {
+		got, found := app.FeeabsKeeper.GetHostZoneConfigByOsmosisTokenDenom(ctx, item.OsmosisPoolTokenDenomIn)
+		require.True(t, found)
 		require.Equal(t, item, got)
 	}
 }
@@ -47,8 +58,10 @@ func TestHostZoneRemove(t *testing.T) {
 	for _, item := range expected {
 		err := app.FeeabsKeeper.DeleteHostZoneConfig(ctx, item.IbcDenom)
 		require.NoError(t, err)
-		got, _ := app.FeeabsKeeper.GetHostZoneConfig(ctx, item.IbcDenom)
-		require.NotEqual(t, item, got)
+		_, found := app.FeeabsKeeper.GetHostZoneConfig(ctx, item.IbcDenom)
+		require.False(t, found)
+		_, found = app.FeeabsKeeper.GetHostZoneConfigByOsmosisTokenDenom(ctx, item.OsmosisPoolTokenDenomIn)
+		require.False(t, found)
 	}
 }
 

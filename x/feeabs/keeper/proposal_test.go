@@ -49,8 +49,8 @@ func (s *KeeperTestSuite) TestAddHostZoneProposal() {
 			err = handler(s.ctx, proposal)
 			s.Require().NoError(err)
 
-			hostChainConfig, err := s.feeAbsKeeper.GetHostZoneConfig(s.ctx, tc.hostChainConfig.IbcDenom)
-			s.Require().NoError(err)
+			hostChainConfig, found := s.feeAbsKeeper.GetHostZoneConfig(s.ctx, tc.hostChainConfig.IbcDenom)
+			s.Require().True(found)
 			s.Require().Equal(tc.hostChainConfig, hostChainConfig)
 
 			// store proposal again and it should error

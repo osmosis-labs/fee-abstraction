@@ -7,12 +7,12 @@ import (
 )
 
 func (k Keeper) AddHostZoneProposal(ctx sdk.Context, p *types.AddHostZoneProposal) error {
-	config, _ := k.GetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom)
-	if (config != types.HostChainFeeAbsConfig{}) {
+	_, found := k.GetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom)
+	if found {
 		return types.ErrDuplicateHostZoneConfig
 	}
 
-	err := k.SetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom, *p.HostChainConfig)
+	err := k.SetHostZoneConfig(ctx, *p.HostChainConfig)
 	if err != nil {
 		return err
 	}
@@ -21,12 +21,12 @@ func (k Keeper) AddHostZoneProposal(ctx sdk.Context, p *types.AddHostZoneProposa
 }
 
 func (k Keeper) DeleteHostZoneProposal(ctx sdk.Context, p *types.DeleteHostZoneProposal) error {
-	_, err := k.GetHostZoneConfig(ctx, p.IbcDenom)
-	if err == nil {
+	_, found := k.GetHostZoneConfig(ctx, p.IbcDenom)
+	if !found {
 		return types.ErrHostZoneConfigNotFound
 	}
 
-	err = k.DeleteHostZoneConfig(ctx, p.IbcDenom)
+	err := k.DeleteHostZoneConfig(ctx, p.IbcDenom)
 	if err != nil {
 		return err
 	}
@@ -35,12 +35,12 @@ func (k Keeper) DeleteHostZoneProposal(ctx sdk.Context, p *types.DeleteHostZoneP
 }
 
 func (k Keeper) SetHostZoneProposal(ctx sdk.Context, p *types.SetHostZoneProposal) error {
-	_, err := k.GetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom)
-	if err == nil {
+	_, found := k.GetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom)
+	if !found {
 		return types.ErrHostZoneConfigNotFound
 	}
 
-	err = k.SetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom, *p.HostChainConfig)
+	err := k.SetHostZoneConfig(ctx, *p.HostChainConfig)
 	if err != nil {
 		return err
 	}
