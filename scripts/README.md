@@ -73,7 +73,7 @@ EOF
 osmosisd tx gamm create-pool --pool-file sample_pool.json --from validator1 --keyring-backend=test --home=$HOME/.osmosisd --chain-id testing --yes --fees 5000stake --gas 400000
 ```
 
-# Deploy contract and create relayer channel
+# Deploy Osmosis contract
 ```./scripts/ibc_swap/deploy_osmosis_contract.sh```
 
 
