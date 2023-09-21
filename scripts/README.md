@@ -80,11 +80,11 @@ osmosisd tx gamm create-pool --pool-file sample_pool.json --from validator1 --ke
 ## Gov proposal
 
 ```
-feeappd tx gov submit-legacy-proposal param-change scripts/proposal.json --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
+feeappd tx gov submit-legacy-proposal param-change scripts/proposal.json --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake --gas 400000
 
 feeappd tx gov vote 1 yes --from feeapp1 --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
 
-feeappd tx gov submit-legacy-proposal add-hostzone-config scripts/host_zone_gaia.json --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake  
+feeappd tx gov submit-legacy-proposal add-hostzone-config scripts/host_zone_gaia.json --from feeacc --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake --gas 400000
 
 feeappd tx gov vote 2 yes --from feeapp1 --keyring-backend test --chain-id feeappd-t1 --yes --fees 5000stake
 ```
