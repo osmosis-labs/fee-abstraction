@@ -2,7 +2,7 @@
 # Run this script to quickly install, setup, and run the current version of juno without docker.
 # ./scripts/test_node.sh [clean|c]
 
-KEY="test"
+KEY="feeapp1"
 CHAINID="feeappd-t1"
 MONIKER="localfeeappd"
 KEYALGO="secp256k1"
@@ -55,7 +55,7 @@ from_scratch () {
   feeappd add-genesis-account $KEY 10000000000000000000stake,100000000000000utest --keyring-backend $KEYRING
   feeappd add-genesis-account feeacc 10000000000000000000stake,100000000000000utest --keyring-backend $KEYRING
 
-  feeappd gentx $KEY 10000000000000000000stake --keyring-backend $KEYRING --chain-id $CHAINID
+  feeappd gentx $KEY 1000000000000000000stake --keyring-backend $KEYRING --chain-id $CHAINID
 
   # Collect genesis tx
   feeappd collect-gentxs
