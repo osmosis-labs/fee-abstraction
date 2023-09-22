@@ -20,6 +20,12 @@ const (
 	KeySeparator = "|"
 )
 
+type (
+	ByPassMsgKey               struct{}
+	ByPassExceedMaxGasUsageKey struct{}
+	GlobalFeeKey               struct{}
+)
+
 var (
 	OsmosisTwapExchangeRate          = []byte{0x01} // Key for the exchange rate of osmosis (to native token)
 	KeyChannelID                     = []byte{0x02} // Key for IBC channel to osmosis

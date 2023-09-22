@@ -72,6 +72,10 @@ func (k Keeper) GetFeeAbsModuleAddress() sdk.AccAddress {
 	return k.ak.GetModuleAddress(types.ModuleName)
 }
 
+func (k Keeper) GetDefaultBondDenom(ctx sdk.Context) string {
+	return k.sk.BondDenom(ctx)
+}
+
 // need to implement
 func (k Keeper) CalculateNativeFromIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins, chainConfig types.HostChainFeeAbsConfig) (coins sdk.Coins, err error) {
 	err = k.verifyIBCCoins(ctx, ibcCoins)

@@ -2,7 +2,7 @@
 # Run this script to quickly install, setup, and run the current version of juno without docker.
 # ./scripts/test_node.sh [clean|c]
 
-KEY="test"
+KEY="feeapp1"
 CHAINID="feeappd-t1"
 MONIKER="localfeeappd"
 KEYALGO="secp256k1"
@@ -25,7 +25,7 @@ from_scratch () {
   # juno1efd63aw40lxf3n4mhf7dzhjkr453axurv2zdzk
   echo "decorate bright ozone fork gallery riot bus exhaust worth way bone indoor calm squirrel merry zero scheme cotton until shop any excess stage laundry" | feeappd keys add $KEY --keyring-backend $KEYRING --algo $KEYALGO --recover
   # juno1hj5fveer5cjtn4wd6wstzugjfdxzl0xps73ftl
-  echo "wealth flavor believe regret funny network recall kiss grape useless pepper cram hint member few certain unveil rather brick bargain curious require crowd raise" | feeappd keys add myaccount --keyring-backend $KEYRING --algo $KEYALGO --recover
+  echo "wealth flavor believe regret funny network recall kiss grape useless pepper cram hint member few certain unveil rather brick bargain curious require crowd raise" | feeappd keys add feeacc --keyring-backend $KEYRING --algo $KEYALGO --recover
 
   feeappd init $MONIKER --chain-id $CHAINID
 
@@ -53,9 +53,9 @@ from_scratch () {
 
   # Allocate genesis accounts
   feeappd add-genesis-account $KEY 10000000000000000000stake,100000000000000utest --keyring-backend $KEYRING
-  feeappd add-genesis-account myaccount 10000000000000000000stake,100000000000000utest --keyring-backend $KEYRING
+  feeappd add-genesis-account feeacc 10000000000000000000stake,100000000000000utest --keyring-backend $KEYRING
 
-  feeappd gentx $KEY 10000000000000000000stake --keyring-backend $KEYRING --chain-id $CHAINID
+  feeappd gentx $KEY 1000000000000000000stake --keyring-backend $KEYRING --chain-id $CHAINID
 
   # Collect genesis tx
   feeappd collect-gentxs
