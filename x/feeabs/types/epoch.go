@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	DefaultSwapPeriod           time.Duration = time.Minute * 180
-	DefaultQueryPeriod          time.Duration = time.Minute * 60
+	DefaultSwapPeriod           time.Duration = time.Minute * 5
+	DefaultQueryPeriod          time.Duration = time.Minute * 5
 	DefaultSwapEpochIdentifier  string        = "swap"
 	DefaultQueryEpochIdentifier string        = "query"
 )
