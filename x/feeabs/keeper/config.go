@@ -27,6 +27,12 @@ func (k Keeper) GetHostZoneConfig(ctx sdk.Context, ibcDenom string) (types.HostC
 	return chainConfig, true
 }
 
+func (k Keeper) HasHostZoneConfigByOsmosisTokenDenom(ctx sdk.Context, osmosisIbcDenom string) bool {
+	store := ctx.KVStore(k.storeKey)
+	key := types.GetKeyHostZoneConfigByOsmosisIBCDenom(osmosisIbcDenom)
+	return store.Has(key)
+}
+
 func (k Keeper) GetHostZoneConfigByOsmosisTokenDenom(ctx sdk.Context, osmosisIbcDenom string) (types.HostChainFeeAbsConfig, bool) {
 	store := ctx.KVStore(k.storeKey)
 	key := types.GetKeyHostZoneConfigByOsmosisIBCDenom(osmosisIbcDenom)
