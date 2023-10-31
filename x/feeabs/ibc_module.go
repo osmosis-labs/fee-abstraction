@@ -209,6 +209,8 @@ func (am IBCModule) OnTimeoutPacket(
 	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &icqPacketData); err != nil {
 		return sdkerrors.Wrapf(errorstypes.ErrUnknownRequest, "cannot unmarshal packet data: %v", err)
 	}
+	// Frozen all hostzone
+	am.keeper.FrozenAllHostZone(ctx)
 	// Resend request if timeout
 	err := am.keeper.OnTimeoutPacket(ctx)
 	if err != nil {

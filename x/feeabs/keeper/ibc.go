@@ -167,14 +167,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			),
 		)
 	case *channeltypes.Acknowledgement_Error:
-		k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-			err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
-			if err != nil {
-				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
-			}
-
-			return false
-		})
+		k.FrozenAllHostZone(ctx)
 		k.Logger(ctx).Error(fmt.Sprintf("failed to send packet ICQ request %v", resp.Error))
 
 		ctx.EventManager().EmitEvent(
@@ -185,6 +178,18 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 		)
 	}
 	return nil
+}
+
+// FrozenAllHostZone resend packet when timeout
+func (k Keeper) FrozenAllHostZone(ctx sdk.Context) {
+	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+		err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+		if err != nil {
+			k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
+		}
+
+		return false
+	})
 }
 
 // OnTimeoutPacket resend packet when timeout
