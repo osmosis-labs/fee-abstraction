@@ -36,6 +36,10 @@ func (fadfd FeeAbstractionDeductFeeDecorate) AnteHandle(ctx sdk.Context, tx sdk.
 		return ctx, sdkerrors.Wrap(errorstypes.ErrTxDecode, "Tx must be a FeeTx")
 	}
 
+	if addr := fadfd.accountKeeper.GetModuleAddress(types.FeeCollectorName); addr == nil {
+		return ctx, fmt.Errorf("fee collector module account (%s) has not been set", types.FeeCollectorName)
+	}
+
 	fee := feeTx.GetFee()
 	if len(fee) == 0 {
 		return fadfd.normalDeductFeeAnteHandle(ctx, tx, simulate, next, feeTx)
@@ -52,10 +56,6 @@ func (fadfd FeeAbstractionDeductFeeDecorate) AnteHandle(ctx sdk.Context, tx sdk.
 }
 
 func (fadfd FeeAbstractionDeductFeeDecorate) normalDeductFeeAnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler, feeTx sdk.FeeTx) (newCtx sdk.Context, err error) {
-	if addr := fadfd.accountKeeper.GetModuleAddress(types.FeeCollectorName); addr == nil {
-		return ctx, fmt.Errorf("fee collector module account (%s) has not been set", types.FeeCollectorName)
-	}
-
 	fee := feeTx.GetFee()
 	feePayer := feeTx.FeePayer()
 	feeGranter := feeTx.FeeGranter()
