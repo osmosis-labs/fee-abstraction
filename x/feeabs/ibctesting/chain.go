@@ -6,13 +6,21 @@ import (
 	"testing"
 	"time"
 
+	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	commitmenttypes "github.com/cosmos/ibc-go/v7/modules/core/23-commitment/types"
+	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
+	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
+	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
+	"github.com/cosmos/ibc-go/v7/modules/core/types"
+	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
+	ibctesting "github.com/cosmos/ibc-go/v7/testing"
+	"github.com/cosmos/ibc-go/v7/testing/mock"
+	ibctestingtypes "github.com/cosmos/ibc-go/v7/testing/types"
+	"github.com/stretchr/testify/require"
+
 	sdkerrors "cosmossdk.io/errors"
-	abci "github.com/cometbft/cometbft/abci/types"
-	"github.com/cometbft/cometbft/crypto/tmhash"
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
-	tmprotoversion "github.com/cometbft/cometbft/proto/tendermint/version"
-	tmtypes "github.com/cometbft/cometbft/types"
-	tmversion "github.com/cometbft/cometbft/version"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -24,24 +32,16 @@ import (
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	teststaking "github.com/cosmos/cosmos-sdk/x/staking/testutil"
-
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
-	commitmenttypes "github.com/cosmos/ibc-go/v7/modules/core/23-commitment/types"
-	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
-	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
-	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
-	"github.com/cosmos/ibc-go/v7/modules/core/types"
-	ibctestingtypes "github.com/cosmos/ibc-go/v7/testing/types"
 
-	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
-	ibctesting "github.com/cosmos/ibc-go/v7/testing"
-	"github.com/cosmos/ibc-go/v7/testing/mock"
-	"github.com/stretchr/testify/require"
+	abci "github.com/cometbft/cometbft/abci/types"
+	"github.com/cometbft/cometbft/crypto/tmhash"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	tmprotoversion "github.com/cometbft/cometbft/proto/tendermint/version"
+	tmtypes "github.com/cometbft/cometbft/types"
+	tmversion "github.com/cometbft/cometbft/version"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
-	feeabs "github.com/osmosis-labs/fee-abstraction/v4/app"
+	feeabs "github.com/osmosis-labs/fee-abstraction/v7/app"
 )
 
 // TestChain is a testing struct that wraps a simapp with the last TM Header, the current ABCI
@@ -84,7 +84,8 @@ type PacketAck struct {
 //
 // Time management is handled by the Coordinator in order to ensure synchrony between chains.
 // Each update of any chain increments the block header time for all chains by 5 seconds.
-func NewTestChain(t *testing.T, coord *Coordinator, chainID string, opts ...wasm.Option) *TestChain {
+func NewTestChain(t *testing.T, coord *Coordinator, chainID string) *TestChain {
+	t.Helper()
 	// generate validator private/public key
 	privVal := mock.NewPV()
 	pubKey, err := privVal.GetPubKey()
@@ -106,7 +107,7 @@ func NewTestChain(t *testing.T, coord *Coordinator, chainID string, opts ...wasm
 		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, amount)),
 	}
 
-	app := NewTestingAppDecorator(t, feeabs.SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, opts, chainID, balance))
+	app := NewTestingAppDecorator(t, feeabs.SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, chainID, balance))
 
 	// create current header and call begin block
 	header := tmproto.Header{
@@ -419,7 +420,7 @@ func (chain *TestChain) CreateTMClientHeader(chainID string, blockHeight int64, 
 		AppHash:            chain.CurrentHeader.AppHash,
 		LastResultsHash:    tmhash.Sum([]byte("last_results_hash")),
 		EvidenceHash:       tmhash.Sum([]byte("evidence_hash")),
-		ProposerAddress:    tmValSet.Proposer.Address, //nolint:staticcheck
+		ProposerAddress:    tmValSet.Proposer.Address,
 	}
 	hhash := tmHeader.Hash()
 	blockID := MakeBlockID(hhash, 3, tmhash.Sum([]byte("part_set")))
@@ -495,11 +496,11 @@ func (chain *TestChain) CreatePortCapability(scopedKeeper capabilitykeeper.Scope
 	_, ok := chain.App.GetScopedIBCKeeper().GetCapability(chain.GetContext(), host.PortPath(portID))
 	if !ok {
 		// create capability using the IBC capability keeper
-		cap, err := chain.App.GetScopedIBCKeeper().NewCapability(chain.GetContext(), host.PortPath(portID))
+		capability, err := chain.App.GetScopedIBCKeeper().NewCapability(chain.GetContext(), host.PortPath(portID))
 		require.NoError(chain.t, err)
 
 		// claim capability using the scopedKeeper
-		err = scopedKeeper.ClaimCapability(chain.GetContext(), cap, host.PortPath(portID))
+		err = scopedKeeper.ClaimCapability(chain.GetContext(), capability, host.PortPath(portID))
 		require.NoError(chain.t, err)
 	}
 
@@ -511,10 +512,10 @@ func (chain *TestChain) CreatePortCapability(scopedKeeper capabilitykeeper.Scope
 // GetPortCapability returns the port capability for the given portID. The capability must
 // exist, otherwise testing will fail.
 func (chain *TestChain) GetPortCapability(portID string) *capabilitytypes.Capability {
-	cap, ok := chain.App.GetScopedIBCKeeper().GetCapability(chain.GetContext(), host.PortPath(portID))
+	capability, ok := chain.App.GetScopedIBCKeeper().GetCapability(chain.GetContext(), host.PortPath(portID))
 	require.True(chain.t, ok)
 
-	return cap
+	return capability
 }
 
 // CreateChannelCapability binds and claims a capability for the given portID and channelID
@@ -525,9 +526,9 @@ func (chain *TestChain) CreateChannelCapability(scopedKeeper capabilitykeeper.Sc
 	// check if the portId is already binded, if not bind it
 	_, ok := chain.App.GetScopedIBCKeeper().GetCapability(chain.GetContext(), capName)
 	if !ok {
-		cap, err := chain.App.GetScopedIBCKeeper().NewCapability(chain.GetContext(), capName)
+		capability, err := chain.App.GetScopedIBCKeeper().NewCapability(chain.GetContext(), capName)
 		require.NoError(chain.t, err)
-		err = scopedKeeper.ClaimCapability(chain.GetContext(), cap, capName)
+		err = scopedKeeper.ClaimCapability(chain.GetContext(), capability, capName)
 		require.NoError(chain.t, err)
 	}
 
@@ -539,10 +540,10 @@ func (chain *TestChain) CreateChannelCapability(scopedKeeper capabilitykeeper.Sc
 // GetChannelCapability returns the channel capability for the given portID and channelID.
 // The capability must exist, otherwise testing will fail.
 func (chain *TestChain) GetChannelCapability(portID, channelID string) *capabilitytypes.Capability {
-	cap, ok := chain.App.GetScopedIBCKeeper().GetCapability(chain.GetContext(), host.ChannelCapabilityPath(portID, channelID))
+	capability, ok := chain.App.GetScopedIBCKeeper().GetCapability(chain.GetContext(), host.ChannelCapabilityPath(portID, channelID))
 	require.True(chain.t, ok)
 
-	return cap
+	return capability
 }
 
 func (chain *TestChain) Balance(acc sdk.AccAddress, denom string) sdk.Coin {
@@ -564,8 +565,9 @@ type TestingAppDecorator struct {
 	t *testing.T
 }
 
-func NewTestingAppDecorator(t *testing.T, feeabs *feeabs.FeeAbs) *TestingAppDecorator {
-	return &TestingAppDecorator{FeeAbs: feeabs, t: t}
+func NewTestingAppDecorator(t *testing.T, feeabstraction *feeabs.FeeAbs) *TestingAppDecorator {
+	t.Helper()
+	return &TestingAppDecorator{FeeAbs: feeabstraction, t: t}
 }
 
 func (a TestingAppDecorator) GetBaseApp() *baseapp.BaseApp {

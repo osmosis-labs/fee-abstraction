@@ -6,17 +6,17 @@ A Ibc-token/Native-token TWAP pair is achieved by using the `QueryArithmeticTwap
 
 ```go
 type QueryArithmeticTwapToNowRequest struct {
-	PoolId     uint64
-	BaseAsset  string
-	QuoteAsset string
-	StartTime  time.Time
+ PoolId     uint64
+ BaseAsset  string
+ QuoteAsset string
+ StartTime  time.Time
 }
 ```
 
 ```go
 type InterchainQueryPacketData struct {
-	Data []byte
-	Memo string
+ Data []byte
+ Memo string
 }
 ```
 
@@ -32,14 +32,14 @@ Feeabs module exchange Ibc token to native token using the `SwapCrossChain` whic
 
 ```go
 type MsgTransfer struct {
-	SourcePort string
-	SourceChannel string
-	Token types.Coin
-	Sender string
-	Receiver string
-	TimeoutHeight types1.Height
-	TimeoutTimestamp uint64
-	Memo string
+ SourcePort string
+ SourceChannel string
+ Token types.Coin
+ Sender string
+ Receiver string
+ TimeoutHeight types1.Height
+ TimeoutTimestamp uint64
+ Memo string
 }
 ```
 
@@ -62,16 +62,17 @@ These 2 case are defined in the `IsOsmosis` field in `HostChainFeeAbsConfig`
 
 ```go
 type HostChainFeeAbsConfig struct {
-	IbcDenom string
-	OsmosisPoolTokenDenomIn string
-	MiddlewareAddress string
-	IbcTransferChannel string
-	HostZoneIbcTransferChannel string
-	CrosschainSwapAddress string
-	PoolId uint64
-	IsOsmosis bool
-	Frozen bool
-	OsmosisQueryChannel string
+ IbcDenom string
+ OsmosisPoolTokenDenomIn string
+ MiddlewareAddress string
+ IbcTransferChannel string
+ HostZoneIbcTransferChannel string
+ CrosschainSwapAddress string
+ PoolId uint64
+ IsOsmosis bool
+ Frozen bool
+ OsmosisQueryChannel string
 }
 ```
+
 Note: These 2 Ibc message only open for testing version. In the product version, user can't manual send these 2 message instead, feeabs module will automatic send every epoch to update the TWAP and swap ibc-token to native-token.

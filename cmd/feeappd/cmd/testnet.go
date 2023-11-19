@@ -10,11 +10,8 @@ import (
 	"os"
 	"path/filepath"
 
-	tmconfig "github.com/cometbft/cometbft/config"
-	tmos "github.com/cometbft/cometbft/libs/os"
-	tmrand "github.com/cometbft/cometbft/libs/rand"
-	"github.com/cometbft/cometbft/types"
-	tmtime "github.com/cometbft/cometbft/types/time"
+	ibcclienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	ibcchanneltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -33,10 +30,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	ibcclienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	ibcchanneltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 
-	"github.com/osmosis-labs/fee-abstraction/v4/app/params"
+	tmconfig "github.com/cometbft/cometbft/config"
+	tmos "github.com/cometbft/cometbft/libs/os"
+	tmrand "github.com/cometbft/cometbft/libs/rand"
+	"github.com/cometbft/cometbft/types"
+	tmtime "github.com/cometbft/cometbft/types/time"
+
+	"github.com/osmosis-labs/fee-abstraction/v7/app/params"
 )
 
 var (

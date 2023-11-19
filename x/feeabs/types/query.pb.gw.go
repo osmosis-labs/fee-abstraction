@@ -400,13 +400,13 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_OsmosisArithmeticTwap_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"fee-abstraction", "feeabs", "v1", "osmosis-arithmetic-twap", "ibc_denom"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_OsmosisArithmeticTwap_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"fee-abstraction", "feeabs", "v1", "osmosis-arithmetic-twap", "ibc_denom"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_FeeabsModuleBalances_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"fee-abstraction", "feeabs", "v1", "module-balances"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_FeeabsModuleBalances_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"fee-abstraction", "feeabs", "v1", "module-balances"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_HostChainConfig_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"fee-abstraction", "feeabs", "v1", "host-chain-config", "ibc_denom"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_HostChainConfig_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"fee-abstraction", "feeabs", "v1", "host-chain-config", "ibc_denom"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_AllHostChainConfig_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"fee-abstraction", "feeabs", "v1", "all-host-chain-config"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_AllHostChainConfig_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"fee-abstraction", "feeabs", "v1", "all-host-chain-config"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (

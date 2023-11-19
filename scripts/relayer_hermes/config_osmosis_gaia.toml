@@ -100,7 +100,7 @@ port = 5001
 id = 'testing'
 rpc_addr = 'http://localhost:26657'
 grpc_addr = 'http://localhost:9090'
-websocket_addr = 'ws://localhost:26657/websocket'	# ws://135.181.59.162:26657/websocket
+event_source = { mode = 'push', url = 'ws://localhost:26657/websocket', batch_delay = '500ms' }
 rpc_timeout = '10s'
 account_prefix = 'osmo'
 key_name = 'alice'
@@ -120,7 +120,7 @@ trust_threshold = { numerator = '1', denominator = '3' }
 id = 'gaiad-t1'
 rpc_addr = 'http://localhost:3241'
 grpc_addr = 'http://localhost:3242'
-websocket_addr = 'ws://localhost:3241/websocket'	# ws://135.181.59.162:26657/websocket
+event_source = { mode = 'push', url = 'ws://localhost:3241/websocket', batch_delay = '500ms' }
 rpc_timeout = '10s'
 account_prefix = 'cosmos'
 key_name = 'alice'

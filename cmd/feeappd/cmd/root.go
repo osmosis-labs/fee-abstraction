@@ -6,12 +6,11 @@ import (
 	"os"
 	"path/filepath"
 
-	tmcfg "github.com/cometbft/cometbft/config"
-	tmcli "github.com/cometbft/cometbft/libs/cli"
-	"github.com/cometbft/cometbft/libs/log"
+	ibcclienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	ibcchanneltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	"github.com/spf13/cast"
+	"github.com/spf13/cobra"
 
-	dbm "github.com/cometbft/cometbft-db"
-	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/config"
@@ -34,17 +33,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
-	ibcclienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	ibcchanneltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/spf13/cast"
-	"github.com/spf13/cobra"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	dbm "github.com/cometbft/cometbft-db"
+	tmcfg "github.com/cometbft/cometbft/config"
+	tmcli "github.com/cometbft/cometbft/libs/cli"
+	"github.com/cometbft/cometbft/libs/log"
+	tmtypes "github.com/cometbft/cometbft/types"
 
-	feeapp "github.com/osmosis-labs/fee-abstraction/v4/app"
-	"github.com/osmosis-labs/fee-abstraction/v4/app/params"
+	feeapp "github.com/osmosis-labs/fee-abstraction/v7/app"
+	"github.com/osmosis-labs/fee-abstraction/v7/app/params"
 )
 
 // NewRootCmd creates a new root command for simd. It is called once in the
@@ -241,11 +238,6 @@ func (ac appCreator) newApp(
 		panic(err)
 	}
 
-	var wasmOpts []wasm.Option
-	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
-		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
-	}
-
 	homeDir := cast.ToString(appOpts.Get(flags.FlagHome))
 	chainID := cast.ToString(appOpts.Get(flags.FlagChainID))
 	if chainID == "" {
@@ -263,7 +255,6 @@ func (ac appCreator) newApp(
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		ac.encCfg,
 		appOpts,
-		wasmOpts,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
 		baseapp.SetHaltHeight(cast.ToUint64(appOpts.Get(server.FlagHaltHeight))),
@@ -308,7 +299,6 @@ func (ac appCreator) appExport(
 		loadLatest = true
 	}
 
-	var emptyWasmOpts []wasm.Option
 	app := feeapp.NewFeeAbs(
 		logger,
 		db,
@@ -319,7 +309,6 @@ func (ac appCreator) appExport(
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		ac.encCfg,
 		appOpts,
-		emptyWasmOpts,
 	)
 
 	if height != -1 {

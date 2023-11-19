@@ -1,4 +1,4 @@
-# State 
+# State
 
 ## OsmosisTwapExchangeRate
 

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	tmrand "github.com/cometbft/cometbft/libs/rand"
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	"github.com/stretchr/testify/suite"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -14,10 +14,12 @@ import (
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
-	"github.com/stretchr/testify/suite"
 
-	"github.com/osmosis-labs/fee-abstraction/v4/app"
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v4/app/helpers"
+	tmrand "github.com/cometbft/cometbft/libs/rand"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+
+	"github.com/osmosis-labs/fee-abstraction/v7/app"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v7/app/helpers"
 )
 
 type IntegrationTestSuite struct {
@@ -35,8 +37,8 @@ func TestIntegrationTestSuite(t *testing.T) {
 }
 
 func (s *IntegrationTestSuite) SetupTest() {
-	app := apphelpers.Setup(s.T(), false, 1)
-	ctx := app.BaseApp.NewContext(false, tmproto.Header{
+	feeapp := apphelpers.Setup(s.T(), false, 1)
+	ctx := feeapp.BaseApp.NewContext(false, tmproto.Header{
 		ChainID: fmt.Sprintf("test-chain-%s", tmrand.Str(4)),
 		Height:  1,
 	})
@@ -45,7 +47,7 @@ func (s *IntegrationTestSuite) SetupTest() {
 	encodingConfig.Amino.RegisterConcrete(&testdata.TestMsg{}, "testdata.TestMsg", nil)
 	testdata.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 
-	s.app = app
+	s.app = feeapp
 	s.ctx = ctx
 	s.clientCtx = client.Context{}.WithTxConfig(encodingConfig.TxConfig)
 }

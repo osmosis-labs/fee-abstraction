@@ -1,14 +1,15 @@
 package cli
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
-	"github.com/spf13/cobra"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 // NewTxCmd returns a root CLI command handler for all x/exp transaction commands.
@@ -23,6 +24,7 @@ func NewTxCmd() *cobra.Command {
 
 	txCmd.AddCommand(NewQueryOsmosisTWAPCmd())
 	txCmd.AddCommand(NewSwapOverChainCmd())
+	txCmd.AddCommand(NewFundFeeAbsModuleAccount())
 
 	return txCmd
 }
@@ -42,7 +44,6 @@ func NewQueryOsmosisTWAPCmd() *cobra.Command {
 
 			msg := types.NewMsgSendQueryIbcDenomTWAP(clientCtx.GetFromAddress())
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
@@ -61,7 +62,6 @@ func NewSwapOverChainCmd() *cobra.Command {
 			}
 			msg := types.NewMsgSwapCrossChain(clientCtx.GetFromAddress(), args[0])
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
