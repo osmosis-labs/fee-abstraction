@@ -59,7 +59,10 @@ func (k Keeper) SetHostZoneConfig(ctx sdk.Context, chainConfig types.HostChainFe
 }
 
 func (k Keeper) DeleteHostZoneConfig(ctx sdk.Context, ibcDenom string) error {
-	hostZoneConfig, _ := k.GetHostZoneConfig(ctx, ibcDenom)
+	hostZoneConfig, ok := k.GetHostZoneConfig(ctx, ibcDenom)
+	if !ok {
+		return types.ErrHostZoneConfigNotFound
+	}
 	store := ctx.KVStore(k.storeKey)
 
 	key := types.GetKeyHostZoneConfigByFeeabsIBCDenom(ibcDenom)
