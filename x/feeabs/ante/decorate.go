@@ -249,9 +249,8 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		// TODO: Support more fee token in feeRequired for fee-abstraction
 		if feeCoinsNonZeroDenom.Len() == 1 {
 			feeDenom := feeCoinsNonZeroDenom.GetDenomByIndex(0)
-			hasHostChainConfig := famfd.feeabsKeeper.HasHostZoneConfig(ctx, feeDenom)
-			if hasHostChainConfig {
-				hostChainConfig, _ := famfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
+			hostChainConfig, found := famfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
+			if found {
 				nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, feeCoins, hostChainConfig)
 				if err != nil {
 					return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees")
