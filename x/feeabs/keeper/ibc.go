@@ -19,6 +19,10 @@ import (
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
+const (
+	timeoutDuration = 5 * time.Minute
+)
+
 // GetPort returns the portID for the module. Used in ExportGenesis.
 func (k Keeper) GetPort(ctx sdk.Context) string {
 	store := ctx.KVStore(k.storeKey)
@@ -84,7 +88,7 @@ func (k Keeper) SendInterchainQuery(
 	sourcePort string,
 	sourceChannel string,
 ) (uint64, error) {
-	timeoutTimestamp := ctx.BlockTime().Add(time.Minute * 5).UnixNano()
+	timeoutTimestamp := ctx.BlockTime().Add(timeoutDuration).UnixNano()
 	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
 	if !ok {
 		return 0, sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
@@ -224,7 +228,7 @@ func (k Keeper) transferOsmosisCrosschainSwap(ctx sdk.Context, hostChainConfig t
 		return err
 	}
 
-	timeoutTimestamp := ctx.BlockTime().Add(time.Minute * 5).UnixNano()
+	timeoutTimestamp := ctx.BlockTime().Add(timeoutDuration).UnixNano()
 
 	transferMsg := transfertypes.MsgTransfer{
 		SourcePort:       transfertypes.PortID,
