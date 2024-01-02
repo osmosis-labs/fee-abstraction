@@ -46,12 +46,11 @@ func (fadfd FeeAbstractionDeductFeeDecorate) AnteHandle(ctx sdk.Context, tx sdk.
 	}
 
 	feeDenom := fee.GetDenomByIndex(0)
-	hasHostChainConfig := fadfd.feeabsKeeper.HasHostZoneConfig(ctx, feeDenom)
-	if !hasHostChainConfig {
+	hostChainConfig, found := fadfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
+	if !found {
 		return fadfd.normalDeductFeeAnteHandle(ctx, tx, simulate, next, feeTx)
 	}
 
-	hostChainConfig, _ := fadfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
 	return fadfd.abstractionDeductFeeHandler(ctx, tx, simulate, next, feeTx, hostChainConfig)
 }
 
