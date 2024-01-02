@@ -3,6 +3,7 @@ package keeper
 import (
 	"fmt"
 
+	sdkerrors "cosmossdk.io/errors"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
@@ -109,10 +110,11 @@ func (k Keeper) verifyIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins) error {
 		return types.ErrInvalidIBCFees
 	}
 
-	if k.HasHostZoneConfig(ctx, ibcCoins[0].Denom) {
+	ibcDenom := ibcCoins[0].Denom
+	if k.HasHostZoneConfig(ctx, ibcDenom) {
 		return nil
 	}
-	return types.ErrUnsupportedDenom
+	return sdkerrors.Wrapf(types.ErrUnsupportedDenom, "unsupported denom: %s", ibcDenom)
 }
 
 func (Keeper) Logger(ctx sdk.Context) log.Logger {
