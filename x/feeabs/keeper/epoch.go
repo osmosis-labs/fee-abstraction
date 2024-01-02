@@ -18,18 +18,18 @@ func (k Keeper) HasEpochInfo(ctx sdk.Context, identifier string) bool {
 }
 
 // GetEpochInfo returns epoch info by identifier.
-func (k Keeper) GetEpochInfo(ctx sdk.Context, identifier string) types.EpochInfo {
+func (k Keeper) GetEpochInfo(ctx sdk.Context, identifier string) (types.EpochInfo, bool) {
 	epoch := types.EpochInfo{}
 	store := ctx.KVStore(k.storeKey)
 	b := store.Get(append(types.KeyPrefixEpoch, []byte(identifier)...))
 	if b == nil {
-		return epoch
+		return epoch, false
 	}
 	err := proto.Unmarshal(b, &epoch)
 	if err != nil {
 		panic(err)
 	}
-	return epoch
+	return epoch, true
 }
 
 // AddEpochInfo adds a new epoch info. Will return an error if the epoch fails validation,
@@ -41,7 +41,7 @@ func (k Keeper) AddEpochInfo(ctx sdk.Context, epoch types.EpochInfo) error {
 		return err
 	}
 	// Check if identifier already exists
-	if (k.GetEpochInfo(ctx, epoch.Identifier) != types.EpochInfo{}) {
+	if k.HasEpochInfo(ctx, epoch.Identifier) {
 		return fmt.Errorf("epoch with identifier %s already exists", epoch.Identifier)
 	}
 
