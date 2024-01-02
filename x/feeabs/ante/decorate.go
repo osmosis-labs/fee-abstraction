@@ -83,15 +83,15 @@ func (fadfd FeeAbstractionDeductFeeDecorate) normalDeductFeeAnteHandle(ctx sdk.C
 	}
 
 	// deduct the fees
-	if !feeTx.GetFee().IsZero() {
-		err = DeductFees(fadfd.bankKeeper, ctx, deductFeesFrom, feeTx.GetFee())
+	if !fee.IsZero() {
+		err = DeductFees(fadfd.bankKeeper, ctx, deductFeesFrom, fee)
 		if err != nil {
 			return ctx, err
 		}
 	}
 
 	events := sdk.Events{sdk.NewEvent(sdk.EventTypeTx,
-		sdk.NewAttribute(sdk.AttributeKeyFee, feeTx.GetFee().String()),
+		sdk.NewAttribute(sdk.AttributeKeyFee, fee.String()),
 	)}
 	ctx.EventManager().EmitEvents(events)
 
@@ -126,19 +126,18 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 	}
 
 	// calculate the native token can be swapped from ibc token
-	ibcFees := feeTx.GetFee()
-	if len(ibcFees) != 1 {
-		return ctx, sdkerrors.Wrapf(errorstypes.ErrInvalidCoins, "invalid ibc token: %s", ibcFees)
+	if len(fee) != 1 {
+		return ctx, sdkerrors.Wrapf(errorstypes.ErrInvalidCoins, "invalid ibc token: %s", fee)
 	}
 
-	nativeFees, err := fadfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, ibcFees, hostChainConfig)
+	nativeFees, err := fadfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, fee, hostChainConfig)
 	if err != nil {
 		return ctx, err
 	}
 
 	// deduct the fees
 	if !feeTx.GetFee().IsZero() {
-		err = fadfd.bankKeeper.SendCoinsFromAccountToModule(ctx, feeAbstractionPayer, feeabstypes.ModuleName, ibcFees)
+		err = fadfd.bankKeeper.SendCoinsFromAccountToModule(ctx, feeAbstractionPayer, feeabstypes.ModuleName, fee)
 		if err != nil {
 			return ctx, err
 		}
@@ -150,7 +149,7 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 	}
 
 	events := sdk.Events{sdk.NewEvent(sdk.EventTypeTx,
-		sdk.NewAttribute(sdk.AttributeKeyFee, feeTx.GetFee().String()),
+		sdk.NewAttribute(sdk.AttributeKeyFee, fee.String()),
 	)}
 	ctx.EventManager().EmitEvents(events)
 
@@ -159,12 +158,11 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 
 // DeductFees deducts fees from the given account.
 func DeductFees(bankKeeper types.BankKeeper, ctx sdk.Context, accAddress sdk.AccAddress, fees sdk.Coins) error {
-	if !fees.IsValid() {
+	if err := fees.Validate(); err != nil {
 		return sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "invalid fee amount: %s", fees)
 	}
 
-	err := bankKeeper.SendCoinsFromAccountToModule(ctx, accAddress, types.FeeCollectorName, fees)
-	if err != nil {
+	if err := bankKeeper.SendCoinsFromAccountToModule(ctx, accAddress, types.FeeCollectorName, fees); err != nil {
 		return sdkerrors.Wrapf(errorstypes.ErrInsufficientFunds, err.Error())
 	}
 
@@ -266,26 +264,19 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "fee is not a subset of required fees; got %s, required: %s", feeCoins.String(), feeRequired.String())
 		}
 
-		if byPass {
-			return next(ctx, tx, simulate)
-		}
-
 		// if the msg does not satisfy bypass condition and the feeCoins denoms are subset of fezeRequired,
 		// check the feeCoins amount against feeRequired
 		//
 		// when feeCoins=[]
-		// special case: and there is zero coin in fee requirement, pass,
-		// otherwise, err
-		if feeCoinsLen == 0 {
-			if len(zeroCoinFeesDenomReq) != 0 {
-				return next(ctx, tx, simulate)
-			}
-			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees; got: %s required 12: %s", feeCoins, feeRequired)
-		}
+		// special case: and there is zero coin in fee requirement, pass, otherwise, err
 		// when feeCoins != []
 		// special case: if TX has at least one of the zeroCoinFeesDenomReq, then it should pass
-		if len(feeCoinsZeroDenom) > 0 {
+		if byPass || (feeCoinsLen == 0 && len(zeroCoinFeesDenomReq) != 0) || len(feeCoinsZeroDenom) > 0 {
 			return next(ctx, tx, simulate)
+		}
+
+		if feeCoinsLen == 0 {
+			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees; got: %s required 12: %s", feeCoins, feeRequired)
 		}
 		// After all the checks, the tx is confirmed:
 		// feeCoins denoms subset off feeRequired (or replaced with fee-abstraction)
