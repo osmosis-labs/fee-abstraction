@@ -19,6 +19,10 @@ import (
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
+const (
+	timeoutDuration = 5 * time.Minute
+)
+
 // GetPort returns the portID for the module. Used in ExportGenesis.
 func (k Keeper) GetPort(ctx sdk.Context) string {
 	store := ctx.KVStore(k.storeKey)
@@ -84,7 +88,7 @@ func (k Keeper) SendInterchainQuery(
 	sourcePort string,
 	sourceChannel string,
 ) (uint64, error) {
-	timeoutTimestamp := ctx.BlockTime().Add(time.Minute * 5).UnixNano()
+	timeoutTimestamp := ctx.BlockTime().Add(timeoutDuration).UnixNano()
 	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
 	if !ok {
 		return 0, sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
@@ -224,7 +228,7 @@ func (k Keeper) transferOsmosisCrosschainSwap(ctx sdk.Context, hostChainConfig t
 		return err
 	}
 
-	timeoutTimestamp := ctx.BlockTime().Add(time.Minute * 5).UnixNano()
+	timeoutTimestamp := ctx.BlockTime().Add(timeoutDuration).UnixNano()
 
 	transferMsg := transfertypes.MsgTransfer{
 		SourcePort:       transfertypes.PortID,
@@ -253,14 +257,12 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 }
 
 func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
-	hasQueryEpochInfo := k.HasEpochInfo(ctx, types.DefaultQueryEpochIdentifier)
-	if !hasQueryEpochInfo {
+	// set startTime for query twap
+	queryTwapEpochInfo, found := k.GetEpochInfo(ctx, types.DefaultQueryEpochIdentifier)
+	if !found {
 		k.Logger(ctx).Error(fmt.Sprintf("Don't have query epoch information: %s", types.DefaultQueryEpochIdentifier))
 		return nil
 	}
-
-	// set startTime for query twap
-	queryTwapEpochInfo := k.GetEpochInfo(ctx, types.DefaultQueryEpochIdentifier)
 	startTime := ctx.BlockTime().Add(-queryTwapEpochInfo.Duration)
 	k.Logger(ctx).Info(fmt.Sprintf("Start time: %v", startTime.Unix()))
 
