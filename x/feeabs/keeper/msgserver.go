@@ -40,7 +40,7 @@ func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossCha
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	hostChainConfig, found := k.GetHostZoneConfig(ctx, msg.IbcDenom)
 	if !found {
-		return &types.MsgSwapCrossChainResponse{}, types.ErrHostZoneConfigNotFound
+		return nil, types.ErrHostZoneConfigNotFound
 	}
 	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
 	if err != nil {

@@ -15,12 +15,12 @@ const (
 
 // Parameter keys store keys.
 var (
-	KeyOsmosisQueryTwapPath         = []byte("osmosisquerytwappath")
-	KeyNativeIbcedInOsmosis         = []byte("nativeibcedinosmosis")
-	KeyChainName                    = []byte("chainname")
-	KeyIbcTransferChannel           = []byte("ibctransferchannel")
-	KeyIbcQueryIcqChannel           = []byte("ibcqueryicqchannel")
-	KeyOsmosisCrosschainSwapAddress = []byte("osmosiscrosschainswapaddress")
+	KeyOsmosisQueryTwapPath         = []byte("OsmosisQueryTwapPath")
+	KeyNativeIbcedInOsmosis         = []byte("NativeIbcedInOsmosis")
+	KeyChainName                    = []byte("ChainName")
+	KeyIbcTransferChannel           = []byte("IbcTransferChannel")
+	KeyIbcQueryIcqChannel           = []byte("IbcQueryIcqChannel")
+	KeyOsmosisCrosschainSwapAddress = []byte("OsmosisCrosschainSwapAddress")
 
 	_ paramtypes.ParamSet = &Params{}
 )
