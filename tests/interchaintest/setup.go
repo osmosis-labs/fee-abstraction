@@ -23,7 +23,7 @@ type QueryFeeabsModuleBalacesResponse struct {
 	Address  string
 }
 
-type QueryHostChainConfigRespone struct {
+type QueryHostChainConfigResponse struct {
 	HostChainConfig cosmos.HostChainFeeAbsConfig `protobuf:"bytes,1,opt,name=host_chain_config,json=hostChainConfig,proto3" json:"host_chain_config" yaml:"host_chain_config"`
 }
 

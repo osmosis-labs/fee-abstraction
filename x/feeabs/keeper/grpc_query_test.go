@@ -70,7 +70,7 @@ func (s *KeeperTestSuite) TestHostChainConfig() {
 	for _, tc := range []struct {
 		desc      string
 		req       *types.QueryHostChainConfigRequest
-		res       *types.QueryHostChainConfigRespone
+		res       *types.QueryHostChainConfigResponse
 		shouldErr bool
 	}{
 		{
@@ -78,7 +78,7 @@ func (s *KeeperTestSuite) TestHostChainConfig() {
 			req: &types.QueryHostChainConfigRequest{
 				IbcDenom: chainConfig.IbcDenom,
 			},
-			res: &types.QueryHostChainConfigRespone{
+			res: &types.QueryHostChainConfigResponse{
 				HostChainConfig: chainConfig,
 			},
 			shouldErr: false,
@@ -88,7 +88,7 @@ func (s *KeeperTestSuite) TestHostChainConfig() {
 			req: &types.QueryHostChainConfigRequest{
 				IbcDenom: "Invalid",
 			},
-			res: &types.QueryHostChainConfigRespone{
+			res: &types.QueryHostChainConfigResponse{
 				HostChainConfig: chainConfig,
 			},
 			shouldErr: true,

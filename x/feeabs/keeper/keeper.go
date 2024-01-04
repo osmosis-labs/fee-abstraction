@@ -107,10 +107,6 @@ func (k Keeper) SendAbstractionFeeToModuleAccount(ctx sdk.Context, ibcCoins sdk.
 
 // return err if IBC token isn't in allowed_list
 func (k Keeper) verifyIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins) error {
-	if ibcCoins.Len() != 1 {
-		return types.ErrInvalidIBCFees
-	}
-
 	if k.HasHostZoneConfig(ctx, ibcCoins[0].Denom) {
 		return nil
 	}
