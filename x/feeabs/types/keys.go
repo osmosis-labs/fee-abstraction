@@ -27,20 +27,20 @@ type (
 )
 
 var (
-	OsmosisTwapExchangeRate          = []byte{0x01} // Key for the exchange rate of osmosis (to native token)
-	KeyChannelID                     = []byte{0x02} // Key for IBC channel to osmosis
-	KeyHostChainChainConfigByFeeAbs  = []byte{0x03} // Key for IBC channel to osmosis
-	KeyHostChainChainConfigByOsmosis = []byte{0x04} // Key for IBC channel to osmosis
-	KeyPrefixEpoch                   = []byte{0x05} // KeyPrefixEpoch defines prefix key for storing epochs.
-	KeyTokenDenomPair                = []byte{0x06} // Key store token denom pair on feeabs and osmosis
+	OsmosisTwapExchangeRate     = []byte{0x01} // Key for the exchange rate of osmosis (to native token)
+	KeyChannelID                = []byte{0x02} // Key for IBC channel to osmosis
+	KeyHostChainConfigByFeeAbs  = []byte{0x03} // Key for IBC channel to osmosis
+	KeyHostChainConfigByOsmosis = []byte{0x04} // Key for IBC channel to osmosis
+	KeyPrefixEpoch              = []byte{0x05} // KeyPrefixEpoch defines prefix key for storing epochs.
+	KeyTokenDenomPair           = []byte{0x06} // Key store token denom pair on feeabs and osmosis
 )
 
 func GetKeyHostZoneConfigByFeeabsIBCDenom(feeabsIbcDenom string) []byte {
-	return append(KeyHostChainChainConfigByFeeAbs, []byte(feeabsIbcDenom)...)
+	return append(KeyHostChainConfigByFeeAbs, []byte(feeabsIbcDenom)...)
 }
 
 func GetKeyHostZoneConfigByOsmosisIBCDenom(osmosisIbcDenom string) []byte {
-	return append(KeyHostChainChainConfigByOsmosis, []byte(osmosisIbcDenom)...)
+	return append(KeyHostChainConfigByOsmosis, []byte(osmosisIbcDenom)...)
 }
 
 func GetKeyTwapExchangeRate(ibcDenom string) []byte {

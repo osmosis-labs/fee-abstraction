@@ -550,17 +550,17 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	})
 }
 
-func QueryFeeabsHostZoneConfig(c *cosmos.CosmosChain, ctx context.Context) (*QueryHostChainConfigRespone, error) {
+func QueryFeeabsHostZoneConfig(c *cosmos.CosmosChain, ctx context.Context) (*QueryHostChainConfigResponse, error) {
 	cmd := []string{"feeabs", "all-host-chain-config"}
 	stdout, _, err := c.ExecQuery(ctx, cmd)
 	if err != nil {
-		return &QueryHostChainConfigRespone{}, err
+		return &QueryHostChainConfigResponse{}, err
 	}
 
-	var hostZoneConfig QueryHostChainConfigRespone
+	var hostZoneConfig QueryHostChainConfigResponse
 	err = json.Unmarshal(stdout, &hostZoneConfig)
 	if err != nil {
-		return &QueryHostChainConfigRespone{}, err
+		return &QueryHostChainConfigResponse{}, err
 	}
 
 	return &hostZoneConfig, nil

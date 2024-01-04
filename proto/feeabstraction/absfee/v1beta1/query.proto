@@ -25,13 +25,13 @@ service Query {
   }
 
   rpc HostChainConfig(QueryHostChainConfigRequest)
-      returns (QueryHostChainConfigRespone) {
+      returns (QueryHostChainConfigResponse) {
     option (google.api.http).get =
         "/fee-abstraction/feeabs/v1/host-chain-config/{ibc_denom}";
   }
 
   rpc AllHostChainConfig(AllQueryHostChainConfigRequest)
-      returns (AllQueryHostChainConfigRespone) {
+      returns (AllQueryHostChainConfigResponse) {
     option (google.api.http).get =
         "/fee-abstraction/feeabs/v1/all-host-chain-config";
   }
@@ -39,7 +39,7 @@ service Query {
 
 message QueryHostChainConfigRequest { string ibc_denom = 1; }
 
-message QueryHostChainConfigRespone {
+message QueryHostChainConfigResponse {
   HostChainFeeAbsConfig host_chain_config = 1 [
     (gogoproto.moretags) = "yaml:\"host_chain_config\"",
     (gogoproto.nullable) = false
@@ -73,7 +73,7 @@ message QueryFeeabsModuleBalacesResponse {
 
 message AllQueryHostChainConfigRequest {}
 
-message AllQueryHostChainConfigRespone {
+message AllQueryHostChainConfigResponse {
   repeated HostChainFeeAbsConfig all_host_chain_config = 1 [
     (gogoproto.moretags) = "yaml:\"all_host_chain_config\"",
     (gogoproto.nullable) = false
