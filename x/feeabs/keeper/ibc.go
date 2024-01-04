@@ -139,7 +139,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 
 			if icqRes.Code != 0 {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to send interchain query code %d", icqRes.Code))
-				err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+				err := k.FreezeHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 				if err != nil {
 					// should never happen
 					k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
@@ -155,7 +155,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			k.Logger(ctx).Info(fmt.Sprintf("TwapRate %v", twapRate))
 			k.SetTwapRate(ctx, hostZoneConfig.IbcDenom, twapRate)
 
-			err = k.UnFrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+			err = k.UnFreezeHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 			if err != nil {
 				// should never happen
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
@@ -172,7 +172,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 		)
 	case *channeltypes.Acknowledgement_Error:
 		k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-			err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+			err := k.FreezeHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 			if err != nil {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
 			}
@@ -310,7 +310,7 @@ func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
 
 		if err != nil {
 			k.Logger(ctx).Error(fmt.Sprintf("Failed to transfer IBC token %s", err.Error()))
-			err = k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+			err = k.FreezeHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 			if err != nil {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozem host zone %s", err.Error()))
 			}

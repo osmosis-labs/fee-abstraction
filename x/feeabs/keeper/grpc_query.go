@@ -58,7 +58,7 @@ func (q Querier) FeeabsModuleBalances(goCtx context.Context, req *types.QueryFee
 	}, nil
 }
 
-func (q Querier) HostChainConfig(goCtx context.Context, req *types.QueryHostChainConfigRequest) (*types.QueryHostChainConfigRespone, error) {
+func (q Querier) HostChainConfig(goCtx context.Context, req *types.QueryHostChainConfigRequest) (*types.QueryHostChainConfigResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
@@ -70,12 +70,12 @@ func (q Querier) HostChainConfig(goCtx context.Context, req *types.QueryHostChai
 		return nil, types.ErrHostZoneConfigNotFound
 	}
 
-	return &types.QueryHostChainConfigRespone{
+	return &types.QueryHostChainConfigResponse{
 		HostChainConfig: hostChainConfig,
 	}, nil
 }
 
-func (q Querier) AllHostChainConfig(goCtx context.Context, req *types.AllQueryHostChainConfigRequest) (*types.AllQueryHostChainConfigRespone, error) {
+func (q Querier) AllHostChainConfig(goCtx context.Context, req *types.AllQueryHostChainConfigRequest) (*types.AllQueryHostChainConfigResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
@@ -87,7 +87,7 @@ func (q Querier) AllHostChainConfig(goCtx context.Context, req *types.AllQueryHo
 		return nil, err
 	}
 
-	return &types.AllQueryHostChainConfigRespone{
+	return &types.AllQueryHostChainConfigResponse{
 		AllHostChainConfig: allHostChainConfig,
 	}, nil
 }
