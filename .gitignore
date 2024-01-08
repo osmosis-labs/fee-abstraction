@@ -16,3 +16,9 @@
 # Go
 go.work
 go.work.sum
+
+bin/
+
+# IDE config
+.vscode/
+.idea/
