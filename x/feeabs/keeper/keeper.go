@@ -3,7 +3,6 @@ package keeper
 import (
 	"fmt"
 
-	sdkerrors "cosmossdk.io/errors"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -116,7 +115,7 @@ func (k Keeper) verifyIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins) error {
 	if k.HasHostZoneConfig(ctx, ibcDenom) {
 		return nil
 	}
-	return sdkerrors.Wrapf(types.ErrUnsupportedDenom, "unsupported denom: %s", ibcDenom)
+	return types.ErrUnsupportedDenom.Wrapf("unsupported denom: %s", ibcDenom)
 }
 
 func (Keeper) Logger(ctx sdk.Context) log.Logger {
