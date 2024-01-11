@@ -93,6 +93,9 @@ install: go.sum
 build:
 	go build $(BUILD_FLAGS) -o bin/feeappd ./cmd/feeappd
 
+test:
+	go test -race -v ./... 
+
 docker-build-debug:
 	@DOCKER_BUILDKIT=1 docker build -t feeapp:debug -f Dockerfile .
 
@@ -100,7 +103,7 @@ lint:
 	@find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -name '*.gw.go' | xargs go run mvdan.cc/gofumpt -w .
 	@find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -name '*.gw.go' | xargs go run github.com/client9/misspell/cmd/misspell -w
 	@find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -name '*.gw.go' | xargs go run golang.org/x/tools/cmd/goimports -w -local github.com/osmosis-labs/fee-abstraction
-.PHONY: lint
+.PHONY: lint test
 
 ###############################################################################
 ###                             Interchain test                             ###
