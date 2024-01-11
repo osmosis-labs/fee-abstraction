@@ -3,6 +3,7 @@ package keeper
 import (
 	"fmt"
 
+	sdkerrors "cosmossdk.io/errors"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -80,12 +81,12 @@ func (k Keeper) GetDefaultBondDenom(ctx sdk.Context) string {
 func (k Keeper) CalculateNativeFromIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins, chainConfig types.HostChainFeeAbsConfig) (coins sdk.Coins, err error) {
 	err = k.verifyIBCCoins(ctx, ibcCoins)
 	if err != nil {
-		return sdk.Coins{}, nil
+		return sdk.Coins{}, err
 	}
 
 	twapRate, err := k.GetTwapRate(ctx, chainConfig.IbcDenom)
 	if err != nil {
-		return sdk.Coins{}, nil
+		return sdk.Coins{}, err
 	}
 
 	// mul
@@ -107,11 +108,15 @@ func (k Keeper) SendAbstractionFeeToModuleAccount(ctx sdk.Context, ibcCoins sdk.
 
 // return err if IBC token isn't in allowed_list
 func (k Keeper) verifyIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins) error {
-	if k.HasHostZoneConfig(ctx, ibcCoins[0].Denom) {
+	if ibcCoins.Len() != 1 {
+		return types.ErrInvalidIBCFees
+	}
+
+	ibcDenom := ibcCoins[0].Denom
+	if k.HasHostZoneConfig(ctx, ibcDenom) {
 		return nil
 	}
-	// TODO: we should register error for this
-	return fmt.Errorf("unallowed %s for tx fee", ibcCoins[0].Denom)
+	return sdkerrors.Wrapf(types.ErrUnsupportedDenom, "unsupported denom: %s", ibcDenom)
 }
 
 func (Keeper) Logger(ctx sdk.Context) log.Logger {
@@ -132,7 +137,7 @@ func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 func (k Keeper) GetCapability(ctx sdk.Context, name string) *capabilitytypes.Capability {
 	capability, ok := k.scopedKeeper.GetCapability(ctx, name)
 	if !ok {
-		k.Logger(ctx).Error("Error ErrChannelCapabilityNotFound ")
+		k.Logger(ctx).Error(fmt.Sprintf("not found capability with given name: %s", name))
 		return nil
 	}
 	return capability
