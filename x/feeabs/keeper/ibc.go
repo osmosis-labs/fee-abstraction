@@ -193,6 +193,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 
 // OnTimeoutPacket resend packet when timeout
 func (k Keeper) OnTimeoutPacket(ctx sdk.Context) error {
+	ctx.Logger().Info("IBC Timeout packet")
 	return k.handleOsmosisIbcQuery(ctx)
 }
 
@@ -268,8 +269,13 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 
 	params := k.GetParams(ctx)
 
+	batchSize := 10
 	var reqs []types.QueryArithmeticTwapToNowRequest
+	batchCounter := 0
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+		if hostZoneConfig.Frozen {
+			return false
+		}
 		req := types.NewQueryArithmeticTwapToNowRequest(
 			hostZoneConfig.PoolId,
 			params.NativeIbcedInOsmosis,
@@ -277,13 +283,24 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 			startTime,
 		)
 		reqs = append(reqs, req)
+		batchCounter++
+		if batchCounter == batchSize {
+			err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)
+			if err != nil {
+				return true
+			}
+			reqs = []types.QueryArithmeticTwapToNowRequest{}
+			batchCounter = 0
+		}
 		return false
 	})
-	err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)
-	if err != nil {
-		return err
-	}
 
+	if len(reqs) > 0 {
+		err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
