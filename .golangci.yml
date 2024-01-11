@@ -9,7 +9,6 @@ linters:
     - exportloopref
     - errcheck
     - gci
-    - goconst
     - gocritic
     - gofumpt
     - gosec
