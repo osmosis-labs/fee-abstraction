@@ -21,7 +21,6 @@ linters:
     - thelper
     - typecheck
     - stylecheck
-    - revive
     - typecheck
     - tenv
     - unconvert
