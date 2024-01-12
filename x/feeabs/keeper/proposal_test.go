@@ -59,3 +59,55 @@ func (s *KeeperTestSuite) TestAddHostZoneProposal() {
 		})
 	}
 }
+
+func (s *KeeperTestSuite) TestDeleteHostZoneProposal() {
+	s.SetupTest()
+	addrs := simtestutil.AddTestAddrs(s.feeAbsApp.BankKeeper, s.feeAbsApp.StakingKeeper, s.ctx, 10, valTokens)
+
+	hostChainConfig := types.HostChainFeeAbsConfig{
+		IbcDenom:                "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
+		OsmosisPoolTokenDenomIn: "ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E",
+		PoolId:                  1,
+		Frozen:                  false,
+	}
+
+	addProposal := &types.AddHostZoneProposal{
+		Title:           "Title",
+		Description:     "Description",
+		HostChainConfig: &hostChainConfig,
+	}
+
+	legacyProposal, err := govv1types.NewLegacyContent(addProposal, authtypes.NewModuleAddress(govtypes.ModuleName).String())
+	s.Require().NoError(err)
+
+	// Store proposal
+	_, err = s.govKeeper.SubmitProposal(s.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0])
+	s.Require().NoError(err)
+
+	// Execute proposal
+	handler := s.govKeeper.LegacyRouter().GetRoute(addProposal.ProposalRoute())
+	err = handler(s.ctx, addProposal)
+	s.Require().NoError(err)
+
+	hostChainConfig, found := s.feeAbsKeeper.GetHostZoneConfig(s.ctx, hostChainConfig.IbcDenom)
+	s.Require().True(found)
+	s.Require().Equal(hostChainConfig, hostChainConfig)
+
+	// Should no error when delete proposal
+	deleteProposal := &types.DeleteHostZoneProposal{
+		Title:       "Title",
+		Description: "Description",
+		IbcDenom:    "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
+	}
+	legacyProposal, err = govv1types.NewLegacyContent(deleteProposal, authtypes.NewModuleAddress(govtypes.ModuleName).String())
+	s.Require().NoError(err)
+
+	// Store proposal
+	_, err = s.govKeeper.SubmitProposal(s.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0])
+	s.Require().NoError(err)
+
+	// Execute proposal
+	handler = s.govKeeper.LegacyRouter().GetRoute(addProposal.ProposalRoute())
+	err = handler(s.ctx, deleteProposal)
+	s.Require().NoError(err)
+}
