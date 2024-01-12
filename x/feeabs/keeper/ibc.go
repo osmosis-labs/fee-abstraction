@@ -19,6 +19,10 @@ import (
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
+const (
+	timeoutDuration = 5 * time.Minute
+)
+
 // GetPort returns the portID for the module. Used in ExportGenesis.
 func (k Keeper) GetPort(ctx sdk.Context) string {
 	store := ctx.KVStore(k.storeKey)
@@ -84,7 +88,7 @@ func (k Keeper) SendInterchainQuery(
 	sourcePort string,
 	sourceChannel string,
 ) (uint64, error) {
-	timeoutTimestamp := ctx.BlockTime().Add(time.Minute * 5).UnixNano()
+	timeoutTimestamp := ctx.BlockTime().Add(timeoutDuration).UnixNano()
 	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
 	if !ok {
 		return 0, sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
@@ -135,7 +139,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 
 			if icqRes.Code != 0 {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to send interchain query code %d", icqRes.Code))
-				err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+				err := k.FreezeHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 				if err != nil {
 					// should never happen
 					k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
@@ -151,7 +155,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			k.Logger(ctx).Info(fmt.Sprintf("TwapRate %v", twapRate))
 			k.SetTwapRate(ctx, hostZoneConfig.IbcDenom, twapRate)
 
-			err = k.UnFrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+			err = k.UnFreezeHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 			if err != nil {
 				// should never happen
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
@@ -168,7 +172,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 		)
 	case *channeltypes.Acknowledgement_Error:
 		k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-			err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+			err := k.FreezeHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 			if err != nil {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
 			}
@@ -224,7 +228,7 @@ func (k Keeper) transferOsmosisCrosschainSwap(ctx sdk.Context, hostChainConfig t
 		return err
 	}
 
-	timeoutTimestamp := ctx.BlockTime().Add(time.Minute * 5).UnixNano()
+	timeoutTimestamp := ctx.BlockTime().Add(timeoutDuration).UnixNano()
 
 	transferMsg := transfertypes.MsgTransfer{
 		SourcePort:       transfertypes.PortID,
@@ -306,7 +310,7 @@ func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
 
 		if err != nil {
 			k.Logger(ctx).Error(fmt.Sprintf("Failed to transfer IBC token %s", err.Error()))
-			err = k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+			err = k.FreezeHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 			if err != nil {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozem host zone %s", err.Error()))
 			}
