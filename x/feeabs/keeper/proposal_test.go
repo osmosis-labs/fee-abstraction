@@ -72,8 +72,8 @@ func (s *KeeperTestSuite) TestDeleteHostZoneProposal() {
 	}
 
 	addProposal := &types.AddHostZoneProposal{
-		Title:           "Title",
-		Description:     "Description",
+		Title:           "AddHostZoneProposal Title",
+		Description:     "AddHostZoneProposal Description",
 		HostChainConfig: &hostChainConfig,
 	}
 
@@ -93,21 +93,49 @@ func (s *KeeperTestSuite) TestDeleteHostZoneProposal() {
 	s.Require().True(found)
 	s.Require().Equal(hostChainConfig, hostChainConfig)
 
-	// Should no error when delete proposal
-	deleteProposal := &types.DeleteHostZoneProposal{
-		Title:       "Title",
-		Description: "Description",
-		IbcDenom:    "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
+	testCases := []struct {
+		desc           string
+		deleteProposal *types.DeleteHostZoneProposal
+		shouldError    bool
+	}{
+		{
+			desc: "should success when delete an exists host zone config.",
+			deleteProposal: &types.DeleteHostZoneProposal{
+				Title:       "DeleteHostZoneProposal Title",
+				Description: "DeleteHostZoneProposal Description",
+				IbcDenom:    "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
+			},
+			shouldError: false,
+		},
+		{
+			deleteProposal: &types.DeleteHostZoneProposal{
+				Title:       "DeleteHostZoneProposal Title",
+				Description: "DeleteHostZoneProposal Description",
+				IbcDenom:    "ibc/00000",
+			},
+			desc:        "should error when delete a not exists host zone config.",
+			shouldError: true,
+		},
 	}
-	legacyProposal, err = govv1types.NewLegacyContent(deleteProposal, authtypes.NewModuleAddress(govtypes.ModuleName).String())
-	s.Require().NoError(err)
 
-	// Store proposal
-	_, err = s.govKeeper.SubmitProposal(s.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0])
-	s.Require().NoError(err)
+	for _, tc := range testCases {
+		s.Run(tc.desc, func() {
+			legacyProposal, err := govv1types.NewLegacyContent(tc.deleteProposal, authtypes.NewModuleAddress(govtypes.ModuleName).String())
+			s.Require().NoError(err)
 
-	// Execute proposal
-	handler = s.govKeeper.LegacyRouter().GetRoute(addProposal.ProposalRoute())
-	err = handler(s.ctx, deleteProposal)
-	s.Require().NoError(err)
+			// Store proposal
+			_, err = s.govKeeper.SubmitProposal(s.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0])
+			if !tc.shouldError {
+				s.Require().NoError(err)
+			} else {
+				s.Require().Error(err)
+				return
+			}
+
+			// Execute proposal
+			handler = s.govKeeper.LegacyRouter().GetRoute(addProposal.ProposalRoute())
+			err = handler(s.ctx, tc.deleteProposal)
+			s.Require().NoError(err)
+		})
+	}
 }
