@@ -513,7 +513,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, paramTx.ProposalID, cosmos.ProposalStatusPassed)
 		require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
-		_, err = cosmos.FeeabsAddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName(), "./proposal/host_zone.json")
+		_, err = cosmos.FeeabsAddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName(), "./proposal/add_host_zone.json")
 		require.NoError(t, err)
 
 		err = feeabs.VoteOnProposalAllValidators(ctx, "2", cosmos.ProposalVoteYes)
