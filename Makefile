@@ -121,6 +121,9 @@ ictest-ibc:
 ictest-packet-forward:
 	cd tests/interchaintest && go test -timeout=25m -race -v -run TestPacketForwardMiddleware .
 
+ictest-host-zone-proposal:
+	cd tests/interchaintest && go test -timeout=25m -race -v -run TestHostZoneProposal .
+
 # Executes all tests via interchaintest after compling a local image as juno:local
 ictest-all: ictest-basic ictest-ibc ictest-packet-forward
 
