@@ -16,7 +16,7 @@ func TestParseMsgToMemo(t *testing.T) {
 	}
 
 	swap := types.Swap{
-		OutPutDenom: "khanhyeuchau",
+		OutputDenom: "denom",
 		Slippage:    types.Twap{Twap: twapRouter},
 		Receiver:    "123456",
 	}

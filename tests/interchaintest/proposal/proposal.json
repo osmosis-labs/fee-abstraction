@@ -4,27 +4,27 @@
     "changes": [
       {
         "subspace": "feeabs",
-        "key": "nativeibcedinosmosis",
+        "key": "NativeIbcedInOsmosis",
         "value": "ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878"
       },
       {
         "subspace": "feeabs",
-        "key": "chainname",
+        "key": "ChainName",
         "value": "feeabs"
       },
       {
         "subspace": "feeabs",
-        "key": "ibctransferchannel",
+        "key": "IbcTransferChannel",
         "value": "channel-0"
       },
       {
         "subspace": "feeabs",
-        "key": "ibcqueryicqchannel",
+        "key": "IbcQueryIcqChannel",
         "value": "channel-1"
       },
       {
         "subspace": "feeabs",
-        "key": "osmosiscrosschainswapaddress",
+        "key": "OsmosisCrosschainSwapAddress",
         "value": "osmo17p9rzwnnfxcjp32un9ug7yhhzgtkhvl9jfksztgw5uh69wac2pgs5yczr8"
       }
     ],
