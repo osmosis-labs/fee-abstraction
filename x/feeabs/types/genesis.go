@@ -1,6 +1,6 @@
 package types
 
-import fmt "fmt"
+import "fmt"
 
 // DefaultGenesis returns the incentive module's default genesis state.
 func DefaultGenesis() *GenesisState {
