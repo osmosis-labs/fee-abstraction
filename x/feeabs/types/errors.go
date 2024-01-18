@@ -11,4 +11,5 @@ var (
 	ErrDuplicateHostZoneConfig      = sdkerrors.Register(ModuleName, 4, "duplicate host zone config")
 	ErrNotEnoughFundInModuleAddress = sdkerrors.Register(ModuleName, 5, "not have funding yet")
 	ErrUnsupportedDenom             = sdkerrors.Register(ModuleName, 6, "unsupported denom")
+	ErrHostZoneFrozen               = sdkerrors.Register(ModuleName, 7, "host zone frozen")
 )
