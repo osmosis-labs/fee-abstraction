@@ -38,13 +38,19 @@ func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQ
 
 func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossChain) (*types.MsgSwapCrossChainResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
+	if err != nil {
+		return nil, err
+	}
+
 	hostChainConfig, found := k.GetHostZoneConfig(ctx, msg.IbcDenom)
 	if !found {
 		return nil, types.ErrHostZoneConfigNotFound
 	}
-	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
-	if err != nil {
-		return nil, err
+
+	if hostChainConfig.Frozen {
+		return nil, types.ErrHostZoneFrozen
 	}
 
 	err = k.transferOsmosisCrosschainSwap(ctx, hostChainConfig)
