@@ -10,9 +10,9 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router"
-	routerkeeper "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router/keeper"
-	routertypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router/types"
+	packetforward "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/packetforward"
+	packetforwardkeeper "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/packetforward/keeper"
+	packetforwardtypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/packetforward/types"
 	ica "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts"
 	icacontrollerkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/keeper"
 	icacontrollertypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/types"
@@ -168,7 +168,7 @@ var (
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
-		router.AppModuleBasic{},
+		packetforward.AppModuleBasic{},
 		ica.AppModuleBasic{},
 		solomachine.AppModuleBasic{},
 		feeabsmodule.AppModuleBasic{},
@@ -237,7 +237,7 @@ type FeeAbs struct { // nolint: golint
 	FeeabsKeeper          feeabskeeper.Keeper
 	ConsensusParamsKeeper consensusparamkeeper.Keeper
 
-	RouterKeeper *routerkeeper.Keeper
+	RouterKeeper *packetforwardkeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper
@@ -289,7 +289,7 @@ func NewFeeAbs(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey, upgradetypes.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, feeabstypes.StoreKey,
-		capabilitytypes.StoreKey, feegrant.StoreKey, authzkeeper.StoreKey, routertypes.StoreKey,
+		capabilitytypes.StoreKey, feegrant.StoreKey, authzkeeper.StoreKey, packetforwardtypes.StoreKey,
 		icahosttypes.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey, crisistypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -423,15 +423,15 @@ func NewFeeAbs(
 	)
 
 	// RouterKeeper must be created before TransferKeeper
-	app.RouterKeeper = routerkeeper.NewKeeper(
+	app.RouterKeeper = packetforwardkeeper.NewKeeper(
 		appCodec,
-		app.keys[routertypes.StoreKey],
-		app.GetSubspace(routertypes.ModuleName),
+		app.keys[packetforwardtypes.StoreKey],
 		app.TransferKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		app.DistrKeeper,
 		app.BankKeeper,
 		app.IBCKeeper.ChannelKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	// Create Transfer Keepers
@@ -449,7 +449,7 @@ func NewFeeAbs(
 
 	app.RouterKeeper.SetTransferKeeper(app.TransferKeeper)
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
-	routerModule := router.NewAppModule(app.RouterKeeper)
+	routerModule := packetforward.NewAppModule(app.RouterKeeper)
 
 	app.FeeabsKeeper = feeabskeeper.NewKeeper(
 		appCodec,
@@ -478,12 +478,12 @@ func NewFeeAbs(
 
 	var ibcStack porttypes.IBCModule
 	ibcStack = transfer.NewIBCModule(app.TransferKeeper)
-	ibcStack = router.NewIBCMiddleware(
+	ibcStack = packetforward.NewIBCMiddleware(
 		ibcStack,
 		app.RouterKeeper,
 		0,
-		routerkeeper.DefaultForwardTransferPacketTimeoutTimestamp,
-		routerkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
+		packetforwardkeeper.DefaultForwardTransferPacketTimeoutTimestamp,
+		packetforwardkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
 	)
 
 	app.ICAHostKeeper = icahostkeeper.NewKeeper(
@@ -611,7 +611,7 @@ func NewFeeAbs(
 		ibcexported.ModuleName,
 		feeabstypes.ModuleName,
 		icatypes.ModuleName,
-		routertypes.ModuleName,
+		packetforwardtypes.ModuleName,
 		// intertxtypes.ModuleName,
 	)
 
@@ -637,7 +637,7 @@ func NewFeeAbs(
 		ibcexported.ModuleName,
 		feeabstypes.ModuleName,
 		icatypes.ModuleName,
-		routertypes.ModuleName,
+		packetforwardtypes.ModuleName,
 		// intertxtypes.ModuleName,
 	)
 
@@ -668,7 +668,7 @@ func NewFeeAbs(
 		ibcexported.ModuleName,
 		feeabstypes.ModuleName,
 		icatypes.ModuleName,
-		routertypes.ModuleName,
+		packetforwardtypes.ModuleName,
 	)
 
 	// Uncomment if you want to set a custom migration order here.
@@ -982,7 +982,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(crisistypes.ModuleName)
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibcexported.ModuleName)
-	paramsKeeper.Subspace(routertypes.ModuleName).WithKeyTable(routertypes.ParamKeyTable())
+	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(feeabstypes.ModuleName)
