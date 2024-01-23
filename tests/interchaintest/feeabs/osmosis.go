@@ -49,7 +49,6 @@ func CreatePool(c *cosmos.CosmosChain, ctx context.Context, keyName string, para
 func SetupProposePFM(c *cosmos.CosmosChain, ctx context.Context, keyName string, contractAddress string, message string, ibcdenom string) (txHash string, err error) {
 	oneCoin := strconv.FormatInt(1, 10)
 	amount := oneCoin + ibcdenom
-	fmt.Println(amount)
 	tn := getFullNode(c)
 	return tn.ExecTx(ctx, keyName,
 		"wasm", "execute", contractAddress, message, "--amount", amount, "--gas", "1000000",

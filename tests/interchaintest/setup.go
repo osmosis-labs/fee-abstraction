@@ -1,6 +1,7 @@
 package interchaintest
 
 import (
+	"cosmossdk.io/math"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -67,6 +68,7 @@ var (
 	pathFeeabsOsmosis   = "feeabs-osmosis"
 	pathOsmosisGaia     = "osmosis-gaia"
 	genesisWalletAmount = int64(10_000_000)
+	amountToSend        = math.NewInt(1_000_000_000)
 )
 
 // feeabsEncoding registers the feeabs specific module codecs so that the associated types and msgs
