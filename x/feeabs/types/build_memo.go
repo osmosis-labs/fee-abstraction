@@ -2,7 +2,7 @@ package types
 
 import (
 	"encoding/json"
-	fmt "fmt"
+	"fmt"
 	"time"
 )
 
