@@ -257,14 +257,12 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 }
 
 func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
-	hasQueryEpochInfo := k.HasEpochInfo(ctx, types.DefaultQueryEpochIdentifier)
-	if !hasQueryEpochInfo {
+	// set startTime for query twap
+	queryTwapEpochInfo, found := k.GetEpochInfo(ctx, types.DefaultQueryEpochIdentifier)
+	if !found {
 		k.Logger(ctx).Error(fmt.Sprintf("Don't have query epoch information: %s", types.DefaultQueryEpochIdentifier))
 		return nil
 	}
-
-	// set startTime for query twap
-	queryTwapEpochInfo := k.GetEpochInfo(ctx, types.DefaultQueryEpochIdentifier)
 	startTime := ctx.BlockTime().Add(-queryTwapEpochInfo.Duration)
 	k.Logger(ctx).Info(fmt.Sprintf("Start time: %v", startTime.Unix()))
 
