@@ -392,7 +392,7 @@ func TestHostZoneProposal(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, amountToSend, osmosisUserBalance)
 
-	poolID, err := cosmos.OsmosisCreatePool(osmosis, ctx, osmosisUser.KeyName(), cosmos.OsmosisPoolParams{
+	poolID, err := feeabsCli.CreatePool(osmosis, ctx, osmosisUser.KeyName(), cosmos.OsmosisPoolParams{
 		Weights:        fmt.Sprintf("5%s,5%s", stakeOnOsmosis, uatomOnOsmosis),
 		InitialDeposit: fmt.Sprintf("95000000%s,950000000%s", stakeOnOsmosis, uatomOnOsmosis),
 		SwapFee:        "0.01",
@@ -404,7 +404,7 @@ func TestHostZoneProposal(t *testing.T) {
 
 	// Setup propose_pfm
 	// propose_pfm for feeabs
-	_, err = cosmos.OsmosisSetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "feeabs"}}`, stakeOnOsmosis)
+	_, err = feeabsCli.SetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "feeabs"}}`, stakeOnOsmosis)
 	require.NoError(t, err)
 	err = testutil.WaitForBlocks(ctx, 15, feeabs, gaia, osmosis)
 	require.NoError(t, err)
@@ -416,7 +416,7 @@ func TestHostZoneProposal(t *testing.T) {
 	res := QuerySmartMsgResponse{}
 	osmosis.QueryContract(ctx, registryContractAddress, queryMsg, res)
 	// propose_pfm for gaia
-	_, err = cosmos.OsmosisSetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "gaia"}}`, uatomOnOsmosis)
+	_, err = feeabsCli.SetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "gaia"}}`, uatomOnOsmosis)
 	require.NoError(t, err)
 	err = testutil.WaitForBlocks(ctx, 15, feeabs, gaia, osmosis)
 	require.NoError(t, err)
@@ -456,7 +456,7 @@ func TestHostZoneProposal(t *testing.T) {
 	// send ibc token to feeabs module account
 	gaiaHeight, err = gaia.Height(ctx)
 	require.NoError(t, err)
-	feeabsModule, err := QueryFeeabsModuleAccountBalances(feeabs, ctx)
+	feeabsModule, err := feeabsCli.QueryModuleAccountBalances(feeabs, ctx)
 	require.NoError(t, err)
 	dstAddress = feeabsModule.Address
 	transfer = ibc.WalletAmount{
@@ -477,7 +477,7 @@ func TestHostZoneProposal(t *testing.T) {
 	denomTrace = transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channFeeabsGaia.PortID, channFeeabsGaia.ChannelID, gaia.Config().Denom))
 
 	// Start testing for add host zone proposal
-	_, err = cosmos.FeeabsAddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName(), "./proposal/add_host_zone.json")
+	_, err = feeabsCli.AddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName(), "./proposal/add_host_zone.json")
 	require.NoError(t, err)
 
 	err = feeabs.VoteOnProposalAllValidators(ctx, "1", cosmos.ProposalVoteYes)
@@ -487,7 +487,7 @@ func TestHostZoneProposal(t *testing.T) {
 	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, "1", cosmos.ProposalStatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
-	config, err := feeabsCli.QueryFeeabsHostZoneConfigWithDenom(feeabs, ctx, "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9")
+	config, err := feeabsCli.QueryHostZoneConfigWithDenom(feeabs, ctx, "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9")
 	require.NoError(t, err)
 	require.Equal(t, config, &feeabsCli.HostChainFeeAbsConfigResponse{HostChainConfig: feeabsCli.HostChainFeeAbsConfig{
 		IbcDenom:                "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
@@ -507,7 +507,7 @@ func TestHostZoneProposal(t *testing.T) {
 	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, "2", cosmos.ProposalStatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
-	config, err = feeabsCli.QueryFeeabsHostZoneConfigWithDenom(feeabs, ctx, "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9")
+	config, err = feeabsCli.QueryHostZoneConfigWithDenom(feeabs, ctx, "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9")
 	require.NoError(t, err)
 	require.Equal(t, config, &feeabsCli.HostChainFeeAbsConfigResponse{HostChainConfig: feeabsCli.HostChainFeeAbsConfig{
 		IbcDenom:                "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
@@ -528,7 +528,7 @@ func TestHostZoneProposal(t *testing.T) {
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 	fmt.Printf("response: %s\n", response)
 
-	config, err = feeabsCli.QueryFeeabsHostZoneConfigWithDenom(feeabs, ctx, "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9")
+	config, err = feeabsCli.QueryHostZoneConfigWithDenom(feeabs, ctx, "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9")
 	require.Equal(t, config, &feeabsCli.HostChainFeeAbsConfigResponse{HostChainConfig: feeabsCli.HostChainFeeAbsConfig{
 		IbcDenom:                "",
 		OsmosisPoolTokenDenomIn: "",

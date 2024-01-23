@@ -2,19 +2,17 @@ package interchaintest
 
 import (
 	"context"
-	"encoding/json"
+	"cosmossdk.io/math"
 	"fmt"
+	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
+	feeabsCli "github.com/notional-labs/fee-abstraction/tests/interchaintest/feeabs"
 	"os"
 	"path"
 	"testing"
-	"time"
-
-	"cosmossdk.io/math"
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
-	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
 
 	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
-	interchaintest "github.com/strangelove-ventures/interchaintest/v7"
+	"github.com/strangelove-ventures/interchaintest/v7"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v7/ibc"
 	"github.com/strangelove-ventures/interchaintest/v7/testreporter"
@@ -22,20 +20,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
 )
-
-type PacketMetadata struct {
-	Forward *ForwardMetadata `json:"forward"`
-}
-
-type ForwardMetadata struct {
-	Receiver       string        `json:"receiver"`
-	Port           string        `json:"port"`
-	Channel        string        `json:"channel"`
-	Timeout        time.Duration `json:"timeout"`
-	Retries        *uint8        `json:"retries,omitempty"`
-	Next           *string       `json:"next,omitempty"`
-	RefundSequence *uint64       `json:"refund_sequence,omitempty"`
-}
 
 func TestPacketForwardMiddleware(t *testing.T) {
 	if testing.Short() {
@@ -412,7 +396,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, amountToSend, osmosisUserBalance)
 
-		poolID, err := cosmos.OsmosisCreatePool(osmosis, ctx, osmosisUser.KeyName(), cosmos.OsmosisPoolParams{
+		poolID, err := feeabsCli.CreatePool(osmosis, ctx, osmosisUser.KeyName(), cosmos.OsmosisPoolParams{
 			Weights:        fmt.Sprintf("5%s,5%s", stakeOnOsmosis, uatomOnOsmosis),
 			InitialDeposit: fmt.Sprintf("95000000%s,950000000%s", stakeOnOsmosis, uatomOnOsmosis),
 			SwapFee:        "0.01",
@@ -424,7 +408,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 
 		// Setup propose_pfm
 		// propose_pfm for feeabs
-		_, err = cosmos.OsmosisSetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "feeabs"}}`, stakeOnOsmosis)
+		_, err = feeabsCli.SetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "feeabs"}}`, stakeOnOsmosis)
 		require.NoError(t, err)
 		err = testutil.WaitForBlocks(ctx, 15, feeabs, gaia, osmosis)
 		require.NoError(t, err)
@@ -436,7 +420,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		res := QuerySmartMsgResponse{}
 		osmosis.QueryContract(ctx, registryContractAddress, queryMsg, res)
 		// propose_pfm for gaia
-		_, err = cosmos.OsmosisSetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "gaia"}}`, uatomOnOsmosis)
+		_, err = feeabsCli.SetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "gaia"}}`, uatomOnOsmosis)
 		require.NoError(t, err)
 		err = testutil.WaitForBlocks(ctx, 15, feeabs, gaia, osmosis)
 		require.NoError(t, err)
@@ -476,7 +460,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		// send ibc token to feeabs module account
 		gaiaHeight, err = gaia.Height(ctx)
 		require.NoError(t, err)
-		feeabsModule, err := QueryFeeabsModuleAccountBalances(feeabs, ctx)
+		feeabsModule, err := feeabsCli.QueryModuleAccountBalances(feeabs, ctx)
 		require.NoError(t, err)
 		dstAddress = feeabsModule.Address
 		transfer = ibc.WalletAmount{
@@ -503,7 +487,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		changeParamProposal, err := paramsutils.ParseParamChangeProposalJSON(feeabs.Config().EncodingConfig.Amino, param_change_path)
 		require.NoError(t, err)
 
-		paramTx, err := feeabs.ParamChangeProposal(ctx, feeabsUser.KeyName(), &changeParamProposal)
+		paramTx, err := feeabsCli.ParamChangeProposal(feeabs, ctx, feeabsUser.KeyName(), &changeParamProposal)
 		require.NoError(t, err, "error submitting param change proposal tx")
 
 		err = feeabs.VoteOnProposalAllValidators(ctx, paramTx.ProposalID, cosmos.ProposalVoteYes)
@@ -513,7 +497,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, paramTx.ProposalID, cosmos.ProposalStatusPassed)
 		require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
-		_, err = cosmos.FeeabsAddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName(), "./proposal/add_host_zone.json")
+		_, err = feeabsCli.AddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName(), "./proposal/add_host_zone.json")
 		require.NoError(t, err)
 
 		err = feeabs.VoteOnProposalAllValidators(ctx, "2", cosmos.ProposalVoteYes)
@@ -523,24 +507,24 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, "2", cosmos.ProposalStatusPassed)
 		require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
-		_, err = QueryFeeabsHostZoneConfig(feeabs, ctx)
+		_, err = feeabsCli.QueryHostZoneConfig(feeabs, ctx)
 		require.NoError(t, err)
 		// xcs
 		feeabsHeight, err = feeabs.Height(ctx)
 		require.NoError(t, err)
 
-		feeabsModule, err = QueryFeeabsModuleAccountBalances(feeabs, ctx)
+		feeabsModule, err = feeabsCli.QueryModuleAccountBalances(feeabs, ctx)
 		require.NoError(t, err)
 		fmt.Printf("Module Account Balances before swap: %v\n", feeabsModule.Balances)
 
-		transferTx, err := cosmos.FeeabsCrossChainSwap(feeabs, ctx, feeabsUser.KeyName(), uatomOnFeeabs)
+		transferTx, err := feeabsCli.CrossChainSwap(feeabs, ctx, feeabsUser.KeyName(), uatomOnFeeabs)
 		require.NoError(t, err)
 		_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+25, transferTx.Packet)
 		require.NoError(t, err)
 		err = testutil.WaitForBlocks(ctx, 50, feeabs, gaia, osmosis)
 		require.NoError(t, err)
 
-		feeabsModule, err = QueryFeeabsModuleAccountBalances(feeabs, ctx)
+		feeabsModule, err = feeabsCli.QueryModuleAccountBalances(feeabs, ctx)
 		require.NoError(t, err)
 		fmt.Printf("Module Account Balances after swap: %v\n", feeabsModule.Balances)
 
@@ -548,36 +532,4 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		require.NoError(t, err)
 		require.True(t, balance.GT(math.NewInt(1)))
 	})
-}
-
-func QueryFeeabsHostZoneConfig(c *cosmos.CosmosChain, ctx context.Context) (*QueryHostChainConfigResponse, error) {
-	cmd := []string{"feeabs", "all-host-chain-config"}
-	stdout, _, err := c.ExecQuery(ctx, cmd)
-	if err != nil {
-		return &QueryHostChainConfigResponse{}, err
-	}
-
-	var hostZoneConfig QueryHostChainConfigResponse
-	err = json.Unmarshal(stdout, &hostZoneConfig)
-	if err != nil {
-		return &QueryHostChainConfigResponse{}, err
-	}
-
-	return &hostZoneConfig, nil
-}
-
-func QueryFeeabsModuleAccountBalances(c *cosmos.CosmosChain, ctx context.Context) (*QueryFeeabsModuleBalacesResponse, error) {
-	cmd := []string{"feeabs", "module-balances"}
-	stdout, _, err := c.ExecQuery(ctx, cmd)
-	if err != nil {
-		return &QueryFeeabsModuleBalacesResponse{}, err
-	}
-
-	var feeabsModule QueryFeeabsModuleBalacesResponse
-	err = json.Unmarshal(stdout, &feeabsModule)
-	if err != nil {
-		return &QueryFeeabsModuleBalacesResponse{}, err
-	}
-
-	return &feeabsModule, nil
 }

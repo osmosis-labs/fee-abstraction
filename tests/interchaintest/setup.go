@@ -6,10 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/icza/dyno"
-	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos/wasm"
 
 	feeabstype "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
@@ -17,15 +15,6 @@ import (
 	// "github.com/strangelove-ventures/interchaintest/v7/chain/cosmos/wasm"
 	"github.com/strangelove-ventures/interchaintest/v7/ibc"
 )
-
-type QueryFeeabsModuleBalacesResponse struct {
-	Balances types.Coins
-	Address  string
-}
-
-type QueryHostChainConfigResponse struct {
-	HostChainConfig cosmos.HostChainFeeAbsConfig `protobuf:"bytes,1,opt,name=host_chain_config,json=hostChainConfig,proto3" json:"host_chain_config" yaml:"host_chain_config"`
-}
 
 type HasPacketForwarding struct {
 	ChainID string `json:"chain"`
