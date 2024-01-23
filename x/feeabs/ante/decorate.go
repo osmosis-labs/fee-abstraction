@@ -46,12 +46,11 @@ func (fadfd FeeAbstractionDeductFeeDecorate) AnteHandle(ctx sdk.Context, tx sdk.
 	}
 
 	feeDenom := fee.GetDenomByIndex(0)
-	hasHostChainConfig := fadfd.feeabsKeeper.HasHostZoneConfig(ctx, feeDenom)
-	if !hasHostChainConfig {
+	hostChainConfig, found := fadfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
+	if !found {
 		return fadfd.normalDeductFeeAnteHandle(ctx, tx, simulate, next, feeTx)
 	}
 
-	hostChainConfig, _ := fadfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
 	return fadfd.abstractionDeductFeeHandler(ctx, tx, simulate, next, feeTx, hostChainConfig)
 }
 
@@ -251,9 +250,8 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		// TODO: Support more fee token in feeRequired for fee-abstraction
 		if feeCoinsNonZeroDenom.Len() == 1 {
 			feeDenom := feeCoinsNonZeroDenom.GetDenomByIndex(0)
-			hasHostChainConfig := famfd.feeabsKeeper.HasHostZoneConfig(ctx, feeDenom)
-			if hasHostChainConfig {
-				hostChainConfig, _ := famfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
+			hostChainConfig, found := famfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
+			if found {
 				if hostChainConfig.Frozen {
 					return ctx, sdkerrors.Wrapf(feeabstypes.ErrHostZoneFrozen, "cannot deduct fee as host zone is frozen")
 				}
