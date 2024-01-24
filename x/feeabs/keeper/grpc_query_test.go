@@ -110,15 +110,15 @@ func (s *KeeperTestSuite) TestHostChainConfig() {
 }
 
 func randStringRunes(n int) string {
-	rand.Seed(time.Now().UnixNano()) //nolint:staticcheck // this is for testing
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	b := make([]rune, n)
 	for i := range b {
-		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+		b[i] = letterRunes[r.Intn(len(letterRunes))]
 	}
 	return string(b)
 }
 
 func randUint64Num() uint64 {
-	rand.Seed(time.Now().UnixNano()) //nolint:staticcheck // this is for testing
-	return rand.Uint64()
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	return r.Uint64()
 }
