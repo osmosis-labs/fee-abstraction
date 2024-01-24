@@ -255,7 +255,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 				if hostChainConfig.Frozen {
 					return ctx, sdkerrors.Wrapf(feeabstypes.ErrHostZoneFrozen, "cannot deduct fee as host zone is frozen")
 				}
-				nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, feeCoins, hostChainConfig)
+				nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, nonZeroCoinFeesReq, hostChainConfig)
 				if err != nil {
 					return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees")
 				}
