@@ -80,12 +80,6 @@ func TestHostZoneProposal(t *testing.T) {
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 	fmt.Printf("response: %s\n", response)
 
-	config, err = feeabsCli.QueryHostZoneConfigWithDenom(feeabs, ctx, "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9")
-	require.NoError(t, err)
-	require.Equal(t, config, &feeabsCli.HostChainFeeAbsConfigResponse{HostChainConfig: feeabsCli.HostChainFeeAbsConfig{
-		IbcDenom:                "",
-		OsmosisPoolTokenDenomIn: "",
-		PoolId:                  "",
-		Frozen:                  false,
-	}})
+	_, err = feeabsCli.QueryHostZoneConfigWithDenom(feeabs, ctx, "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9")
+	require.Error(t, err) // not found
 }
