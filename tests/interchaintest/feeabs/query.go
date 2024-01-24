@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 )
 
@@ -41,19 +42,33 @@ func QueryHostZoneConfig(c *cosmos.CosmosChain, ctx context.Context) (*HostChain
 	return &hostZoneConfig, nil
 }
 
-func QueryModuleAccountBalances(c *cosmos.CosmosChain, ctx context.Context) (*QueryFeeabsModuleBalacesResponse, error) {
+func QueryModuleAccountBalances(c *cosmos.CosmosChain, ctx context.Context) (*feeabstypes.QueryFeeabsModuleBalacesResponse, error) {
 	tn := getFullNode(c)
 	cmd := []string{"feeabs", "module-balances"}
 	stdout, _, err := tn.ExecQuery(ctx, cmd...)
 	if err != nil {
-		return &QueryFeeabsModuleBalacesResponse{}, err
+		return &feeabstypes.QueryFeeabsModuleBalacesResponse{}, err
 	}
 
-	var feeabsModule QueryFeeabsModuleBalacesResponse
-	err = json.Unmarshal(stdout, &feeabsModule)
+	var response feeabstypes.QueryFeeabsModuleBalacesResponse
+	if err = json.Unmarshal(stdout, &response); err != nil {
+		return &feeabstypes.QueryFeeabsModuleBalacesResponse{}, err
+	}
+
+	return &response, nil
+}
+
+func QueryOsmosisArithmeticTwap(c *cosmos.CosmosChain, ctx context.Context, ibcDenom string) (*feeabstypes.QueryOsmosisArithmeticTwapResponse, error) {
+	node := getFullNode(c)
+	cmd := []string{"feeabs", "osmo-arithmetic-twap", ibcDenom}
+	stdout, _, err := node.ExecQuery(ctx, cmd...)
 	if err != nil {
-		return &QueryFeeabsModuleBalacesResponse{}, err
+		return &feeabstypes.QueryOsmosisArithmeticTwapResponse{}, err
 	}
 
-	return &feeabsModule, nil
+	var response feeabstypes.QueryOsmosisArithmeticTwapResponse
+	if err = json.Unmarshal(stdout, &response); err != nil {
+		return &feeabstypes.QueryOsmosisArithmeticTwapResponse{}, err
+	}
+	return &response, nil
 }
