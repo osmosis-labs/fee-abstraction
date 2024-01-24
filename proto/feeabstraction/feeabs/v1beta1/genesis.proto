@@ -1,15 +1,15 @@
 syntax = "proto3";
-package feeabstraction.absfee.v1beta1;
+package feeabstraction.feeabs.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
-import "feeabstraction/absfee/v1beta1/params.proto";
-import "feeabstraction/absfee/v1beta1/epoch.proto";
+import "feeabstraction/feeabs/v1beta1/params.proto";
+import "feeabstraction/feeabs/v1beta1/epoch.proto";
 
 option go_package = "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types";
 
-// Params defines the parameters for the feeabs module.
+// GenesisState defines the feeabs module's genesis state.
 message GenesisState {
   Params params = 1 [
     (gogoproto.moretags) = "yaml:\"params\"",

@@ -1,18 +1,18 @@
 syntax = "proto3";
-package feeabstraction.absfee.v1beta1;
+package feeabstraction.feeabs.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "feeabstraction/absfee/v1beta1/params.proto";
-import "feeabstraction/absfee/v1beta1/osmosisibc.proto";
-import "feeabstraction/absfee/v1beta1/proposal.proto";
+import "feeabstraction/feeabs/v1beta1/params.proto";
+import "feeabstraction/feeabs/v1beta1/osmosisibc.proto";
+import "feeabstraction/feeabs/v1beta1/proposal.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
 option go_package = "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types";
 
 // Query defines the gRPC querier service.
 service Query {
-  // OsmosisSpotPrice return spot price of pair Osmo/nativeToken
+  // OsmosisArithmeticTwap return spot price of pair Osmo/nativeToken
   rpc OsmosisArithmeticTwap(QueryOsmosisArithmeticTwapRequest)
       returns (QueryOsmosisArithmeticTwapResponse) {
     option (google.api.http).get =
@@ -46,8 +46,8 @@ message QueryHostChainConfigResponse {
   ];
 }
 
-// QueryOsmosisSpotPriceRequest is the request type for the Query/Feeabs RPC
-// method.
+// QueryOsmosisArithmeticTwapRequest is the request type for the Query/Feeabs
+// RPC method.
 message QueryOsmosisArithmeticTwapRequest { string ibc_denom = 1; }
 
 message QueryOsmosisArithmeticTwapResponse {
