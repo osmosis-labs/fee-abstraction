@@ -10,9 +10,8 @@ import (
 	"cosmossdk.io/math"
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
-	feeabsCli "github.com/notional-labs/fee-abstraction/tests/interchaintest/feeabs"
-
 	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
+	feeabsCli "github.com/notional-labs/fee-abstraction/tests/interchaintest/feeabs"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v7/ibc"
 	"github.com/strangelove-ventures/interchaintest/v7/testutil"

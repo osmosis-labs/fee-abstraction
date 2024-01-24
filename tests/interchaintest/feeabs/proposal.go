@@ -5,6 +5,11 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
+	"strconv"
+	"time"
+
 	"github.com/avast/retry-go/v4"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types"
@@ -13,10 +18,6 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v7/ibc"
 	"github.com/strangelove-ventures/interchaintest/v7/testutil"
-	"os"
-	"path/filepath"
-	"strconv"
-	"time"
 )
 
 func getFullNode(c *cosmos.CosmosChain) *cosmos.ChainNode {

@@ -1,6 +1,8 @@
 package feeabs
 
-import "github.com/cosmos/cosmos-sdk/types"
+import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 type HostChainFeeAbsConfigResponse struct {
 	HostChainConfig HostChainFeeAbsConfig `json:"host_chain_config"`
@@ -21,6 +23,6 @@ type AddHostZoneProposalType struct {
 }
 
 type QueryFeeabsModuleBalacesResponse struct {
-	Balances types.Coins
+	Balances sdk.Coins
 	Address  string
 }

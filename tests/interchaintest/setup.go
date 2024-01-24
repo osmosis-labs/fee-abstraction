@@ -1,19 +1,16 @@
 package interchaintest
 
 import (
-	"cosmossdk.io/math"
 	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
 
+	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/icza/dyno"
-	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos/wasm"
-
 	feeabstype "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
-
-	// "github.com/strangelove-ventures/interchaintest/v7/chain/cosmos/wasm"
+	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos/wasm"
 	"github.com/strangelove-ventures/interchaintest/v7/ibc"
 )
 
