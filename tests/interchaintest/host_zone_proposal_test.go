@@ -3,8 +3,9 @@ package interchaintest
 import (
 	"context"
 	"fmt"
-	feeabsCli "github.com/notional-labs/fee-abstraction/tests/interchaintest/feeabs"
 	"testing"
+
+	feeabsCli "github.com/notional-labs/fee-abstraction/tests/interchaintest/feeabs"
 
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/stretchr/testify/require"
@@ -28,7 +29,9 @@ func TestHostZoneProposal(t *testing.T) {
 	err = feeabs.VoteOnProposalAllValidators(ctx, "1", cosmos.ProposalVoteYes)
 	require.NoError(t, err, "failed to submit votes")
 
-	height, _ := feeabs.Height(ctx)
+	height, err := feeabs.Height(ctx)
+	require.NoError(t, err)
+
 	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, "1", cosmos.ProposalStatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
@@ -48,7 +51,9 @@ func TestHostZoneProposal(t *testing.T) {
 	err = feeabs.VoteOnProposalAllValidators(ctx, "2", cosmos.ProposalVoteYes)
 	require.NoError(t, err, "failed to submit votes")
 
-	height, _ = feeabs.Height(ctx)
+	height, err = feeabs.Height(ctx)
+	require.NoError(t, err)
+
 	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, "2", cosmos.ProposalStatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
@@ -68,12 +73,15 @@ func TestHostZoneProposal(t *testing.T) {
 	err = feeabs.VoteOnProposalAllValidators(ctx, "3", cosmos.ProposalVoteYes)
 	require.NoError(t, err, "failed to submit votes")
 
-	height, _ = feeabs.Height(ctx)
+	height, err = feeabs.Height(ctx)
+	require.NoError(t, err)
+
 	response, err := cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, "3", cosmos.ProposalStatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 	fmt.Printf("response: %s\n", response)
 
 	config, err = feeabsCli.QueryHostZoneConfigWithDenom(feeabs, ctx, "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9")
+	require.NoError(t, err)
 	require.Equal(t, config, &feeabsCli.HostChainFeeAbsConfigResponse{HostChainConfig: feeabsCli.HostChainFeeAbsConfig{
 		IbcDenom:                "",
 		OsmosisPoolTokenDenomIn: "",
