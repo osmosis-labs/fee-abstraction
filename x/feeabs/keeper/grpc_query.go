@@ -23,7 +23,7 @@ func NewQuerier(k Keeper) Querier {
 	return Querier{Keeper: k}
 }
 
-// OsmosisSpotPrice return spot price of pair Osmo/nativeToken
+// OsmosisArithmeticTwap return spot price of pair Osmo/nativeToken
 func (q Querier) OsmosisArithmeticTwap(goCtx context.Context, req *types.QueryOsmosisArithmeticTwapRequest) (*types.QueryOsmosisArithmeticTwapResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")
