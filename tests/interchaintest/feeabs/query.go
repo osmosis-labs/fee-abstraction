@@ -3,6 +3,7 @@ package feeabs
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 )
 

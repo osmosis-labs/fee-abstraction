@@ -2,6 +2,7 @@ package feeabs
 
 import (
 	"encoding/base64"
+
 	abcitypes "github.com/cometbft/cometbft/abci/types"
 )
 

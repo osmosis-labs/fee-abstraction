@@ -3,10 +3,11 @@ package interchaintest
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/strangelove-ventures/interchaintest/v7/ibc"
 	"github.com/strangelove-ventures/interchaintest/v7/testutil"
-	"testing"
 
 	"github.com/strangelove-ventures/interchaintest/v7"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
