@@ -2,16 +2,16 @@ package interchaintest
 
 import (
 	"context"
-	"cosmossdk.io/math"
 	"fmt"
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
-	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
-	feeabsCli "github.com/notional-labs/fee-abstraction/tests/interchaintest/feeabs"
 	"os"
 	"path"
 	"testing"
 
+	"cosmossdk.io/math"
+	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
 	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
+	feeabsCli "github.com/notional-labs/fee-abstraction/tests/interchaintest/feeabs"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v7/ibc"
 	"github.com/strangelove-ventures/interchaintest/v7/testutil"
@@ -143,6 +143,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	// send ibc token to feeabs module account
 	gaiaHeight, err := gaia.Height(ctx)
 	require.NoError(t, err)
+
 	feeabsModule, err := feeabsCli.QueryModuleAccountBalances(feeabs, ctx)
 	require.NoError(t, err)
 	dstAddress := feeabsModule.Address
@@ -176,7 +177,9 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	err = feeabs.VoteOnProposalAllValidators(ctx, paramTx.ProposalID, cosmos.ProposalVoteYes)
 	require.NoError(t, err, "failed to submit votes")
 
-	height, _ := feeabs.Height(ctx)
+	height, err := feeabs.Height(ctx)
+	require.NoError(t, err)
+
 	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, paramTx.ProposalID, cosmos.ProposalStatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
@@ -186,7 +189,9 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	err = feeabs.VoteOnProposalAllValidators(ctx, "2", cosmos.ProposalVoteYes)
 	require.NoError(t, err, "failed to submit votes")
 
-	height, _ = feeabs.Height(ctx)
+	height, err = feeabs.Height(ctx)
+	require.NoError(t, err)
+
 	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, "2", cosmos.ProposalStatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
