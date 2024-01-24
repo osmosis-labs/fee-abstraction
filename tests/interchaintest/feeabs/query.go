@@ -6,20 +6,10 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 )
 
-type HostChainFeeAbsConfigResponse struct {
-	HostChainConfig HostChainFeeAbsConfig `json:"host_chain_config"`
-}
-
-type HostChainFeeAbsConfig struct {
-	IbcDenom                string `json:"ibc_denom"`
-	OsmosisPoolTokenDenomIn string `json:"osmosis_pool_token_denom_in"`
-	PoolId                  string `json:"pool_id"`
-	Frozen                  bool   `json:"frozen"`
-}
-
-func QueryFeeabsHostZoneConfigWithDenom(c *cosmos.CosmosChain, ctx context.Context, denom string) (*HostChainFeeAbsConfigResponse, error) {
+func QueryHostZoneConfigWithDenom(c *cosmos.CosmosChain, ctx context.Context, denom string) (*HostChainFeeAbsConfigResponse, error) {
+	tn := getFullNode(c)
 	cmd := []string{"feeabs", "host-chain-config", denom}
-	stdout, _, err := c.ExecQuery(ctx, cmd)
+	stdout, _, err := tn.ExecQuery(ctx, cmd...)
 	if err != nil {
 		return &HostChainFeeAbsConfigResponse{}, err
 	}
@@ -31,4 +21,38 @@ func QueryFeeabsHostZoneConfigWithDenom(c *cosmos.CosmosChain, ctx context.Conte
 	}
 
 	return &hostZoneConfig, nil
+}
+
+func QueryHostZoneConfig(c *cosmos.CosmosChain, ctx context.Context) (*HostChainFeeAbsConfigResponse, error) {
+	tn := getFullNode(c)
+	cmd := []string{"feeabs", "all-host-chain-config"}
+	stdout, _, err := tn.ExecQuery(ctx, cmd...)
+	if err != nil {
+		return &HostChainFeeAbsConfigResponse{}, err
+	}
+
+	var hostZoneConfig HostChainFeeAbsConfigResponse
+	err = json.Unmarshal(stdout, &hostZoneConfig)
+	if err != nil {
+		return &HostChainFeeAbsConfigResponse{}, err
+	}
+
+	return &hostZoneConfig, nil
+}
+
+func QueryModuleAccountBalances(c *cosmos.CosmosChain, ctx context.Context) (*QueryFeeabsModuleBalacesResponse, error) {
+	tn := getFullNode(c)
+	cmd := []string{"feeabs", "module-balances"}
+	stdout, _, err := tn.ExecQuery(ctx, cmd...)
+	if err != nil {
+		return &QueryFeeabsModuleBalacesResponse{}, err
+	}
+
+	var feeabsModule QueryFeeabsModuleBalacesResponse
+	err = json.Unmarshal(stdout, &feeabsModule)
+	if err != nil {
+		return &QueryFeeabsModuleBalacesResponse{}, err
+	}
+
+	return &feeabsModule, nil
 }
