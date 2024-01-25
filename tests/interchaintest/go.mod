@@ -1,6 +1,6 @@
 module github.com/notional-labs/fee-abstraction/tests/interchaintest
 
-go 1.20
+go 1.21
 
 require (
 	cosmossdk.io/math v1.0.1
