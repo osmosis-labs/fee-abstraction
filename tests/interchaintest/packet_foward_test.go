@@ -96,7 +96,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		},
 	}
 	res := QuerySmartMsgResponse{}
-	err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, res)
+	err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, &res)
 	require.NoError(t, err)
 	// propose_pfm for gaia
 	_, err = feeabsCli.SetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "gaia"}}`, uatomOnOsmosis)
@@ -109,6 +109,6 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		},
 	}
 	res = QuerySmartMsgResponse{}
-	err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, res)
+	err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, &res)
 	require.NoError(t, err)
 }

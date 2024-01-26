@@ -101,7 +101,7 @@ func TestFeeAbs(t *testing.T) {
 		},
 	}
 	res := QuerySmartMsgResponse{}
-	err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, res)
+	err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, &res)
 	require.NoError(t, err)
 	// propose_pfm for gaia
 	_, err = feeabsCli.SetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "gaia"}}`, uatomOnOsmosis)
@@ -114,7 +114,7 @@ func TestFeeAbs(t *testing.T) {
 		},
 	}
 	res = QuerySmartMsgResponse{}
-	err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, res)
+	err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, &res)
 	require.NoError(t, err)
 	// store swaprouter
 	swapRouterContractID, err := osmosis.StoreContract(ctx, osmosisUser.KeyName(), "./bytecode/swaprouter.wasm")
