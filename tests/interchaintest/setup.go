@@ -38,6 +38,7 @@ type QuerySmartMsgResponse struct {
 const (
 	votingPeriod     = "10s"
 	maxDepositPeriod = "10s"
+	queryEpochTime   = "10s"
 )
 
 var (
@@ -69,7 +70,7 @@ var (
 		GasAdjustment:       1.1,
 		TrustingPeriod:      "112h",
 		NoHostMount:         false,
-		ModifyGenesis:       modifyGenesisShortProposals(votingPeriod, maxDepositPeriod),
+		ModifyGenesis:       modifyGenesisShortProposals(votingPeriod, maxDepositPeriod, queryEpochTime),
 		ConfigFileOverrides: nil,
 		EncodingConfig:      feeabsEncoding(),
 	}
@@ -118,7 +119,7 @@ func GetDockerImageInfo() (repo, version string) {
 	return repo, branchVersion
 }
 
-func modifyGenesisShortProposals(votingPeriod string, maxDepositPeriod string) func(ibc.ChainConfig, []byte) ([]byte, error) {
+func modifyGenesisShortProposals(votingPeriod string, maxDepositPeriod string, queryEpochTime string) func(ibc.ChainConfig, []byte) ([]byte, error) {
 	return func(chainConfig ibc.ChainConfig, genbz []byte) ([]byte, error) {
 		g := make(map[string]interface{})
 		if err := json.Unmarshal(genbz, &g); err != nil {
@@ -132,6 +133,9 @@ func modifyGenesisShortProposals(votingPeriod string, maxDepositPeriod string) f
 		}
 		if err := dyno.Set(g, chainConfig.Denom, "app_state", "gov", "params", "min_deposit", 0, "denom"); err != nil {
 			return nil, fmt.Errorf("failed to set voting period in genesis json: %w", err)
+		}
+		if err := dyno.Set(g, queryEpochTime, "app_state", "feeabs", "epochs", 0, "duration"); err != nil {
+			return nil, fmt.Errorf("failed to set query epoch time in genesis json: %w", err)
 		}
 		out, err := json.Marshal(g)
 		if err != nil {
