@@ -23,7 +23,7 @@ type QuerySmartMsg struct {
 }
 
 type QuerySmartMsgResponse struct {
-	Response bool `json:"data"`
+	Data bool `json:"data"`
 }
 
 const (
