@@ -88,10 +88,10 @@ endif
 all: install
 
 install: go.sum
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/feeappd
+	@GOWORK=off go install -mod=readonly $(BUILD_FLAGS) ./cmd/feeappd
 
 build:
-	go build $(BUILD_FLAGS) -o bin/feeappd ./cmd/feeappd
+	@GOWORK=off go build $(BUILD_FLAGS) -o bin/feeappd ./cmd/feeappd
 
 test:
 	@GOWORK=off go test -race -v ./... 
