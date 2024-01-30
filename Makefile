@@ -94,7 +94,7 @@ build:
 	go build $(BUILD_FLAGS) -o bin/feeappd ./cmd/feeappd
 
 test:
-	@GOWORK=off go test -race -v ./... 
+	go test -race -v ./... 
 
 docker-build-debug:
 	@DOCKER_BUILDKIT=1 docker build -t feeapp:debug -f Dockerfile .

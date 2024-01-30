@@ -64,17 +64,16 @@ func CrossChainSwap(c *cosmos.CosmosChain, ctx context.Context, keyName string, 
 	tx.GasSpent = txResp.GasWanted
 
 	const evType = "send_packet"
-	events := txResp.Events
 
 	var (
-		seq, _           = AttributeValue(events, evType, "packet_sequence")
-		srcPort, _       = AttributeValue(events, evType, "packet_src_port")
-		srcChan, _       = AttributeValue(events, evType, "packet_src_channel")
-		dstPort, _       = AttributeValue(events, evType, "packet_dst_port")
-		dstChan, _       = AttributeValue(events, evType, "packet_dst_channel")
-		timeoutHeight, _ = AttributeValue(events, evType, "packet_timeout_height")
-		timeoutTs, _     = AttributeValue(events, evType, "packet_timeout_timestamp")
-		data, _          = AttributeValue(events, evType, "packet_data")
+		seq, _           = AttributeValue(txResp, evType, "packet_sequence")
+		srcPort, _       = AttributeValue(txResp, evType, "packet_src_port")
+		srcChan, _       = AttributeValue(txResp, evType, "packet_src_channel")
+		dstPort, _       = AttributeValue(txResp, evType, "packet_dst_port")
+		dstChan, _       = AttributeValue(txResp, evType, "packet_dst_channel")
+		timeoutHeight, _ = AttributeValue(txResp, evType, "packet_timeout_height")
+		timeoutTs, _     = AttributeValue(txResp, evType, "packet_timeout_timestamp")
+		data, _          = AttributeValue(txResp, evType, "packet_data")
 	)
 
 	tx.Packet.SourcePort = srcPort
@@ -86,7 +85,7 @@ func CrossChainSwap(c *cosmos.CosmosChain, ctx context.Context, keyName string, 
 
 	seqNum, err := strconv.Atoi(seq)
 	if err != nil {
-		return tx, fmt.Errorf("invalid packet sequence from events %s: %w", seq, err)
+		return tx, fmt.Errorf("invalid packet sequence from txResp %s: %w", seq, err)
 	}
 	tx.Packet.Sequence = uint64(seqNum)
 
@@ -208,13 +207,12 @@ func txProposal(c *cosmos.CosmosChain, txHash string) (tx cosmos.TxProposal, _ e
 	tx.TxHash = txHash
 	// In cosmos, user is charged for entire gas requested, not the actual gas used.
 	tx.GasSpent = txResp.GasWanted
-	events := txResp.Events
 
-	tx.DepositAmount, _ = AttributeValue(events, "proposal_deposit", "amount")
+	tx.DepositAmount, _ = AttributeValue(txResp, "proposal_deposit", "amount")
 
 	evtSubmitProp := "submit_proposal"
-	tx.ProposalID, _ = AttributeValue(events, evtSubmitProp, "proposal_id")
-	tx.ProposalType, _ = AttributeValue(events, evtSubmitProp, "proposal_type")
+	tx.ProposalID, _ = AttributeValue(txResp, evtSubmitProp, "proposal_id")
+	tx.ProposalType, _ = AttributeValue(txResp, evtSubmitProp, "proposal_type")
 
 	return tx, nil
 }

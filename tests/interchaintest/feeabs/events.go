@@ -3,11 +3,14 @@ package feeabs
 import (
 	"encoding/base64"
 
-	abcitypes "github.com/cometbft/cometbft/abci/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func AttributeValue(events []abcitypes.Event, eventType, attrKey string) (string, bool) {
-	for _, event := range events {
+func AttributeValue(txResponse *sdk.TxResponse, eventType, attrKey string) (string, bool) {
+	if txResponse == nil {
+		return "", false
+	}
+	for _, event := range txResponse.Events {
 		if event.Type != eventType {
 			continue
 		}
@@ -15,8 +18,6 @@ func AttributeValue(events []abcitypes.Event, eventType, attrKey string) (string
 			if attr.Key == attrKey {
 				return attr.Value, true
 			}
-
-			// tendermint < v0.37-alpha returns base64 encoded strings in events.
 			key, err := base64.StdEncoding.DecodeString(attr.Key)
 			if err != nil {
 				continue
