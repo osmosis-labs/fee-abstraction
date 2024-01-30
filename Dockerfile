@@ -1,13 +1,11 @@
 # syntax=docker/dockerfile:1
 
-ARG GO_VERSION="1.19"
-ARG RUNNER_IMAGE="gcr.io/distroless/static-debian11"
-
+ARG GO_VERSION="1.21"
 # --------------------------------------------------------
 # Builder
 # --------------------------------------------------------
 
-FROM golang:${GO_VERSION}-alpine as builder
+FROM golang:${GO_VERSION}-alpine3.18 as builder
 
 ARG GIT_VERSION
 ARG GIT_COMMIT
@@ -41,18 +39,18 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
             -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger,muslc \
             -w -s -linkmode=external -extldflags '-Wl,-z,muldefs -static'" \
         -trimpath \
-        -o /feeapp/build/feeappd \
+        -o /feeapp/bin/feeappd \
         /feeapp/cmd/feeappd/main.go
 
 # --------------------------------------------------------
 # Runner
 # --------------------------------------------------------
 
-FROM ${RUNNER_IMAGE}
+FROM alpine:3.16
 
-COPY --from=builder /feeapp/build/feeappd /bin/feeappd
+COPY --from=builder /feeapp/bin/feeappd /usr/bin/feeappd
 
-ENV HOME /feeapp
+ENV HOME /.feeappd
 WORKDIR $HOME
 
 # rest server
