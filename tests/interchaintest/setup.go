@@ -32,8 +32,10 @@ const (
 )
 
 var (
-	FFeeabsMainRepo  = "osmolabs/fee-abstraction"
-	FeeabsICTestRepo = "osmolabs/fee-abstraction-ictest"
+	FFeeabsMainRepo   = "osmolabs/fee-abstraction"
+	FeeabsICTestRepo  = "osmolabs/fee-abstraction-ictest"
+	IBCRelayerImage   = "ghcr.io/cosmos/relayer"
+	IBCRelayerVersion = "latest"
 
 	repo, version = GetDockerImageInfo()
 
