@@ -335,7 +335,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	transfer := ibc.WalletAmount{
 		Address: dstAddress,
 		Denom:   gaia.Config().Denom,
-		Amount:  amountToSend,
+		Amount:  amountToSend.Int64(),
 	}
 
 	tx, err := gaia.SendIBCTransfer(ctx, channGaiaOsmosis.ChannelID, gaiaUser.KeyName(), transfer, ibc.TransferOptions{})
@@ -354,7 +354,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	transfer = ibc.WalletAmount{
 		Address: dstAddress,
 		Denom:   feeabs.Config().Denom,
-		Amount:  amountToSend,
+		Amount:  amountToSend.Int64(),
 	}
 
 	tx, err = feeabs.SendIBCTransfer(ctx, channFeeabsOsmosis.ChannelID, feeabsUser.KeyName(), transfer, ibc.TransferOptions{})
@@ -373,7 +373,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	transfer = ibc.WalletAmount{
 		Address: dstAddress,
 		Denom:   gaia.Config().Denom,
-		Amount:  amountToSend,
+		Amount:  amountToSend.Int64(),
 	}
 
 	tx, err = gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName(), transfer, ibc.TransferOptions{})
