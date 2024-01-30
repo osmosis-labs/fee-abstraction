@@ -6,7 +6,6 @@ import (
 	"os"
 	"strings"
 
-	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/icza/dyno"
 	feeabstype "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
@@ -67,7 +66,7 @@ var (
 	pathFeeabsOsmosis   = "feeabs-osmosis"
 	pathOsmosisGaia     = "osmosis-gaia"
 	genesisWalletAmount = int64(10_000_000)
-	amountToSend        = math.NewInt(1_000_000_000)
+	amountToSend        = int64(1_000_000_000)
 )
 
 // feeabsEncoding registers the feeabs specific module codecs so that the associated types and msgs
