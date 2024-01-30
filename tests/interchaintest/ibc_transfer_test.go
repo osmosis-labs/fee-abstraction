@@ -41,7 +41,7 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 		},
 		{
 			Name:          "gaia",
-			Version:       "v9.1.0",
+			Version:       GaiaImageVersion,
 			NumValidators: &numVals,
 			NumFullNodes:  &numFullNodes,
 		},
