@@ -94,7 +94,7 @@ build:
 	go build $(BUILD_FLAGS) -o bin/feeappd ./cmd/feeappd
 
 test:
-	go test -race -v ./... 
+	@GOWORK=off go test -race -v ./...
 
 docker-build-debug:
 	@DOCKER_BUILDKIT=1 docker build -t feeapp:debug -f Dockerfile .
@@ -126,6 +126,9 @@ ictest-host-zone-proposal:
 
 ictest-feeabs:
 	cd tests/interchaintest && go test -timeout=25m -race -v -run TestFeeabs .
+
+ictest-query-osmosis-twap:
+	cd tests/interchaintest && go test -timeout=25m -race -v -run TestQueryOsmosisTwap .
 
 # Executes all tests via interchaintest after compling a local image as juno:local
 ictest-all: ictest-basic ictest-ibc ictest-packet-forward
