@@ -328,7 +328,6 @@ func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
 		}
 
 		err = k.transferOsmosisCrosschainSwap(ctx, hostZoneConfig)
-
 		if err != nil {
 			k.Logger(ctx).Error(fmt.Sprintf("Failed to transfer IBC token %s", err.Error()))
 			err = k.FreezeHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
