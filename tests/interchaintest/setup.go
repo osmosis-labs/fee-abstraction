@@ -463,3 +463,67 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 
 	return chains, users, chanels
 }
+
+// SetupOsmosisContracts setup osmosis contracts for crosschain swap.
+// There are three main contracts
+// 1. crosschain-registry: https://github.com/osmosis-labs/osmosis/blob/main/cosmwasm/contracts/crosschain-swaps/README.md
+// 2. swaprouter: https://github.com/osmosis-labs/osmosis/tree/main/cosmwasm/contracts/swaprouter
+// 3. crosschain-swaps: https://github.com/osmosis-labs/osmosis/blob/main/cosmwasm/contracts/crosschain-swaps/README.md
+func SetupOsmosisContracts(t *testing.T,
+	ctx context.Context,
+	osmosis *cosmos.CosmosChain,
+	user ibc.Wallet,
+) ([]string, error) {
+	registryWasm := "./bytecode/crosschain_registry.wasm"
+	swaprouterWasm := "./bytecode/swaprouter.wasm"
+	xcsV2Wasm := "./bytecode/crosschain_swaps.wasm"
+
+	// Store crosschain registry contract
+	registryCodeId, err := osmosis.StoreContract(ctx, user.KeyName(), registryWasm)
+	if err != nil {
+		return nil, err
+	}
+	t.Logf("crosschain registry code id: %s\n", registryCodeId)
+
+	// Store swap router contract
+	swaprouterCodeId, err := osmosis.StoreContract(ctx, user.KeyName(), swaprouterWasm)
+	if err != nil {
+		return nil, err
+	}
+	t.Logf("swap router code id: %s\n", swaprouterCodeId)
+
+	// Store crosschain swaps contract
+	xcsV2CodeId, err := osmosis.StoreContract(ctx, user.KeyName(), xcsV2Wasm)
+	if err != nil {
+		return nil, err
+	}
+	t.Logf("crosschain swaps code id: %s\n", xcsV2CodeId)
+
+	// Instantiate contracts
+	// 1. Crosschain Registry Contract
+	owner := sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, user.Address())
+	initMsg := fmt.Sprintf("{\"owner\":\"%s\"}", owner)
+
+	registryContractAddr, err := osmosis.InstantiateContract(ctx, user.KeyName(), registryCodeId, initMsg, true)
+	if err != nil {
+		return nil, err
+	}
+	t.Logf("registry contract address: %s\n", registryContractAddr)
+
+	// 2. Swap Router Contract
+	swaprouterContractAddr, err := osmosis.InstantiateContract(ctx, user.KeyName(), swaprouterCodeId, initMsg, true)
+	if err != nil {
+		return nil, err
+	}
+	t.Logf("swap router contract address: %s\n", swaprouterContractAddr)
+
+	// 3. Crosschain Swaps Contract
+	initMsg = fmt.Sprintf("{\"swap_contract\":\"%s\",\"governor\": \"%s\"}", swaprouterContractAddr, owner)
+	xcsV2ContractAddr, err := osmosis.InstantiateContract(ctx, user.KeyName(), xcsV2Wasm, initMsg, true)
+	if err != nil {
+		return nil, err
+	}
+	t.Logf("crosschain swaps contract address: %s", xcsV2ContractAddr)
+
+	return []string{registryContractAddr, swaprouterContractAddr, xcsV2ContractAddr}, nil
+}
