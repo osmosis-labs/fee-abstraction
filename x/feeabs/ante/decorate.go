@@ -21,7 +21,12 @@ type FeeAbstractionDeductFeeDecorate struct {
 	feegrantKeeper FeegrantKeeper
 }
 
-func NewFeeAbstractionDeductFeeDecorate(ak AccountKeeper, bk BankKeeper, feeabsKeeper feeabskeeper.Keeper, fk FeegrantKeeper) FeeAbstractionDeductFeeDecorate {
+func NewFeeAbstractionDeductFeeDecorate(
+	ak AccountKeeper,
+	bk BankKeeper,
+	feeabsKeeper feeabskeeper.Keeper,
+	fk FeegrantKeeper,
+) FeeAbstractionDeductFeeDecorate {
 	return FeeAbstractionDeductFeeDecorate{
 		accountKeeper:  ak,
 		bankKeeper:     bk,
@@ -54,7 +59,15 @@ func (fadfd FeeAbstractionDeductFeeDecorate) AnteHandle(ctx sdk.Context, tx sdk.
 	return fadfd.abstractionDeductFeeHandler(ctx, tx, simulate, next, feeTx, hostChainConfig)
 }
 
-func (fadfd FeeAbstractionDeductFeeDecorate) normalDeductFeeAnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler, feeTx sdk.FeeTx) (newCtx sdk.Context, err error) {
+// normalDeductFeeAnteHandle deducts the fee from fee payer or fee granter (if set) and ensure
+// the fee collector module account is set
+func (fadfd FeeAbstractionDeductFeeDecorate) normalDeductFeeAnteHandle(
+	ctx sdk.Context,
+	tx sdk.Tx,
+	simulate bool,
+	next sdk.AnteHandler,
+	feeTx sdk.FeeTx,
+) (newCtx sdk.Context, err error) {
 	fee := feeTx.GetFee()
 	feePayer := feeTx.FeePayer()
 	feeGranter := feeTx.FeeGranter()
@@ -97,6 +110,9 @@ func (fadfd FeeAbstractionDeductFeeDecorate) normalDeductFeeAnteHandle(ctx sdk.C
 	return next(ctx, tx, simulate)
 }
 
+// abstractionDeductFeeHandler calculates the equivalent native tokens from
+// IBC tokens and deducts the fees accordingly if the transaction involves IBC tokens
+// and the host chain configuration is set.
 func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler, feeTx sdk.FeeTx, hostChainConfig feeabstypes.HostChainFeeAbsConfig) (newCtx sdk.Context, err error) {
 	if hostChainConfig.Frozen {
 		return ctx, sdkerrors.Wrap(feeabstypes.ErrHostZoneFrozen, "cannot deduct fee as host zone is frozen")
@@ -171,7 +187,7 @@ func DeductFees(bankKeeper types.BankKeeper, ctx sdk.Context, accAddress sdk.Acc
 	return nil
 }
 
-// MempoolFeeDecorator will check if the transaction's fee is at least as large
+// FeeAbstrationMempoolFeeDecorator will check if the transaction's fee is at least as large
 // as the local validator's minimum gasFee (defined in validator config).
 // If fee is too low, decorator returns error and tx is rejected from mempool.
 // Note this only applies when ctx.CheckTx = true
@@ -232,8 +248,8 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 			return ctx, err
 		}
 
-		// split feeRequired into zero and non-zero coins(nonZeroCoinFeesReq, zeroCoinFeesDenomReq), split feeCoins according to
-		// nonZeroCoinFeesReq, zeroCoinFeesDenomReq,
+		// split feeRequired into zero and non-zero coins(nonZeroCoinFeesReq, zeroCoinFeesDenomReq)
+		// split feeCoins according to nonZeroCoinFeesReq, zeroCoinFeesDenomReq,
 		// so that feeCoins can be checked separately against them.
 		nonZeroCoinFeesReq, zeroCoinFeesDenomReq := getNonZeroFees(feeRequired)
 
@@ -280,7 +296,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		}
 
 		if feeCoinsLen == 0 {
-			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees; got: %s required 12: %s", feeCoins, feeRequired)
+			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, feeRequired)
 		}
 		// After all the checks, the tx is confirmed:
 		// feeCoins denoms subset off feeRequired (or replaced with fee-abstraction)

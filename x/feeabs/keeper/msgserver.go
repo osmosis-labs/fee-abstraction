@@ -54,7 +54,6 @@ func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossCha
 	}
 
 	err = k.transferOsmosisCrosschainSwap(ctx, hostChainConfig)
-
 	if err != nil {
 		return nil, err
 	}
