@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"cosmossdk.io/errors"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
