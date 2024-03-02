@@ -131,9 +131,9 @@ ictest-query-osmosis-twap:
 	cd tests/interchaintest && go test -timeout=25m -race -v -run TestQueryOsmosisTwap .
 
 # Executes all tests via interchaintest after compling a local image as juno:local
-ictest-all: ictest-basic ictest-ibc ictest-packet-forward
+ictest-all: ictest-basic ictest-ibc ictest-packet-forward ictest-host-zone-proposal ictest-query-osmosis-twap ictest-feeabs
 
-.PHONY: ictest-basic ictest-ibc ictest-packet-forward ictest-all
+.PHONY: ictest-basic ictest-ibc ictest-packet-forward ictest-all ictest-host-zone-proposal ictest-query-osmosis-twap ictest-feeabs
 
 ###############################################################################
 ###                                  Proto                                  ###

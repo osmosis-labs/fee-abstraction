@@ -117,6 +117,7 @@ func AddHostZoneProposal(c *cosmos.CosmosChain, ctx context.Context, keyName str
 	command := []string{
 		"gov", "submit-legacy-proposal",
 		"add-hostzone-config", filePath,
+		"--gas", "auto", "--gas-adjustment", "1.5",
 	}
 	return tn.ExecTx(ctx, keyName, command...)
 }
@@ -140,6 +141,7 @@ func DeleteHostZoneProposal(c *cosmos.CosmosChain, ctx context.Context, keyName 
 	command := []string{
 		"gov", "submit-legacy-proposal",
 		"delete-hostzone-config", filePath,
+		"--gas", "auto", "--gas-adjustment", "1.5",
 	}
 	return tn.ExecTx(ctx, keyName, command...)
 }
@@ -163,6 +165,7 @@ func SetHostZoneProposal(c *cosmos.CosmosChain, ctx context.Context, keyName str
 	command := []string{
 		"gov", "submit-legacy-proposal",
 		"set-hostzone-config", filePath,
+		"--gas", "auto", "--gas-adjustment", "1.5",
 	}
 	return tn.ExecTx(ctx, keyName, command...)
 }
