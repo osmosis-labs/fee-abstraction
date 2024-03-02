@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"cosmossdk.io/errors"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
@@ -11,10 +10,6 @@ import (
 func (k Keeper) AddHostZoneProposal(ctx sdk.Context, p *types.AddHostZoneProposal) error {
 	if k.HasHostZoneConfig(ctx, p.HostChainConfig.IbcDenom) {
 		return errors.Wrapf(types.ErrDuplicateHostZoneConfig, "duplicate host ibc denom")
-	}
-
-	if k.HasHostZoneConfigByOsmosisDenom(ctx, p.HostChainConfig.OsmosisPoolTokenDenomIn) {
-		return errors.Wrapf(types.ErrDuplicateHostZoneConfig, "duplicate osmosis ibc denom")
 	}
 
 	if err := k.SetHostZoneConfig(ctx, *p.HostChainConfig); err != nil {
