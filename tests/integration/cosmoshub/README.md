@@ -1,8 +1,8 @@
-# Integrate `x/feeabs` with new chain
+# Integrate `x/feeabs` with Cosmos Hub
 
 This is document for testing integrate a new chain with `x/feeabs` module.
 
-Firstly, we will add `feeabs` module to Cosmos Hub, Stargaze and using Osmosis testnet to minimize effort.
+Firstly, we will add `feeabs` module to Cosmos Hub and using Osmosis testnet to minimize effort.
 
 * Original Fee Abstraction repository:
 
@@ -12,18 +12,32 @@ Firstly, we will add `feeabs` module to Cosmos Hub, Stargaze and using Osmosis t
 
     <https://github.com/notional-labs/gaia/tree/feeabs>
 
-* Stargaze with added `feeabs` module:
-
-    <https://github.com/notional-labs/stargaze/tree/feature/feeabs>
-
 ## 1. Setup nodes
 
-* Install Gaia CLI
-* Install Starsgaze CLI
-* Install Osmosis CLI
+* Install Gaia CLI:
+
+```bash
+git clone https://github.com/notional-labs/gaia.git
+cd gaia
+git checkout feeabs
+make install
+```
+
+* Install Osmosis CLI:
+
+```bash
+git clone https://github.com/osmosis-labs/osmosis.git
+cd osmosis
+make install
+```
+
 * Run nodes:
-  * Gaiad
-  * Starsd
+  * `Gaiad`: In `gaia` working dir, run:
+
+  ```bash
+  sh startnode.sh
+  ```
+
 * Enable `feeabs` by change params of this module
 * Add host zone config proposal for `feeabs`
 
