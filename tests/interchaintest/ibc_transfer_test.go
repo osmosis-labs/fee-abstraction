@@ -183,4 +183,11 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	gaiaUpdateBal, err = gaia.GetBalance(ctx, gaiaUserAddr, feeabsIBCDenom)
 	require.NoError(t, err)
 	require.Equal(t, int64(0), gaiaUpdateBal)
+
+	// TODO: add a test that ibc transfer with non-native denom, success
+	gaiaOnFeeabsToken := transfertypes.GetPrefixedDenom(channel.PortID, channel.ChannelID, gaia.Config().Denom)
+	gaiaOnFeeabsIBCDenom := transfertypes.ParseDenomTrace(gaiaOnFeeabsToken).IBCDenom()
+	txHash, err := feeabs.FullNodes[0].ExecTx(ctx, feeabsUser.KeyName(), "ibc-transfer", "transfer", "transfer", channel.ChannelID, gaiaUserAddr, "1000"+feeabs.Config().Denom, "--fee", "1000"+gaiaOnFeeabsIBCDenom)
+	require.NoError(t, err)
+	require.NotEmpty(t, txHash)
 }

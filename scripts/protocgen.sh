@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 set -eo pipefail
 
@@ -21,5 +21,3 @@ cd ..
 # Note: Proto files are suffixed with the current binary version.
 cp -r github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types/* ./x/feeabs/types/
 rm -rf github.com
-
-go mod tidy

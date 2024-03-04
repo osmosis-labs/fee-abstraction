@@ -21,7 +21,7 @@ message QueryArithmeticTwapToNowRequest {
 
 message QueryArithmeticTwapToNowResponse {
   string arithmetic_twap = 1 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.moretags) = "yaml:\"arithmetic_twap\"",
     (gogoproto.nullable) = false
   ];
