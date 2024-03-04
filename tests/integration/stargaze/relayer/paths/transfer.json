@@ -1,0 +1,17 @@
+{
+  "src": {
+    "chain-id": "stargaze-03",
+    "port-id": "transfer",
+    "order": "unordered",
+    "version": "ics20-1"
+  },
+  "dst": {
+    "chain-id": "osmo-test-5",
+    "port-id": "transfer",
+    "order": "unordered",
+    "version": "ics20-1"
+  },
+  "strategy": {
+    "type": "naive"
+  }
+}
