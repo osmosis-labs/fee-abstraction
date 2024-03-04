@@ -1,8 +1,8 @@
-# Integrate `x/feeabs` with Cosmos Hub
+# Integrate `x/feeabs` with Stargaze
 
 This is document for testing integrate a new chain with `x/feeabs` module.
 
-Firstly, we will add `feeabs` module to Cosmos Hub and using Osmosis testnet to minimize effort.
+Firstly, we will add `feeabs` module to Stargaze and using Osmosis testnet to minimize effort.
 
 - Original Fee Abstraction repository:
 
@@ -10,7 +10,7 @@ Firstly, we will add `feeabs` module to Cosmos Hub and using Osmosis testnet to 
 
 - Cosmos Hub with added `feeabs` module:
 
-  <https://github.com/notional-labs/gaia/tree/feeabs>
+  <https://github.com/notional-labs/stargaze/tree/feature/feeabs>
 
 ## 1. Setup nodes
 
@@ -80,6 +80,7 @@ owner: osmo1sg5ta3eaed5wxxpnq3u5463lysfg7ytjxqvk43
 - XCS:
   - code_id: 7240
   - Contract_addr: osmo177jurcy582fk5q298es6662pu48a46ze6eequnv3z0parekpwhhs034wsv
+    We use the existing stored bytecode to instantiate the contract.
 
 ```bash
 NODE=https://osmosis-testnet-rpc.polkachu.com:443
@@ -89,15 +90,19 @@ REG=./bytecode/crosschain_registry.wasm
 REG_ID=7238
 RELAYER_ADDR=osmo1sg5ta3eaed5wxxpnq3u5463lysfg7ytjxqvk43
 
+# init registry contract
 REG_INIT='{"owner": "'$RELAYER_ADDR'"}'
 osmosisd tx wasm instantiate $REG_ID $REG_INIT --label "Registry Feeabs" --admin $RELAYER_ADDR --from relayer --node $NODE --chain-id=osmo-test-5 --gas-prices 0.1uosmo --gas auto --gas-adjustment 1.3
 
+# init cross chain swap contract
+XCS_ID=7240
 XCS_INIT='{"swap_contract":"osmo1j48ncj9wkzs3pnkux96ct6peg7rznnt4jx6ysdcs0283ysxj2ztqtr602y","governor":"osmo1sg5ta3eaed5wxxpnq3u5463lysfg7ytjxqvk43", "registry_contract":"osmo1m9jk8zvrkpex0rxhp76emr0qm2z5khvj09msl9c78gcq7c38xdzsgq0cgm"}'
-osmosisd tx wasm instantiate $REG_ID $REG_INIT --label "Registry Feeabs" --admin $RELAYER_ADDR --from relayer --node $NODE --chain-id=osmo-test-5 --gas-prices 0.1uosmo --gas auto --gas-adjustment 1.3
+osmosisd tx wasm instantiate $XCS_ID $XCS_INIT --label "Registry Feeabs" --admin $RELAYER_ADDR --from relayer --node $NODE --chain-id=osmo-test-5 --gas-prices 0.1uosmo --gas auto --gas-adjustment 1.3
 
 # Setup the pfm on stargaze for path unwinding
+REG_ADDR=osmo1m9jk8zvrkpex0rxhp76emr0qm2z5khvj09msl9c78gcq7c38xdzsgq0cgm
 PFM_EXEC='{"propose_pfm":{"chain": "stargaze"}}'
-osmosisd tx wasm execute osmo1m9jk8zvrkpex0rxhp76emr0qm2z5khvj09msl9c78gcq7c38xdzsgq0cgm $PFM_EXEC --from relayer --amount 100000ibc/BD47A6048AA3BDC7E9DC98E0CB31AB777E6E8561E9D0BA45E13CA6EEB1558CB5 --node $NODE --chain-id=osmo-test-5 --gas-prices 0.1uosmo --gas auto --gas-adjustment 1.3
+osmosisd tx wasm execute $REG_ADDR $PFM_EXEC --from relayer --amount 100000ibc/BD47A6048AA3BDC7E9DC98E0CB31AB777E6E8561E9D0BA45E13CA6EEB1558CB5 --node $NODE --chain-id=osmo-test-5 --gas-prices 0.1uosmo --gas auto --gas-adjustment 1.3
 
 # check if properly set
 QUERY='{"has_packet_forwarding": {"chain": "stargaze"}}'
