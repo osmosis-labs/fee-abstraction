@@ -52,11 +52,12 @@ build/rly chains add-dir <PATH_TO_CHAIN_CONFIG> // Example:  relayer/chains
 build/rly paths add-dir <PATH_TO_PATHS_CONFIG_DIR> // Example: relayer/paths
 
 build/rly keys restore stargaze relayer <STARGAZE_MNEMONIC\>
-build/rly keys restore osmosis relayer  <OSMOSIS_MNEMONIC\>"
+build/rly keys restore osmosis relayer  <OSMOSIS_MNEMONIC\>
 
 
 build/rly tx link transfer -d -t 10s
-build/rly tx link feeabs --src_port feeabs --dst_port icqhost --order unordered --version icq-1build/rly start transfer
+build/rly tx link feeabs --src_port feeabs --dst_port icqhost --order unordered --version icq-1
+build/rly start transfer
 ```
 
 We should fund the wallets and reuse the wallets for relaying.
