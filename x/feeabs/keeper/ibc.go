@@ -103,7 +103,6 @@ func (k Keeper) SendInterchainQuery(
 
 	sequence, err := k.channelKeeper.SendPacket(ctx, channelCap, sourcePort, sourceChannel, clienttypes.ZeroHeight(), uint64(timeoutTimestamp), icqPacketData.GetBytes())
 	if err != nil {
-
 		return 0, err
 	}
 
