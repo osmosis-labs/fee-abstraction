@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"testing"
 
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 	"github.com/strangelove-ventures/interchaintest/v7"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
@@ -15,6 +14,8 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v7/testutil"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
+
+	sdktypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 // TestFeeabsGaiaIBCTransfer spins up a Feeabs and Gaia network, initializes an IBC connection between them,
@@ -187,7 +188,7 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	// TODO: add a test that ibc transfer with non-native denom, success
 	gaiaOnFeeabsToken := transfertypes.GetPrefixedDenom(channel.PortID, channel.ChannelID, gaia.Config().Denom)
 	gaiaOnFeeabsIBCDenom := transfertypes.ParseDenomTrace(gaiaOnFeeabsToken).IBCDenom()
-	txHash, err := feeabs.FullNodes[0].ExecTx(ctx, feeabsUser.KeyName(), "ibc-transfer", "transfer", "transfer", channel.ChannelID, gaiaUserAddr, "1000"+feeabs.Config().Denom, "--fee", "1000"+gaiaOnFeeabsIBCDenom)
+	txHash, err := feeabs.FullNodes[0].ExecTx(ctx, feeabsUser.KeyName(), "ibc-transfer", "transfer", "transfer", channel.ChannelID, gaiaUserAddr, "1000"+feeabs.Config().Denom, "--fees", "1000"+gaiaOnFeeabsIBCDenom)
 	require.NoError(t, err)
 	require.NotEmpty(t, txHash)
 }
