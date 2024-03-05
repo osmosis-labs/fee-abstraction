@@ -32,16 +32,19 @@ make install
 ```
 
 * Run nodes:
-  * `Gaiad`: In `gaia` working dir, run:
+* In `gaia` working dir, run:
 
-  ```bash
-  sh startnode.sh
-  ```
-
-* Enable `feeabs` by change params of this module
-* Add host zone config proposal for `feeabs`
+```bash
+sh startnode.sh
+```
 
 ## 2. Setup relayers
+
+* Run script:
+
+```bash
+cd <>
+```
 
 ## 3. Setup pools, contracts on Osmosis testnet
 
