@@ -205,6 +205,9 @@ func (k Keeper) GetChannelID(ctx sdk.Context) string {
 }
 
 func (k Keeper) GetDecTWAPFromBytes(bz []byte) (sdk.Dec, error) {
+	if bz == nil {
+		return sdk.Dec{}, sdkerrors.New("GetDecTWAPFromBytes: err ", 1, "nil bytes")
+	}
 	var ibcTokenTwap types.QueryArithmeticTwapToNowResponse
 	err := k.cdc.Unmarshal(bz, &ibcTokenTwap)
 	if err != nil || ibcTokenTwap.ArithmeticTwap.IsNil() {
