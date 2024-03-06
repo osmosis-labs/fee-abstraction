@@ -43,7 +43,8 @@ sh startnode.sh
 * Run script:
 
 ```bash
-cd <>
+cd <fee-abstraction>/tests/integration/cosmoshub
+sh tools/run_relayer.sh
 ```
 
 ## 3. Setup pools, contracts on Osmosis testnet
