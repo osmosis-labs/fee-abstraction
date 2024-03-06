@@ -103,8 +103,11 @@ func (k Keeper) SendInterchainQuery(
 
 	sequence, err := k.channelKeeper.SendPacket(ctx, channelCap, sourcePort, sourceChannel, clienttypes.ZeroHeight(), uint64(timeoutTimestamp), icqPacketData.GetBytes())
 	if err != nil {
+		k.Logger(ctx).Error("SendInterchainQuery: SendPacket failed", "err", err)
 		return 0, err
 	}
+
+	k.Logger(ctx).Info("SendInterchainQuery: ", "sequence", sequence)
 
 	return sequence, nil
 }
@@ -284,6 +287,7 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 			hostZoneConfig.OsmosisPoolTokenDenomIn,
 			startTime,
 		)
+		k.Logger(ctx).Info("handleOsmosisIbcQuery: NewQueryArithmeticTwapToNowRequest", "req", fmt.Sprintf("%+v", req))
 		reqs = append(reqs, req)
 		batchCounter++
 		if batchCounter == batchSize {
@@ -303,10 +307,14 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 	}
 
 	if len(reqs) > 0 {
+		k.Logger(ctx).Info("handleOsmosisIbcQuery", "requests", len(reqs))
 		err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)
 		if err != nil {
+			k.Logger(ctx).Error("handleOsmosisIbcQuery: SendOsmosisQueryRequest failed", "err", err)
 			return err
 		}
+	} else {
+		k.Logger(ctx).Info("handleOsmosisIbcQuery: no requests")
 	}
 	return nil
 }
