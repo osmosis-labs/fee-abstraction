@@ -14,22 +14,7 @@ Firstly, we will add `feeabs` module to Cosmos Hub and using Osmosis testnet to 
 
 ## 1. Setup nodes
 
-* Install Gaia CLI:
-
-```bash
-git clone https://github.com/notional-labs/gaia.git
-cd gaia
-git checkout feeabs
-make install
-```
-
-* Install Osmosis CLI:
-
-```bash
-git clone https://github.com/osmosis-labs/osmosis.git
-cd osmosis
-make install
-```
+* Install binaries: [install binaries guide](../README.md)
 
 * Run nodes:
 * In `gaia` working dir, run:

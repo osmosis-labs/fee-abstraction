@@ -4,11 +4,11 @@ BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 COMMIT := $(shell git log -1 --format='%H')
 
 ifeq (,$(VERSION))
-  VERSION := $(shell git describe --tags)
-  # if VERSION is empty, then populate it with branch's name and raw commit hash
-  ifeq (,$(VERSION))
-    VERSION := $(BRANCH)-$(COMMIT)
-  endif
+	VERSION := $(shell git describe --tags)
+	# if VERSION is empty, then populate it with branch's name and raw commit hash
+	ifeq (,$(VERSION))
+	VERSION := $(BRANCH)-$(COMMIT)
+	endif
 endif
 
 LEDGER_ENABLED ?= true
@@ -25,30 +25,30 @@ export GO111MODULE = on
 
 build_tags = netgo
 ifeq ($(LEDGER_ENABLED),true)
-  ifeq ($(OS),Windows_NT)
-    GCCEXE = $(shell where gcc.exe 2> NUL)
-    ifeq ($(GCCEXE),)
-      $(error gcc.exe not installed for ledger support, please install or set LEDGER_ENABLED=false)
-    else
-      build_tags += ledger
-    endif
-  else
-    UNAME_S = $(shell uname -s)
-    ifeq ($(UNAME_S),OpenBSD)
-      $(warning OpenBSD detected, disabling ledger support (https://github.com/cosmos/cosmos-sdk/issues/1988))
-    else
-      GCC = $(shell command -v gcc 2> /dev/null)
-      ifeq ($(GCC),)
-        $(error gcc not installed for ledger support, please install or set LEDGER_ENABLED=false)
-      else
-        build_tags += ledger
-      endif
-    endif
-  endif
+	ifeq ($(OS),Windows_NT)
+	GCCEXE = $(shell where gcc.exe 2> NUL)
+	ifeq ($(GCCEXE),)
+	$(error gcc.exe not installed for ledger support, please install or set LEDGER_ENABLED=false)
+	else
+	build_tags += ledger
+	endif
+	else
+	UNAME_S = $(shell uname -s)
+	ifeq ($(UNAME_S),OpenBSD)
+	$(warning OpenBSD detected, disabling ledger support (https://github.com/cosmos/cosmos-sdk/issues/1988))
+	else
+	GCC = $(shell command -v gcc 2> /dev/null)
+	ifeq ($(GCC),)
+	$(error gcc not installed for ledger support, please install or set LEDGER_ENABLED=false)
+	else
+	build_tags += ledger
+	endif
+	endif
+	endif
 endif
 
 ifeq (cleveldb,$(findstring cleveldb,$(COSMOS_BUILD_OPTIONS)))
-  build_tags += gcc cleveldb
+	build_tags += gcc cleveldb
 endif
 build_tags += $(BUILD_TAGS)
 build_tags := $(strip $(build_tags))
@@ -67,13 +67,13 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=feeapp \
 			-X github.com/cometbft/cometbft/version.TMCoreSemVer=$(TM_VERSION)
 
 ifeq (cleveldb,$(findstring cleveldb,$(COSMOS_BUILD_OPTIONS)))
-  ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
+	ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
 endif
 ifeq ($(LINK_STATICALLY),true)
-  ldflags += -linkmode=external -extldflags "-Wl,-z,muldefs -static"
+	ldflags += -linkmode=external -extldflags "-Wl,-z,muldefs -static"
 endif
 ifeq (,$(findstring nostrip,$(COSMOS_BUILD_OPTIONS)))
-  ldflags += -w -s
+	ldflags += -w -s
 endif
 ldflags += $(LDFLAGS)
 ldflags := $(strip $(ldflags))
@@ -81,7 +81,7 @@ ldflags := $(strip $(ldflags))
 BUILD_FLAGS := -tags "$(build_tags)" -ldflags '$(ldflags)'
 # check for nostrip option
 ifeq (,$(findstring nostrip,$(COSMOS_BUILD_OPTIONS)))
-  BUILD_FLAGS += -trimpath
+	BUILD_FLAGS += -trimpath
 endif
 
 
@@ -134,6 +134,16 @@ ictest-query-osmosis-twap:
 ictest-all: ictest-basic ictest-ibc ictest-packet-forward ictest-host-zone-proposal ictest-query-osmosis-twap ictest-feeabs
 
 .PHONY: ictest-basic ictest-ibc ictest-packet-forward ictest-all ictest-host-zone-proposal ictest-query-osmosis-twap ictest-feeabs
+
+###############################################################################
+###                         Integration Test                                ###
+###############################################################################
+
+build-integration-binary:
+	@git submodule update --init --recursive
+	@bash tests/integration/build-binary.sh
+
+.PHONY: build-integration-binary
 
 ###############################################################################
 ###                                  Proto                                  ###
