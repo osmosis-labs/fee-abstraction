@@ -16,6 +16,7 @@ go.work.sum
 go.work
 
 bin/
+_build/
 
 # IDE config
 .vscode/

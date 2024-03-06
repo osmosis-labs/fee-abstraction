@@ -14,22 +14,7 @@ Firstly, we will add `feeabs` module to Stargaze and using Osmosis testnet to mi
 
 ## 1. Setup nodes
 
-- Install Stargaze CLI(starsd):
-
-```bash
-git clone https://github.com/notional-labs/stargaze.git
-cd gaia
-git checkout feature/feeabs
-make install
-```
-
-- Install Osmosis CLI:
-
-```bash
-git clone https://github.com/osmosis-labs/osmosis.git
-cd osmosis
-make install
-```
+- Install binaries: [install binaries guide](../README.md)
 
 - Run nodes:
 
