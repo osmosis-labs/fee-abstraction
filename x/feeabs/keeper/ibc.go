@@ -146,7 +146,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 				}
 				continue
 			}
-			k.Logger(ctx).Info(fmt.Sprintf("ICQ response %+v", icqRes))
+			// k.Logger(ctx).Info(fmt.Sprintf("ICQ response %+v", icqRes))
 			// Not sure why, but the value is unmarshalled to icqRes.Key instead of icqRes.Value
 			// 10:36AM INF ICQ response {Code:0 Log: Info: Index:0 Key:[10 19 50 49 52 50 56 53 55 49 52 48 48 48 48 48 48 48 48 48 48] Value:[] ProofOps:<nil> Height:0 Codespace:}
 			twapRate, err := k.GetDecTWAPFromBytes(icqRes.Key)
