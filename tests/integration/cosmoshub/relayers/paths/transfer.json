@@ -1,6 +1,6 @@
 {
   "src": {
-    "chain-id": "gaia-feeabs-1",
+    "chain-id": "gaia-1",
     "port-id": "transfer",
     "order": "unordered",
     "version": "ics20-1"
