@@ -146,8 +146,10 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 				}
 				continue
 			}
-
-			twapRate, err := k.GetDecTWAPFromBytes(icqRes.Value)
+			// k.Logger(ctx).Info(fmt.Sprintf("ICQ response %+v", icqRes))
+			// Not sure why, but the value is unmarshalled to icqRes.Key instead of icqRes.Value
+			// 10:36AM INF ICQ response {Code:0 Log: Info: Index:0 Key:[10 19 50 49 52 50 56 53 55 49 52 48 48 48 48 48 48 48 48 48 48] Value:[] ProofOps:<nil> Height:0 Codespace:}
+			twapRate, err := k.GetDecTWAPFromBytes(icqRes.Key)
 			if err != nil {
 				k.Logger(ctx).Error("Failed to get twap")
 				continue
@@ -202,14 +204,15 @@ func (k Keeper) GetChannelID(ctx sdk.Context) string {
 	return string(store.Get(types.KeyChannelID))
 }
 
-// TODO: add testing
 func (k Keeper) GetDecTWAPFromBytes(bz []byte) (sdk.Dec, error) {
+	if bz == nil {
+		return sdk.Dec{}, sdkerrors.New("GetDecTWAPFromBytes: err ", 1, "nil bytes")
+	}
 	var ibcTokenTwap types.QueryArithmeticTwapToNowResponse
 	err := k.cdc.Unmarshal(bz, &ibcTokenTwap)
-	if err != nil {
+	if err != nil || ibcTokenTwap.ArithmeticTwap.IsNil() {
 		return sdk.Dec{}, sdkerrors.New("arithmeticTwap data umarshal", 1, err.Error())
 	}
-
 	return ibcTokenTwap.ArithmeticTwap, nil
 }
 
