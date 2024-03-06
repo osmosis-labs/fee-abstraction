@@ -3,7 +3,7 @@
       "chain-id": "gaia-feeabs-1",
       "port-id": "feeabs",
       "order": "unordered",
-      "version": "icq-1"
+      "version": "ics20-1"
     },
     "dst": {
       "chain-id": "osmo-test-5",
