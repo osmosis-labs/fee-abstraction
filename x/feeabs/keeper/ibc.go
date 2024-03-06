@@ -204,7 +204,6 @@ func (k Keeper) GetChannelID(ctx sdk.Context) string {
 	return string(store.Get(types.KeyChannelID))
 }
 
-// TODO: add testing
 func (k Keeper) GetDecTWAPFromBytes(bz []byte) (sdk.Dec, error) {
 	var ibcTokenTwap types.QueryArithmeticTwapToNowResponse
 	err := k.cdc.Unmarshal(bz, &ibcTokenTwap)
