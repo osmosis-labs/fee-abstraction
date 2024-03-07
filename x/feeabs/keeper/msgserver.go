@@ -49,7 +49,7 @@ func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossCha
 		return nil, types.ErrHostZoneConfigNotFound
 	}
 
-	if hostChainConfig.Frozen {
+	if hostChainConfig.Status == types.HostChainFeeAbsStatus_FROZEN {
 		return nil, types.ErrHostZoneFrozen
 	}
 

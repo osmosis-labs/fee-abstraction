@@ -105,7 +105,7 @@ func (k Keeper) FreezeHostZoneByIBCDenom(ctx sdk.Context, ibcDenom string) error
 	if !found {
 		return types.ErrHostZoneConfigNotFound
 	}
-	hostChainConfig.Frozen = true
+	hostChainConfig.Status = types.HostChainFeeAbsStatus_FROZEN
 	err := k.SetHostZoneConfig(ctx, hostChainConfig)
 	if err != nil {
 		return err
@@ -119,7 +119,7 @@ func (k Keeper) UnFreezeHostZoneByIBCDenom(ctx sdk.Context, ibcDenom string) err
 	if !found {
 		return types.ErrHostZoneConfigNotFound
 	}
-	hostChainConfig.Frozen = false
+	hostChainConfig.Status = types.HostChainFeeAbsStatus_UPDATED
 	err := k.SetHostZoneConfig(ctx, hostChainConfig)
 	if err != nil {
 		return err

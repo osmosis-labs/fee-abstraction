@@ -281,7 +281,7 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 	batchCounter := 0
 	var errorFound error
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-		if hostZoneConfig.Frozen {
+		if hostZoneConfig.Status == types.HostChainFeeAbsStatus_FROZEN {
 			return false
 		}
 		req := types.NewQueryArithmeticTwapToNowRequest(
@@ -335,7 +335,7 @@ func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
 		var err error
 
-		if hostZoneConfig.Frozen {
+		if hostZoneConfig.Status == types.HostChainFeeAbsStatus_FROZEN {
 			return false
 		}
 

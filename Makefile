@@ -148,7 +148,7 @@ build-integration-binary:
 ###############################################################################
 ###                                  Proto                                  ###
 ###############################################################################
-PROTO_BUILDER_IMAGE=ghcr.io/cosmos/proto-builder:0.13.5
+PROTO_BUILDER_IMAGE=ghcr.io/cosmos/proto-builder:0.14.0
 
 proto-all: proto-format proto-gen
 
