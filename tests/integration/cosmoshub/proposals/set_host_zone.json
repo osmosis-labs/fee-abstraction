@@ -1,11 +1,11 @@
 {
-    "title": "Update Fee Abstraction Host Zone Proposal",
-    "description": "Unfrozen Fee Abstraction Host Zone",
-    "host_chain_fee_abs_config": {
-        "ibc_denom": "ibc/80C64E7EB7E8B6705FC9C1D9C486EB6278823068D9224915B6A5DABDF03FB2D5",
-        "osmosis_pool_token_denom_in": "uosmo",
-        "pool_id": "408",
-        "frozen": false
-    },
-    "deposit": "100000000uatom"
+  "title": "Update Fee Abstraction Host Zone Proposal",
+  "description": "Unfrozen Fee Abstraction Host Zone",
+  "host_chain_fee_abs_config": {
+    "ibc_denom": "ibc/80C64E7EB7E8B6705FC9C1D9C486EB6278823068D9224915B6A5DABDF03FB2D5",
+    "osmosis_pool_token_denom_in": "uosmo",
+    "pool_id": "408",
+    "frozen": false
+  },
+  "deposit": "100000000uatom"
 }

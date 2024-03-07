@@ -33,7 +33,7 @@ cd <fee-abstraction>/tests/integration/cosmoshub
 sh tools/setup_relayer.sh
 
 rly tx link transfer -d -t 10s --client-tp 36h
-rly tx link query -d -t 10s --client-tp 36h
+rly tx link query --src_port feeabs --dst_port icqhost --order unordered --version icq-1 -d -t 10s --client-tp 36h
 
 rly start
 ```

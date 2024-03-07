@@ -2,6 +2,7 @@
 
 DENOM=ibc/80C64E7EB7E8B6705FC9C1D9C486EB6278823068D9224915B6A5DABDF03FB2D5
 POOL_ID=409
+echo "river tackle scare kiss top depend know siege member awesome left display exotic skate assault glue observe prosper female reveal recall north shine behind" | osmosisd keys add swap --recover
 SWAPROUTER=osmo1j48ncj9wkzs3pnkux96ct6peg7rznnt4jx6ysdcs0283ysxj2ztqtr602y
 NODE=https://osmosis-testnet-rpc.polkachu.com:443
 CHAIN_ID=osmo-test-5
