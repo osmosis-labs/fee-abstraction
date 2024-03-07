@@ -117,6 +117,11 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 	if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_FROZEN {
 		return ctx, sdkerrors.Wrap(feeabstypes.ErrHostZoneFrozen, "cannot deduct fee as host zone is frozen")
 	}
+
+	if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_OUTDATED {
+		return ctx, sdkerrors.Wrap(feeabstypes.ErrHostZoneOutdated, "cannot deduct fee as host zone is outdated")
+	}
+
 	fee := feeTx.GetFee()
 	feePayer := feeTx.FeePayer()
 	feeGranter := feeTx.FeeGranter()
@@ -271,6 +276,11 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 				if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_FROZEN {
 					return ctx, sdkerrors.Wrapf(feeabstypes.ErrHostZoneFrozen, "cannot deduct fee as host zone is frozen")
 				}
+
+				if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_OUTDATED {
+					return ctx, sdkerrors.Wrapf(feeabstypes.ErrHostZoneOutdated, "cannot deduct fee as host zone is outdated")
+				}
+
 				nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, feeCoinsNonZeroDenom, hostChainConfig)
 				if err != nil {
 					return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees")
