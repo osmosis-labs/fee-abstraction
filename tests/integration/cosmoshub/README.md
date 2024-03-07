@@ -88,12 +88,6 @@ Correct information on `<cosmoshub>/pools/pool.json`, and run script:
 sh tools/create_pool.sh
 ```
 
-Query `txhash` and find `pool_id`:
-
-```bash
-pool_id=409 
-```
-
 c. Set swap route
 
 Correct information on `<cosmoshub>/tools/set_route.sh`, and run script:
