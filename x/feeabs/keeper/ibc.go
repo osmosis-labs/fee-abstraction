@@ -119,8 +119,14 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			// update the index
 			index = reqPosition
 			if !found {
+<<<<<<< HEAD
 				// if not found any request, end the iterator
 				return true
+=======
+				k.Logger(ctx).Error(fmt.Sprintf("Error when get host zone by Osmosis denom %s %v not found", icqReqData.QuoteAsset, err))
+				fmt.Println("error")
+				continue
+>>>>>>> d2b5f20 (migrate from frozen to more generic host chain fee abs connection status (#156))
 			}
 			// Check if icq TWAP denom match with hostzone denom store
 			if icqReqData.QuoteAsset != hostZoneConfig.OsmosisPoolTokenDenomIn {
@@ -130,6 +136,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			IcqRes := ICQResponses[index]
 			index++
 
+<<<<<<< HEAD
 			if IcqRes.Code != 0 {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to send interchain query code %d", IcqRes.Code))
 				err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
@@ -137,6 +144,14 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 					k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
 				}
 				return false
+=======
+			icqRes := icqResponses[i]
+
+			if icqRes.Code != 0 {
+				k.Logger(ctx).Error(fmt.Sprintf("Failed to send interchain query code %d", icqRes.Code))
+				k.IncreaseBlockDelayToQuery(ctx, hostZoneConfig.IbcDenom)
+				continue
+>>>>>>> d2b5f20 (migrate from frozen to more generic host chain fee abs connection status (#156))
 			}
 
 			twapRate, err := k.GetDecTWAPFromBytes(IcqRes.Value)
@@ -147,8 +162,20 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			k.Logger(ctx).Info(fmt.Sprintf("TwapRate %v", twapRate))
 			k.SetTwapRate(ctx, hostZoneConfig.IbcDenom, twapRate)
 
+<<<<<<< HEAD
 			return false
 		})
+=======
+			err = k.SetStateHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom, types.HostChainFeeAbsStatus_UPDATED)
+			if err != nil {
+				// should never happen
+				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
+			}
+
+			// reset block delay to query
+			k.ResetBlockDelayToQuery(ctx, hostZoneConfig.IbcDenom)
+		}
+>>>>>>> d2b5f20 (migrate from frozen to more generic host chain fee abs connection status (#156))
 
 		k.Logger(ctx).Info("packet ICQ request successfully")
 
@@ -160,10 +187,15 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 		)
 	case *channeltypes.Acknowledgement_Error:
 		k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+<<<<<<< HEAD
 			err := k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
 			if err != nil {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
 			}
+=======
+			// todo: should try to retry here instead of setting FROZEN
+			k.IncreaseBlockDelayToQuery(ctx, hostZoneConfig.IbcDenom)
+>>>>>>> d2b5f20 (migrate from frozen to more generic host chain fee abs connection status (#156))
 
 			return false
 		})
@@ -179,6 +211,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 	return nil
 }
 
+<<<<<<< HEAD
 func (k Keeper) getQueryArithmeticTwapToNowRequest(
 	ctx sdk.Context,
 	icqReqs []abci.RequestQuery,
@@ -198,6 +231,13 @@ func (k Keeper) getQueryArithmeticTwapToNowRequest(
 	}
 
 	return icqReqData, index, found
+=======
+// OnTimeoutPacket resend packet when timeout
+func (k Keeper) OnTimeoutPacket(ctx sdk.Context) error {
+	ctx.Logger().Info("IBC Timeout packet")
+	_, err := k.HandleOsmosisIbcQuery(ctx)
+	return err
+>>>>>>> d2b5f20 (migrate from frozen to more generic host chain fee abs connection status (#156))
 }
 
 func (k Keeper) GetChannelId(ctx sdk.Context) string {
@@ -261,11 +301,18 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 
 }
 
+<<<<<<< HEAD
 func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 	hasQueryEpochInfo := k.HasEpochInfo(ctx, types.DefaultQueryEpochIdentifier)
 	if !hasQueryEpochInfo {
+=======
+func (k Keeper) HandleOsmosisIbcQuery(ctx sdk.Context) (int, error) {
+	// set startTime for query twap
+	queryTwapEpochInfo, found := k.GetEpochInfo(ctx, types.DefaultQueryEpochIdentifier)
+	if !found {
+>>>>>>> d2b5f20 (migrate from frozen to more generic host chain fee abs connection status (#156))
 		k.Logger(ctx).Error(fmt.Sprintf("Don't have query epoch information: %s", types.DefaultQueryEpochIdentifier))
-		return nil
+		return 0, nil
 	}
 
 	// set startTime for query twap
@@ -276,7 +323,20 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 	params := k.GetParams(ctx)
 
 	var reqs []types.QueryArithmeticTwapToNowRequest
+<<<<<<< HEAD
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+=======
+	batchCounter := 0
+	var errorFound error
+	// fee abstraction will not send query to a frozen host zone
+	// however, it will continue to send query to other host zone if UPDATED, or OUTDATED
+	// this logic iterate through registered host zones and collect requests before sending it
+	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
+		if k.IbcQueryHostZoneFilter(ctx, hostZoneConfig, queryTwapEpochInfo) {
+			return false
+		}
+
+>>>>>>> d2b5f20 (migrate from frozen to more generic host chain fee abs connection status (#156))
 		req := types.NewQueryArithmeticTwapToNowRequest(
 			hostZoneConfig.PoolId,
 			params.NativeIbcedInOsmosis,
@@ -286,28 +346,54 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 		reqs = append(reqs, req)
 		return false
 	})
+<<<<<<< HEAD
 	err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)
 	if err != nil {
 		return err
 	}
 
 	return nil
+=======
+
+	if errorFound != nil {
+		return 0, errorFound
+	}
+
+	if len(reqs) > 0 {
+		k.Logger(ctx).Info("handleOsmosisIbcQuery", "requests", len(reqs))
+		err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)
+		if err != nil {
+			k.Logger(ctx).Error("handleOsmosisIbcQuery: SendOsmosisQueryRequest failed", "err", err)
+			return 0, err
+		}
+	} else {
+		k.Logger(ctx).Info("handleOsmosisIbcQuery: no requests")
+	}
+	return len(reqs), nil
+>>>>>>> d2b5f20 (migrate from frozen to more generic host chain fee abs connection status (#156))
 }
 
 // executeAllHostChainTWAPQuery will iterate all hostZone and send the IBC Query Packet to Osmosis chain.
-func (k Keeper) executeAllHostChainTWAPQuery(ctx sdk.Context) {
-	err := k.handleOsmosisIbcQuery(ctx)
+func (k Keeper) ExecuteAllHostChainTWAPQuery(ctx sdk.Context) {
+	_, err := k.HandleOsmosisIbcQuery(ctx)
 	if err != nil {
 		k.Logger(ctx).Error(fmt.Sprintf("Error executeAllHostChainTWAPQuery %s", err.Error()))
 	}
 }
 
 // executeAllHostChainTWAPSwap will iterate all hostZone and execute swap over chain.
-func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
+// If the hostZone is frozen, it will not execute the swap.
+func (k Keeper) ExecuteAllHostChainSwap(ctx sdk.Context) {
+	// should only execute swap when the host zone is not frozen
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
 		var err error
 
-		if hostZoneConfig.Frozen {
+		if hostZoneConfig.Status == types.HostChainFeeAbsStatus_FROZEN {
+			return false
+		}
+
+		// if the host zone is outdated, it should not execute swap
+		if hostZoneConfig.Status == types.HostChainFeeAbsStatus_OUTDATED {
 			return false
 		}
 
@@ -315,7 +401,13 @@ func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
 
 		if err != nil {
 			k.Logger(ctx).Error(fmt.Sprintf("Failed to transfer IBC token %s", err.Error()))
+<<<<<<< HEAD
 			err = k.FrozenHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+=======
+			// should be set to OUTDATED if failed to transfer to preserve funds
+			// if the newest twap query successes, it will be set to UPDATED
+			err = k.SetStateHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom, types.HostChainFeeAbsStatus_OUTDATED)
+>>>>>>> d2b5f20 (migrate from frozen to more generic host chain fee abs connection status (#156))
 			if err != nil {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozem host zone %s", err.Error()))
 			}
@@ -323,4 +415,25 @@ func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
 
 		return false
 	})
+}
+
+func (k Keeper) IbcQueryHostZoneFilter(ctx sdk.Context, hostZoneConfig types.HostChainFeeAbsConfig, queryTwapEpochInfo types.EpochInfo) bool {
+	if hostZoneConfig.Status == types.HostChainFeeAbsStatus_FROZEN {
+		return true
+	}
+
+	// determine what host zone gets to query
+	exponential := k.GetBlockDelayToQuery(ctx, hostZoneConfig.IbcDenom)
+	if exponential.Jump == types.ExponentialOutdatedJump {
+		err := k.SetStateHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom, types.HostChainFeeAbsStatus_OUTDATED)
+		if err != nil {
+			k.Logger(ctx).Error(fmt.Sprintf("Failed to set host zone status %s", err.Error()))
+		}
+	}
+
+	if queryTwapEpochInfo.CurrentEpoch < exponential.FutureEpoch {
+		return true
+	}
+
+	return false
 }

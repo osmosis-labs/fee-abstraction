@@ -120,7 +120,11 @@ ictest-all: ictest-basic ictest-ibc ictest-packet-forward
 ###############################################################################
 ###                                  Proto                                  ###
 ###############################################################################
+<<<<<<< HEAD
 PROTO_BUILDER_IMAGE=ghcr.io/cosmos/proto-builder
+=======
+PROTO_BUILDER_IMAGE=ghcr.io/cosmos/proto-builder:0.14.0
+>>>>>>> d2b5f20 (migrate from frozen to more generic host chain fee abs connection status (#156))
 
 proto-all: proto-format proto-gen
 

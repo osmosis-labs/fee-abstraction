@@ -13,13 +13,21 @@ import (
 	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
 
 	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
+<<<<<<< HEAD
 	interchaintest "github.com/strangelove-ventures/interchaintest/v7"
+=======
+>>>>>>> d2b5f20 (migrate from frozen to more generic host chain fee abs connection status (#156))
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v7/ibc"
 	"github.com/strangelove-ventures/interchaintest/v7/testreporter"
 	"github.com/strangelove-ventures/interchaintest/v7/testutil"
 	"github.com/stretchr/testify/require"
+<<<<<<< HEAD
 	"go.uber.org/zap/zaptest"
+=======
+
+	feeabsCli "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/feeabs"
+>>>>>>> d2b5f20 (migrate from frozen to more generic host chain fee abs connection status (#156))
 )
 
 type PacketMetadata struct {

@@ -63,3 +63,8 @@ message EpochInfo {
   // started. (The block height at which the timer last ticked)
   int64 current_epoch_start_height = 8;
 }
+
+message ExponentialBackoff {
+  int64 jump = 1;
+  int64 future_epoch = 2;
+}

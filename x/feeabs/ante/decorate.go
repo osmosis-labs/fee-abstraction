@@ -97,6 +97,17 @@ func (fadfd FeeAbstractionDeductFeeDecorate) normalDeductFeeAnteHandle(ctx sdk.C
 }
 
 func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler, feeTx sdk.FeeTx, hostChainConfig feeabstypes.HostChainFeeAbsConfig) (newCtx sdk.Context, err error) {
+<<<<<<< HEAD
+=======
+	if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_FROZEN {
+		return ctx, sdkerrors.Wrap(feeabstypes.ErrHostZoneFrozen, "cannot deduct fee as host zone is frozen")
+	}
+
+	if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_OUTDATED {
+		return ctx, sdkerrors.Wrap(feeabstypes.ErrHostZoneOutdated, "cannot deduct fee as host zone is outdated")
+	}
+
+>>>>>>> d2b5f20 (migrate from frozen to more generic host chain fee abs connection status (#156))
 	fee := feeTx.GetFee()
 	feePayer := feeTx.FeePayer()
 	feeGranter := feeTx.FeeGranter()
@@ -199,9 +210,67 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 	// Ensure that the provided fees meet a minimum threshold for the validator,
 	// if this is a CheckTx. This is only for local mempool purposes, and thus
 	// is only ran on check tx.
+<<<<<<< HEAD
 	if ctx.IsCheckTx() && !simulate {
 		minGasPrices := ctx.MinGasPrices()
 		if minGasPrices.IsZero() {
+=======
+	if ctx.IsCheckTx() || isGlobalFee {
+		feeRequired, err := famfd.GetTxFeeRequired(ctx, int64(gas))
+		if err != nil {
+			return ctx, err
+		}
+
+		// split feeRequired into zero and non-zero coins(nonZeroCoinFeesReq, zeroCoinFeesDenomReq)
+		// split feeCoins according to nonZeroCoinFeesReq, zeroCoinFeesDenomReq,
+		// so that feeCoins can be checked separately against them.
+		nonZeroCoinFeesReq, zeroCoinFeesDenomReq := getNonZeroFees(feeRequired)
+
+		// feeCoinsNonZeroDenom contains non-zero denominations from the feeRequired
+		// feeCoinsNonZeroDenom is used to check if the fees meets the requirement imposed by nonZeroCoinFeesReq
+		// when feeCoins does not contain zero coins' denoms in feeRequired
+		feeCoinsNonZeroDenom, feeCoinsZeroDenom := splitCoinsByDenoms(feeCoins, zeroCoinFeesDenomReq)
+
+		feeCoinsLen := feeCoins.Len()
+
+		// Check if feeDenom is defined in feeabs
+		// If so, replace the amount of feeDenom in feeCoins with the
+		// corresponding amount of native denom that allow to pay fee
+		// TODO: Support more fee token in feeRequired for fee-abstraction
+		if feeCoinsNonZeroDenom.Len() == 1 {
+			feeDenom := feeCoinsNonZeroDenom.GetDenomByIndex(0)
+			hostChainConfig, found := famfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
+			if found {
+				if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_FROZEN {
+					return ctx, sdkerrors.Wrapf(feeabstypes.ErrHostZoneFrozen, "cannot deduct fee as host zone is frozen")
+				}
+
+				if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_OUTDATED {
+					return ctx, sdkerrors.Wrapf(feeabstypes.ErrHostZoneOutdated, "cannot deduct fee as host zone is outdated")
+				}
+
+				nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, feeCoinsNonZeroDenom, hostChainConfig)
+				if err != nil {
+					return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees")
+				}
+				feeCoinsNonZeroDenom = nativeCoinsFees
+			}
+		}
+
+		// After replace the feeCoinsNonZeroDenom, feeCoinsNonZeroDenom must be in denom subset of nonZeroCoinFeesReq
+		if !feeCoinsNonZeroDenom.DenomsSubsetOf(nonZeroCoinFeesReq) {
+			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "fee is not a subset of required fees; got %s, required: %s", feeCoins.String(), feeRequired.String())
+		}
+
+		// if the msg does not satisfy bypass condition and the feeCoins denoms are subset of fezeRequired,
+		// check the feeCoins amount against feeRequired
+		//
+		// when feeCoins=[]
+		// special case: and there is zero coin in fee requirement, pass, otherwise, err
+		// when feeCoins != []
+		// special case: if TX has at least one of the zeroCoinFeesDenomReq, then it should pass
+		if byPass || (feeCoinsLen == 0 && len(zeroCoinFeesDenomReq) != 0) || len(feeCoinsZeroDenom) > 0 {
+>>>>>>> d2b5f20 (migrate from frozen to more generic host chain fee abs connection status (#156))
 			return next(ctx, tx, simulate)
 		}
 		feeCoinsLen := feeCoins.Len()

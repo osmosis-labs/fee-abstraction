@@ -50,7 +50,7 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 				sdk.NewAttribute(types.AttributeEpochStartTime, fmt.Sprintf("%d", epochInfo.CurrentEpochStartTime.Unix())),
 			),
 		)
-		k.setEpochInfo(ctx, epochInfo)
+		k.SetEpochInfo(ctx, epochInfo)
 
 		return false
 	})

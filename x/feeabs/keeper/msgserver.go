@@ -29,7 +29,7 @@ func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQ
 	if err != nil {
 		return nil, err
 	}
-	err = k.handleOsmosisIbcQuery(ctx)
+	_, err = k.HandleOsmosisIbcQuery(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -49,6 +49,22 @@ func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossCha
 		return nil, err
 	}
 
+<<<<<<< HEAD
+=======
+	hostChainConfig, found := k.GetHostZoneConfig(ctx, msg.IbcDenom)
+	if !found {
+		return nil, types.ErrHostZoneConfigNotFound
+	}
+
+	if hostChainConfig.Status == types.HostChainFeeAbsStatus_FROZEN {
+		return nil, types.ErrHostZoneFrozen
+	}
+
+	if hostChainConfig.Status == types.HostChainFeeAbsStatus_OUTDATED {
+		return nil, types.ErrHostZoneOutdated
+	}
+
+>>>>>>> d2b5f20 (migrate from frozen to more generic host chain fee abs connection status (#156))
 	err = k.transferOsmosisCrosschainSwap(ctx, hostChainConfig)
 
 	if err != nil {

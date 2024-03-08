@@ -14,7 +14,7 @@ func TestParseProposal(t *testing.T) {
 		IbcDenom:                "ibc/123",
 		OsmosisPoolTokenDenomIn: "ibc/456",
 		PoolId:                  1,
-		Frozen:                  false,
+		Status:                  types.HostChainFeeAbsStatus_UPDATED,
 	}
 	cdc := codec.NewLegacyAmino()
 	okJSON := testutil.WriteToNewTempFile(t, `
@@ -31,7 +31,7 @@ func TestParseProposal(t *testing.T) {
 			"crosschain_swap_address":"osmo123456",
 			"pool_id": "1",
 			"is_osmosis": false,
-			"frozen": false,
+			"status": 0,
 			"osmosis_query_channel": "channel-3"
 
 		},
