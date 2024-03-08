@@ -99,7 +99,7 @@ Current version of fee-abstraction working with XCSv2
 
 * cosmos-sdk:
   * many developers :)
-* interchaintest and packet-forward-middleware:
+* async-icq
   * strangelove ventures
 * ideation
   * osmosis grants program
