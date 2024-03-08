@@ -93,9 +93,7 @@ This repository is branched by the cosmos-sdk versions and ibc-go versions used.
 - SDK v0.47.x & IBC-go v7.*
   - branch: release/v7.0.x
   - path: github.com/osmosis-labs/fee-abstraction/v7
-- SDK v0.45.x
-  - branch: release/v4.0.x
-  - path: github.com/osmosis-labs/fee-abstraction/v4
+
  
-**note:** there is an sdk v0.46.x branch, but I don't recommend using it at this time. 
+**note:** there is an sdk v0.46.x branch, but it is not currently supported or fully up to date.  If you need it, please open an issue. 
 
