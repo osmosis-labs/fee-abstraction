@@ -72,9 +72,10 @@ func (k Keeper) SendOsmosisQueryRequest(ctx sdk.Context, twapReqs []types.QueryA
 			Data: k.cdc.MustMarshal(&req),
 		}
 	}
-
+	k.Logger(ctx).Info("SendOsmosisQueryRequest", "num_requests", len(icqReqs), "sourcePort", sourcePort, "sourceChannel", sourceChannel)
 	_, err := k.SendInterchainQuery(ctx, icqReqs, sourcePort, sourceChannel)
 	if err != nil {
+		k.Logger(ctx).Error("SendOsmosisQueryRequest: error when send interchain query", "err", err)
 		return err
 	}
 
@@ -91,7 +92,7 @@ func (k Keeper) SendInterchainQuery(
 	timeoutTimestamp := ctx.BlockTime().Add(timeoutDuration).UnixNano()
 	channelCap, ok := k.scopedKeeper.GetCapability(ctx, host.ChannelCapabilityPath(sourcePort, sourceChannel))
 	if !ok {
-		return 0, sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
+		return 0, sdkerrors.Wrapf(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability: source_port: %s, source_channel: %s", sourcePort, sourceChannel)
 	}
 
 	data, err := types.SerializeCosmosQuery(reqs)
@@ -102,8 +103,11 @@ func (k Keeper) SendInterchainQuery(
 
 	sequence, err := k.channelKeeper.SendPacket(ctx, channelCap, sourcePort, sourceChannel, clienttypes.ZeroHeight(), uint64(timeoutTimestamp), icqPacketData.GetBytes())
 	if err != nil {
+		k.Logger(ctx).Error("SendInterchainQuery: SendPacket failed", "err", err)
 		return 0, err
 	}
+
+	k.Logger(ctx).Info("SendInterchainQuery: ", "sequence", sequence)
 
 	return sequence, nil
 }
@@ -286,6 +290,7 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 			hostZoneConfig.OsmosisPoolTokenDenomIn,
 			startTime,
 		)
+		k.Logger(ctx).Info("handleOsmosisIbcQuery: NewQueryArithmeticTwapToNowRequest", "req", fmt.Sprintf("%+v", req))
 		reqs = append(reqs, req)
 		batchCounter++
 		if batchCounter == batchSize {
@@ -305,10 +310,14 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 	}
 
 	if len(reqs) > 0 {
+		k.Logger(ctx).Info("handleOsmosisIbcQuery", "requests", len(reqs))
 		err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)
 		if err != nil {
+			k.Logger(ctx).Error("handleOsmosisIbcQuery: SendOsmosisQueryRequest failed", "err", err)
 			return err
 		}
+	} else {
+		k.Logger(ctx).Info("handleOsmosisIbcQuery: no requests")
 	}
 	return nil
 }
@@ -327,6 +336,11 @@ func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
 		var err error
 
 		if hostZoneConfig.Frozen {
+			return false
+		}
+
+		if err := sdk.ValidateDenom(hostZoneConfig.IbcDenom); err != nil {
+			k.Logger(ctx).Error("executeAllHostChainSwap: invalid ibc denom", "denom", hostZoneConfig.IbcDenom, "err", err)
 			return false
 		}
 

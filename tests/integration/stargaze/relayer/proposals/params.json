@@ -1,0 +1,32 @@
+{
+    "title": "Enable Fee Abtraction",
+    "description": "Change params for enable fee abstraction",
+    "changes": [
+      {
+        "subspace": "feeabs",
+        "key": "NativeIbcedInOsmosis",
+        "value": "ibc/BD47A6048AA3BDC7E9DC98E0CB31AB777E6E8561E9D0BA45E13CA6EEB1558CB5"
+      },
+      {
+        "subspace": "feeabs",
+        "key": "ChainName",
+        "value": "stargaze"
+      },
+      {
+        "subspace": "feeabs",
+        "key": "IbcTransferChannel",
+        "value": "channel-0"
+      },
+      {
+        "subspace": "feeabs",
+        "key": "IbcQueryIcqChannel",
+        "value": "channel-1"
+      },
+      {
+        "subspace": "feeabs",
+        "key": "OsmosisCrosschainSwapAddress",
+        "value": "osmo177jurcy582fk5q298es6662pu48a46ze6eequnv3z0parekpwhhs034wsv"
+      }
+    ],
+    "deposit": "100000000ustars"
+  }
