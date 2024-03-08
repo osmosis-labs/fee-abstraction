@@ -377,7 +377,10 @@ func (k Keeper) IbcQueryHostZoneFilter(ctx sdk.Context, hostZoneConfig types.Hos
 	// determine what host zone gets to query
 	exponential := k.GetBlockDelayToQuery(ctx, hostZoneConfig.IbcDenom)
 	if exponential.Jump == types.ExponentialOutdatedJump {
-		k.SetStateHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom, types.HostChainFeeAbsStatus_OUTDATED)
+		err := k.SetStateHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom, types.HostChainFeeAbsStatus_OUTDATED)
+		if err != nil {
+			k.Logger(ctx).Error(fmt.Sprintf("Failed to set host zone status %s", err.Error()))
+		}
 	}
 
 	if queryTwapEpochInfo.CurrentEpoch < exponential.FutureEpoch {

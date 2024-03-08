@@ -33,13 +33,14 @@ func (s *KeeperTestSuite) TestSuccessfulTwapAck() {
 	abciQuery := s.generateQueryRequest()
 
 	// setup env
-	s.feeAbsKeeper.SetHostZoneConfig(s.ctx, types.HostChainFeeAbsConfig{
+	err := s.feeAbsKeeper.SetHostZoneConfig(s.ctx, types.HostChainFeeAbsConfig{
 		IbcDenom:                IBCDenom,
 		OsmosisPoolTokenDenomIn: OsmosisIBCDenom,
 		Status:                  types.HostChainFeeAbsStatus_UPDATED,
 	})
+	require.NoError(s.T(), err)
 
-	err := s.feeAbsKeeper.OnAcknowledgementPacket(s.ctx, ack, abciQuery)
+	err = s.feeAbsKeeper.OnAcknowledgementPacket(s.ctx, ack, abciQuery)
 	require.NoError(s.T(), err)
 	dec, err := s.feeAbsKeeper.GetTwapRate(s.ctx, IBCDenom)
 	require.NoError(s.T(), err)
@@ -64,7 +65,8 @@ func (s *KeeperTestSuite) TestFailedTwapAck() {
 		OsmosisPoolTokenDenomIn: OsmosisIBCDenom,
 		Status:                  types.HostChainFeeAbsStatus_UPDATED,
 	}
-	s.feeAbsKeeper.SetHostZoneConfig(s.ctx, hostZoneConfig)
+	err := s.feeAbsKeeper.SetHostZoneConfig(s.ctx, hostZoneConfig)
+	require.NoError(s.T(), err)
 
 	s.feeAbsKeeper.SetEpochInfo(s.ctx, types.EpochInfo{
 		Identifier:   types.DefaultQueryEpochIdentifier,
@@ -76,7 +78,7 @@ func (s *KeeperTestSuite) TestFailedTwapAck() {
 	require.Equal(s.T(), int64(1), res.CurrentEpoch)
 
 	// simulate receiving failed ack packet
-	err := s.feeAbsKeeper.OnAcknowledgementPacket(s.ctx, ack, abciQuery)
+	err = s.feeAbsKeeper.OnAcknowledgementPacket(s.ctx, ack, abciQuery)
 	require.NoError(s.T(), err)
 	exp := s.feeAbsKeeper.GetBlockDelayToQuery(s.ctx, IBCDenom)
 	require.Equal(s.T(), int64(2), exp.Jump)
@@ -121,7 +123,8 @@ func (s *KeeperTestSuite) TestOutdatedStatus() {
 		OsmosisPoolTokenDenomIn: OsmosisIBCDenom,
 		Status:                  types.HostChainFeeAbsStatus_UPDATED,
 	}
-	s.feeAbsKeeper.SetHostZoneConfig(s.ctx, hostZoneConfig)
+	err := s.feeAbsKeeper.SetHostZoneConfig(s.ctx, hostZoneConfig)
+	require.NoError(s.T(), err)
 
 	s.feeAbsKeeper.SetEpochInfo(s.ctx, types.EpochInfo{
 		Identifier:   types.DefaultQueryEpochIdentifier,
@@ -133,7 +136,7 @@ func (s *KeeperTestSuite) TestOutdatedStatus() {
 	require.Equal(s.T(), int64(1), res.CurrentEpoch)
 
 	// simulate receiving failed ack packet, exponential backoff jump = 2
-	err := s.feeAbsKeeper.OnAcknowledgementPacket(s.ctx, ack, abciQuery)
+	err = s.feeAbsKeeper.OnAcknowledgementPacket(s.ctx, ack, abciQuery)
 	require.NoError(s.T(), err)
 	exp := s.feeAbsKeeper.GetBlockDelayToQuery(s.ctx, IBCDenom)
 	require.Equal(s.T(), int64(2), exp.Jump)
