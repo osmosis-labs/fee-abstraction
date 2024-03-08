@@ -2,8 +2,9 @@ package keeper_test
 
 import (
 	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	"github.com/stretchr/testify/require"
+
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 

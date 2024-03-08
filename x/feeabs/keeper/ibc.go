@@ -283,7 +283,6 @@ func (k Keeper) HandleOsmosisIbcQuery(ctx sdk.Context) (int, error) {
 	// however, it will continue to send query to other host zone if UPDATED, or OUTDATED
 	// this logic iterate through registered host zones and collect requests before sending it
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-
 		if k.IbcQueryHostZoneFilter(ctx, hostZoneConfig, queryTwapEpochInfo) {
 			return false
 		}

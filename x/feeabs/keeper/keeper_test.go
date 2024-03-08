@@ -37,9 +37,7 @@ const (
 	OSMOSIS_IBC_DENOM = "ibc/2"
 )
 
-var (
-	valTokens = sdk.TokensFromConsensusPower(42, sdk.DefaultPowerReduction)
-)
+var valTokens = sdk.TokensFromConsensusPower(42, sdk.DefaultPowerReduction)
 
 func (s *KeeperTestSuite) SetupTest() {
 	s.feeAbsApp = apphelpers.Setup(s.T(), false, 1)
