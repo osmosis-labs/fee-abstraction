@@ -143,11 +143,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 
 			if icqRes.Code != 0 {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to send interchain query code %d", icqRes.Code))
-				err := k.SetStateHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom, types.HostChainFeeAbsStatus_FROZEN)
-				if err != nil {
-					// should never happen
-					k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
-				}
+				k.IncreaseBlockDelayToQuery(ctx, hostZoneConfig.IbcDenom)
 				continue
 			}
 			// k.Logger(ctx).Info(fmt.Sprintf("ICQ response %+v", icqRes))
@@ -166,6 +162,9 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 				// should never happen
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
 			}
+
+			// reset block delay to query
+			k.ResetBlockDelayToQuery(ctx, hostZoneConfig.IbcDenom)
 		}
 
 		k.Logger(ctx).Info("packet ICQ request successfully")
@@ -178,10 +177,8 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 		)
 	case *channeltypes.Acknowledgement_Error:
 		k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-			err := k.SetStateHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom, types.HostChainFeeAbsStatus_FROZEN)
-			if err != nil {
-				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
-			}
+			// todo: should try to retry here instead of setting FROZEN
+			k.IncreaseBlockDelayToQuery(ctx, hostZoneConfig.IbcDenom)
 
 			return false
 		})
@@ -280,10 +277,24 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 	var reqs []types.QueryArithmeticTwapToNowRequest
 	batchCounter := 0
 	var errorFound error
+	// fee abstraction will not send query to a frozen host zone
+	// however, it will continue to send query to other host zone if UPDATED, or OUTDATED
+	// this logic iterate through registered host zones and collect requests before sending it
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
 		if hostZoneConfig.Status == types.HostChainFeeAbsStatus_FROZEN {
 			return false
 		}
+
+		// determine what host zone gets to query
+		exponential := k.GetBlockDelayToQuery(ctx, hostZoneConfig.IbcDenom)
+		if exponential.Jump == types.ExponentialOutdatedJump {
+			k.SetStateHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom, types.HostChainFeeAbsStatus_OUTDATED)
+		}
+
+		if queryTwapEpochInfo.CurrentEpoch < exponential.FutureEpoch {
+			return false
+		}
+
 		req := types.NewQueryArithmeticTwapToNowRequest(
 			hostZoneConfig.PoolId,
 			params.NativeIbcedInOsmosis,
@@ -331,11 +342,18 @@ func (k Keeper) executeAllHostChainTWAPQuery(ctx sdk.Context) {
 }
 
 // executeAllHostChainTWAPSwap will iterate all hostZone and execute swap over chain.
+// If the hostZone is frozen, it will not execute the swap.
 func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
+	// should only execute swap when the host zone is not frozen
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
 		var err error
 
 		if hostZoneConfig.Status == types.HostChainFeeAbsStatus_FROZEN {
+			return false
+		}
+
+		// if the host zone is outdated, it should not execute swap
+		if hostZoneConfig.Status == types.HostChainFeeAbsStatus_OUTDATED {
 			return false
 		}
 
@@ -347,7 +365,9 @@ func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
 		err = k.transferOsmosisCrosschainSwap(ctx, hostZoneConfig)
 		if err != nil {
 			k.Logger(ctx).Error(fmt.Sprintf("Failed to transfer IBC token %s", err.Error()))
-			err = k.SetStateHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom, types.HostChainFeeAbsStatus_FROZEN)
+			// should be set to OUTDATED if failed to transfer to preserve funds
+			// if the newest twap query successes, it will be set to UPDATED
+			err = k.SetStateHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom, types.HostChainFeeAbsStatus_OUTDATED)
 			if err != nil {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozem host zone %s", err.Error()))
 			}

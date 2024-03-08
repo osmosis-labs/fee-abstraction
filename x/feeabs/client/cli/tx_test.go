@@ -33,7 +33,7 @@ func TestParseProposal(t *testing.T) {
 			"crosschain_swap_address":"osmo123456",
 			"pool_id": "1",
 			"is_osmosis": false,
-			"status": 1,
+			"status": 0,
 			"osmosis_query_channel": "channel-3"
 
 		},

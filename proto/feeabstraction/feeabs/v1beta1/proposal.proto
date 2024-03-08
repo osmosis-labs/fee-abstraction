@@ -8,10 +8,9 @@ import "google/api/annotations.proto";
 option go_package = "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types";
 
 enum HostChainFeeAbsStatus {
-  UNSPECIFIED = 0;
-  UPDATED = 1;
-  OUTDATED = 2;
-  FROZEN = 3;
+  UPDATED = 0;
+  OUTDATED = 1;
+  FROZEN = 2;
 }
 
 message HostChainFeeAbsConfig {

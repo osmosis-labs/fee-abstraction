@@ -10,6 +10,12 @@ const (
 	DefaultQueryPeriod          = time.Minute * 1
 	DefaultSwapEpochIdentifier  = "swap"
 	DefaultQueryEpochIdentifier = "query"
+	// assume that query period is after 1 minute, thus a maximum of 32 minutes is enough
+	// todo: should be a parameter
+	// 1, 2, 4, 8, 16, 32
+	ExponentialMaxJump = 32
+	// after 4 jump, a connection is considered outdated
+	ExponentialOutdatedJump = 4
 )
 
 func KeyPrefix(p string) []byte {

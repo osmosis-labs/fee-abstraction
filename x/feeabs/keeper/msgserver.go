@@ -53,6 +53,10 @@ func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossCha
 		return nil, types.ErrHostZoneFrozen
 	}
 
+	if hostChainConfig.Status == types.HostChainFeeAbsStatus_OUTDATED {
+		return nil, types.ErrHostZoneOutdated
+	}
+
 	err = k.transferOsmosisCrosschainSwap(ctx, hostChainConfig)
 	if err != nil {
 		return nil, err

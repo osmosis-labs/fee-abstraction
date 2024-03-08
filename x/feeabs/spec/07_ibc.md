@@ -30,6 +30,8 @@ The denomination provided for QueryArithmeticTwapToNowRequest should correspond 
 
 Feeabs module exchange Ibc token to native token using the `SwapCrossChain` which is `MsgTransfer` with a specific `Memo`:
 
+Swap cross chain shall not be performed if fee abstraction connection to host zone is either FROZEN or OUTDATED. Upon successful twap query, the connection will be set to UPDATED.
+
 ```go
 type MsgTransfer struct {
  SourcePort string
@@ -66,10 +68,9 @@ A host chain config for fee abstraction will contains:
 
 ```proto
 enum HostChainFeeAbsStatus {
-  UNSPECIFIED = 0;
-  UPDATED = 1;
-  OUTDATED = 2;
-  FROZEN = 3;
+  UPDATED = 0;
+  OUTDATED = 1;
+  FROZEN = 2;
 }
 
 message HostChainFeeAbsConfig {
@@ -86,7 +87,6 @@ message HostChainFeeAbsConfig {
 
 1. HostChainFeeAbsStatus
 There are four status of fee abstraction connection to host chain:
-* UNSPECIFIED: the connection is unspecified, and will be determined by the chain.
 * UPDATED: the connection is up - to - date.
 * OUTDATED: the connection is out of date after failure to ibq query, or fail to cross - chain swap after 5 retries. Should be resumed after 30 mins.
 * FROZEN: the connection is frozen, no further actions will be performed.
