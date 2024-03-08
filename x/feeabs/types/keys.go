@@ -27,6 +27,8 @@ type (
 )
 
 var (
+	StoreExponentialBackoff = []byte{0x10} // sub store that records the next block to send an ibc query or cross - chain swap
+
 	OsmosisTwapExchangeRate     = []byte{0x01} // Key for the exchange rate of osmosis (to native token)
 	KeyChannelID                = []byte{0x02} // Key for IBC channel to osmosis
 	KeyHostChainConfigByFeeAbs  = []byte{0x03} // Key for IBC channel to osmosis

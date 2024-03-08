@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"testing"
 
-	feeabsCli "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/feeabs"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/stretchr/testify/require"
+
+	feeabsCli "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/feeabs"
 )
 
 func TestHostZoneProposal(t *testing.T) {

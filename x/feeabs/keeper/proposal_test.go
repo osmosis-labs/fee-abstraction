@@ -26,7 +26,7 @@ func (s *KeeperTestSuite) TestAddHostZoneProposal() {
 				IbcDenom:                "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
 				OsmosisPoolTokenDenomIn: "ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E",
 				PoolId:                  1,
-				Frozen:                  false,
+				Status:                  types.HostChainFeeAbsStatus_UPDATED,
 			},
 			shouldErr: false,
 		},
@@ -68,7 +68,7 @@ func (s *KeeperTestSuite) TestDeleteHostZoneProposal() {
 		IbcDenom:                "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
 		OsmosisPoolTokenDenomIn: "ibc/9117A26BA81E29FA4F78F57DC2BD90CD3D26848101BA880445F119B22A1E254E",
 		PoolId:                  1,
-		Frozen:                  false,
+		Status:                  types.HostChainFeeAbsStatus_UPDATED,
 	}
 
 	addProposal := &types.AddHostZoneProposal{

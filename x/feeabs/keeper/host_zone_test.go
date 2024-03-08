@@ -19,7 +19,7 @@ func createNHostZone(t *testing.T, keeper *feeabskeeper.Keeper, ctx sdk.Context,
 		IbcDenom:                "ibc/123",
 		OsmosisPoolTokenDenomIn: "ibc/456",
 		PoolId:                  1,
-		Frozen:                  false,
+		Status:                  types.HostChainFeeAbsStatus_UPDATED,
 	}
 	for i := 0; i < n; i++ {
 		expected = append(expected, expectedConfig)
