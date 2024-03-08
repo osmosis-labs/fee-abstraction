@@ -50,12 +50,12 @@ func (k Keeper) AddEpochInfo(ctx sdk.Context, epoch types.EpochInfo) error {
 		epoch.StartTime = ctx.BlockTime()
 	}
 	epoch.CurrentEpochStartHeight = ctx.BlockHeight()
-	k.setEpochInfo(ctx, epoch)
+	k.SetEpochInfo(ctx, epoch)
 	return nil
 }
 
-// setEpochInfo set epoch info.
-func (k Keeper) setEpochInfo(ctx sdk.Context, epoch types.EpochInfo) {
+// SetEpochInfo set epoch info.
+func (k Keeper) SetEpochInfo(ctx sdk.Context, epoch types.EpochInfo) {
 	store := ctx.KVStore(k.storeKey)
 	value, err := proto.Marshal(&epoch)
 	if err != nil {
@@ -102,10 +102,10 @@ func (k Keeper) AfterEpochEnd(ctx sdk.Context, epochIdentifier string) {
 	switch epochIdentifier {
 	case types.DefaultQueryEpochIdentifier:
 		k.Logger(ctx).Info("Epoch interchain query TWAP")
-		k.executeAllHostChainTWAPQuery(ctx)
+		k.ExecuteAllHostChainTWAPQuery(ctx)
 	case types.DefaultSwapEpochIdentifier:
 		k.Logger(ctx).Info("Epoch cross chain swap")
-		k.executeAllHostChainSwap(ctx)
+		k.ExecuteAllHostChainSwap(ctx)
 	default:
 		k.Logger(ctx).Error(fmt.Sprintf("Unknown epoch %s", epochIdentifier))
 	}

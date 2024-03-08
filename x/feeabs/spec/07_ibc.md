@@ -30,6 +30,8 @@ The denomination provided for QueryArithmeticTwapToNowRequest should correspond 
 
 Feeabs module exchange Ibc token to native token using the `SwapCrossChain` which is `MsgTransfer` with a specific `Memo`:
 
+Swap cross chain shall not be performed if fee abstraction connection to host zone is either FROZEN or OUTDATED. Upon successful twap query, the connection will be set to UPDATED.
+
 ```go
 type MsgTransfer struct {
  SourcePort string
@@ -56,23 +58,35 @@ This message is expected to fail if:
 
 Feeabs module will send an ibc transfer message with a sepecific data in `Memo` field. This `Memo` field data will be used in Ibc transfer middleware on counterparty chain to swap the amount of ibc token to native token on Osmosis.
 
-There will be 2 separate case that the counterparty chain is Osmosis or not, we will have 2 correspond `Memo`.
+# Host Chain
 
-These 2 case are defined in the `IsOsmosis` field in `HostChainFeeAbsConfig`
+Host chain is the swap service provider that fee abstraction uses to swap a token for native fee. Currently, host chain is designed for Osmosis.
 
-```go
-type HostChainFeeAbsConfig struct {
- IbcDenom string
- OsmosisPoolTokenDenomIn string
- MiddlewareAddress string
- IbcTransferChannel string
- HostZoneIbcTransferChannel string
- CrosschainSwapAddress string
- PoolId uint64
- IsOsmosis bool
- Frozen bool
- OsmosisQueryChannel string
+Fee Abstraction connection to host chain should always be kept alive unless specified FROZEN, as this is crucial to the normal function of fee abstraction.
+
+A host chain config for fee abstraction will contains:
+
+```proto
+enum HostChainFeeAbsStatus {
+  UPDATED = 0;
+  OUTDATED = 1;
+  FROZEN = 2;
+}
+
+message HostChainFeeAbsConfig {
+  // ibc token is allowed to be used as fee token
+  string ibc_denom = 1 [ (gogoproto.moretags) = "yaml:\"allowed_token\"" ];
+  // token_in in cross_chain swap contract.
+  string osmosis_pool_token_denom_in = 2;
+  // pool id
+  uint64 pool_id = 3;
+  // Host chain fee abstraction connection status
+  HostChainFeeAbsStatus status = 4;
 }
 ```
 
-Note: These 2 Ibc message only open for testing version. In the product version, user can't manual send these 2 message instead, feeabs module will automatic send every epoch to update the TWAP and swap ibc-token to native-token.
+1. HostChainFeeAbsStatus
+There are four status of fee abstraction connection to host chain:
+* UPDATED: the connection is up - to - date.
+* OUTDATED: the connection is out of date after failure to ibq query, or fail to cross - chain swap after 5 retries. Should be resumed after 30 mins.
+* FROZEN: the connection is frozen, no further actions will be performed.
