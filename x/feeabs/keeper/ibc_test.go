@@ -4,11 +4,11 @@ import (
 	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
+	sdkmath "cosmossdk.io/math"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 
-	sdkmath "cosmossdk.io/math"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 func (s *KeeperTestSuite) TestGetDecTWAPFromBytes() {
@@ -34,14 +34,14 @@ func (s *KeeperTestSuite) TestSuccessfulTwapAck() {
 
 	// setup env
 	s.feeAbsKeeper.SetHostZoneConfig(s.ctx, types.HostChainFeeAbsConfig{
-		IbcDenom:                IBC_DENOM,
-		OsmosisPoolTokenDenomIn: OSMOSIS_IBC_DENOM,
+		IbcDenom:                IBCDenom,
+		OsmosisPoolTokenDenomIn: OsmosisIBCDenom,
 		Status:                  types.HostChainFeeAbsStatus_UPDATED,
 	})
 
 	err := s.feeAbsKeeper.OnAcknowledgementPacket(s.ctx, ack, abciQuery)
 	require.NoError(s.T(), err)
-	dec, err := s.feeAbsKeeper.GetTwapRate(s.ctx, IBC_DENOM)
+	dec, err := s.feeAbsKeeper.GetTwapRate(s.ctx, IBCDenom)
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), sdkmath.LegacyMustNewDecFromStr("2.142857140000000000"), dec)
 }
@@ -60,8 +60,8 @@ func (s *KeeperTestSuite) TestFailedTwapAck() {
 
 	// setup env
 	hostZoneConfig := types.HostChainFeeAbsConfig{
-		IbcDenom:                IBC_DENOM,
-		OsmosisPoolTokenDenomIn: OSMOSIS_IBC_DENOM,
+		IbcDenom:                IBCDenom,
+		OsmosisPoolTokenDenomIn: OsmosisIBCDenom,
 		Status:                  types.HostChainFeeAbsStatus_UPDATED,
 	}
 	s.feeAbsKeeper.SetHostZoneConfig(s.ctx, hostZoneConfig)
@@ -78,7 +78,7 @@ func (s *KeeperTestSuite) TestFailedTwapAck() {
 	// simulate receiving failed ack packet
 	err := s.feeAbsKeeper.OnAcknowledgementPacket(s.ctx, ack, abciQuery)
 	require.NoError(s.T(), err)
-	exp := s.feeAbsKeeper.GetBlockDelayToQuery(s.ctx, IBC_DENOM)
+	exp := s.feeAbsKeeper.GetBlockDelayToQuery(s.ctx, IBCDenom)
 	require.Equal(s.T(), int64(2), exp.Jump)
 	require.Equal(s.T(), int64(3), exp.FutureEpoch)
 
@@ -117,8 +117,8 @@ func (s *KeeperTestSuite) TestOutdatedStatus() {
 
 	// setup env
 	hostZoneConfig := types.HostChainFeeAbsConfig{
-		IbcDenom:                IBC_DENOM,
-		OsmosisPoolTokenDenomIn: OSMOSIS_IBC_DENOM,
+		IbcDenom:                IBCDenom,
+		OsmosisPoolTokenDenomIn: OsmosisIBCDenom,
 		Status:                  types.HostChainFeeAbsStatus_UPDATED,
 	}
 	s.feeAbsKeeper.SetHostZoneConfig(s.ctx, hostZoneConfig)
@@ -135,7 +135,7 @@ func (s *KeeperTestSuite) TestOutdatedStatus() {
 	// simulate receiving failed ack packet, exponential backoff jump = 2
 	err := s.feeAbsKeeper.OnAcknowledgementPacket(s.ctx, ack, abciQuery)
 	require.NoError(s.T(), err)
-	exp := s.feeAbsKeeper.GetBlockDelayToQuery(s.ctx, IBC_DENOM)
+	exp := s.feeAbsKeeper.GetBlockDelayToQuery(s.ctx, IBCDenom)
 	require.Equal(s.T(), int64(2), exp.Jump)
 	require.Equal(s.T(), int64(3), exp.FutureEpoch)
 
@@ -152,7 +152,7 @@ func (s *KeeperTestSuite) TestOutdatedStatus() {
 
 	err = s.feeAbsKeeper.OnAcknowledgementPacket(s.ctx, ack, abciQuery)
 	require.NoError(s.T(), err)
-	exp = s.feeAbsKeeper.GetBlockDelayToQuery(s.ctx, IBC_DENOM)
+	exp = s.feeAbsKeeper.GetBlockDelayToQuery(s.ctx, IBCDenom)
 	require.Equal(s.T(), int64(4), exp.Jump)
 	require.Equal(s.T(), int64(7), exp.FutureEpoch)
 
@@ -166,7 +166,7 @@ func (s *KeeperTestSuite) TestOutdatedStatus() {
 	filter = s.feeAbsKeeper.IbcQueryHostZoneFilter(s.ctx, hostZoneConfig, epochInfo)
 	require.False(s.T(), filter)
 
-	config, found := s.feeAbsKeeper.GetHostZoneConfig(s.ctx, IBC_DENOM)
+	config, found := s.feeAbsKeeper.GetHostZoneConfig(s.ctx, IBCDenom)
 	require.True(s.T(), found)
 	require.Equal(s.T(), types.HostChainFeeAbsStatus_OUTDATED, config.Status)
 
@@ -179,10 +179,10 @@ func (s *KeeperTestSuite) TestOutdatedStatus() {
 
 	err = s.feeAbsKeeper.OnAcknowledgementPacket(s.ctx, ack, abciQuery)
 	require.NoError(s.T(), err)
-	config, found = s.feeAbsKeeper.GetHostZoneConfig(s.ctx, IBC_DENOM)
+	config, found = s.feeAbsKeeper.GetHostZoneConfig(s.ctx, IBCDenom)
 	require.True(s.T(), found)
 	require.Equal(s.T(), types.HostChainFeeAbsStatus_UPDATED, config.Status)
-	exp = s.feeAbsKeeper.GetBlockDelayToQuery(s.ctx, IBC_DENOM)
+	exp = s.feeAbsKeeper.GetBlockDelayToQuery(s.ctx, IBCDenom)
 	require.Equal(s.T(), int64(1), exp.Jump)
 	require.Equal(s.T(), int64(0), exp.FutureEpoch)
 }
@@ -203,8 +203,8 @@ func (s *KeeperTestSuite) generateAckPacket(queryResponses []abci.ResponseQuery)
 
 func (s *KeeperTestSuite) generateQueryRequest() []abci.RequestQuery {
 	icqReqData := types.QueryArithmeticTwapToNowRequest{
-		BaseAsset:  IBC_DENOM,
-		QuoteAsset: OSMOSIS_IBC_DENOM,
+		BaseAsset:  IBCDenom,
+		QuoteAsset: OsmosisIBCDenom,
 	}
 	icqReqDataBz, err := icqReqData.Marshal()
 	require.NoError(s.T(), err)

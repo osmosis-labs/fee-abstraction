@@ -31,10 +31,10 @@ type KeeperTestSuite struct {
 }
 
 const (
-	SOURCE_PORT       = "feeabs"
-	SOURCE_CHANNEL    = "channel-0"
-	IBC_DENOM         = "ibc/1"
-	OSMOSIS_IBC_DENOM = "ibc/2"
+	SourcePort      = "feeabs"
+	SourceChannel   = "channel-0"
+	IBCDenom        = "ibc/1"
+	OsmosisIBCDenom = "ibc/2"
 )
 
 var valTokens = sdk.TokensFromConsensusPower(42, sdk.DefaultPowerReduction)
