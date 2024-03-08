@@ -86,17 +86,16 @@ Current version of fee-abstraction working with XCSv2
 
 This repository is branched by the cosmos-sdk versions and ibc-go versions used.  Currently fee abstraction supports:
 
-- SDK v0.50.x & IBC-go v7.*
+- SDK v0.50.x & IBC-go v8.*
   - note: incomplete
   - branch: release/v8.0.x
   - path: github.com/osmosis-labs/fee-abstraction/v8 
 - SDK v0.47.x & IBC-go v7.*
   - branch: release/v7.0.x
   - path: github.com/osmosis-labs/fee-abstraction/v7
-- SDK v0.46.x
-  - branch: release/v6.0.x
-  - path: github.com/osmosis-labs/fee-abstraction/v6
 - SDK v0.45.x
   - branch: release/v4.0.x
   - path: github.com/osmosis-labs/fee-abstraction/v4
+ 
+**note:** there is an sdk v0.46.x branch, but I don't recommend using it at this time. 
 
