@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -27,6 +29,8 @@ func (k Keeper) IncreaseBlockDelayToQuery(ctx sdk.Context, ibcDenom string) {
 	if nextJump > types.ExponentialMaxJump {
 		nextJump = types.ExponentialMaxJump
 	}
+
+	fmt.Println("currentJump", currentJump, "nextJump", nextJump, "currentEpoch.CurrentEpoch", currentEpoch.CurrentEpoch, "nextEpoch", currentEpoch.CurrentEpoch+nextJump)
 
 	next := &types.ExponentialBackoff{
 		Jump:        nextJump,

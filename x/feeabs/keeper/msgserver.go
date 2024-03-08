@@ -28,7 +28,7 @@ func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQ
 	if err != nil {
 		return nil, err
 	}
-	err = k.handleOsmosisIbcQuery(ctx)
+	_, err = k.HandleOsmosisIbcQuery(ctx)
 	if err != nil {
 		return nil, err
 	}

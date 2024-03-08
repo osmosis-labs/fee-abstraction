@@ -136,6 +136,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			hostZoneConfig, found := k.GetHostZoneConfigByOsmosisTokenDenom(ctx, icqReqData.QuoteAsset)
 			if !found {
 				k.Logger(ctx).Error(fmt.Sprintf("Error when get host zone by Osmosis denom %s %v not found", icqReqData.QuoteAsset, err))
+				fmt.Println("error")
 				continue
 			}
 
@@ -197,7 +198,8 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 // OnTimeoutPacket resend packet when timeout
 func (k Keeper) OnTimeoutPacket(ctx sdk.Context) error {
 	ctx.Logger().Info("IBC Timeout packet")
-	return k.handleOsmosisIbcQuery(ctx)
+	_, err := k.HandleOsmosisIbcQuery(ctx)
+	return err
 }
 
 func (k Keeper) GetChannelID(ctx sdk.Context) string {
@@ -261,12 +263,12 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 	return k.transferKeeper.Transfer(sdk.WrapSDKContext(ctx), transferMsg)
 }
 
-func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
+func (k Keeper) HandleOsmosisIbcQuery(ctx sdk.Context) (int, error) {
 	// set startTime for query twap
 	queryTwapEpochInfo, found := k.GetEpochInfo(ctx, types.DefaultQueryEpochIdentifier)
 	if !found {
 		k.Logger(ctx).Error(fmt.Sprintf("Don't have query epoch information: %s", types.DefaultQueryEpochIdentifier))
-		return nil
+		return 0, nil
 	}
 	startTime := ctx.BlockTime().Add(-queryTwapEpochInfo.Duration)
 	k.Logger(ctx).Info(fmt.Sprintf("Start time: %v", startTime.Unix()))
@@ -281,17 +283,8 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 	// however, it will continue to send query to other host zone if UPDATED, or OUTDATED
 	// this logic iterate through registered host zones and collect requests before sending it
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-		if hostZoneConfig.Status == types.HostChainFeeAbsStatus_FROZEN {
-			return false
-		}
 
-		// determine what host zone gets to query
-		exponential := k.GetBlockDelayToQuery(ctx, hostZoneConfig.IbcDenom)
-		if exponential.Jump == types.ExponentialOutdatedJump {
-			k.SetStateHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom, types.HostChainFeeAbsStatus_OUTDATED)
-		}
-
-		if queryTwapEpochInfo.CurrentEpoch < exponential.FutureEpoch {
+		if k.IbcQueryHostZoneFilter(ctx, hostZoneConfig, queryTwapEpochInfo) {
 			return false
 		}
 
@@ -317,7 +310,7 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 	})
 
 	if errorFound != nil {
-		return errorFound
+		return 0, errorFound
 	}
 
 	if len(reqs) > 0 {
@@ -325,17 +318,17 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 		err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)
 		if err != nil {
 			k.Logger(ctx).Error("handleOsmosisIbcQuery: SendOsmosisQueryRequest failed", "err", err)
-			return err
+			return 0, err
 		}
 	} else {
 		k.Logger(ctx).Info("handleOsmosisIbcQuery: no requests")
 	}
-	return nil
+	return len(reqs), nil
 }
 
 // executeAllHostChainTWAPQuery will iterate all hostZone and send the IBC Query Packet to Osmosis chain.
-func (k Keeper) executeAllHostChainTWAPQuery(ctx sdk.Context) {
-	err := k.handleOsmosisIbcQuery(ctx)
+func (k Keeper) ExecuteAllHostChainTWAPQuery(ctx sdk.Context) {
+	_, err := k.HandleOsmosisIbcQuery(ctx)
 	if err != nil {
 		k.Logger(ctx).Error(fmt.Sprintf("Error executeAllHostChainTWAPQuery %s", err.Error()))
 	}
@@ -343,7 +336,7 @@ func (k Keeper) executeAllHostChainTWAPQuery(ctx sdk.Context) {
 
 // executeAllHostChainTWAPSwap will iterate all hostZone and execute swap over chain.
 // If the hostZone is frozen, it will not execute the swap.
-func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
+func (k Keeper) ExecuteAllHostChainSwap(ctx sdk.Context) {
 	// should only execute swap when the host zone is not frozen
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
 		var err error
@@ -375,4 +368,22 @@ func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
 
 		return false
 	})
+}
+
+func (k Keeper) IbcQueryHostZoneFilter(ctx sdk.Context, hostZoneConfig types.HostChainFeeAbsConfig, queryTwapEpochInfo types.EpochInfo) bool {
+	if hostZoneConfig.Status == types.HostChainFeeAbsStatus_FROZEN {
+		return true
+	}
+
+	// determine what host zone gets to query
+	exponential := k.GetBlockDelayToQuery(ctx, hostZoneConfig.IbcDenom)
+	if exponential.Jump == types.ExponentialOutdatedJump {
+		k.SetStateHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom, types.HostChainFeeAbsStatus_OUTDATED)
+	}
+
+	if queryTwapEpochInfo.CurrentEpoch < exponential.FutureEpoch {
+		return true
+	}
+
+	return false
 }
