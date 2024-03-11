@@ -1,0 +1,14 @@
+queue_rules:
+  - name: default
+    conditions:
+      - "#approved-reviews-by>1"
+
+pull_request_rules:
+  - name: backport patches to release/v7.0.x branch
+    conditions:
+      - base=main
+      - label=release/v7.0.x
+    actions:
+      backport:
+        branches:
+          - release/v7.0.x
