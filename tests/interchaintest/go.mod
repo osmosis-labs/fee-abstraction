@@ -7,7 +7,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.47.8
 	github.com/cosmos/ibc-go/v7 v7.3.1
 	github.com/icza/dyno v0.0.0-20220812133438-f0b6f8a18845
-	github.com/osmosis-labs/fee-abstraction/v7 v7.0.0-00010101000000-000000000000
+	github.com/osmosis-labs/fee-abstraction/v7 v7.0.0-20240308160138-d1eb119cae30
 	github.com/strangelove-ventures/interchaintest/v7 v7.0.0-20230721183422-fb937bb0e165
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/zap v1.26.0
