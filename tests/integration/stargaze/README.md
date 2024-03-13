@@ -148,12 +148,18 @@ proposal.json
       "ibc_denom": "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
       "osmosis_pool_token_denom_in": "uosmo",
       "pool_id": "404",
-      "frozen": false
+      "status": 0
     },
     "deposit": "100000000ustars"
   }
 }
 ```
+
+"status" field indicates fee abstraction connection status to host zone:
+* 0: UPDADTED
+* 1: OUTDATED
+* 2: FROZEN
+
 
 ```bash
 starsd tx gov submit-legacy-proposal add-hostzone-config proposal.json --from investor

@@ -41,7 +41,7 @@ func TestHostZoneProposal(t *testing.T) {
 		IbcDenom:                "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
 		OsmosisPoolTokenDenomIn: "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
 		PoolId:                  "1",
-		Frozen:                  false,
+		Status:                  feeabsCli.HostChainFeeAbsStatus_UPDATED,
 	}})
 
 	// Start testing for set host zone proposal
@@ -63,7 +63,7 @@ func TestHostZoneProposal(t *testing.T) {
 		IbcDenom:                "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
 		OsmosisPoolTokenDenomIn: "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
 		PoolId:                  "1",
-		Frozen:                  true,
+		Status:                  feeabsCli.HostChainFeeAbsStatus_FROZEN,
 	}})
 
 	// Start testing for delete host zone proposal
