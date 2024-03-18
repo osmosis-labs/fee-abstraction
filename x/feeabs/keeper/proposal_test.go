@@ -7,7 +7,7 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govv1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v8/app/helpers"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v8/app"
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 

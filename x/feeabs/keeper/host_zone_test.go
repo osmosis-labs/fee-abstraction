@@ -7,7 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v8/app/helpers"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v8/app"
 	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )

@@ -3,25 +3,16 @@ package main
 import (
 	"os"
 
-	"github.com/cosmos/cosmos-sdk/server"
+	"cosmossdk.io/log"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
-
 	app "github.com/osmosis-labs/fee-abstraction/v8/app"
-	"github.com/osmosis-labs/fee-abstraction/v8/app/params"
-	"github.com/osmosis-labs/fee-abstraction/v8/cmd/feeappd/cmd"
 )
 
 func main() {
-	params.SetAddressPrefixes()
-	rootCmd, _ := cmd.NewRootCmd()
+	rootCmd := NewRootCmd()
 
 	if err := svrcmd.Execute(rootCmd, "", app.DefaultNodeHome); err != nil {
-		switch e := err.(type) {
-		case server.ErrorCode:
-			os.Exit(e.Code)
-
-		default:
-			os.Exit(1)
-		}
+		log.NewLogger(rootCmd.OutOrStderr()).Error("failure when running app", "err", err)
+		os.Exit(1)
 	}
 }

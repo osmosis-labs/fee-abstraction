@@ -19,10 +19,10 @@ import (
 
 type TestSupport struct {
 	t   testing.TB
-	app *FeeAbs
+	app *FeeApp
 }
 
-func NewTestSupport(tb testing.TB, app *FeeAbs) *TestSupport {
+func NewTestSupport(tb testing.TB, app *FeeApp) *TestSupport {
 	tb.Helper()
 	return &TestSupport{t: tb, app: app}
 }

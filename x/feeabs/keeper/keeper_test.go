@@ -11,10 +11,10 @@ import (
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 
 	tmrand "github.com/cometbft/cometbft/libs/rand"
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 
 	"github.com/osmosis-labs/fee-abstraction/v8/app"
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v8/app/helpers"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v8/app"
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
@@ -23,7 +23,7 @@ type KeeperTestSuite struct {
 	suite.Suite
 
 	ctx          sdk.Context
-	feeAbsApp    *app.FeeAbs
+	feeAbsApp    *app.FeeApp
 	feeAbsKeeper keeper.Keeper
 	govKeeper    govkeeper.Keeper
 	queryClient  types.QueryClient
@@ -41,7 +41,7 @@ var valTokens = sdk.TokensFromConsensusPower(42, sdk.DefaultPowerReduction)
 
 func (s *KeeperTestSuite) SetupTest() {
 	s.feeAbsApp = apphelpers.Setup(s.T(), false, 1)
-	s.ctx = s.feeAbsApp.BaseApp.NewContext(false, tmproto.Header{
+	s.ctx = s.feeAbsApp.BaseApp.NewContextLegacy(false, cmtproto.Header{
 		ChainID: fmt.Sprintf("test-chain-%s", tmrand.Str(4)),
 		Height:  1,
 	})

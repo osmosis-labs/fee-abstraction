@@ -8,7 +8,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v8/app/helpers"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v8/app"
 	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
@@ -34,7 +34,7 @@ func createEpoch(t *testing.T, keeper *feeabskeeper.Keeper, ctx sdk.Context) typ
 }
 
 func TestGetEpochInfo(t *testing.T) {
-	app := apphelpers.Setup(t, false, 1)
+	app := apphelpers.Setup(t)
 	ctx := apphelpers.NewContextForApp(*app)
 	expected := createEpoch(t, &app.FeeabsKeeper, ctx)
 	got, found := app.FeeabsKeeper.GetEpochInfo(ctx, expected.Identifier)

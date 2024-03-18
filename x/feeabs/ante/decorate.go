@@ -1,11 +1,11 @@
 package ante
 
 import (
-	"errors"
+	"bytes"
 	"fmt"
 
 	sdkerrors "cosmossdk.io/errors"
-
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -79,7 +79,7 @@ func (fadfd FeeAbstractionDeductFeeDecorate) normalDeductFeeAnteHandle(
 	if feeGranter != nil {
 		if fadfd.feegrantKeeper == nil {
 			return ctx, sdkerrors.Wrap(errorstypes.ErrInvalidRequest, "fee grants are not enabled")
-		} else if !feeGranter.Equals(feePayer) {
+		} else if bytes.Compare(feeGranter, feePayer) != 0 {
 			err := fadfd.feegrantKeeper.UseGrantedFees(ctx, feeGranter, feePayer, fee, tx.GetMsgs())
 			if err != nil {
 				return ctx, sdkerrors.Wrapf(err, "%s not allowed to pay fees from %s", feeGranter, feePayer)
@@ -132,7 +132,7 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 	if feeGranter != nil {
 		if fadfd.feegrantKeeper == nil {
 			return ctx, sdkerrors.Wrap(errorstypes.ErrInvalidRequest, "fee grants are not enabled")
-		} else if !feeGranter.Equals(feePayer) {
+		} else if bytes.Compare(feeGranter, feePayer) != 0 {
 			err := fadfd.feegrantKeeper.UseGrantedFees(ctx, feeGranter, feePayer, fee, tx.GetMsgs())
 			if err != nil {
 				return ctx, sdkerrors.Wrapf(err, "%s not allowed to pay fees from %s", feeGranter, feePayer)
@@ -328,12 +328,12 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 }
 
 func (famfd FeeAbstrationMempoolFeeDecorator) DefaultZeroFee(ctx sdk.Context) ([]sdk.DecCoin, error) {
-	bondDenom := famfd.feeabsKeeper.GetDefaultBondDenom(ctx)
-	if bondDenom == "" {
-		return nil, errors.New("empty staking bond denomination")
+	bondDenom, err := famfd.feeabsKeeper.GetDefaultBondDenom(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	return []sdk.DecCoin{sdk.NewDecCoinFromDec(bondDenom, sdk.NewDec(0))}, nil
+	return []sdk.DecCoin{sdk.NewDecCoinFromDec(bondDenom, sdkmath.LegacyNewDec(0))}, nil
 }
 
 // GetTxFeeRequired returns the required fees for the given FeeTx.
@@ -355,7 +355,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) GetTxFeeRequired(ctx sdk.Context, 
 	requiredFees := make(sdk.Coins, len(minGasPrices))
 	// Determine the required fees by multiplying each required minimum gas
 	// price by the gas limit, where fee = ceil(minGasPrice * gasLimit).
-	glDec := sdk.NewDec(gasLimit)
+	glDec := sdkmath.LegacyNewDec(gasLimit)
 	for i, gp := range minGasPrices {
 		fee := gp.Amount.Mul(glDec)
 		requiredFees[i] = sdk.NewCoin(gp.Denom, fee.Ceil().RoundInt())

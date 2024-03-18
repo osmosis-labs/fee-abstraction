@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v8/app/helpers"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v8/app"
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
