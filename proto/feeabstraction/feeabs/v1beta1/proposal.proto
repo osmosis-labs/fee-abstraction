@@ -22,6 +22,8 @@ message HostChainFeeAbsConfig {
   uint64 pool_id = 3;
   // Host chain fee abstraction connection status
   HostChainFeeAbsStatus status = 4;
+  // A minimum amount threshold allow cross-chain swap call
+  uint64 min_swap_amount = 5;
 }
 
 message AddHostZoneProposal {

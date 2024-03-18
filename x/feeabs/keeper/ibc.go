@@ -226,7 +226,7 @@ func (k Keeper) transferOsmosisCrosschainSwap(ctx sdk.Context, hostChainConfig t
 	nativeDenomIBCedInOsmosis := params.NativeIbcedInOsmosis
 	chainName := params.ChainName
 
-	if !token.Amount.IsPositive() {
+	if !token.Amount.IsPositive() || token.Amount.LT(sdk.NewIntFromUint64(hostChainConfig.MinSwapAmount)) {
 		return nil
 	}
 

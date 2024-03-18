@@ -12,11 +12,12 @@ const (
 
 type HostChainFeeAbsConfig struct {
 	// ibc token is allowed to be used as fee token
-	IbcDenom string `protobuf:"bytes,1,opt,name=ibc_denom,json=ibcDenom,proto3" json:"ibc_denom,omitempty" yaml:"allowed_token"`
+	IbcDenom string `json:"ibc_denom,omitempty"`
 	// token_in in cross_chain swap contract.
-	OsmosisPoolTokenDenomIn string `protobuf:"bytes,2,opt,name=osmosis_pool_token_denom_in,json=osmosisPoolTokenDenomIn,proto3" json:"osmosis_pool_token_denom_in,omitempty"`
+	OsmosisPoolTokenDenomIn string `json:"osmosis_pool_token_denom_in,omitempty"`
 	// pool id
-	PoolId string `protobuf:"varint,3,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
+	PoolId string `json:"pool_id,omitempty"`
 	// Host chain fee abstraction connection status
-	Status string `protobuf:"varint,4,opt,name=status,proto3,enum=feeabstraction.feeabs.v1beta1.HostChainFeeAbsStatus" json:"status,omitempty"`
+	Status        string `json:"status,omitempty"`
+	MinSwapAmount uint64 `json:"min_swap_amount,omitempty"`
 }
