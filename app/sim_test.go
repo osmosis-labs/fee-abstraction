@@ -9,8 +9,6 @@ import (
 	"strings"
 	"testing"
 
-	abci "github.com/cometbft/cometbft/abci/types"
-	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
@@ -31,6 +29,9 @@ import (
 	simcli "github.com/cosmos/cosmos-sdk/x/simulation/client/cli"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
+	abci "github.com/cometbft/cometbft/abci/types"
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 )
 
 // SimAppChainID hardcoded chainID for simulation
@@ -133,7 +134,6 @@ func TestAppImportExport(t *testing.T) {
 	ctxA := app.NewContextLegacy(true, cmtproto.Header{Height: app.LastBlockHeight()})
 	ctxB := newApp.NewContextLegacy(true, cmtproto.Header{Height: app.LastBlockHeight()})
 	_, err = newApp.InitChainer(ctxB, initReq)
-
 	if err != nil {
 		if strings.Contains(err.Error(), "validator set is empty after InitGenesis") {
 			t.Log("Skipping simulation as all validators have been unbonded")
@@ -261,6 +261,7 @@ func TestAppSimulationAfterImport(t *testing.T) {
 }
 
 func setupSimulationApp(t *testing.T, msg string) (simtypes.Config, dbm.DB, simtestutil.AppOptionsMap, *FeeApp) {
+	t.Helper()
 	config := simcli.NewConfigFromFlags()
 	config.ChainID = SimAppChainID
 

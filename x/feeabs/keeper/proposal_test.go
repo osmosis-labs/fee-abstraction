@@ -7,7 +7,7 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govv1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v8/app"
+	app "github.com/osmosis-labs/fee-abstraction/v8/app"
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
@@ -33,7 +33,7 @@ func (s *KeeperTestSuite) TestAddHostZoneProposal() {
 	} {
 		tc := tc
 		s.Run(tc.desc, func() {
-			proposal := apphelpers.AddHostZoneProposalFixture(func(p *types.AddHostZoneProposal) {
+			proposal := app.AddHostZoneProposalFixture(func(p *types.AddHostZoneProposal) {
 				p.HostChainConfig = &tc.hostChainConfig
 			})
 
@@ -41,7 +41,7 @@ func (s *KeeperTestSuite) TestAddHostZoneProposal() {
 			s.Require().NoError(err)
 
 			// store proposal
-			_, err = s.govKeeper.SubmitProposal(s.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0])
+			_, err = s.govKeeper.SubmitProposal(s.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0], true)
 			s.Require().NoError(err)
 
 			// execute proposal
@@ -54,7 +54,7 @@ func (s *KeeperTestSuite) TestAddHostZoneProposal() {
 			s.Require().Equal(tc.hostChainConfig, hostChainConfig)
 
 			// store proposal again and it should error
-			_, err = s.govKeeper.SubmitProposal(s.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0])
+			_, err = s.govKeeper.SubmitProposal(s.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0], true)
 			s.Require().Error(err)
 		})
 	}
@@ -81,7 +81,7 @@ func (s *KeeperTestSuite) TestDeleteHostZoneProposal() {
 	s.Require().NoError(err)
 
 	// Store proposal
-	_, err = s.govKeeper.SubmitProposal(s.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0])
+	_, err = s.govKeeper.SubmitProposal(s.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0], true)
 	s.Require().NoError(err)
 
 	// Execute proposal
@@ -124,7 +124,7 @@ func (s *KeeperTestSuite) TestDeleteHostZoneProposal() {
 			s.Require().NoError(err)
 
 			// Store proposal
-			_, err = s.govKeeper.SubmitProposal(s.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0])
+			_, err = s.govKeeper.SubmitProposal(s.ctx, []sdk.Msg{legacyProposal}, "", "", "", addrs[0], true)
 			if !tc.shouldError {
 				s.Require().NoError(err)
 			} else {

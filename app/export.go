@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 
-	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
-
 	storetypes "cosmossdk.io/store/types"
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
@@ -14,6 +12,8 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 )
 
 // ExportAppStateAndValidators exports the state of the application for a genesis

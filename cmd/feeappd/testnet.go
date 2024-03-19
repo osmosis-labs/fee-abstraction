@@ -11,8 +11,6 @@ import (
 	"path/filepath"
 	"time"
 
-	cmtconfig "github.com/cometbft/cometbft/config"
-	cmttime "github.com/cometbft/cometbft/types/time"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
@@ -38,6 +36,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
+	cmtconfig "github.com/cometbft/cometbft/config"
+	cmttime "github.com/cometbft/cometbft/types/time"
 
 	"github.com/osmosis-labs/fee-abstraction/v8/app"
 )

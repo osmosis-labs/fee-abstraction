@@ -6,6 +6,7 @@ import (
 
 	sdkerrors "cosmossdk.io/errors"
 	sdkmath "cosmossdk.io/math"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -79,7 +80,7 @@ func (fadfd FeeAbstractionDeductFeeDecorate) normalDeductFeeAnteHandle(
 	if feeGranter != nil {
 		if fadfd.feegrantKeeper == nil {
 			return ctx, sdkerrors.Wrap(errorstypes.ErrInvalidRequest, "fee grants are not enabled")
-		} else if bytes.Compare(feeGranter, feePayer) != 0 {
+		} else if !bytes.Equal(feeGranter, feePayer) {
 			err := fadfd.feegrantKeeper.UseGrantedFees(ctx, feeGranter, feePayer, fee, tx.GetMsgs())
 			if err != nil {
 				return ctx, sdkerrors.Wrapf(err, "%s not allowed to pay fees from %s", feeGranter, feePayer)
@@ -132,7 +133,7 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 	if feeGranter != nil {
 		if fadfd.feegrantKeeper == nil {
 			return ctx, sdkerrors.Wrap(errorstypes.ErrInvalidRequest, "fee grants are not enabled")
-		} else if bytes.Compare(feeGranter, feePayer) != 0 {
+		} else if !bytes.Equal(feeGranter, feePayer) {
 			err := fadfd.feegrantKeeper.UseGrantedFees(ctx, feeGranter, feePayer, fee, tx.GetMsgs())
 			if err != nil {
 				return ctx, sdkerrors.Wrapf(err, "%s not allowed to pay fees from %s", feeGranter, feePayer)

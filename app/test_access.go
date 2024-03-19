@@ -3,6 +3,7 @@ package app
 import (
 	"testing"
 
+	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 
@@ -11,7 +12,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
 
 	"github.com/osmosis-labs/fee-abstraction/v8/app/params"
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper"

@@ -5,7 +5,11 @@ import (
 	"io"
 	"os"
 
-	cmtcfg "github.com/cometbft/cometbft/config"
+	"github.com/CosmWasm/wasmd/app"
+	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmcli "github.com/CosmWasm/wasmd/x/wasm/client/cli"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
@@ -34,11 +38,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
-	"github.com/CosmWasm/wasmd/app"
-	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmcli "github.com/CosmWasm/wasmd/x/wasm/client/cli"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	cmtcfg "github.com/cometbft/cometbft/config"
 )
 
 // initCometBFTConfig helps to override default CometBFT Config values.
@@ -256,7 +256,7 @@ func appExport(
 }
 
 var tempDir = func() string {
-	dir, err := os.MkdirTemp("", "wasmd")
+	dir, err := os.MkdirTemp("", "feeappd")
 	if err != nil {
 		panic("failed to create temp dir: " + err.Error())
 	}

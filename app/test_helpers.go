@@ -9,9 +9,7 @@ import (
 	"testing"
 	"time"
 
-	abci "github.com/cometbft/cometbft/abci/types"
-	cmtjson "github.com/cometbft/cometbft/libs/json"
-	cmttypes "github.com/cometbft/cometbft/types"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/stretchr/testify/require"
 
@@ -42,7 +40,11 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	abci "github.com/cometbft/cometbft/abci/types"
+	cmtjson "github.com/cometbft/cometbft/libs/json"
+	cmttypes "github.com/cometbft/cometbft/types"
+
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
 // SetupOptions defines arguments that are passed into `FeeApp` constructor.
@@ -53,16 +55,17 @@ type SetupOptions struct {
 	WasmOpts []wasmkeeper.Option
 }
 
-func setup(t testing.TB, chainID string, withGenesis bool, invCheckPeriod uint, opts ...wasmkeeper.Option) (*FeeApp, GenesisState) {
+func setup(tb testing.TB, chainID string, withGenesis bool, invCheckPeriod uint) (*FeeApp, GenesisState) {
+	tb.Helper()
 	db := dbm.NewMemDB()
-	nodeHome := t.TempDir()
+	nodeHome := tb.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
 
 	snapshotDB, err := dbm.NewDB("metadata", dbm.GoLevelDBBackend, snapshotDir)
-	require.NoError(t, err)
-	t.Cleanup(func() { snapshotDB.Close() })
+	require.NoError(tb, err)
+	tb.Cleanup(func() { snapshotDB.Close() })
 	snapshotStore, err := snapshots.NewStore(snapshotDB, snapshotDir)
-	require.NoError(t, err)
+	require.NoError(tb, err)
 
 	appOptions := make(simtestutil.AppOptionsMap, 0)
 	appOptions[flags.FlagHome] = nodeHome // ensure unique folder
@@ -117,7 +120,7 @@ func NewFeeAppWithCustomOptions(t *testing.T, isCheckTx bool, options SetupOptio
 }
 
 // Setup initializes a new FeeApp. A Nop logger is set in FeeApp.
-func Setup(t *testing.T, opts ...wasmkeeper.Option) *FeeApp {
+func Setup(t *testing.T) *FeeApp {
 	t.Helper()
 
 	privVal := mock.NewPV()
@@ -136,7 +139,7 @@ func Setup(t *testing.T, opts ...wasmkeeper.Option) *FeeApp {
 		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdkmath.NewInt(100000000000000))),
 	}
 	chainID := "testing"
-	app := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, chainID, opts, balance)
+	app := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, chainID, balance)
 
 	return app
 }
@@ -150,12 +153,11 @@ func SetupWithGenesisValSet(
 	valSet *cmttypes.ValidatorSet,
 	genAccs []authtypes.GenesisAccount,
 	chainID string,
-	opts []wasmkeeper.Option,
 	balances ...banktypes.Balance,
 ) *FeeApp {
 	t.Helper()
 
-	app, genesisState := setup(t, chainID, true, 5, opts...)
+	app, genesisState := setup(t, chainID, true, 5)
 	genesisState, err := GenesisStateWithValSet(app.AppCodec(), genesisState, valSet, genAccs, balances...)
 	require.NoError(t, err)
 
@@ -186,8 +188,9 @@ func SetupWithGenesisValSet(
 }
 
 // SetupWithEmptyStore set up a wasmd app instance with empty DB
-func SetupWithEmptyStore(t testing.TB) *FeeApp {
-	app, _ := setup(t, "testing", false, 0)
+func SetupWithEmptyStore(tb testing.TB) *FeeApp {
+	tb.Helper()
+	app, _ := setup(tb, "testing", false, 0)
 	return app
 }
 
@@ -255,8 +258,6 @@ func initAccountWithCoins(app *FeeApp, ctx sdk.Context, addr sdk.AccAddress, coi
 	}
 }
 
-var emptyWasmOptions []wasmkeeper.Option
-
 // NewTestNetworkFixture returns a new FeeApp AppConstructor for network simulation tests
 func NewTestNetworkFixture() network.TestFixture {
 	dir, err := os.MkdirTemp("", "simapp")
@@ -290,6 +291,7 @@ func NewTestNetworkFixture() network.TestFixture {
 
 // SignAndDeliverWithoutCommit signs and delivers a transaction. No commit
 func SignAndDeliverWithoutCommit(t *testing.T, txCfg client.TxConfig, app *bam.BaseApp, msgs []sdk.Msg, fees sdk.Coins, chainID string, accNums, accSeqs []uint64, blockTime time.Time, priv ...cryptotypes.PrivKey) (*abci.ResponseFinalizeBlock, error) {
+	t.Helper()
 	tx, err := simtestutil.GenSignedMockTx(
 		rand.New(rand.NewSource(time.Now().UnixNano())),
 		txCfg,
@@ -391,4 +393,17 @@ func GenesisStateWithValSet(
 	genesisState[banktypes.ModuleName] = codec.MustMarshalJSON(bankGenesis)
 	println(string(genesisState[banktypes.ModuleName]))
 	return genesisState, nil
+}
+
+func AddHostZoneProposalFixture(mutators ...func(*feeabstypes.AddHostZoneProposal)) *feeabstypes.AddHostZoneProposal {
+	p := &feeabstypes.AddHostZoneProposal{
+		Title:           "Title",
+		Description:     "Description",
+		HostChainConfig: &feeabstypes.HostChainFeeAbsConfig{},
+	}
+	for _, m := range mutators {
+		m(p)
+	}
+
+	return p
 }

@@ -1,7 +1,6 @@
 package keeper_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
@@ -10,11 +9,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 
-	tmrand "github.com/cometbft/cometbft/libs/rand"
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 
 	"github.com/osmosis-labs/fee-abstraction/v8/app"
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v8/app"
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
@@ -40,11 +37,9 @@ const (
 var valTokens = sdk.TokensFromConsensusPower(42, sdk.DefaultPowerReduction)
 
 func (s *KeeperTestSuite) SetupTest() {
-	s.feeAbsApp = apphelpers.Setup(s.T(), false, 1)
-	s.ctx = s.feeAbsApp.BaseApp.NewContextLegacy(false, cmtproto.Header{
-		ChainID: fmt.Sprintf("test-chain-%s", tmrand.Str(4)),
-		Height:  1,
-	})
+	s.feeAbsApp = app.Setup(s.T())
+	s.ctx = s.feeAbsApp.NewContextLegacy(true, cmtproto.Header{Height: 1})
+
 	s.feeAbsKeeper = s.feeAbsApp.FeeabsKeeper
 	s.govKeeper = s.feeAbsApp.GovKeeper
 
