@@ -1,5 +1,6 @@
 {
     "network": "osmo-test-5",
+    "owner": "osmo1sg5ta3eaed5wxxpnq3u5463lysfg7ytjxqvk43",
     "registry_contract": {
         "code_id": "7238",
         "address": "osmo1m9jk8zvrkpex0rxhp76emr0qm2z5khvj09msl9c78gcq7c38xdzsgq0cgm",
