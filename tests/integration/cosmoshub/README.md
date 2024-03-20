@@ -64,23 +64,7 @@ rly q balance osmosis --ibc-denoms
 
 ## 3. Setup pools, contracts on Osmosis testnet
 
-a. Pre-deploy contracts:
-
-* Registry:
-
-  * code_id: `7238`
-  * address: `osmo1m9jk8zvrkpex0rxhp76emr0qm2z5khvj09msl9c78gcq7c38xdzsgq0cgm`
-
-* SwapRouter:
-
-  * code_id: `7239`
-  * address: `osmo1j48ncj9wkzs3pnkux96ct6peg7rznnt4jx6ysdcs0283ysxj2ztqtr602y`
-
-* XCSv2:
-  * code_id: `7240`
-  * address: `osmo177jurcy582fk5q298es6662pu48a46ze6eequnv3z0parekpwhhs034wsv`
-
-b. Create pool:
+a. Create pool:
 
 Correct information on `<cosmoshub>/pools/pool.json`, and run script:
 
@@ -88,7 +72,7 @@ Correct information on `<cosmoshub>/pools/pool.json`, and run script:
 sh tools/create_pool.sh
 ```
 
-c. Set swap route
+b. Set swap route
 
 Correct information on `<cosmoshub>/tools/set_route.sh`, and run script:
 
