@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
 // InitGenesis initializes the incentives module's state from a provided genesis state.

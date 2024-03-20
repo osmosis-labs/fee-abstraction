@@ -8,9 +8,9 @@ import (
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	v1beta1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
-	cli "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/client/cli"
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
+	cli "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/client/cli"
+	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper"
+	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
 var (

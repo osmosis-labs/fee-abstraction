@@ -37,7 +37,7 @@ import (
 	"github.com/cometbft/cometbft/types"
 	tmtime "github.com/cometbft/cometbft/types/time"
 
-	"github.com/osmosis-labs/fee-abstraction/v7/app/params"
+	"github.com/osmosis-labs/fee-abstraction/v8/app/params"
 )
 
 var (

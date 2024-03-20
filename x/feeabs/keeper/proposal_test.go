@@ -7,8 +7,8 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govv1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v7/app/helpers"
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
+	apphelpers "github.com/osmosis-labs/fee-abstraction/v8/app/helpers"
+	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
 func (s *KeeperTestSuite) TestAddHostZoneProposal() {

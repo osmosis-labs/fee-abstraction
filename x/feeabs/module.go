@@ -17,9 +17,9 @@ import (
 
 	abci "github.com/cometbft/cometbft/abci/types"
 
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/client/cli"
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/client/cli"
+	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper"
+	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
 var (

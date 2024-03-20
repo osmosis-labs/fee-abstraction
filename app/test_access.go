@@ -13,8 +13,8 @@ import (
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 
-	"github.com/osmosis-labs/fee-abstraction/v7/app/params"
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
+	"github.com/osmosis-labs/fee-abstraction/v8/app/params"
+	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper"
 )
 
 type TestSupport struct {

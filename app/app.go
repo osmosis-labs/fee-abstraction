@@ -116,10 +116,10 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 	tmos "github.com/cometbft/cometbft/libs/os"
 
-	appparams "github.com/osmosis-labs/fee-abstraction/v7/app/params"
-	feeabsmodule "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs"
-	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
-	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
+	appparams "github.com/osmosis-labs/fee-abstraction/v8/app/params"
+	feeabsmodule "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs"
+	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper"
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
 func getGovProposalHandlers() []govclient.ProposalHandler {

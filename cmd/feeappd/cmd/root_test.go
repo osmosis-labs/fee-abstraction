@@ -7,8 +7,8 @@ import (
 
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 
-	app "github.com/osmosis-labs/fee-abstraction/v7/app"
-	"github.com/osmosis-labs/fee-abstraction/v7/cmd/feeappd/cmd"
+	app "github.com/osmosis-labs/fee-abstraction/v8/app"
+	"github.com/osmosis-labs/fee-abstraction/v8/cmd/feeappd/cmd"
 )
 
 func TestRootCmdConfig(t *testing.T) {

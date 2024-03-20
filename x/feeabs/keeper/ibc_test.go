@@ -8,7 +8,7 @@ import (
 
 	abci "github.com/cometbft/cometbft/abci/types"
 
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
+	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
 func (s *KeeperTestSuite) TestGetDecTWAPFromBytes() {
@@ -21,7 +21,7 @@ func (s *KeeperTestSuite) TestGetDecTWAPFromBytes() {
 }
 
 // test successful ibc ack
-// go test -v -run TestKeeperTestSuite/TestSuccessfulTwapAck  github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper
+// go test -v -run TestKeeperTestSuite/TestSuccessfulTwapAck  github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper
 func (s *KeeperTestSuite) TestSuccessfulTwapAck() {
 	s.SetupTest()
 
@@ -49,7 +49,7 @@ func (s *KeeperTestSuite) TestSuccessfulTwapAck() {
 
 // test failed ibc ack
 // should increase fallback count
-// go test -v -run TestKeeperTestSuite/TestFailedTwapAck  github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper
+// go test -v -run TestKeeperTestSuite/TestFailedTwapAck  github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper
 func (s *KeeperTestSuite) TestFailedTwapAck() {
 	s.SetupTest()
 
@@ -107,7 +107,7 @@ func (s *KeeperTestSuite) TestFailedTwapAck() {
 }
 
 // test correct setting of OUTDATED status
-// go test -v -run TestKeeperTestSuite/TestOutdatedStatus  github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper
+// go test -v -run TestKeeperTestSuite/TestOutdatedStatus  github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper
 func (s *KeeperTestSuite) TestOutdatedStatus() {
 	s.SetupTest()
 

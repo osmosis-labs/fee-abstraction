@@ -19,7 +19,7 @@ cd ..
 # move proto files to the right places
 #
 # Note: Proto files are suffixed with the current binary version.
-cp -r github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types/* ./x/feeabs/types/
+cp -r github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types/* ./x/feeabs/types/
 rm -rf github.com
 
 go mod tidy

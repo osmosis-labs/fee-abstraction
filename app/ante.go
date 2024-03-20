@@ -10,8 +10,8 @@ import (
 	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 
-	feeabsante "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/ante"
-	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
+	feeabsante "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/ante"
+	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper"
 )
 
 // HandlerOptions extends the SDK's AnteHandler options by requiring the IBC

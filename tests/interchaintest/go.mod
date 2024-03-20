@@ -7,7 +7,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.47.8
 	github.com/cosmos/ibc-go/v7 v7.3.1
 	github.com/icza/dyno v0.0.0-20220812133438-f0b6f8a18845
-	github.com/osmosis-labs/fee-abstraction/v7 v7.0.0-20240308160138-d1eb119cae30
+	github.com/osmosis-labs/fee-abstraction/v8 v7.0.0-20240308160138-d1eb119cae30
 	github.com/strangelove-ventures/interchaintest/v7 v7.0.0-20230721183422-fb937bb0e165
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/zap v1.26.0
@@ -244,6 +244,6 @@ replace (
 	github.com/btcsuite/btcd => github.com/btcsuite/btcd v0.22.2 //indirect
 	github.com/cometbft/cometbft => github.com/cometbft/cometbft v0.37.2
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/osmosis-labs/fee-abstraction/v7 => ../../
+	github.com/osmosis-labs/fee-abstraction/v8 => ../../
 	github.com/vedhavyas/go-subkey => github.com/strangelove-ventures/go-subkey v1.0.7
 )

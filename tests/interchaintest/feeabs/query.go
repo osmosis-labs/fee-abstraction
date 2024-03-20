@@ -6,7 +6,7 @@ import (
 
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 
-	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
 func QueryHostZoneConfigWithDenom(c *cosmos.CosmosChain, ctx context.Context, denom string) (*HostChainFeeAbsConfigResponse, error) {

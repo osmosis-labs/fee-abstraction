@@ -21,7 +21,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
 
-	feeabstype "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
+	feeabstype "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
 type HasPacketForwarding struct {

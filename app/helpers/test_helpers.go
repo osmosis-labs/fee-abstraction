@@ -24,8 +24,8 @@ import (
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	tmtypes "github.com/cometbft/cometbft/types"
 
-	feeapp "github.com/osmosis-labs/fee-abstraction/v7/app"
-	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
+	feeapp "github.com/osmosis-labs/fee-abstraction/v8/app"
+	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
 // SimAppChainID hardcoded chainID for simulation

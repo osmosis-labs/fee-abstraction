@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types";
+option go_package = "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types";
 
 message EpochInfo {
   // identifier is a unique reference to this particular timer.

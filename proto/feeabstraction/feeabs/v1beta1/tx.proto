@@ -7,7 +7,7 @@ import "feeabstraction/feeabs/v1beta1/epoch.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types";
+option go_package = "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types";
 
 service Msg {
   rpc SendQueryIbcDenomTWAP(MsgSendQueryIbcDenomTWAP)

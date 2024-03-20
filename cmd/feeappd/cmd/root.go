@@ -40,8 +40,8 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 	tmtypes "github.com/cometbft/cometbft/types"
 
-	feeapp "github.com/osmosis-labs/fee-abstraction/v7/app"
-	"github.com/osmosis-labs/fee-abstraction/v7/app/params"
+	feeapp "github.com/osmosis-labs/fee-abstraction/v8/app"
+	"github.com/osmosis-labs/fee-abstraction/v8/app/params"
 )
 
 // NewRootCmd creates a new root command for simd. It is called once in the

@@ -19,8 +19,8 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cometbft/cometbft/libs/rand"
 
-	feeapp "github.com/osmosis-labs/fee-abstraction/v7/app"
-	"github.com/osmosis-labs/fee-abstraction/v7/app/helpers"
+	feeapp "github.com/osmosis-labs/fee-abstraction/v8/app"
+	"github.com/osmosis-labs/fee-abstraction/v8/app/helpers"
 )
 
 func init() {

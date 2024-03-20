@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 
-option go_package = "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types";
+option go_package = "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types";
 
 enum HostChainFeeAbsStatus {
   UPDATED = 0;
