@@ -9,25 +9,20 @@ import (
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
-// var now = time.Now().UTC()
-
-var defaultGenesis = types.DefaultGenesis()
-
 func TestInitGenesis(t *testing.T) {
 	app := app.Setup(t)
 	ctx := app.NewContext(false)
 
-	ctx = ctx.WithBlockHeight(1)
-	genesis := defaultGenesis
+	genesisState := types.DefaultGenesis()
 
 	params := app.FeeabsKeeper.GetParams(ctx)
-	require.Equal(t, params, genesis.Params)
+	require.Equal(t, params, genesisState.Params)
 
 	epochs := app.FeeabsKeeper.AllEpochInfos(ctx)
-	require.Equal(t, epochs, genesis.Epochs)
+	require.Equal(t, epochs, genesisState.Epochs)
 
 	portid := app.FeeabsKeeper.GetPort(ctx)
-	require.Equal(t, portid, genesis.PortId)
+	require.Equal(t, portid, genesisState.PortId)
 }
 
 func TestExportGenesis(t *testing.T) {

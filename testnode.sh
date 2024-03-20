@@ -14,8 +14,8 @@ command -v jq > /dev/null 2>&1 || { echo >&2 "jq not installed. More info: https
 # remove existing daemon
 rm -rf ~/.feeapp*
 
-feeappd config keyring-backend $KEYRING
-feeappd config chain-id $CHAINID
+# feeappd config keyring-backend $KEYRING
+# feeappd config chain-id $CHAINID
 
 # if $KEY exists it should be deleted
 feeappd keys add $KEY --keyring-backend $KEYRING --algo $KEYALGO
@@ -24,16 +24,16 @@ feeappd keys add $KEY --keyring-backend $KEYRING --algo $KEYALGO
 feeappd init $MONIKER --chain-id $CHAINID 
 
 # Allocate genesis accounts (cosmos formatted addresses)
-feeappd add-genesis-account $KEY 100000000000000000000000000stake --keyring-backend $KEYRING
+feeappd genesis add-genesis-account $KEY 100000000000000000000000000stake --keyring-backend $KEYRING
 
 # Sign genesis transaction
-feeappd gentx $KEY 1000000000000000000000stake --keyring-backend $KEYRING --chain-id $CHAINID
+feeappd genesis gentx $KEY 1000000000000000000000stake --keyring-backend $KEYRING --chain-id $CHAINID
 
 # Collect genesis tx
-feeappd collect-gentxs
+feeappd genesis collect-gentxs
 
 # Run this to ensure everything worked and that the genesis file is setup correctly
-feeappd validate-genesis
+feeappd genesis validate
 
 if [[ $1 == "pending" ]]; then
   echo "pending mode is on, please wait for the first block committed."

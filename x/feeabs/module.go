@@ -9,6 +9,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
+	"cosmossdk.io/core/appmodule"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -23,8 +24,9 @@ import (
 )
 
 var (
-	_ module.AppModule      = AppModule{}
+	_ module.AppModuleBasic = AppModule{}
 	_ module.AppModuleBasic = AppModuleBasic{}
+	_ appmodule.AppModule   = AppModule{}
 )
 
 // ----------------------------------------------------------------------------
@@ -32,14 +34,7 @@ var (
 // ----------------------------------------------------------------------------
 
 // AppModuleBasic implements the AppModuleBasic interface for the feeabs module.
-type AppModuleBasic struct {
-	cdc codec.Codec
-}
-
-// NewAppModuleBasic instatiate an AppModuleBasic object
-func NewAppModuleBasic(cdc codec.Codec) AppModuleBasic {
-	return AppModuleBasic{cdc: cdc}
-}
+type AppModuleBasic struct{}
 
 // Name return the feeabs module name
 func (AppModuleBasic) Name() string {
@@ -109,7 +104,7 @@ func NewAppModule(
 	feeabskeeper keeper.Keeper,
 ) AppModule {
 	return AppModule{
-		AppModuleBasic: NewAppModuleBasic(cdc),
+		AppModuleBasic: AppModuleBasic{},
 		keeper:         feeabskeeper,
 	}
 }

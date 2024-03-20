@@ -9,7 +9,6 @@ import (
 	"testing"
 	"time"
 
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	dbm "github.com/cosmos/cosmos-db"
 	"github.com/stretchr/testify/require"
 
@@ -49,10 +48,9 @@ import (
 
 // SetupOptions defines arguments that are passed into `FeeApp` constructor.
 type SetupOptions struct {
-	Logger   log.Logger
-	DB       *dbm.MemDB
-	AppOpts  servertypes.AppOptions
-	WasmOpts []wasmkeeper.Option
+	Logger  log.Logger
+	DB      *dbm.MemDB
+	AppOpts servertypes.AppOptions
 }
 
 func setup(tb testing.TB, chainID string, withGenesis bool, invCheckPeriod uint) (*FeeApp, GenesisState) {
