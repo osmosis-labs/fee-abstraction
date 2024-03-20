@@ -205,11 +205,13 @@ func (am IBCModule) OnTimeoutPacket(
 	packet channeltypes.Packet,
 	relayer sdk.AccAddress,
 ) error {
-	params := am.keeper.GetParams(ctx)
-	chancap := am.keeper.GetCapability(ctx, host.ChannelCapabilityPath(types.IBCPortID, params.IbcQueryIcqChannel))
+	ctx.Logger().Info("Timeout packet", "packet", packet)
+	var icqPacketData types.InterchainQueryPacketData
+	if err := types.ModuleCdc.UnmarshalJSON(packet.GetData(), &icqPacketData); err != nil {
+		return sdkerrors.Wrapf(errorstypes.ErrUnknownRequest, "cannot unmarshal packet data: %v", err)
+	}
 	// Resend request if timeout
-	err := am.keeper.OnTimeoutPacket(ctx, chancap, packet.SourcePort, packet.SourceChannel,
-		packet.TimeoutHeight, packet.TimeoutTimestamp, packet.Data) // If there is an error here we should still handle the timeout
+	err := am.keeper.OnTimeoutPacket(ctx)
 	if err != nil {
 		am.keeper.Logger(ctx).Error(fmt.Sprintf("Error OnTimeoutPacket %s", err.Error()))
 		ctx.EventManager().EmitEvent(

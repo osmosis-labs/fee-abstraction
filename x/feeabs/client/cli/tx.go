@@ -24,6 +24,7 @@ func NewTxCmd() *cobra.Command {
 
 	txCmd.AddCommand(NewQueryOsmosisTWAPCmd())
 	txCmd.AddCommand(NewSwapOverChainCmd())
+	txCmd.AddCommand(NewFundFeeAbsModuleAccount())
 
 	return txCmd
 }

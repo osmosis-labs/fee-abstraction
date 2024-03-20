@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
-	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
@@ -73,16 +72,20 @@ func (k Keeper) GetFeeAbsModuleAddress() sdk.AccAddress {
 	return k.ak.GetModuleAddress(types.ModuleName)
 }
 
+func (k Keeper) GetDefaultBondDenom(ctx sdk.Context) string {
+	return k.sk.BondDenom(ctx)
+}
+
 // need to implement
 func (k Keeper) CalculateNativeFromIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins, chainConfig types.HostChainFeeAbsConfig) (coins sdk.Coins, err error) {
 	err = k.verifyIBCCoins(ctx, ibcCoins)
 	if err != nil {
-		return sdk.Coins{}, nil
+		return sdk.Coins{}, err
 	}
 
 	twapRate, err := k.GetTwapRate(ctx, chainConfig.IbcDenom)
 	if err != nil {
-		return sdk.Coins{}, nil
+		return sdk.Coins{}, err
 	}
 
 	// mul
@@ -108,11 +111,11 @@ func (k Keeper) verifyIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins) error {
 		return types.ErrInvalidIBCFees
 	}
 
-	if k.HasHostZoneConfig(ctx, ibcCoins[0].Denom) {
+	ibcDenom := ibcCoins[0].Denom
+	if k.HasHostZoneConfig(ctx, ibcDenom) {
 		return nil
 	}
-	// TODO: we should register error for this
-	return fmt.Errorf("unallowed %s for tx fee", ibcCoins[0].Denom)
+	return types.ErrUnsupportedDenom.Wrapf("unsupported denom: %s", ibcDenom)
 }
 
 func (Keeper) Logger(ctx sdk.Context) log.Logger {
@@ -130,19 +133,10 @@ func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 	k.paramSpace.SetParamSet(ctx, &params)
 }
 
-// OnTimeoutPacket resend packet when timeout
-func (k Keeper) OnTimeoutPacket(ctx sdk.Context, chanCap *capabilitytypes.Capability, sourcePort string,
-	sourceChannel string, timeoutHeight clienttypes.Height, timeoutTimestamp uint64, packetData []byte,
-) error {
-	_, err := k.channelKeeper.SendPacket(ctx, chanCap, sourcePort, sourceChannel,
-		timeoutHeight, timeoutTimestamp, packetData)
-	return err
-}
-
 func (k Keeper) GetCapability(ctx sdk.Context, name string) *capabilitytypes.Capability {
 	capability, ok := k.scopedKeeper.GetCapability(ctx, name)
 	if !ok {
-		k.Logger(ctx).Error("Error ErrChannelCapabilityNotFound ")
+		k.Logger(ctx).Error(fmt.Sprintf("not found capability with given name: %s", name))
 		return nil
 	}
 	return capability

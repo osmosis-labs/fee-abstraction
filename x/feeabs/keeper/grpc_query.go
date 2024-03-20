@@ -23,7 +23,7 @@ func NewQuerier(k Keeper) Querier {
 	return Querier{Keeper: k}
 }
 
-// OsmosisSpotPrice return spot price of pair Osmo/nativeToken
+// OsmosisArithmeticTwap return spot price of pair Osmo/nativeToken
 func (q Querier) OsmosisArithmeticTwap(goCtx context.Context, req *types.QueryOsmosisArithmeticTwapRequest) (*types.QueryOsmosisArithmeticTwapResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")
@@ -58,24 +58,24 @@ func (q Querier) FeeabsModuleBalances(goCtx context.Context, req *types.QueryFee
 	}, nil
 }
 
-func (q Querier) HostChainConfig(goCtx context.Context, req *types.QueryHostChainConfigRequest) (*types.QueryHostChainConfigRespone, error) {
+func (q Querier) HostChainConfig(goCtx context.Context, req *types.QueryHostChainConfigRequest) (*types.QueryHostChainConfigResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	hostChainConfig, err := q.GetHostZoneConfig(ctx, req.IbcDenom)
-	if err != nil {
-		return nil, err
+	hostChainConfig, found := q.GetHostZoneConfig(ctx, req.IbcDenom)
+	if !found {
+		return nil, types.ErrHostZoneConfigNotFound
 	}
 
-	return &types.QueryHostChainConfigRespone{
+	return &types.QueryHostChainConfigResponse{
 		HostChainConfig: hostChainConfig,
 	}, nil
 }
 
-func (q Querier) AllHostChainConfig(goCtx context.Context, req *types.AllQueryHostChainConfigRequest) (*types.AllQueryHostChainConfigRespone, error) {
+func (q Querier) AllHostChainConfig(goCtx context.Context, req *types.AllQueryHostChainConfigRequest) (*types.AllQueryHostChainConfigResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
@@ -87,7 +87,7 @@ func (q Querier) AllHostChainConfig(goCtx context.Context, req *types.AllQueryHo
 		return nil, err
 	}
 
-	return &types.AllQueryHostChainConfigRespone{
+	return &types.AllQueryHostChainConfigResponse{
 		AllHostChainConfig: allHostChainConfig,
 	}, nil
 }

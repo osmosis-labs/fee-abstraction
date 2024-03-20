@@ -64,13 +64,13 @@ func (s *KeeperTestSuite) TestHostChainConfig() {
 		PoolId:                  randUint64Num(),
 	}
 
-	err := s.feeAbsKeeper.SetHostZoneConfig(s.ctx, chainConfig.IbcDenom, chainConfig)
+	err := s.feeAbsKeeper.SetHostZoneConfig(s.ctx, chainConfig)
 	s.Require().NoError(err)
 
 	for _, tc := range []struct {
 		desc      string
 		req       *types.QueryHostChainConfigRequest
-		res       *types.QueryHostChainConfigRespone
+		res       *types.QueryHostChainConfigResponse
 		shouldErr bool
 	}{
 		{
@@ -78,7 +78,7 @@ func (s *KeeperTestSuite) TestHostChainConfig() {
 			req: &types.QueryHostChainConfigRequest{
 				IbcDenom: chainConfig.IbcDenom,
 			},
-			res: &types.QueryHostChainConfigRespone{
+			res: &types.QueryHostChainConfigResponse{
 				HostChainConfig: chainConfig,
 			},
 			shouldErr: false,
@@ -88,7 +88,7 @@ func (s *KeeperTestSuite) TestHostChainConfig() {
 			req: &types.QueryHostChainConfigRequest{
 				IbcDenom: "Invalid",
 			},
-			res: &types.QueryHostChainConfigRespone{
+			res: &types.QueryHostChainConfigResponse{
 				HostChainConfig: chainConfig,
 			},
 			shouldErr: true,
@@ -103,22 +103,22 @@ func (s *KeeperTestSuite) TestHostChainConfig() {
 				s.Require().Equal(tc.res, res)
 			} else {
 				_, err := s.queryClient.HostChainConfig(goCtx, tc.req)
-				s.Require().NoError(err)
+				s.Require().Error(err)
 			}
 		})
 	}
 }
 
 func randStringRunes(n int) string {
-	rand.Seed(time.Now().UnixNano()) //nolint:staticcheck // this is for testing
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	b := make([]rune, n)
 	for i := range b {
-		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+		b[i] = letterRunes[r.Intn(len(letterRunes))]
 	}
 	return string(b)
 }
 
 func randUint64Num() uint64 {
-	rand.Seed(time.Now().UnixNano()) //nolint:staticcheck // this is for testing
-	return rand.Uint64()
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	return r.Uint64()
 }

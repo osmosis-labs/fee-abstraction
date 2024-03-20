@@ -1,0 +1,16 @@
+{
+    "type": "cosmos",
+    "value": {
+      "key": "relayer",
+      "chain-id": "stargaze-03",
+      "rpc-addr": "http://localhost:26657",
+      "account-prefix": "stars",
+      "keyring-backend": "test",
+      "gas-adjustment": 2,
+      "gas-prices": "0.0025ustars",
+      "debug": true,
+      "timeout": "20s",
+      "output-format": "json",
+      "sign-mode": "direct"
+    }
+}

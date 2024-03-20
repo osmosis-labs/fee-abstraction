@@ -1,0 +1,19 @@
+{
+    "network": "osmo-test-5",
+    "owner": "osmo1sg5ta3eaed5wxxpnq3u5463lysfg7ytjxqvk43",
+    "registry_contract": {
+        "code_id": "7238",
+        "address": "osmo1m9jk8zvrkpex0rxhp76emr0qm2z5khvj09msl9c78gcq7c38xdzsgq0cgm",
+        "contract_commits": "https://github.com/osmosis-labs/osmosis/commit/c78426a24090466a0bb2402bfc6119e36a3ce4b7"
+    },
+    "swap_router_contract": {
+        "code_id": "7239",
+        "address": "osmo1j48ncj9wkzs3pnkux96ct6peg7rznnt4jx6ysdcs0283ysxj2ztqtr602y",
+        "contract_commits": "https://github.com/osmosis-labs/osmosis/commit/c78426a24090466a0bb2402bfc6119e36a3ce4b7"
+    },
+    "xcs_v2_contract": {
+        "code_id": "7240",
+        "address": "osmo177jurcy582fk5q298es6662pu48a46ze6eequnv3z0parekpwhhs034wsv",
+        "contract_commits": "https://github.com/osmosis-labs/osmosis/commit/c78426a24090466a0bb2402bfc6119e36a3ce4b7"
+    }
+}

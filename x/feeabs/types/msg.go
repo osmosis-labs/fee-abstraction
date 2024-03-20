@@ -1,8 +1,6 @@
 package types
 
 import (
-	sdkerrors "cosmossdk.io/errors"
-
 	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -33,7 +31,7 @@ func (m MsgSendQueryIbcDenomTWAP) GetSignBytes() []byte {
 func (m MsgSendQueryIbcDenomTWAP) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(m.FromAddress)
 	if err != nil {
-		return sdkerrors.Wrap(err, "from address must be valid address")
+		return err
 	}
 	return nil
 }
@@ -70,7 +68,7 @@ func (m MsgSwapCrossChain) GetSignBytes() []byte {
 func (m MsgSwapCrossChain) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(m.FromAddress)
 	if err != nil {
-		return sdkerrors.Wrap(err, "from address must be valid address")
+		return err
 	}
 	return nil
 }
@@ -108,7 +106,7 @@ func (m MsgFundFeeAbsModuleAccount) GetSignBytes() []byte {
 func (m MsgFundFeeAbsModuleAccount) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(m.FromAddress)
 	if err != nil {
-		return sdkerrors.Wrap(err, "from address must be valid address")
+		return err
 	}
 	return nil
 }

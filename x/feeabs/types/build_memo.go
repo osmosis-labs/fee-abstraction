@@ -2,7 +2,7 @@ package types
 
 import (
 	"encoding/json"
-	fmt "fmt"
+	"fmt"
 	"time"
 )
 
@@ -14,7 +14,7 @@ type OsmosisSwapMsg struct {
 	OsmosisSwap Swap `json:"osmosis_swap"`
 }
 type Swap struct {
-	OutPutDenom      string `json:"output_denom"`
+	OutputDenom      string `json:"output_denom"`
 	Slippage         Twap   `json:"slippage"`
 	Receiver         string `json:"receiver"`
 	OnFailedDelivery string `json:"on_failed_delivery"`
@@ -46,7 +46,7 @@ type ForwardMetadata struct {
 
 func NewOsmosisSwapMsg(outputDenom string, slippagePercentage string, windowSeconds uint64, receiver string) OsmosisSwapMsg {
 	swap := Swap{
-		OutPutDenom: outputDenom,
+		OutputDenom: outputDenom,
 		Slippage: Twap{
 			Twap: TwapRouter{
 				SlippagePercentage: slippagePercentage,
@@ -83,7 +83,7 @@ func ParseMsgToMemo(msg OsmosisSwapMsg, contractAddr string) (string, error) {
 func BuildCrossChainSwapMemo(outputDenom string, contractAddress string, receiverAddress string, chainName string) (string, error) {
 	receiver := fmt.Sprintf("%s/%s", chainName, receiverAddress)
 	swap := Swap{
-		OutPutDenom: outputDenom,
+		OutputDenom: outputDenom,
 		Slippage: Twap{
 			Twap: TwapRouter{
 				SlippagePercentage: "20",

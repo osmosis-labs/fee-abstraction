@@ -1,19 +1,19 @@
 package keeper
 
 import (
+	"cosmossdk.io/errors"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 func (k Keeper) AddHostZoneProposal(ctx sdk.Context, p *types.AddHostZoneProposal) error {
-	config, _ := k.GetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom)
-	if (config != types.HostChainFeeAbsConfig{}) {
-		return types.ErrDuplicateHostZoneConfig
+	if k.HasHostZoneConfig(ctx, p.HostChainConfig.IbcDenom) {
+		return errors.Wrapf(types.ErrDuplicateHostZoneConfig, "duplicate host ibc denom")
 	}
 
-	err := k.SetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom, *p.HostChainConfig)
-	if err != nil {
+	if err := k.SetHostZoneConfig(ctx, *p.HostChainConfig); err != nil {
 		return err
 	}
 
@@ -21,27 +21,21 @@ func (k Keeper) AddHostZoneProposal(ctx sdk.Context, p *types.AddHostZoneProposa
 }
 
 func (k Keeper) DeleteHostZoneProposal(ctx sdk.Context, p *types.DeleteHostZoneProposal) error {
-	_, err := k.GetHostZoneConfig(ctx, p.IbcDenom)
-	if err == nil {
-		return types.ErrHostZoneConfigNotFound
-	}
-
-	err = k.DeleteHostZoneConfig(ctx, p.IbcDenom)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return k.DeleteHostZoneConfig(ctx, p.IbcDenom)
 }
 
 func (k Keeper) SetHostZoneProposal(ctx sdk.Context, p *types.SetHostZoneProposal) error {
-	_, err := k.GetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom)
-	if err == nil {
-		return types.ErrHostZoneConfigNotFound
+	if !k.HasHostZoneConfig(ctx, p.HostChainConfig.IbcDenom) {
+		return errors.Wrapf(types.ErrHostZoneConfigNotFound, "host ibc denom not found: %s", p.HostChainConfig.IbcDenom)
 	}
 
-	err = k.SetHostZoneConfig(ctx, p.HostChainConfig.IbcDenom, *p.HostChainConfig)
-	if err != nil {
+	// delete old host zone config
+	if err := k.DeleteHostZoneConfig(ctx, p.HostChainConfig.IbcDenom); err != nil {
+		return err
+	}
+
+	// set new host zone config
+	if err := k.SetHostZoneConfig(ctx, *p.HostChainConfig); err != nil {
 		return err
 	}
 

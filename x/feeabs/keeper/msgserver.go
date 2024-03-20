@@ -22,14 +22,13 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 var _ types.MsgServer = msgServer{}
 
-// Need to remove this
 func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQueryIbcDenomTWAP) (*types.MsgSendQueryIbcDenomTWAPResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
 	if err != nil {
 		return nil, err
 	}
-	err = k.handleOsmosisIbcQuery(ctx)
+	_, err = k.HandleOsmosisIbcQuery(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -37,20 +36,28 @@ func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQ
 	return &types.MsgSendQueryIbcDenomTWAPResponse{}, nil
 }
 
-// Need to remove this
 func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossChain) (*types.MsgSwapCrossChainResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	hostChainConfig, err := k.GetHostZoneConfig(ctx, msg.IbcDenom)
-	if err != nil {
-		return &types.MsgSwapCrossChainResponse{}, nil
-	}
-	_, err = sdk.AccAddressFromBech32(msg.FromAddress)
+
+	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
 	if err != nil {
 		return nil, err
 	}
 
-	err = k.transferOsmosisCrosschainSwap(ctx, hostChainConfig)
+	hostChainConfig, found := k.GetHostZoneConfig(ctx, msg.IbcDenom)
+	if !found {
+		return nil, types.ErrHostZoneConfigNotFound
+	}
 
+	if hostChainConfig.Status == types.HostChainFeeAbsStatus_FROZEN {
+		return nil, types.ErrHostZoneFrozen
+	}
+
+	if hostChainConfig.Status == types.HostChainFeeAbsStatus_OUTDATED {
+		return nil, types.ErrHostZoneOutdated
+	}
+
+	err = k.transferOsmosisCrosschainSwap(ctx, hostChainConfig)
 	if err != nil {
 		return nil, err
 	}

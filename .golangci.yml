@@ -9,7 +9,6 @@ linters:
     - exportloopref
     - errcheck
     - gci
-    - goconst
     - gocritic
     - gofumpt
     - gosec
@@ -22,7 +21,6 @@ linters:
     - thelper
     - typecheck
     - stylecheck
-    - revive
     - typecheck
     - tenv
     - unconvert
