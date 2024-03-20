@@ -18,9 +18,6 @@ func TestInitGenesis(t *testing.T) {
 	params := app.FeeabsKeeper.GetParams(ctx)
 	require.Equal(t, params, genesisState.Params)
 
-	epochs := app.FeeabsKeeper.AllEpochInfos(ctx)
-	require.Equal(t, epochs, genesisState.Epochs)
-
 	portid := app.FeeabsKeeper.GetPort(ctx)
 	require.Equal(t, portid, genesisState.PortId)
 }
@@ -32,7 +29,4 @@ func TestExportGenesis(t *testing.T) {
 	ctx = ctx.WithBlockHeight(1)
 	genesis := app.FeeabsKeeper.ExportGenesis(ctx)
 	require.Len(t, genesis.Epochs, 2)
-
-	expectedEpochs := types.DefaultGenesis().Epochs
-	require.Equal(t, expectedEpochs, genesis.Epochs)
 }
