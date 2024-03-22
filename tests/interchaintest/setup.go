@@ -147,6 +147,7 @@ func modifyGenesisShortProposals(votingPeriod string, maxDepositPeriod string, q
 }
 
 func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, []ibc.ChannelOutput) {
+	t.Helper()
 	client, network := interchaintest.DockerSetup(t)
 
 	rep := testreporter.NewNopReporter()
@@ -520,7 +521,7 @@ func SetupOsmosisContracts(t *testing.T,
 
 	// 3. Crosschain Swaps Contract
 	initMsg = fmt.Sprintf("{\"swap_contract\":\"%s\",\"governor\": \"%s\"}", swaprouterContractAddr, owner)
-	xcsV2ContractAddr, err := osmosis.InstantiateContract(ctx, user.KeyName(), xcsV2Wasm, initMsg, true)
+	xcsV2ContractAddr, err := osmosis.InstantiateContract(ctx, user.KeyName(), xcsV2CodeId, initMsg, true)
 	if err != nil {
 		return nil, err
 	}
