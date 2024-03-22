@@ -520,7 +520,7 @@ func SetupOsmosisContracts(t *testing.T,
 	t.Logf("swap router contract address: %s\n", swaprouterContractAddr)
 
 	// 3. Crosschain Swaps Contract
-	initMsg = fmt.Sprintf("{\"swap_contract\":\"%s\",\"governor\": \"%s\"}", swaprouterContractAddr, owner)
+	initMsg = fmt.Sprintf("{\"swap_contract\":\"%s\",\"governor\": \"%s\",\"registry_contract\": \"%s\"}", swaprouterContractAddr, owner, registryContractAddr)
 	xcsV2ContractAddr, err := osmosis.InstantiateContract(ctx, user.KeyName(), xcsV2CodeId, initMsg, true)
 	if err != nil {
 		return nil, err
