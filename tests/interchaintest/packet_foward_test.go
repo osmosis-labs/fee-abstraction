@@ -45,7 +45,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 		channGaiaFeeabs.ChannelID,
 		channOsmosisGaia.ChannelID,
 		channGaiaOsmosis.ChannelID)
-	_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddress, msg)
+	_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddress, msg, "--gas", "1000000")
 	require.NoError(t, err)
 	// Execute
 	msg = `{
@@ -93,7 +93,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	require.NoError(t, err)
 	queryMsg := QuerySmartMsg{
 		Packet: HasPacketForwarding{
-			ChainID: "feeabs",
+			Chain: "feeabs",
 		},
 	}
 	res := QuerySmartMsgResponse{}
@@ -106,7 +106,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	require.NoError(t, err)
 	queryMsg = QuerySmartMsg{
 		Packet: HasPacketForwarding{
-			ChainID: "gaia",
+			Chain: "gaia",
 		},
 	}
 	res = QuerySmartMsgResponse{}

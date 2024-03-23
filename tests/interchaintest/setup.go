@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"cosmossdk.io/math"
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/icza/dyno"
@@ -25,7 +26,7 @@ import (
 )
 
 type HasPacketForwarding struct {
-	ChainID string `json:"chain"`
+	Chain string `json:"chain"`
 }
 
 type QuerySmartMsg struct {
@@ -80,7 +81,7 @@ var (
 	pathFeeabsOsmosis   = "feeabs-osmosis"
 	pathOsmosisGaia     = "osmosis-gaia"
 	genesisWalletAmount = int64(10_000_000)
-	amountToSend        = int64(1_000_000_000)
+	amountToSend        = math.NewInt(1_000_000_000)
 )
 
 // feeabsEncoding registers the feeabs specific module codecs so that the associated types and msgs
@@ -156,7 +157,6 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	// Create chain factory with Feeabs and Gaia
 	numVals := 1
 	numFullNodes := 1
-	gasAdjustment := 2.0
 
 	cf := interchaintest.NewBuiltinChainFactory(zaptest.NewLogger(t), []*interchaintest.ChainSpec{
 		{
@@ -181,7 +181,6 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 				GasPrices:      "0.005uosmo",
 				EncodingConfig: osmosisEncoding(),
 			},
-			GasAdjustment: &gasAdjustment,
 			NumValidators: &numVals,
 			NumFullNodes:  &numFullNodes,
 		},

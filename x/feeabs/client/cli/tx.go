@@ -38,9 +38,6 @@ func NewQueryOsmosisTWAPCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if err != nil {
-				return err
-			}
 
 			msg := types.NewMsgSendQueryIbcDenomTWAP(clientCtx.GetFromAddress())
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)

@@ -7,6 +7,7 @@ import (
 	"path"
 	"testing"
 
+	"cosmossdk.io/math"
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
 	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
@@ -47,7 +48,7 @@ func TestFeeAbs(t *testing.T) {
 		channGaiaFeeabs.ChannelID,
 		channOsmosisGaia.ChannelID,
 		channGaiaOsmosis.ChannelID)
-	_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddr, msg)
+	_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddr, msg, "--gas", "1000000")
 	require.NoError(t, err)
 
 	// Modify bech32 prefixes on registry contract
@@ -95,9 +96,10 @@ func TestFeeAbs(t *testing.T) {
 
 	queryMsg := QuerySmartMsg{
 		Packet: HasPacketForwarding{
-			ChainID: "feeabs",
+			Chain: "feeabs",
 		},
 	}
+	// {"data":false}
 	var feeabsRes QuerySmartMsgResponse
 	err = osmosis.QueryContract(ctx, registryContractAddr, queryMsg, &feeabsRes)
 	require.NoError(t, err)
@@ -112,13 +114,13 @@ func TestFeeAbs(t *testing.T) {
 
 	queryMsg = QuerySmartMsg{
 		Packet: HasPacketForwarding{
-			ChainID: "gaia",
+			Chain: "gaia",
 		},
 	}
 	var gaiaRes QuerySmartMsgResponse
 	err = osmosis.QueryContract(ctx, registryContractAddr, queryMsg, &gaiaRes)
 	require.NoError(t, err)
-	require.Equal(t, true, gaiaRes)
+	require.Equal(t, true, gaiaRes.Data)
 
 	// Create pool uatom/stake on Osmosis
 	poolID, err := feeabsCli.CreatePool(osmosis, ctx, osmosisUser.KeyName(), cosmos.OsmosisPoolParams{
@@ -151,14 +153,14 @@ func TestFeeAbs(t *testing.T) {
 	transfer := ibc.WalletAmount{
 		Address: feeabsModule.GetAddress(),
 		Denom:   gaia.Config().Denom,
-		Amount:  1000000,
+		Amount:  math.NewInt(1000000),
 	}
 
-	tx, err := gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName(), transfer, ibc.TransferOptions{})
+	ibcTx, err := gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName(), transfer, ibc.TransferOptions{})
 	require.NoError(t, err)
-	require.NoError(t, tx.Validate())
+	require.NoError(t, ibcTx.Validate())
 
-	_, err = testutil.PollForAck(ctx, gaia, gaiaHeight, gaiaHeight+30, tx.Packet)
+	_, err = testutil.PollForAck(ctx, gaia, gaiaHeight, gaiaHeight+30, ibcTx.Packet)
 	require.NoError(t, err)
 
 	err = testutil.WaitForBlocks(ctx, 1, feeabs, gaia, osmosis)
@@ -197,8 +199,14 @@ func TestFeeAbs(t *testing.T) {
 	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, paramTx.ProposalID, cosmos.ProposalStatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
-	_, err = feeabsCli.QueryHostZoneConfig(feeabs, ctx)
+	// wait for next 5 blocks
 	require.NoError(t, err)
+	testutil.WaitForBlocks(ctx, 5, feeabs)
+
+	// there must be exactly 1 host zone configs
+	res, err := feeabsCli.QueryAllHostZoneConfig(feeabs, ctx)
+	require.NoError(t, err)
+	require.Equal(t, len(res.AllHostChainConfig), 1)
 
 	// xcs
 	feeabsHeight, err := feeabs.Height(ctx)
@@ -221,5 +229,5 @@ func TestFeeAbs(t *testing.T) {
 
 	balance, err := feeabs.GetBalance(ctx, feeabsModule.Address, feeabs.Config().Denom)
 	require.NoError(t, err)
-	require.True(t, balance > 1)
+	require.True(t, balance.GT(math.NewInt(1)))
 }

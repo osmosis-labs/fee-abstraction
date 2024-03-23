@@ -4,6 +4,10 @@ type HostChainFeeAbsConfigResponse struct {
 	HostChainConfig HostChainFeeAbsConfig `json:"host_chain_config"`
 }
 
+type AllQueryHostChainConfigResponse struct {
+	AllHostChainConfig []HostChainFeeAbsConfig `json:"all_host_chain_config"`
+}
+
 const (
 	HostChainFeeAbsStatus_UPDATED  string = "UPDATED"
 	HostChainFeeAbsStatus_OUTDATED string = "OUTDATED"
