@@ -80,7 +80,7 @@ var (
 	pathFeeabsGaia      = "feeabs-gaia"
 	pathFeeabsOsmosis   = "feeabs-osmosis"
 	pathOsmosisGaia     = "osmosis-gaia"
-	genesisWalletAmount = int64(10_000_000)
+	genesisWalletAmount = math.NewInt(10_000_000)
 	amountToSend        = math.NewInt(1_000_000_000)
 )
 
