@@ -48,7 +48,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 		channGaiaFeeabs.ChannelID,
 		channOsmosisGaia.ChannelID,
 		channGaiaOsmosis.ChannelID)
-	_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddress, msg)
+	_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddress, msg, "--gas", "1000000")
 	require.NoError(t, err)
 	// Execute
 	msg = `{
@@ -96,7 +96,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	require.NoError(t, err)
 	queryMsg := QuerySmartMsg{
 		Packet: HasPacketForwarding{
-			ChainID: "feeabs",
+			Chain: "feeabs",
 		},
 	}
 	res := QuerySmartMsgResponse{}
@@ -109,7 +109,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	require.NoError(t, err)
 	queryMsg = QuerySmartMsg{
 		Packet: HasPacketForwarding{
-			ChainID: "gaia",
+			Chain: "gaia",
 		},
 	}
 	res = QuerySmartMsgResponse{}
@@ -149,7 +149,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, "2", cosmos.ProposalStatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
-	_, err = feeabsCli.QueryHostZoneConfig(feeabs, ctx)
+	_, err = feeabsCli.QueryAllHostZoneConfig(feeabs, ctx)
 	require.NoError(t, err)
 
 	twap, err := feeabsCli.QueryOsmosisArithmeticTwap(feeabs, ctx, uatomOnFeeabs)
