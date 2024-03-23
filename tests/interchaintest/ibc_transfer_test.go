@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"cosmossdk.io/math"
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 	"github.com/strangelove-ventures/interchaintest/v7"
@@ -103,7 +104,7 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	)
 
 	// Create some user accounts on both chains
-	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), genesisWalletAmount, feeabs, gaia)
+	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), genesisWalletAmount.Int64(), feeabs, gaia)
 
 	// Wait a few blocks for relayer to start and for user accounts to be created
 	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia)
@@ -125,7 +126,7 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	require.Equal(t, genesisWalletAmount, gaiaOrigBal)
 
 	// Compose an IBC transfer and send from feeabs -> Gaia
-	transferAmount := int64(1_000)
+	transferAmount := math.NewInt(1_000)
 	transfer := ibc.WalletAmount{
 		Address: gaiaUserAddr,
 		Denom:   feeabs.Config().Denom,
@@ -152,7 +153,7 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	// Assert that the funds are no longer present in user acc on feeabs and are in the user acc on Gaia
 	feeabsUpdateBal, err := feeabs.GetBalance(ctx, feeabsUserAddr, feeabs.Config().Denom)
 	require.NoError(t, err)
-	require.Equal(t, feeabsOrigBal-transferAmount, feeabsUpdateBal)
+	require.Equal(t, feeabsOrigBal.Sub(transferAmount), feeabsUpdateBal)
 
 	gaiaUpdateBal, err := gaia.GetBalance(ctx, gaiaUserAddr, feeabsIBCDenom)
 	require.NoError(t, err)
@@ -182,5 +183,5 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 
 	gaiaUpdateBal, err = gaia.GetBalance(ctx, gaiaUserAddr, feeabsIBCDenom)
 	require.NoError(t, err)
-	require.Equal(t, int64(0), gaiaUpdateBal)
+	require.Equal(t, math.ZeroInt(), gaiaUpdateBal)
 }

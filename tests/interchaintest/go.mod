@@ -3,6 +3,7 @@ module github.com/osmosis-labs/fee-abstraction/tests/interchaintest
 go 1.21
 
 require (
+	cosmossdk.io/math v1.2.0
 	github.com/avast/retry-go/v4 v4.5.0
 	github.com/cosmos/cosmos-sdk v0.47.8
 	github.com/cosmos/ibc-go/v7 v7.3.1
@@ -24,7 +25,6 @@ require (
 	cosmossdk.io/depinject v1.0.0-alpha.4 // indirect
 	cosmossdk.io/errors v1.0.1 // indirect
 	cosmossdk.io/log v1.3.0 // indirect
-	cosmossdk.io/math v1.2.0 // indirect
 	cosmossdk.io/tools/rosetta v0.2.1 // indirect
 	filippo.io/edwards25519 v1.0.0 // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
@@ -62,7 +62,9 @@ require (
 	github.com/cosmos/gogogateway v1.2.0 // indirect
 	github.com/cosmos/gogoproto v1.4.10 // indirect
 	github.com/cosmos/iavl v0.20.1 // indirect
+	github.com/cosmos/ibc-go/modules/capability v1.0.0-rc1 // indirect
 	github.com/cosmos/ics23/go v0.10.0 // indirect
+	github.com/cosmos/interchain-security/v3 v3.1.1-0.20231102122221-81650a84f989 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.13.0 // indirect
 	github.com/cosmos/rosetta-sdk-go v0.10.0 // indirect
 	github.com/creachadair/taskgroup v0.4.2 // indirect
