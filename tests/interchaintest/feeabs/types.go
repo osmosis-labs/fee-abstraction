@@ -23,5 +23,5 @@ type HostChainFeeAbsConfig struct {
 	PoolId string `json:"pool_id,omitempty"`
 	// Host chain fee abstraction connection status
 	Status        string `json:"status,omitempty"`
-	MinSwapAmount uint64 `json:"min_swap_amount,omitempty"`
+	MinSwapAmount string `json:"min_swap_amount,omitempty"`
 }
