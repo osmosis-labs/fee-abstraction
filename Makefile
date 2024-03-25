@@ -128,10 +128,13 @@ ictest-host-zone-proposal:
 	cd tests/interchaintest && go test -timeout=25m -race -v -run TestHostZoneProposal .
 
 ictest-feeabs:
-	cd tests/interchaintest && go test -timeout=25m -race -v -run TestFeeabs .
+	cd tests/interchaintest && go test -timeout=25m -race -v -run '^TestFeeAbs$$' .
 
 ictest-query-osmosis-twap:
 	cd tests/interchaintest && go test -timeout=25m -race -v -run TestQueryOsmosisTwap .
+
+# ictest-feeabs-ibc-transfer:
+# 		cd tests/interchaintest && go test -timeout=25m -race -v -run  TestIBCTransferWithFeeAbs .
 
 # Executes all tests via interchaintest after compling a local image as juno:local
 ictest-all: ictest-basic ictest-ibc ictest-packet-forward ictest-host-zone-proposal ictest-query-osmosis-twap ictest-feeabs
