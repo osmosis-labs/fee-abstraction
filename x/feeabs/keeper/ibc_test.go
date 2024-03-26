@@ -9,10 +9,11 @@ import (
 
 	sdkmath "cosmossdk.io/math"
 
-	abci "github.com/cometbft/cometbft/abci/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+
+	abci "github.com/cometbft/cometbft/abci/types"
+
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
