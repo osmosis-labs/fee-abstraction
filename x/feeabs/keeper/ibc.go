@@ -226,8 +226,8 @@ func (k Keeper) transferOsmosisCrosschainSwap(ctx sdk.Context, hostChainConfig t
 	nativeDenomIBCedInOsmosis := params.NativeIbcedInOsmosis
 	chainName := params.ChainName
 
-	if !token.Amount.IsPositive() {
-		return nil
+	if !token.Amount.IsPositive() || token.Amount.LT(sdk.NewIntFromUint64(hostChainConfig.MinSwapAmount)) {
+		return fmt.Errorf("invalid amount to transfer, expect minimum %v, got %v", hostChainConfig.MinSwapAmount, token.Amount)
 	}
 
 	memo, err := types.BuildCrossChainSwapMemo(nativeDenomIBCedInOsmosis, params.OsmosisCrosschainSwapAddress, moduleAccountAddress.String(), chainName)
@@ -388,4 +388,9 @@ func (k Keeper) IbcQueryHostZoneFilter(ctx sdk.Context, hostZoneConfig types.Hos
 	}
 
 	return false
+}
+
+// for testing
+func (k Keeper) TransferOsmosisCrosschainSwap(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
+	return k.transferOsmosisCrosschainSwap(ctx, hostChainConfig)
 }

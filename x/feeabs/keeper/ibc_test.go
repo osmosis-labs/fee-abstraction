@@ -1,10 +1,16 @@
 package keeper_test
 
 import (
+	"fmt"
+	"testing"
+
 	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 	"github.com/stretchr/testify/require"
 
 	sdkmath "cosmossdk.io/math"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 
@@ -214,4 +220,63 @@ func (s *KeeperTestSuite) generateQueryRequest() []abci.RequestQuery {
 	return []abci.RequestQuery{{
 		Data: icqReqDataBz,
 	}}
+}
+
+// test unsuccessful osmosisCrooschainSwap due to below swap threshold
+func (s *KeeperTestSuite) TestTransferOsmosisCrosschainSwap() {
+	tests := []struct {
+		name             string
+		AmountToTransfer uint64
+		hostConfig       types.HostChainFeeAbsConfig
+		wantErr          bool
+	}{
+		{
+			"swap zero token",
+			0,
+			types.HostChainFeeAbsConfig{
+				IbcDenom:                IBCDenom,
+				OsmosisPoolTokenDenomIn: OsmosisIBCDenom,
+				Status:                  types.HostChainFeeAbsStatus_UPDATED,
+				PoolId:                  1,
+				MinSwapAmount:           1000,
+			},
+			true,
+		},
+		{
+			"swap amount below min",
+			500,
+			types.HostChainFeeAbsConfig{
+				IbcDenom:                IBCDenom,
+				OsmosisPoolTokenDenomIn: OsmosisIBCDenom,
+				Status:                  types.HostChainFeeAbsStatus_UPDATED,
+				PoolId:                  1,
+				MinSwapAmount:           1000,
+			},
+			true,
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		s.T().Run(tc.name, func(t *testing.T) {
+			s.FundFeeAbsModuleAccount(s.ctx, tc.AmountToTransfer)
+			err := s.feeAbsKeeper.TransferOsmosisCrosschainSwap(s.ctx, tc.hostConfig)
+			if tc.wantErr {
+				require.Error(t, err)
+				require.Contains(t, err.Error(), fmt.Sprintf("invalid amount to transfer, expect minimum %v, got %v", tc.hostConfig.MinSwapAmount, tc.AmountToTransfer))
+
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+// helper function to fund fee abs module account for testing
+func (s *KeeperTestSuite) FundFeeAbsModuleAccount(ctx sdk.Context, amount uint64) {
+	s.T().Helper()
+	err := s.feeAbsApp.BankKeeper.MintCoins(ctx, minttypes.ModuleName, sdk.NewCoins(sdk.NewCoin(IBCDenom, sdk.NewIntFromUint64(amount))))
+	require.NoError(s.T(), err)
+	err = s.feeAbsApp.BankKeeper.SendCoinsFromModuleToModule(ctx, minttypes.ModuleName, types.ModuleName, sdk.NewCoins(sdk.NewCoin(IBCDenom, sdk.NewIntFromUint64(amount))))
+	require.NoError(s.T(), err)
 }
