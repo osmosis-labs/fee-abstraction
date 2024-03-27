@@ -11,13 +11,14 @@ import (
 	"time"
 
 	"github.com/avast/retry-go/v4"
+	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v8/ibc"
+	"github.com/strangelove-ventures/interchaintest/v8/testutil"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types"
 	authTx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
-	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
-	"github.com/strangelove-ventures/interchaintest/v8/ibc"
-	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 )
 
 func getFullNode(c *cosmos.CosmosChain) *cosmos.ChainNode {
@@ -75,7 +76,7 @@ func CrossChainSwap(c *cosmos.CosmosChain, ctx context.Context, keyName string, 
 		dstPort, _       = AttributeValue(txResp, evType, "packet_dst_port")
 		dstChan, _       = AttributeValue(txResp, evType, "packet_dst_channel")
 		timeoutHeight, _ = AttributeValue(txResp, evType, "packet_timeout_height")
-		timeoutTs, _     = AttributeValue(txResp, evType, "packet_timeout_timestamp")
+		timeoutTS, _     = AttributeValue(txResp, evType, "packet_timeout_timestamp")
 		data, _          = AttributeValue(txResp, evType, "packet_data")
 	)
 
@@ -92,9 +93,9 @@ func CrossChainSwap(c *cosmos.CosmosChain, ctx context.Context, keyName string, 
 	}
 	tx.Packet.Sequence = uint64(seqNum)
 
-	timeoutNano, err := strconv.ParseUint(timeoutTs, 10, 64)
+	timeoutNano, err := strconv.ParseUint(timeoutTS, 10, 64)
 	if err != nil {
-		return tx, fmt.Errorf("invalid packet timestamp timeout %s: %w", timeoutTs, err)
+		return tx, fmt.Errorf("invalid packet timestamp timeout %s: %w", timeoutTS, err)
 	}
 	tx.Packet.TimeoutTimestamp = ibc.Nanoseconds(timeoutNano)
 

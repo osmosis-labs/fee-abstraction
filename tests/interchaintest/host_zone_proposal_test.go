@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"testing"
 
-	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/stretchr/testify/require"
+
+	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	feeabsCli "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/feeabs"
 )

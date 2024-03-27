@@ -8,9 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	"cosmossdk.io/math"
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
-	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/icza/dyno"
 	"github.com/strangelove-ventures/interchaintest/v8"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
@@ -21,6 +18,11 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
+
+	"cosmossdk.io/math"
+
+	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 
 	feeabstype "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )

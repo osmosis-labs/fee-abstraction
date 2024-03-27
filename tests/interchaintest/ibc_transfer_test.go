@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"testing"
 
-	"cosmossdk.io/math"
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	"github.com/strangelove-ventures/interchaintest/v8"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
@@ -16,6 +14,10 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
+
+	"cosmossdk.io/math"
+
+	sdktypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 // TestFeeabsGaiaIBCTransfer spins up a Feeabs and Gaia network, initializes an IBC connection between them,

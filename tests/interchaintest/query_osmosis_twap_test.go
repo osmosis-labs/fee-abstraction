@@ -8,13 +8,14 @@ import (
 	"strconv"
 	"testing"
 
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
-	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 	"github.com/stretchr/testify/require"
+
+	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
 
 	feeabsCli "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/feeabs"
 )

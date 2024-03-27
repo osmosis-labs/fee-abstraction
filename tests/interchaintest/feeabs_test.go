@@ -8,15 +8,17 @@ import (
 	"strconv"
 	"testing"
 
-	"cosmossdk.io/math"
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
-	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v8/ibc"
 	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 	"github.com/stretchr/testify/require"
+
+	"cosmossdk.io/math"
+
+	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
 
 	feeabsCli "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/feeabs"
 )
@@ -205,8 +207,8 @@ func TestFeeAbs(t *testing.T) {
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
 	// wait for next 5 blocks
+	err = testutil.WaitForBlocks(ctx, 5, feeabs)
 	require.NoError(t, err)
-	testutil.WaitForBlocks(ctx, 5, feeabs)
 
 	// there must be exactly 1 host zone configs
 	res, err := feeabsCli.QueryAllHostZoneConfig(feeabs, ctx)
