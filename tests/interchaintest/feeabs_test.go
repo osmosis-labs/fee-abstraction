@@ -5,15 +5,17 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strconv"
 	"testing"
 
 	"cosmossdk.io/math"
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
-	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
-	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
-	"github.com/strangelove-ventures/interchaintest/v7/ibc"
-	"github.com/strangelove-ventures/interchaintest/v7/testutil"
+	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
+	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v8/ibc"
+	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 	"github.com/stretchr/testify/require"
 
 	feeabsCli "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/feeabs"
@@ -184,7 +186,10 @@ func TestFeeAbs(t *testing.T) {
 	height, err := feeabs.Height(ctx)
 	require.NoError(t, err)
 
-	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, paramTx.ProposalID, cosmos.ProposalStatusPassed)
+	proposalID, err := strconv.ParseUint(paramTx.ProposalID, 10, 64)
+	require.NoError(t, err, "parse proposal id failed")
+
+	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, proposalID, govv1beta1.StatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
 	_, err = feeabsCli.AddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName(), "./proposal/add_host_zone.json")
@@ -196,7 +201,7 @@ func TestFeeAbs(t *testing.T) {
 	height, err = feeabs.Height(ctx)
 	require.NoError(t, err)
 
-	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, paramTx.ProposalID, cosmos.ProposalStatusPassed)
+	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, 2, govv1beta1.StatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
 	// wait for next 5 blocks

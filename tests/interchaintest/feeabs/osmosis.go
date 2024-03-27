@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 )
 
 func CreatePool(c *cosmos.CosmosChain, ctx context.Context, keyName string, params cosmos.OsmosisPoolParams) (string, error) {

@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 
 	feeabstypes "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
