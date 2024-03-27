@@ -67,7 +67,7 @@ var (
 		ChainID:             "feeabs-2",
 		Images:              []ibc.DockerImage{feeabsImage},
 		Bin:                 "feeappd",
-		Bech32Prefix:        "feeabs",
+		Bech32Prefix:        "cosmos",
 		Denom:               "stake",
 		CoinType:            "118",
 		GasPrices:           "0.00stake",
@@ -156,7 +156,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	rep := testreporter.NewNopReporter()
 	eRep := rep.RelayerExecReporter(t)
 
-	// Create chain factory with Feeabs and Gaia
+	// Create chain factory with Feeabs, Gaia and Osmosis
 	numVals := 1
 	numFullNodes := 1
 
@@ -229,168 +229,14 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 		NetworkID:         network,
 		BlockDatabaseFile: interchaintest.DefaultBlockDatabaseFilepath(),
 
-		SkipPathCreation: true,
+		SkipPathCreation: false,
 	}))
 	t.Cleanup(func() {
 		_ = ic.Close()
 	})
 
-	const userFunds = 10_000_000_000
-	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), math.NewInt(userFunds), feeabs, gaia, osmosis)
-
-	// rly feeabs-osmo
-	// Generate new path
-	err = r.GeneratePath(ctx, eRep, feeabs.Config().ChainID, osmosis.Config().ChainID, pathFeeabsOsmosis)
-	require.NoError(t, err)
-	// Create client
-	err = r.CreateClients(ctx, eRep, pathFeeabsOsmosis, ibc.DefaultClientOpts())
-	require.NoError(t, err)
-
-	err = testutil.WaitForBlocks(ctx, 5, feeabs, osmosis)
-	require.NoError(t, err)
-
-	// Create connection
-	err = r.CreateConnections(ctx, eRep, pathFeeabsOsmosis)
-	require.NoError(t, err)
-
-	err = testutil.WaitForBlocks(ctx, 5, feeabs, osmosis)
-	require.NoError(t, err)
-	// Create channel
-	err = r.CreateChannel(ctx, eRep, pathFeeabsOsmosis, ibc.CreateChannelOptions{
-		SourcePortName: "transfer",
-		DestPortName:   "transfer",
-		Order:          ibc.Unordered,
-		Version:        "ics20-1",
-	})
-	require.NoError(t, err)
-
-	err = testutil.WaitForBlocks(ctx, 5, feeabs, osmosis)
-	require.NoError(t, err)
-	var chanels []ibc.ChannelOutput
-	channsFeeabs, err := r.GetChannels(ctx, eRep, feeabs.Config().ChainID)
-	require.NoError(t, err)
-
-	channsOsmosis, err := r.GetChannels(ctx, eRep, osmosis.Config().ChainID)
-	require.NoError(t, err)
-
-	require.Len(t, channsFeeabs, 1)
-	require.Len(t, channsOsmosis, 1)
-
-	channFeeabsOsmosis := channsFeeabs[0]
-	require.NotEmpty(t, channFeeabsOsmosis.ChannelID)
-	channOsmosisFeeabs := channsOsmosis[0]
-	require.NotEmpty(t, channOsmosisFeeabs.ChannelID)
-	// rly feeabs-gaia
-	// Generate new path
-	err = r.GeneratePath(ctx, eRep, feeabs.Config().ChainID, gaia.Config().ChainID, pathFeeabsGaia)
-	require.NoError(t, err)
-	// Create clients
-	err = r.CreateClients(ctx, eRep, pathFeeabsGaia, ibc.DefaultClientOpts())
-	require.NoError(t, err)
-
-	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia)
-	require.NoError(t, err)
-
-	// Create connection
-	err = r.CreateConnections(ctx, eRep, pathFeeabsGaia)
-	require.NoError(t, err)
-
-	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia)
-	require.NoError(t, err)
-
-	// Create channel
-	err = r.CreateChannel(ctx, eRep, pathFeeabsGaia, ibc.CreateChannelOptions{
-		SourcePortName: "transfer",
-		DestPortName:   "transfer",
-		Order:          ibc.Unordered,
-		Version:        "ics20-1",
-	})
-	require.NoError(t, err)
-
-	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia)
-	require.NoError(t, err)
-
-	channsFeeabs, err = r.GetChannels(ctx, eRep, feeabs.Config().ChainID)
-	require.NoError(t, err)
-
-	channsGaia, err := r.GetChannels(ctx, eRep, gaia.Config().ChainID)
-	require.NoError(t, err)
-
-	require.Len(t, channsFeeabs, 2)
-	require.Len(t, channsGaia, 1)
-
-	var channFeeabsGaia ibc.ChannelOutput
-	for _, chann := range channsFeeabs {
-		if chann.ChannelID != channFeeabsOsmosis.ChannelID {
-			channFeeabsGaia = chann
-		}
-	}
-	require.NotEmpty(t, channFeeabsGaia.ChannelID)
-
-	channGaiaFeeabs := channsGaia[0]
-	require.NotEmpty(t, channGaiaFeeabs.ChannelID)
-	// rly osmo-gaia
-	// Generate new path
-	err = r.GeneratePath(ctx, eRep, osmosis.Config().ChainID, gaia.Config().ChainID, pathOsmosisGaia)
-	require.NoError(t, err)
-	// Create clients
-	err = r.CreateClients(ctx, eRep, pathOsmosisGaia, ibc.DefaultClientOpts())
-	require.NoError(t, err)
-
-	err = testutil.WaitForBlocks(ctx, 5, osmosis, gaia)
-	require.NoError(t, err)
-	// Create connection
-	err = r.CreateConnections(ctx, eRep, pathOsmosisGaia)
-	require.NoError(t, err)
-
-	err = testutil.WaitForBlocks(ctx, 5, osmosis, gaia)
-	require.NoError(t, err)
-	// Create channel
-	err = r.CreateChannel(ctx, eRep, pathOsmosisGaia, ibc.CreateChannelOptions{
-		SourcePortName: "transfer",
-		DestPortName:   "transfer",
-		Order:          ibc.Unordered,
-		Version:        "ics20-1",
-	})
-	require.NoError(t, err)
-
-	err = testutil.WaitForBlocks(ctx, 5, osmosis, gaia)
-	require.NoError(t, err)
-
-	channsOsmosis, err = r.GetChannels(ctx, eRep, osmosis.Config().ChainID)
-	require.NoError(t, err)
-
-	channsGaia, err = r.GetChannels(ctx, eRep, gaia.Config().ChainID)
-	require.NoError(t, err)
-
-	require.Len(t, channsOsmosis, 2)
-	require.Len(t, channsGaia, 2)
-
-	var channOsmosisGaia ibc.ChannelOutput
-	var channGaiaOsmosis ibc.ChannelOutput
-
-	for _, chann := range channsOsmosis {
-		if chann.ChannelID != channOsmosisFeeabs.ChannelID {
-			channOsmosisGaia = chann
-		}
-	}
-	require.NotEmpty(t, channOsmosisGaia)
-
-	for _, chann := range channsGaia {
-		if chann.ChannelID != channGaiaFeeabs.ChannelID {
-			channGaiaOsmosis = chann
-		}
-	}
-	require.NotEmpty(t, channGaiaOsmosis)
-
-	fmt.Println("-----------------------------------")
-	fmt.Printf("channFeeabsOsmosis: %s - %s\n", channFeeabsOsmosis.ChannelID, channFeeabsOsmosis.Counterparty.ChannelID)
-	fmt.Printf("channOsmosisFeeabs: %s - %s\n", channOsmosisFeeabs.ChannelID, channOsmosisFeeabs.Counterparty.ChannelID)
-	fmt.Printf("channFeeabsGaia: %s - %s\n", channFeeabsGaia.ChannelID, channFeeabsGaia.Counterparty.ChannelID)
-	fmt.Printf("channGaiaFeeabs: %s - %s\n", channGaiaFeeabs.ChannelID, channGaiaFeeabs.Counterparty.ChannelID)
-	fmt.Printf("channOsmosisGaia: %s - %s\n", channOsmosisGaia.ChannelID, channOsmosisGaia.Counterparty.ChannelID)
-	fmt.Printf("channGaiaOsmosis: %s - %s\n", channGaiaOsmosis.ChannelID, channGaiaOsmosis.Counterparty.ChannelID)
-	fmt.Println("-----------------------------------")
+	initBal := math.NewInt(10_000_000_000)
+	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), initBal, feeabs, gaia, osmosis)
 
 	// Start the relayer on both paths
 	err = r.StartRelayer(ctx, eRep, pathFeeabsGaia, pathFeeabsOsmosis, pathOsmosisGaia)
@@ -404,7 +250,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 			}
 		},
 	)
-	chanels = append(chanels, channFeeabsOsmosis, channOsmosisFeeabs, channFeeabsGaia, channGaiaFeeabs, channOsmosisGaia, channGaiaOsmosis)
+
 	feeabsUser, gaiaUser, osmosisUser := users[0], users[1], users[2]
 
 	// Send Gaia uatom to Osmosis
@@ -417,7 +263,9 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 		Amount:  amountToSend,
 	}
 
-	tx, err := gaia.SendIBCTransfer(ctx, channGaiaOsmosis.ChannelID, gaiaUser.KeyName(), transfer, ibc.TransferOptions{})
+	gaiaOsmosisChan, err := ibc.GetTransferChannel(ctx, r, eRep, gaia.Config().ChainID, osmosis.Config().ChainID)
+	require.NoError(t, err)
+	tx, err := gaia.SendIBCTransfer(ctx, gaiaOsmosisChan.ChannelID, gaiaUser.KeyName(), transfer, ibc.TransferOptions{})
 	require.NoError(t, err)
 	require.NoError(t, tx.Validate())
 
@@ -436,7 +284,9 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 		Amount:  amountToSend,
 	}
 
-	tx, err = feeabs.SendIBCTransfer(ctx, channFeeabsOsmosis.ChannelID, feeabsUser.KeyName(), transfer, ibc.TransferOptions{})
+	feeabsOsmosisChan, err := ibc.GetTransferChannel(ctx, r, eRep, feeabs.Config().ChainID, osmosis.Config().ChainID)
+	require.NoError(t, err)
+	tx, err = feeabs.SendIBCTransfer(ctx, feeabsOsmosisChan.ChannelID, feeabsUser.KeyName(), transfer, ibc.TransferOptions{})
 	require.NoError(t, err)
 	require.NoError(t, tx.Validate())
 
@@ -455,7 +305,9 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 		Amount:  amountToSend,
 	}
 
-	tx, err = gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName(), transfer, ibc.TransferOptions{})
+	gaiaFeeabsChan, err := ibc.GetTransferChannel(ctx, r, eRep, gaia.Config().ChainID, feeabs.Config().ChainID)
+	require.NoError(t, err)
+	tx, err = gaia.SendIBCTransfer(ctx, gaiaFeeabsChan.ChannelID, gaiaUser.KeyName(), transfer, ibc.TransferOptions{})
 	require.NoError(t, err)
 	require.NoError(t, tx.Validate())
 
@@ -464,7 +316,10 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	err = testutil.WaitForBlocks(ctx, 1, feeabs, gaia, osmosis)
 	require.NoError(t, err)
 
-	return chains, users, chanels
+	var channels []ibc.ChannelOutput
+	channels = append(channels, *feeabsOsmosisChan, *gaiaFeeabsChan, *gaiaOsmosisChan)
+
+	return chains, users, channels
 }
 
 // SetupOsmosisContracts setup osmosis contracts for crosschain swap.
