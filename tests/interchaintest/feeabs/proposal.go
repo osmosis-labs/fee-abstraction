@@ -49,7 +49,6 @@ func CrossChainSwap(c *cosmos.CosmosChain, ctx context.Context, keyName string, 
 		"feeabs", "swap", ibcDenom,
 		"--gas", "auto",
 	)
-
 	if err != nil {
 		return tx, fmt.Errorf("executing transaction failed: %w", err)
 	}

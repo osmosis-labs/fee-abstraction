@@ -3,10 +3,8 @@ package app
 import (
 	"testing"
 
-	dbm "github.com/cosmos/cosmos-db"
-
 	"cosmossdk.io/log"
-
+	dbm "github.com/cosmos/cosmos-db"
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 
 	"github.com/osmosis-labs/fee-abstraction/v8/app/params"
