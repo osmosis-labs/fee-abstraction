@@ -40,7 +40,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
             -w -s -linkmode=external -extldflags '-Wl,-z,muldefs -static'" \
         -trimpath \
         -o /feeapp/bin/feeappd \
-        /feeapp/cmd/feeappd/main.go
+        /feeapp/cmd/feeappd
 
 # --------------------------------------------------------
 # Runner
