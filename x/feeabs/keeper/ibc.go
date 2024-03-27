@@ -4,15 +4,16 @@ import (
 	"fmt"
 	"time"
 
-	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
-	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
-	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
+	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
+	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
+	clienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types" //nolint:staticcheck
+	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
+	host "github.com/cosmos/ibc-go/v8/modules/core/24-host"
 
 	sdkerrors "cosmossdk.io/errors"
+	sdkmath "cosmossdk.io/math"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 
@@ -207,14 +208,14 @@ func (k Keeper) GetChannelID(ctx sdk.Context) string {
 	return string(store.Get(types.KeyChannelID))
 }
 
-func (k Keeper) GetDecTWAPFromBytes(bz []byte) (sdk.Dec, error) {
+func (k Keeper) GetDecTWAPFromBytes(bz []byte) (sdkmath.LegacyDec, error) {
 	if bz == nil {
-		return sdk.Dec{}, sdkerrors.New("GetDecTWAPFromBytes: err ", 1, "nil bytes")
+		return sdkmath.LegacyDec{}, sdkerrors.New("GetDecTWAPFromBytes: err ", 1, "nil bytes")
 	}
 	var ibcTokenTwap types.QueryArithmeticTwapToNowResponse
 	err := k.cdc.Unmarshal(bz, &ibcTokenTwap)
 	if err != nil || ibcTokenTwap.ArithmeticTwap.IsNil() {
-		return sdk.Dec{}, sdkerrors.New("arithmeticTwap data umarshal", 1, err.Error())
+		return sdkmath.LegacyDec{}, sdkerrors.New("arithmeticTwap data umarshal", 1, err.Error())
 	}
 	return ibcTokenTwap.ArithmeticTwap, nil
 }
@@ -260,7 +261,7 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 	if err := transferMsg.ValidateBasic(); err != nil {
 		return nil, fmt.Errorf("bad msg %v", err.Error())
 	}
-	return k.transferKeeper.Transfer(sdk.WrapSDKContext(ctx), transferMsg)
+	return k.transferKeeper.Transfer(sdk.UnwrapSDKContext(ctx), transferMsg)
 }
 
 func (k Keeper) HandleOsmosisIbcQuery(ctx sdk.Context) (int, error) {

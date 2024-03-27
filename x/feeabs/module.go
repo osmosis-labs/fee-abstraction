@@ -9,6 +9,8 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
+	"cosmossdk.io/core/appmodule"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -23,8 +25,9 @@ import (
 )
 
 var (
-	_ module.AppModule      = AppModule{}
+	_ module.AppModuleBasic = AppModule{}
 	_ module.AppModuleBasic = AppModuleBasic{}
+	_ appmodule.AppModule   = AppModule{}
 )
 
 // ----------------------------------------------------------------------------
@@ -32,14 +35,7 @@ var (
 // ----------------------------------------------------------------------------
 
 // AppModuleBasic implements the AppModuleBasic interface for the feeabs module.
-type AppModuleBasic struct {
-	cdc codec.Codec
-}
-
-// NewAppModuleBasic instatiate an AppModuleBasic object
-func NewAppModuleBasic(cdc codec.Codec) AppModuleBasic {
-	return AppModuleBasic{cdc: cdc}
-}
+type AppModuleBasic struct{}
 
 // Name return the feeabs module name
 func (AppModuleBasic) Name() string {
@@ -109,9 +105,17 @@ func NewAppModule(
 	feeabskeeper keeper.Keeper,
 ) AppModule {
 	return AppModule{
-		AppModuleBasic: NewAppModuleBasic(cdc),
+		AppModuleBasic: AppModuleBasic{},
 		keeper:         feeabskeeper,
 	}
+}
+
+// IsOnePerModuleType implements the depinject.OnePerModuleType interface.
+func (am AppModule) IsOnePerModuleType() { // marker
+}
+
+// IsAppModule implements the appmodule.AppModule interface.
+func (am AppModule) IsAppModule() { // marker
 }
 
 // Name return the feeabs module name
@@ -143,17 +147,6 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
 	gs := am.keeper.ExportGenesis(ctx)
 	return cdc.MustMarshalJSON(gs)
-}
-
-// BeginBlock returns the begin blocker for the feeabs module.
-func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
-	am.keeper.BeginBlocker(ctx)
-}
-
-// EndBlock returns the end blocker for the feeabs module. It returns no validator
-// updates.
-func (AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
-	return []abci.ValidatorUpdate{}
 }
 
 // ConsensusVersion return module consensus version

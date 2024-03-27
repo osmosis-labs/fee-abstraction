@@ -3,16 +3,21 @@ package keeper
 import (
 	"fmt"
 
-	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
+	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
+	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
+	channelkeeper "github.com/cosmos/ibc-go/v8/modules/core/04-channel/keeper"
+	portkeeper "github.com/cosmos/ibc-go/v8/modules/core/05-port/keeper"
+
+	"cosmossdk.io/log"
+	storetypes "cosmossdk.io/store/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-
-	"github.com/cometbft/cometbft/libs/log"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
@@ -20,30 +25,29 @@ import (
 type Keeper struct {
 	cdc            codec.BinaryCodec
 	storeKey       storetypes.StoreKey
-	sk             types.StakingKeeper
-	ak             types.AccountKeeper
-	bk             types.BankKeeper
+	sk             *stakingkeeper.Keeper
+	ak             authkeeper.AccountKeeper
+	bk             bankkeeper.BaseKeeper
 	transferKeeper ibctransferkeeper.Keeper
 	paramSpace     paramtypes.Subspace
 
 	// ibc keeper
-	portKeeper    types.PortKeeper
-	channelKeeper types.ChannelKeeper
-	scopedKeeper  types.ScopedKeeper
+	portKeeper    *portkeeper.Keeper
+	channelKeeper channelkeeper.Keeper
+	scopedKeeper  capabilitykeeper.ScopedKeeper
 }
 
 func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
-	sk types.StakingKeeper,
-	ak types.AccountKeeper,
-	bk types.BankKeeper,
+	sk *stakingkeeper.Keeper,
+	ak authkeeper.AccountKeeper,
+	bk bankkeeper.BaseKeeper,
 	transferKeeper ibctransferkeeper.Keeper,
-
-	channelKeeper types.ChannelKeeper,
-	portKeeper types.PortKeeper,
-	scopedKeeper types.ScopedKeeper,
+	channelKeeper channelkeeper.Keeper,
+	portKeeper *portkeeper.Keeper,
+	scopedKeeper capabilitykeeper.ScopedKeeper,
 ) Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -64,7 +68,7 @@ func NewKeeper(
 	}
 }
 
-func (k Keeper) GetFeeAbsModuleAccount(ctx sdk.Context) authtypes.ModuleAccountI {
+func (k Keeper) GetFeeAbsModuleAccount(ctx sdk.Context) sdk.ModuleAccountI {
 	return k.ak.GetModuleAccount(ctx, types.ModuleName)
 }
 
@@ -72,7 +76,7 @@ func (k Keeper) GetFeeAbsModuleAddress() sdk.AccAddress {
 	return k.ak.GetModuleAddress(types.ModuleName)
 }
 
-func (k Keeper) GetDefaultBondDenom(ctx sdk.Context) string {
+func (k Keeper) GetDefaultBondDenom(ctx sdk.Context) (string, error) {
 	return k.sk.BondDenom(ctx)
 }
 
@@ -91,7 +95,11 @@ func (k Keeper) CalculateNativeFromIBCCoins(ctx sdk.Context, ibcCoins sdk.Coins,
 	// mul
 	coin := ibcCoins[0]
 	nativeFeeAmount := twapRate.MulInt(coin.Amount).RoundInt()
-	nativeFee := sdk.NewCoin(k.sk.BondDenom(ctx), nativeFeeAmount)
+	bondDenom, err := k.sk.BondDenom(ctx)
+	if err != nil {
+		return sdk.Coins{}, err
+	}
+	nativeFee := sdk.NewCoin(bondDenom, nativeFeeAmount)
 
 	return sdk.NewCoins(nativeFee), nil
 }

@@ -7,7 +7,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v8/app/helpers"
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
+
+	app "github.com/osmosis-labs/fee-abstraction/v8/app"
 	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
@@ -30,8 +32,9 @@ func createNHostZone(t *testing.T, keeper *feeabskeeper.Keeper, ctx sdk.Context,
 }
 
 func TestHostZoneGet(t *testing.T) {
-	app := apphelpers.Setup(t, false, 1)
-	ctx := apphelpers.NewContextForApp(*app)
+	app := app.Setup(t)
+	ctx := app.NewContextLegacy(true, cmtproto.Header{Height: 1})
+
 	expected := createNHostZone(t, &app.FeeabsKeeper, ctx, 1)
 	for _, item := range expected {
 		got, found := app.FeeabsKeeper.GetHostZoneConfig(ctx, item.IbcDenom)
@@ -41,8 +44,9 @@ func TestHostZoneGet(t *testing.T) {
 }
 
 func TestHostZoneGetByOsmosisDenom(t *testing.T) {
-	app := apphelpers.Setup(t, false, 1)
-	ctx := apphelpers.NewContextForApp(*app)
+	app := app.Setup(t)
+	ctx := app.NewContextLegacy(true, cmtproto.Header{Height: 1})
+
 	expected := createNHostZone(t, &app.FeeabsKeeper, ctx, 1)
 	for _, item := range expected {
 		got, found := app.FeeabsKeeper.GetHostZoneConfigByOsmosisTokenDenom(ctx, item.OsmosisPoolTokenDenomIn)
@@ -52,8 +56,9 @@ func TestHostZoneGetByOsmosisDenom(t *testing.T) {
 }
 
 func TestHostZoneRemove(t *testing.T) {
-	app := apphelpers.Setup(t, false, 1)
-	ctx := apphelpers.NewContextForApp(*app)
+	app := app.Setup(t)
+	ctx := app.NewContextLegacy(true, cmtproto.Header{Height: 1})
+
 	expected := createNHostZone(t, &app.FeeabsKeeper, ctx, 1)
 	for _, item := range expected {
 		err := app.FeeabsKeeper.DeleteHostZoneConfig(ctx, item.IbcDenom)
@@ -66,8 +71,9 @@ func TestHostZoneRemove(t *testing.T) {
 }
 
 func TestHostZoneGetAll(t *testing.T) {
-	app := apphelpers.Setup(t, false, 1)
-	ctx := apphelpers.NewContextForApp(*app)
+	app := app.Setup(t)
+	ctx := app.NewContextLegacy(true, cmtproto.Header{Height: 1})
+
 	expected := createNHostZone(t, &app.FeeabsKeeper, ctx, 1)
 	got, _ := app.FeeabsKeeper.GetAllHostZoneConfig(ctx)
 	require.ElementsMatch(t, expected, got)

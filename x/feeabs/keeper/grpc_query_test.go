@@ -4,6 +4,8 @@ import (
 	"math/rand"
 	"time"
 
+	sdkmath "cosmossdk.io/math"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
@@ -13,7 +15,7 @@ var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 func (s *KeeperTestSuite) TestOsmosisArithmeticTwap() {
 	s.SetupTest()
-	twapPrice := sdk.NewDec(1)
+	twapPrice := sdkmath.LegacyNewDec(1)
 	s.feeAbsKeeper.SetTwapRate(s.ctx, "denom", twapPrice)
 
 	for _, tc := range []struct {
@@ -42,7 +44,7 @@ func (s *KeeperTestSuite) TestOsmosisArithmeticTwap() {
 	} {
 		tc := tc
 		s.Run(tc.desc, func() {
-			goCtx := sdk.WrapSDKContext(s.ctx)
+			goCtx := sdk.UnwrapSDKContext(s.ctx)
 			if !tc.shouldErr {
 				res, err := s.queryClient.OsmosisArithmeticTwap(goCtx, tc.req)
 				s.Require().NoError(err)
@@ -96,7 +98,7 @@ func (s *KeeperTestSuite) TestHostChainConfig() {
 	} {
 		tc := tc
 		s.Run(tc.desc, func() {
-			goCtx := sdk.WrapSDKContext(s.ctx)
+			goCtx := sdk.UnwrapSDKContext(s.ctx)
 			if !tc.shouldErr {
 				res, err := s.queryClient.HostChainConfig(goCtx, tc.req)
 				s.Require().NoError(err)

@@ -3,7 +3,9 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/store/prefix"
+	"cosmossdk.io/store/prefix"
+	storetypes "cosmossdk.io/store/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
@@ -155,7 +157,7 @@ func (k Keeper) GetAllHostZoneConfig(ctx sdk.Context) (allChainConfigs []types.H
 // IterateHostZone iterates over the hostzone .
 func (k Keeper) IterateHostZone(ctx sdk.Context, cb func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.KeyHostChainConfigByFeeAbs)
+	iterator := storetypes.KVStorePrefixIterator(store, types.KeyHostChainConfigByFeeAbs)
 
 	defer iterator.Close()
 	for ; iterator.Valid(); iterator.Next() {

@@ -15,7 +15,8 @@ LEDGER_ENABLED ?= true
 SDK_PACK := $(shell go list -m github.com/cosmos/cosmos-sdk | sed  's/ /\@/g')
 TM_VERSION := $(shell go list -m github.com/cometbft/cometbft | sed 's:.* ::') 
 DOCKER := $(shell which docker)
-DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace bufbuild/buf:1.0.0-rc8
+BUF_IMAGE=bufbuild/buf@sha256:3cb1f8a4b48bd5ad8f09168f10f607ddc318af202f5c057d52a45216793d85e5 #v1.4.0
+DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(BUF_IMAGE)
 BUILDDIR ?= $(CURDIR)/build
 HTTPS_GIT := https://github.com/osmosis-labs/fee-abstraction.git
 
@@ -128,10 +129,13 @@ ictest-host-zone-proposal:
 	cd tests/interchaintest && go test -timeout=25m -race -v -run TestHostZoneProposal .
 
 ictest-feeabs:
-	cd tests/interchaintest && go test -timeout=25m -race -v -run TestFeeabs .
+	cd tests/interchaintest && go test -timeout=25m -race -v -run '^TestFeeAbs$$' .
 
 ictest-query-osmosis-twap:
 	cd tests/interchaintest && go test -timeout=25m -race -v -run TestQueryOsmosisTwap .
+
+# ictest-feeabs-ibc-transfer:
+# 		cd tests/interchaintest && go test -timeout=25m -race -v -run  TestIBCTransferWithFeeAbs .
 
 # Executes all tests via interchaintest after compling a local image as juno:local
 ictest-all: ictest-basic ictest-ibc ictest-packet-forward ictest-host-zone-proposal ictest-query-osmosis-twap ictest-feeabs

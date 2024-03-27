@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/stretchr/testify/require"
+
+	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	feeabsCli "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/feeabs"
 )
@@ -32,7 +34,7 @@ func TestHostZoneProposal(t *testing.T) {
 	height, err := feeabs.Height(ctx)
 	require.NoError(t, err)
 
-	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, "1", cosmos.ProposalStatusPassed)
+	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, 1, govv1beta1.StatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
 	config, err := feeabsCli.QueryHostZoneConfigWithDenom(feeabs, ctx, "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9")
@@ -54,7 +56,7 @@ func TestHostZoneProposal(t *testing.T) {
 	height, err = feeabs.Height(ctx)
 	require.NoError(t, err)
 
-	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, "2", cosmos.ProposalStatusPassed)
+	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, 2, govv1beta1.StatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
 	config, err = feeabsCli.QueryHostZoneConfigWithDenom(feeabs, ctx, "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9")
@@ -76,7 +78,7 @@ func TestHostZoneProposal(t *testing.T) {
 	height, err = feeabs.Height(ctx)
 	require.NoError(t, err)
 
-	response, err := cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, "3", cosmos.ProposalStatusPassed)
+	response, err := cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, 3, govv1beta1.StatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 	fmt.Printf("response: %s\n", response)
 
