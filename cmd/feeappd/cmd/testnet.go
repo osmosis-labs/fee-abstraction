@@ -10,11 +10,8 @@ import (
 	"os"
 	"path/filepath"
 
-	tmconfig "github.com/cometbft/cometbft/config"
-	tmos "github.com/cometbft/cometbft/libs/os"
-	tmrand "github.com/cometbft/cometbft/libs/rand"
-	"github.com/cometbft/cometbft/types"
-	tmtime "github.com/cometbft/cometbft/types/time"
+	ibcclienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	ibcchanneltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -33,10 +30,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	ibcclienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	ibcchanneltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
 
-	"github.com/osmosis-labs/fee-abstraction/v4/app/params"
+	tmconfig "github.com/cometbft/cometbft/config"
+	tmos "github.com/cometbft/cometbft/libs/os"
+	tmrand "github.com/cometbft/cometbft/libs/rand"
+	"github.com/cometbft/cometbft/types"
+	tmtime "github.com/cometbft/cometbft/types/time"
+
+	"github.com/osmosis-labs/fee-abstraction/v7/app/params"
 )
 
 var (
@@ -45,6 +46,7 @@ var (
 	flagOutputDir         = "output-dir"
 	flagNodeDaemonHome    = "node-daemon-home"
 	flagStartingIPAddress = "starting-ip-address"
+	flagKeyAlgorithm      = "key-algorithm"
 )
 
 // get cmd to initialize all files for tendermint testnet and application
@@ -76,7 +78,7 @@ Example:
 			nodeDaemonHome, _ := cmd.Flags().GetString(flagNodeDaemonHome)
 			startingIPAddress, _ := cmd.Flags().GetString(flagStartingIPAddress)
 			numValidators, _ := cmd.Flags().GetInt(flagNumValidators)
-			algo, _ := cmd.Flags().GetString(flags.FlagKeyAlgorithm)
+			algo, _ := cmd.Flags().GetString(flagKeyAlgorithm)
 
 			return InitTestnet(
 				clientCtx, cmd, config, mbm, genBalIterator, outputDir, chainID, minGasPrices,
@@ -93,7 +95,7 @@ Example:
 	cmd.Flags().String(flags.FlagChainID, "", "genesis file chain-id, if left blank will be randomly created")
 	cmd.Flags().String(server.FlagMinGasPrices, fmt.Sprintf("0.000006%s", sdk.DefaultBondDenom), "Minimum gas prices to accept for transactions; All fees in a tx must meet this minimum (e.g. 0.01photino,0.001stake)")
 	cmd.Flags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|test)")
-	cmd.Flags().String(flags.FlagKeyAlgorithm, string(hd.Secp256k1Type), "Key signing algorithm to generate keys for")
+	cmd.Flags().String(flagKeyAlgorithm, string(hd.Secp256k1Type), "Key signing algorithm to generate keys for")
 
 	return cmd
 }

@@ -11,8 +11,13 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
-# Go
-go.work
+# Go work
 go.work.sum
+go.work
+
+bin/
+_build/
+
+# IDE config
+.vscode/
+.idea/

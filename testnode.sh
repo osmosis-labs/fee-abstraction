@@ -40,5 +40,5 @@ if [[ $1 == "pending" ]]; then
 fi
 
 # Start the node (remove the --pruning=nothing flag if historical queries are not needed)
-feeappd start --pruning=nothing  --minimum-gas-prices=0.0001stake --rpc.laddr tcp://127.0.0.1:26650
+feeappd start --pruning=nothing  --minimum-gas-prices=0.0001stake
 

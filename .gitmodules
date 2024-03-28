@@ -1,0 +1,16 @@
+[submodule "deps/gaia"]
+	path = deps/gaia
+	url = https://github.com/notional-labs/gaia.git
+	branch = feeabs
+[submodule "deps/stargaze"]
+	path = deps/stargaze
+	url = https://github.com/notional-labs/stargaze.git
+	branch = feature/feeabs
+[submodule "deps/relayer"]
+	path = deps/relayer
+	url = https://github.com/cosmos/relayer.git
+	branch = release/v2.4.x
+[submodule "deps/osmosis"]
+	path = deps/osmosis
+	url = https://github.com/osmosis-labs/osmosis.git
+	branch = v23.x

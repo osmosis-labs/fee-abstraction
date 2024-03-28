@@ -3,10 +3,12 @@ package cli
 import (
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/testutil"
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
-	"github.com/stretchr/testify/require"
+
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 func TestParseProposal(t *testing.T) {
@@ -14,7 +16,7 @@ func TestParseProposal(t *testing.T) {
 		IbcDenom:                "ibc/123",
 		OsmosisPoolTokenDenomIn: "ibc/456",
 		PoolId:                  1,
-		Frozen:                  false,
+		Status:                  types.HostChainFeeAbsStatus_UPDATED,
 	}
 	cdc := codec.NewLegacyAmino()
 	okJSON := testutil.WriteToNewTempFile(t, `
@@ -31,7 +33,7 @@ func TestParseProposal(t *testing.T) {
 			"crosschain_swap_address":"osmo123456",
 			"pool_id": "1",
 			"is_osmosis": false,
-			"frozen": false,
+			"status": 0,
 			"osmosis_query_channel": "channel-3"
 
 		},

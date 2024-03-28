@@ -1,0 +1,17 @@
+{
+  "type": "cosmos",
+  "value": {
+    "key": "relayer",
+    "chain-id": "osmo-test-5",
+    "rpc-addr": "https://osmosis-testnet-rpc.polkachu.com:443",
+    "grpc-addr": "",
+    "account-prefix": "osmo",
+    "keyring-backend": "test",
+    "gas-adjustment": 1.5,
+    "gas-prices": "0.01uosmo",
+    "debug": true,
+    "timeout": "20s",
+    "output-format": "json",
+    "sign-mode": "direct"
+  }
+}

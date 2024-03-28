@@ -5,15 +5,16 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/osmosis-labs/fee-abstraction/v4/x/feeabs/types"
+
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-func (suite *KeeperTestSuite) TestOsmosisArithmeticTwap() {
-	suite.SetupTest()
+func (s *KeeperTestSuite) TestOsmosisArithmeticTwap() {
+	s.SetupTest()
 	twapPrice := sdk.NewDec(1)
-	suite.feeAbsKeeper.SetTwapRate(suite.ctx, "denom", twapPrice)
+	s.feeAbsKeeper.SetTwapRate(s.ctx, "denom", twapPrice)
 
 	for _, tc := range []struct {
 		desc      string
@@ -40,22 +41,22 @@ func (suite *KeeperTestSuite) TestOsmosisArithmeticTwap() {
 		},
 	} {
 		tc := tc
-		suite.Run(tc.desc, func() {
-			goCtx := sdk.WrapSDKContext(suite.ctx)
+		s.Run(tc.desc, func() {
+			goCtx := sdk.WrapSDKContext(s.ctx)
 			if !tc.shouldErr {
-				res, err := suite.queryClient.OsmosisArithmeticTwap(goCtx, tc.req)
-				suite.Require().NoError(err)
-				suite.Require().Equal(tc.res, res)
+				res, err := s.queryClient.OsmosisArithmeticTwap(goCtx, tc.req)
+				s.Require().NoError(err)
+				s.Require().Equal(tc.res, res)
 			} else {
-				_, err := suite.queryClient.OsmosisArithmeticTwap(goCtx, tc.req)
-				suite.Require().Error(err)
+				_, err := s.queryClient.OsmosisArithmeticTwap(goCtx, tc.req)
+				s.Require().Error(err)
 			}
 		})
 	}
 }
 
-func (suite *KeeperTestSuite) TestHostChainConfig() {
-	suite.SetupTest()
+func (s *KeeperTestSuite) TestHostChainConfig() {
+	s.SetupTest()
 
 	chainConfig := types.HostChainFeeAbsConfig{
 		IbcDenom:                randStringRunes(10),
@@ -63,13 +64,13 @@ func (suite *KeeperTestSuite) TestHostChainConfig() {
 		PoolId:                  randUint64Num(),
 	}
 
-	err := suite.feeAbsKeeper.SetHostZoneConfig(suite.ctx, chainConfig.IbcDenom, chainConfig)
-	suite.Require().NoError(err)
+	err := s.feeAbsKeeper.SetHostZoneConfig(s.ctx, chainConfig)
+	s.Require().NoError(err)
 
 	for _, tc := range []struct {
 		desc      string
 		req       *types.QueryHostChainConfigRequest
-		res       *types.QueryHostChainConfigRespone
+		res       *types.QueryHostChainConfigResponse
 		shouldErr bool
 	}{
 		{
@@ -77,7 +78,7 @@ func (suite *KeeperTestSuite) TestHostChainConfig() {
 			req: &types.QueryHostChainConfigRequest{
 				IbcDenom: chainConfig.IbcDenom,
 			},
-			res: &types.QueryHostChainConfigRespone{
+			res: &types.QueryHostChainConfigResponse{
 				HostChainConfig: chainConfig,
 			},
 			shouldErr: false,
@@ -87,37 +88,37 @@ func (suite *KeeperTestSuite) TestHostChainConfig() {
 			req: &types.QueryHostChainConfigRequest{
 				IbcDenom: "Invalid",
 			},
-			res: &types.QueryHostChainConfigRespone{
+			res: &types.QueryHostChainConfigResponse{
 				HostChainConfig: chainConfig,
 			},
 			shouldErr: true,
 		},
 	} {
 		tc := tc
-		suite.Run(tc.desc, func() {
-			goCtx := sdk.WrapSDKContext(suite.ctx)
+		s.Run(tc.desc, func() {
+			goCtx := sdk.WrapSDKContext(s.ctx)
 			if !tc.shouldErr {
-				res, err := suite.queryClient.HostChainConfig(goCtx, tc.req)
-				suite.Require().NoError(err)
-				suite.Require().Equal(tc.res, res)
+				res, err := s.queryClient.HostChainConfig(goCtx, tc.req)
+				s.Require().NoError(err)
+				s.Require().Equal(tc.res, res)
 			} else {
-				_, err := suite.queryClient.HostChainConfig(goCtx, tc.req)
-				suite.Require().NoError(err)
+				_, err := s.queryClient.HostChainConfig(goCtx, tc.req)
+				s.Require().Error(err)
 			}
 		})
 	}
 }
 
 func randStringRunes(n int) string {
-	rand.Seed(time.Now().UnixNano())
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	b := make([]rune, n)
 	for i := range b {
-		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+		b[i] = letterRunes[r.Intn(len(letterRunes))]
 	}
 	return string(b)
 }
 
 func randUint64Num() uint64 {
-	rand.Seed(time.Now().UnixNano())
-	return rand.Uint64()
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	return r.Uint64()
 }
