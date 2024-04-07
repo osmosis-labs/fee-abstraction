@@ -114,9 +114,14 @@ func (fadfd FeeAbstractionDeductFeeDecorate) normalDeductFeeAnteHandle(
 // IBC tokens and deducts the fees accordingly if the transaction involves IBC tokens
 // and the host chain configuration is set.
 func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler, feeTx sdk.FeeTx, hostChainConfig feeabstypes.HostChainFeeAbsConfig) (newCtx sdk.Context, err error) {
-	if hostChainConfig.Frozen {
+	if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_FROZEN {
 		return ctx, sdkerrors.Wrap(feeabstypes.ErrHostZoneFrozen, "cannot deduct fee as host zone is frozen")
 	}
+
+	if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_OUTDATED {
+		return ctx, sdkerrors.Wrap(feeabstypes.ErrHostZoneOutdated, "cannot deduct fee as host zone is outdated")
+	}
+
 	fee := feeTx.GetFee()
 	feePayer := feeTx.FeePayer()
 	feeGranter := feeTx.FeeGranter()
@@ -268,9 +273,14 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 			feeDenom := feeCoinsNonZeroDenom.GetDenomByIndex(0)
 			hostChainConfig, found := famfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
 			if found {
-				if hostChainConfig.Frozen {
+				if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_FROZEN {
 					return ctx, sdkerrors.Wrapf(feeabstypes.ErrHostZoneFrozen, "cannot deduct fee as host zone is frozen")
 				}
+
+				if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_OUTDATED {
+					return ctx, sdkerrors.Wrapf(feeabstypes.ErrHostZoneOutdated, "cannot deduct fee as host zone is outdated")
+				}
+
 				nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, feeCoinsNonZeroDenom, hostChainConfig)
 				if err != nil {
 					return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees")

@@ -45,12 +45,16 @@ func getTransaction(ctx client.Context, txHash string) (*types.TxResponse, error
 func CrossChainSwap(c *cosmos.CosmosChain, ctx context.Context, keyName string, ibcDenom string) (tx ibc.Tx, _ error) {
 	tn := getFullNode(c)
 
-	txHash, _ := tn.ExecTx(ctx, keyName,
+	txHash, err := tn.ExecTx(ctx, keyName,
 		"feeabs", "swap", ibcDenom,
 		"--gas", "auto",
 	)
 
-	if err := testutil.WaitForBlocks(ctx, 2, tn); err != nil {
+	if err != nil {
+		return tx, fmt.Errorf("executing transaction failed: %w", err)
+	}
+
+	if err := testutil.WaitForBlocks(ctx, 5, tn); err != nil {
 		return tx, err
 	}
 

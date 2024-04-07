@@ -10,10 +10,11 @@ import (
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
 	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
-	feeabsCli "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/feeabs"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v7/testutil"
 	"github.com/stretchr/testify/require"
+
+	feeabsCli "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/feeabs"
 )
 
 func TestQueryOsmosisTwap(t *testing.T) {
@@ -47,7 +48,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 		channGaiaFeeabs.ChannelID,
 		channOsmosisGaia.ChannelID,
 		channGaiaOsmosis.ChannelID)
-	_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddress, msg)
+	_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddress, msg, "--gas", "1000000")
 	require.NoError(t, err)
 	// Execute
 	msg = `{
@@ -95,7 +96,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	require.NoError(t, err)
 	queryMsg := QuerySmartMsg{
 		Packet: HasPacketForwarding{
-			ChainID: "feeabs",
+			Chain: "feeabs",
 		},
 	}
 	res := QuerySmartMsgResponse{}
@@ -108,7 +109,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	require.NoError(t, err)
 	queryMsg = QuerySmartMsg{
 		Packet: HasPacketForwarding{
-			ChainID: "gaia",
+			Chain: "gaia",
 		},
 	}
 	res = QuerySmartMsgResponse{}
@@ -148,11 +149,11 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, "2", cosmos.ProposalStatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
-	_, err = feeabsCli.QueryHostZoneConfig(feeabs, ctx)
+	_, err = feeabsCli.QueryAllHostZoneConfig(feeabs, ctx)
 	require.NoError(t, err)
 
 	twap, err := feeabsCli.QueryOsmosisArithmeticTwap(feeabs, ctx, uatomOnFeeabs)
 	fmt.Println(err)
 	fmt.Println(twap)
-	//require.NoError(t, err)
+	// require.NoError(t, err)
 }

@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 
-	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
+
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 func QueryHostZoneConfigWithDenom(c *cosmos.CosmosChain, ctx context.Context, denom string) (*HostChainFeeAbsConfigResponse, error) {
@@ -25,18 +26,18 @@ func QueryHostZoneConfigWithDenom(c *cosmos.CosmosChain, ctx context.Context, de
 	return &hostZoneConfig, nil
 }
 
-func QueryHostZoneConfig(c *cosmos.CosmosChain, ctx context.Context) (*HostChainFeeAbsConfigResponse, error) {
+func QueryAllHostZoneConfig(c *cosmos.CosmosChain, ctx context.Context) (*AllQueryHostChainConfigResponse, error) {
 	tn := getFullNode(c)
 	cmd := []string{"feeabs", "all-host-chain-config"}
 	stdout, _, err := tn.ExecQuery(ctx, cmd...)
 	if err != nil {
-		return &HostChainFeeAbsConfigResponse{}, err
+		return &AllQueryHostChainConfigResponse{}, err
 	}
 
-	var hostZoneConfig HostChainFeeAbsConfigResponse
+	var hostZoneConfig AllQueryHostChainConfigResponse
 	err = json.Unmarshal(stdout, &hostZoneConfig)
 	if err != nil {
-		return &HostChainFeeAbsConfigResponse{}, err
+		return &AllQueryHostChainConfigResponse{}, err
 	}
 
 	return &hostZoneConfig, nil

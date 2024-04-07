@@ -99,6 +99,9 @@ test:
 docker-build-debug:
 	@DOCKER_BUILDKIT=1 docker build -t feeapp:debug -f Dockerfile .
 
+docker-build-debug-no-cache:
+	@DOCKER_BUILDKIT=1 docker build -t feeapp:debug -f Dockerfile --no-cache .
+
 lint:
 	@find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -name '*.gw.go' | xargs go run mvdan.cc/gofumpt -w .
 	@find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -name '*.gw.go' | xargs go run github.com/client9/misspell/cmd/misspell -w
@@ -125,10 +128,13 @@ ictest-host-zone-proposal:
 	cd tests/interchaintest && go test -timeout=25m -race -v -run TestHostZoneProposal .
 
 ictest-feeabs:
-	cd tests/interchaintest && go test -timeout=25m -race -v -run TestFeeabs .
+	cd tests/interchaintest && go test -timeout=25m -race -v -run '^TestFeeAbs$$' .
 
 ictest-query-osmosis-twap:
 	cd tests/interchaintest && go test -timeout=25m -race -v -run TestQueryOsmosisTwap .
+
+# ictest-feeabs-ibc-transfer:
+# 		cd tests/interchaintest && go test -timeout=25m -race -v -run  TestIBCTransferWithFeeAbs .
 
 # Executes all tests via interchaintest after compling a local image as juno:local
 ictest-all: ictest-basic ictest-ibc ictest-packet-forward ictest-host-zone-proposal ictest-query-osmosis-twap ictest-feeabs
@@ -148,7 +154,7 @@ build-integration-binary:
 ###############################################################################
 ###                                  Proto                                  ###
 ###############################################################################
-PROTO_BUILDER_IMAGE=ghcr.io/cosmos/proto-builder:0.13.5
+PROTO_BUILDER_IMAGE=ghcr.io/cosmos/proto-builder:0.14.0
 
 proto-all: proto-format proto-gen
 

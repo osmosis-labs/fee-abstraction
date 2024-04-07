@@ -68,7 +68,6 @@ Ex: When you sent STARS on Hub to Osmosis, you will get Osmosis(Hub(STARS)) whic
 
 ![Diagram of the process of swapping accumulated ibc-tokens fee](https://i.imgur.com/D1wSrMm.png "Diagram of the process of swapping accumulated ibc-tokens fee")
 
-###### Swap Ibc-token
 
 ###### Swap Ibc-token
 
@@ -81,7 +80,6 @@ After reverse the ibc-token, XCS will :
 
 Current version of fee-abstraction working with XCSv2
 
-
 ## Repository Structure
 
 This repository is branched by the cosmos-sdk versions and ibc-go versions used.  Currently fee abstraction supports:
@@ -93,7 +91,22 @@ This repository is branched by the cosmos-sdk versions and ibc-go versions used.
 - SDK v0.47.x & IBC-go v7.*
   - branch: release/v7.0.x
   - path: github.com/osmosis-labs/fee-abstraction/v7
+- SDK v0.46.x
+  - branch: release/v6.0.x
+  - path: github.com/osmosis-labs/fee-abstraction/v6
+- SDK v0.45.x (Obsolete)
+  - branch: release/v4.0.x
+  - path: github.com/osmosis-labs/fee-abstraction/v4
 
- 
-**note:** there is an sdk v0.46.x branch, but it is not currently supported or fully up to date.  If you need it, please open an issue. 
+**note:** there are sdk v0.45.x and sdk v0.46.x branches, but they might not work as expected. If you need support for older SDK versions, please open an issue. 
 
+## Acknowledgements
+
+* cosmos-sdk:
+  * many developers :)
+* async-icq
+  * strangelove ventures
+* ideation
+  * osmosis grants program
+* mergify configuration and branching strategy
+  * ibc-go 

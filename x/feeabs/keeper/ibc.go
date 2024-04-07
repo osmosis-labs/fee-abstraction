@@ -136,6 +136,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			hostZoneConfig, found := k.GetHostZoneConfigByOsmosisTokenDenom(ctx, icqReqData.QuoteAsset)
 			if !found {
 				k.Logger(ctx).Error(fmt.Sprintf("Error when get host zone by Osmosis denom %s %v not found", icqReqData.QuoteAsset, err))
+				fmt.Println("error")
 				continue
 			}
 
@@ -143,11 +144,7 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 
 			if icqRes.Code != 0 {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to send interchain query code %d", icqRes.Code))
-				err := k.FreezeHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
-				if err != nil {
-					// should never happen
-					k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
-				}
+				k.IncreaseBlockDelayToQuery(ctx, hostZoneConfig.IbcDenom)
 				continue
 			}
 			// k.Logger(ctx).Info(fmt.Sprintf("ICQ response %+v", icqRes))
@@ -161,11 +158,14 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 			k.Logger(ctx).Info(fmt.Sprintf("TwapRate %v", twapRate))
 			k.SetTwapRate(ctx, hostZoneConfig.IbcDenom, twapRate)
 
-			err = k.UnFreezeHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+			err = k.SetStateHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom, types.HostChainFeeAbsStatus_UPDATED)
 			if err != nil {
 				// should never happen
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
 			}
+
+			// reset block delay to query
+			k.ResetBlockDelayToQuery(ctx, hostZoneConfig.IbcDenom)
 		}
 
 		k.Logger(ctx).Info("packet ICQ request successfully")
@@ -178,10 +178,8 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 		)
 	case *channeltypes.Acknowledgement_Error:
 		k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-			err := k.FreezeHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
-			if err != nil {
-				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozen host zone %s", err.Error()))
-			}
+			// todo: should try to retry here instead of setting FROZEN
+			k.IncreaseBlockDelayToQuery(ctx, hostZoneConfig.IbcDenom)
 
 			return false
 		})
@@ -200,7 +198,8 @@ func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknow
 // OnTimeoutPacket resend packet when timeout
 func (k Keeper) OnTimeoutPacket(ctx sdk.Context) error {
 	ctx.Logger().Info("IBC Timeout packet")
-	return k.handleOsmosisIbcQuery(ctx)
+	_, err := k.HandleOsmosisIbcQuery(ctx)
+	return err
 }
 
 func (k Keeper) GetChannelID(ctx sdk.Context) string {
@@ -227,8 +226,8 @@ func (k Keeper) transferOsmosisCrosschainSwap(ctx sdk.Context, hostChainConfig t
 	nativeDenomIBCedInOsmosis := params.NativeIbcedInOsmosis
 	chainName := params.ChainName
 
-	if !token.Amount.IsPositive() {
-		return nil
+	if !token.Amount.IsPositive() || token.Amount.LT(sdk.NewIntFromUint64(hostChainConfig.MinSwapAmount)) {
+		return fmt.Errorf("invalid amount to transfer, expect minimum %v, got %v", hostChainConfig.MinSwapAmount, token.Amount)
 	}
 
 	memo, err := types.BuildCrossChainSwapMemo(nativeDenomIBCedInOsmosis, params.OsmosisCrosschainSwapAddress, moduleAccountAddress.String(), chainName)
@@ -264,12 +263,12 @@ func (k Keeper) executeTransferMsg(ctx sdk.Context, transferMsg *transfertypes.M
 	return k.transferKeeper.Transfer(sdk.WrapSDKContext(ctx), transferMsg)
 }
 
-func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
+func (k Keeper) HandleOsmosisIbcQuery(ctx sdk.Context) (int, error) {
 	// set startTime for query twap
 	queryTwapEpochInfo, found := k.GetEpochInfo(ctx, types.DefaultQueryEpochIdentifier)
 	if !found {
 		k.Logger(ctx).Error(fmt.Sprintf("Don't have query epoch information: %s", types.DefaultQueryEpochIdentifier))
-		return nil
+		return 0, nil
 	}
 	startTime := ctx.BlockTime().Add(-queryTwapEpochInfo.Duration)
 	k.Logger(ctx).Info(fmt.Sprintf("Start time: %v", startTime.Unix()))
@@ -280,10 +279,14 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 	var reqs []types.QueryArithmeticTwapToNowRequest
 	batchCounter := 0
 	var errorFound error
+	// fee abstraction will not send query to a frozen host zone
+	// however, it will continue to send query to other host zone if UPDATED, or OUTDATED
+	// this logic iterate through registered host zones and collect requests before sending it
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
-		if hostZoneConfig.Frozen {
+		if k.IbcQueryHostZoneFilter(ctx, hostZoneConfig, queryTwapEpochInfo) {
 			return false
 		}
+
 		req := types.NewQueryArithmeticTwapToNowRequest(
 			hostZoneConfig.PoolId,
 			params.NativeIbcedInOsmosis,
@@ -306,7 +309,7 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 	})
 
 	if errorFound != nil {
-		return errorFound
+		return 0, errorFound
 	}
 
 	if len(reqs) > 0 {
@@ -314,28 +317,35 @@ func (k Keeper) handleOsmosisIbcQuery(ctx sdk.Context) error {
 		err := k.SendOsmosisQueryRequest(ctx, reqs, types.IBCPortID, params.IbcQueryIcqChannel)
 		if err != nil {
 			k.Logger(ctx).Error("handleOsmosisIbcQuery: SendOsmosisQueryRequest failed", "err", err)
-			return err
+			return 0, err
 		}
 	} else {
 		k.Logger(ctx).Info("handleOsmosisIbcQuery: no requests")
 	}
-	return nil
+	return len(reqs), nil
 }
 
 // executeAllHostChainTWAPQuery will iterate all hostZone and send the IBC Query Packet to Osmosis chain.
-func (k Keeper) executeAllHostChainTWAPQuery(ctx sdk.Context) {
-	err := k.handleOsmosisIbcQuery(ctx)
+func (k Keeper) ExecuteAllHostChainTWAPQuery(ctx sdk.Context) {
+	_, err := k.HandleOsmosisIbcQuery(ctx)
 	if err != nil {
 		k.Logger(ctx).Error(fmt.Sprintf("Error executeAllHostChainTWAPQuery %s", err.Error()))
 	}
 }
 
 // executeAllHostChainTWAPSwap will iterate all hostZone and execute swap over chain.
-func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
+// If the hostZone is frozen, it will not execute the swap.
+func (k Keeper) ExecuteAllHostChainSwap(ctx sdk.Context) {
+	// should only execute swap when the host zone is not frozen
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
 		var err error
 
-		if hostZoneConfig.Frozen {
+		if hostZoneConfig.Status == types.HostChainFeeAbsStatus_FROZEN {
+			return false
+		}
+
+		// if the host zone is outdated, it should not execute swap
+		if hostZoneConfig.Status == types.HostChainFeeAbsStatus_OUTDATED {
 			return false
 		}
 
@@ -347,7 +357,9 @@ func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
 		err = k.transferOsmosisCrosschainSwap(ctx, hostZoneConfig)
 		if err != nil {
 			k.Logger(ctx).Error(fmt.Sprintf("Failed to transfer IBC token %s", err.Error()))
-			err = k.FreezeHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom)
+			// should be set to OUTDATED if failed to transfer to preserve funds
+			// if the newest twap query successes, it will be set to UPDATED
+			err = k.SetStateHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom, types.HostChainFeeAbsStatus_OUTDATED)
 			if err != nil {
 				k.Logger(ctx).Error(fmt.Sprintf("Failed to frozem host zone %s", err.Error()))
 			}
@@ -355,4 +367,30 @@ func (k Keeper) executeAllHostChainSwap(ctx sdk.Context) {
 
 		return false
 	})
+}
+
+func (k Keeper) IbcQueryHostZoneFilter(ctx sdk.Context, hostZoneConfig types.HostChainFeeAbsConfig, queryTwapEpochInfo types.EpochInfo) bool {
+	if hostZoneConfig.Status == types.HostChainFeeAbsStatus_FROZEN {
+		return true
+	}
+
+	// determine what host zone gets to query
+	exponential := k.GetBlockDelayToQuery(ctx, hostZoneConfig.IbcDenom)
+	if exponential.Jump == types.ExponentialOutdatedJump {
+		err := k.SetStateHostZoneByIBCDenom(ctx, hostZoneConfig.IbcDenom, types.HostChainFeeAbsStatus_OUTDATED)
+		if err != nil {
+			k.Logger(ctx).Error(fmt.Sprintf("Failed to set host zone status %s", err.Error()))
+		}
+	}
+
+	if queryTwapEpochInfo.CurrentEpoch < exponential.FutureEpoch {
+		return true
+	}
+
+	return false
+}
+
+// for testing
+func (k Keeper) TransferOsmosisCrosschainSwap(ctx sdk.Context, hostChainConfig types.HostChainFeeAbsConfig) error {
+	return k.transferOsmosisCrosschainSwap(ctx, hostChainConfig)
 }

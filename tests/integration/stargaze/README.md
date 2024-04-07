@@ -49,25 +49,6 @@ We should fund the wallets and reuse the wallets for relaying.
 
 ## 3. Setup pools, contracts on Osmosis testnet
 
-### Pre-Deployed Contract on Osmosis testnet
-
-owner: osmo1sg5ta3eaed5wxxpnq3u5463lysfg7ytjxqvk43
-
-- Registry:
-
-  - Code_id: 7238
-  - Contract_addr: osmo1m9jk8zvrkpex0rxhp76emr0qm2z5khvj09msl9c78gcq7c38xdzsgq0cgm
-
-- Swap:
-
-  - Code_id: 7239
-  - Contract_addr: osmo1j48ncj9wkzs3pnkux96ct6peg7rznnt4jx6ysdcs0283ysxj2ztqtr602y
-
-- XCS:
-  - code_id: 7240
-  - Contract_addr: osmo177jurcy582fk5q298es6662pu48a46ze6eequnv3z0parekpwhhs034wsv
-    We use the existing stored bytecode to instantiate the contract.
-
 ```bash
 NODE=https://osmosis-testnet-rpc.polkachu.com:443
 REG=./bytecode/crosschain_registry.wasm
@@ -148,12 +129,18 @@ proposal.json
       "ibc_denom": "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
       "osmosis_pool_token_denom_in": "uosmo",
       "pool_id": "404",
-      "frozen": false
+      "status": 0
     },
     "deposit": "100000000ustars"
   }
 }
 ```
+
+"status" field indicates fee abstraction connection status to host zone:
+* 0: UPDADTED
+* 1: OUTDATED
+* 2: FROZEN
+
 
 ```bash
 starsd tx gov submit-legacy-proposal add-hostzone-config proposal.json --from investor

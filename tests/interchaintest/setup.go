@@ -8,10 +8,10 @@ import (
 	"strings"
 	"testing"
 
+	"cosmossdk.io/math"
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/icza/dyno"
-	feeabstype "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	"github.com/strangelove-ventures/interchaintest/v7"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos/wasm"
@@ -21,10 +21,12 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v7/testutil"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
+
+	feeabstype "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 type HasPacketForwarding struct {
-	ChainID string `json:"chain"`
+	Chain string `json:"chain"`
 }
 
 type QuerySmartMsg struct {
@@ -78,8 +80,8 @@ var (
 	pathFeeabsGaia      = "feeabs-gaia"
 	pathFeeabsOsmosis   = "feeabs-osmosis"
 	pathOsmosisGaia     = "osmosis-gaia"
-	genesisWalletAmount = int64(10_000_000)
-	amountToSend        = int64(1_000_000_000)
+	genesisWalletAmount = math.NewInt(10_000_000)
+	amountToSend        = math.NewInt(1_000_000_000)
 )
 
 // feeabsEncoding registers the feeabs specific module codecs so that the associated types and msgs
@@ -146,6 +148,7 @@ func modifyGenesisShortProposals(votingPeriod string, maxDepositPeriod string, q
 }
 
 func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, []ibc.ChannelOutput) {
+	t.Helper()
 	client, network := interchaintest.DockerSetup(t)
 
 	rep := testreporter.NewNopReporter()
@@ -154,7 +157,6 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	// Create chain factory with Feeabs and Gaia
 	numVals := 1
 	numFullNodes := 1
-	gasAdjustment := 2.0
 
 	cf := interchaintest.NewBuiltinChainFactory(zaptest.NewLogger(t), []*interchaintest.ChainSpec{
 		{
@@ -179,7 +181,6 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 				GasPrices:      "0.005uosmo",
 				EncodingConfig: osmosisEncoding(),
 			},
-			GasAdjustment: &gasAdjustment,
 			NumValidators: &numVals,
 			NumFullNodes:  &numFullNodes,
 		},
@@ -518,8 +519,8 @@ func SetupOsmosisContracts(t *testing.T,
 	t.Logf("swap router contract address: %s\n", swaprouterContractAddr)
 
 	// 3. Crosschain Swaps Contract
-	initMsg = fmt.Sprintf("{\"swap_contract\":\"%s\",\"governor\": \"%s\"}", swaprouterContractAddr, owner)
-	xcsV2ContractAddr, err := osmosis.InstantiateContract(ctx, user.KeyName(), xcsV2Wasm, initMsg, true)
+	initMsg = fmt.Sprintf("{\"swap_contract\":\"%s\",\"governor\": \"%s\",\"registry_contract\": \"%s\"}", swaprouterContractAddr, owner, registryContractAddr)
+	xcsV2ContractAddr, err := osmosis.InstantiateContract(ctx, user.KeyName(), xcsV2CodeId, initMsg, true)
 	if err != nil {
 		return nil, err
 	}

@@ -30,6 +30,13 @@ type KeeperTestSuite struct {
 	msgServer    types.MsgServer
 }
 
+const (
+	SourcePort      = "feeabs"
+	SourceChannel   = "channel-0"
+	IBCDenom        = "ibc/1"
+	OsmosisIBCDenom = "ibc/2"
+)
+
 var valTokens = sdk.TokensFromConsensusPower(42, sdk.DefaultPowerReduction)
 
 func (s *KeeperTestSuite) SetupTest() {
