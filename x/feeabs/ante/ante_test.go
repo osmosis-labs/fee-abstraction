@@ -15,6 +15,14 @@ import (
 
 func TestMempoolDecorator(t *testing.T) {
 	gasLimit := uint64(200000)
+	// mockHostZoneConfig is used to mock the host zone config, with ibcfee as the ibc fee denom to be used as alternative fee
+	mockHostZoneConfig := types.HostChainFeeAbsConfig{
+		IbcDenom:                "ibcfee",
+		OsmosisPoolTokenDenomIn: "osmosis",
+		PoolId:                  1,
+		Status:                  types.HostChainFeeAbsStatus_UPDATED,
+		MinSwapAmount:           0,
+	}
 	testCases := []struct {
 		name        string
 		feeAmount   sdk.Coins
@@ -61,13 +69,7 @@ func TestMempoolDecorator(t *testing.T) {
 			sdk.NewCoins(sdk.NewInt64Coin("ibcfee", 999*int64(gasLimit))),
 			sdk.NewDecCoinsFromCoins(sdk.NewCoins(sdk.NewInt64Coin("native", 1000))...),
 			func(suite *AnteTestSuite) {
-				err := suite.feeabsKeeper.SetHostZoneConfig(suite.ctx, types.HostChainFeeAbsConfig{
-					IbcDenom:                "ibcfee",
-					OsmosisPoolTokenDenomIn: "osmosis",
-					PoolId:                  1,
-					Status:                  types.HostChainFeeAbsStatus_UPDATED,
-					MinSwapAmount:           0,
-				})
+				err := suite.feeabsKeeper.SetHostZoneConfig(suite.ctx, mockHostZoneConfig)
 				require.NoError(t, err)
 				suite.feeabsKeeper.SetTwapRate(suite.ctx, "ibcfee", sdk.NewDec(1))
 				suite.stakingKeeper.EXPECT().BondDenom(gomock.Any()).Return("native").MinTimes(1)
@@ -81,13 +83,7 @@ func TestMempoolDecorator(t *testing.T) {
 			sdk.NewCoins(sdk.NewInt64Coin("ibcfee", 1000*int64(gasLimit))),
 			sdk.NewDecCoinsFromCoins(sdk.NewCoins(sdk.NewInt64Coin("native", 1000))...),
 			func(suite *AnteTestSuite) {
-				err := suite.feeabsKeeper.SetHostZoneConfig(suite.ctx, types.HostChainFeeAbsConfig{
-					IbcDenom:                "ibcfee",
-					OsmosisPoolTokenDenomIn: "osmosis",
-					PoolId:                  1,
-					Status:                  types.HostChainFeeAbsStatus_UPDATED,
-					MinSwapAmount:           0,
-				})
+				err := suite.feeabsKeeper.SetHostZoneConfig(suite.ctx, mockHostZoneConfig)
 				require.NoError(t, err)
 				suite.feeabsKeeper.SetTwapRate(suite.ctx, "ibcfee", sdk.NewDec(1))
 				suite.stakingKeeper.EXPECT().BondDenom(gomock.Any()).Return("native").MinTimes(1)
