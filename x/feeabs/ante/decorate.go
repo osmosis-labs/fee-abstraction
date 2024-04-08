@@ -291,7 +291,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 
 		// After replace the feeCoinsNonZeroDenom, feeCoinsNonZeroDenom must be in denom subset of nonZeroCoinFeesReq
 		if !feeCoinsNonZeroDenom.DenomsSubsetOf(nonZeroCoinFeesReq) {
-			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "fee is not a subset of required fees; got %s, required: %s", feeCoins.String(), feeRequired.String())
+			return ctx, sdkerrors.Wrapf(errorstypes.ErrInvalidCoins, "fee is not a subset of required fees; got %s, required: %s", feeCoins.String(), feeRequired.String())
 		}
 
 		// if the msg does not satisfy bypass condition and the feeCoins denoms are subset of fezeRequired,
