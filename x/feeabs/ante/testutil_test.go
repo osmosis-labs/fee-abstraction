@@ -13,7 +13,6 @@ import (
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -22,7 +21,6 @@ import (
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	transferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
 	gomock "github.com/golang/mock/gomock"
-	"github.com/osmosis-labs/fee-abstraction/v7/app"
 	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
 	feeabstestutil "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/testutil"
 	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
@@ -98,21 +96,7 @@ func SetupTestSuite(t *testing.T, isCheckTx bool) *AnteTestSuite {
 	suite.clientCtx = client.Context{}.
 		WithTxConfig(suite.encCfg.TxConfig)
 
-	anteHandler, err := app.MockAnteHandler(
-		app.HandlerOptions{
-			HandlerOptions: ante.HandlerOptions{
-				AccountKeeper:   suite.accountKeeper,
-				BankKeeper:      suite.bankKeeper,
-				FeegrantKeeper:  suite.feeGrantKeeper,
-				SignModeHandler: suite.encCfg.TxConfig.SignModeHandler(),
-				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
-			},
-			FeeAbskeeper: suite.feeabsKeeper,
-		},
-	)
-
 	require.NoError(t, err)
-	suite.anteHandler = anteHandler
 
 	suite.txBuilder = suite.clientCtx.TxConfig.NewTxBuilder()
 
