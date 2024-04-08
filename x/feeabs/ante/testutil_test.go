@@ -93,7 +93,7 @@ func SetupTestSuite(t *testing.T, isCheckTx bool) *AnteTestSuite {
 	suite.accountKeeper = authkeeper.NewAccountKeeper(
 		suite.encCfg.Codec, authKey, authtypes.ProtoBaseAccount, maccPerms, sdk.Bech32MainPrefix, authtypes.NewModuleAddress("gov").String(),
 	)
-
+	suite.accountKeeper.SetModuleAccount(suite.ctx, authtypes.NewEmptyModuleAccount(feeabstypes.ModuleName))
 	// Setup feeabs keeper
 	suite.feeabsKeeper = feeabskeeper.NewKeeper(suite.encCfg.Codec, key, subspace, suite.stakingKeeper, suite.accountKeeper, nil, transferkeeper.Keeper{}, suite.channelKeeper, suite.portKeeper, suite.scopedKeeper)
 	suite.clientCtx = client.Context{}.
