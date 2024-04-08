@@ -5,12 +5,13 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/golang/mock/gomock"
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/ante"
+	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 	"github.com/stretchr/testify/require"
 )
 
 func TestMempoolDecorator(t *testing.T) {
-	suite := SetupTestSuite(t, false)
 	gasLimit := uint64(200000)
 	testCases := []struct {
 		name        string
@@ -45,9 +46,57 @@ func TestMempoolDecorator(t *testing.T) {
 			false,
 			nil,
 		},
+		{
+			"unknown ibc fee denom, should fail",
+			sdk.NewCoins(sdk.NewInt64Coin("ibcfee", 1000*int64(gasLimit))),
+			sdk.NewDecCoinsFromCoins(sdk.NewCoins(sdk.NewInt64Coin("native", 1000))...),
+			func(suite *AnteTestSuite) {},
+			true,
+			sdkerrors.ErrInvalidCoins,
+		},
+		{
+			"not enough ibc fee, should fail",
+			sdk.NewCoins(sdk.NewInt64Coin("ibcfee", 999*int64(gasLimit))),
+			sdk.NewDecCoinsFromCoins(sdk.NewCoins(sdk.NewInt64Coin("native", 1000))...),
+			func(suite *AnteTestSuite) {
+				err := suite.feeabsKeeper.SetHostZoneConfig(suite.ctx, types.HostChainFeeAbsConfig{
+					IbcDenom:                "ibcfee",
+					OsmosisPoolTokenDenomIn: "osmosis",
+					PoolId:                  1,
+					Status:                  types.HostChainFeeAbsStatus_UPDATED,
+					MinSwapAmount:           0,
+				})
+				require.NoError(t, err)
+				suite.feeabsKeeper.SetTwapRate(suite.ctx, "ibcfee", sdk.NewDec(1))
+				suite.stakingKeeper.EXPECT().BondDenom(gomock.Any()).Return("native").MinTimes(1)
+			},
+			true,
+			sdkerrors.ErrInsufficientFee,
+		},
+
+		{
+			"enough ibc fee, should pass",
+			sdk.NewCoins(sdk.NewInt64Coin("ibcfee", 1000*int64(gasLimit))),
+			sdk.NewDecCoinsFromCoins(sdk.NewCoins(sdk.NewInt64Coin("native", 1000))...),
+			func(suite *AnteTestSuite) {
+				err := suite.feeabsKeeper.SetHostZoneConfig(suite.ctx, types.HostChainFeeAbsConfig{
+					IbcDenom:                "ibcfee",
+					OsmosisPoolTokenDenomIn: "osmosis",
+					PoolId:                  1,
+					Status:                  types.HostChainFeeAbsStatus_UPDATED,
+					MinSwapAmount:           0,
+				})
+				require.NoError(t, err)
+				suite.feeabsKeeper.SetTwapRate(suite.ctx, "ibcfee", sdk.NewDec(1))
+				suite.stakingKeeper.EXPECT().BondDenom(gomock.Any()).Return("native").MinTimes(1)
+			},
+			false,
+			nil,
+		},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			suite := SetupTestSuite(t, false)
 			// Setup test context
 			tc.malleate(suite)
 			suite.txBuilder.SetGasLimit(gasLimit)

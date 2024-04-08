@@ -17,10 +17,8 @@ import (
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	govtestutil "github.com/cosmos/cosmos-sdk/x/gov/testutil"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	transferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
-	gomock "github.com/golang/mock/gomock"
 	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
 	feeabstestutil "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/testutil"
 	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
@@ -43,7 +41,7 @@ type AnteTestSuite struct {
 	accountKeeper  authkeeper.AccountKeeper
 	bankKeeper     *feeabstestutil.MockBankKeeper
 	feeGrantKeeper *feeabstestutil.MockFeegrantKeeper
-	stakingKeeper  govtestutil.StakingKeeper
+	stakingKeeper  *feeabstestutil.MockStakingKeeper
 	feeabsKeeper   feeabskeeper.Keeper
 	channelKeeper  *feeabstestutil.MockChannelKeeper
 	portKeeper     *feeabstestutil.MockPortKeeper
@@ -55,10 +53,9 @@ type AnteTestSuite struct {
 func SetupTestSuite(t *testing.T, isCheckTx bool) *AnteTestSuite {
 	t.Helper()
 	suite := &AnteTestSuite{}
-	ctrl := gomock.NewController(t)
 	uberCtrl := ubermock.NewController(t)
 	suite.bankKeeper = feeabstestutil.NewMockBankKeeper(uberCtrl)
-	suite.stakingKeeper = govtestutil.NewMockStakingKeeper(ctrl)
+	suite.stakingKeeper = feeabstestutil.NewMockStakingKeeper(uberCtrl)
 	suite.feeGrantKeeper = feeabstestutil.NewMockFeegrantKeeper(uberCtrl)
 	suite.channelKeeper = feeabstestutil.NewMockChannelKeeper(uberCtrl)
 	suite.portKeeper = feeabstestutil.NewMockPortKeeper(uberCtrl)
