@@ -3,12 +3,14 @@ package ante_test
 import (
 	"testing"
 
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/require"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/golang/mock/gomock"
+
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/ante"
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
-	"github.com/stretchr/testify/require"
 )
 
 func TestMempoolDecorator(t *testing.T) {
@@ -120,5 +122,4 @@ func TestMempoolDecorator(t *testing.T) {
 			}
 		})
 	}
-
 }

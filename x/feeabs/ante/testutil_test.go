@@ -3,6 +3,10 @@ package ante_test
 import (
 	"testing"
 
+	transferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
+	"github.com/stretchr/testify/require"
+	ubermock "go.uber.org/mock/gomock"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -15,20 +19,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
-	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	transferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
+
 	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/keeper"
 	feeabstestutil "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/testutil"
 	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
-	"github.com/stretchr/testify/require"
-	ubermock "go.uber.org/mock/gomock"
 )
 
 // TestAccount represents an account used in the tests in x/auth/ante.
 type TestAccount struct {
-	acc  types.AccountI
+	acc  authtypes.AccountI
 	priv cryptotypes.PrivKey
 }
 
@@ -87,7 +88,7 @@ func SetupTestSuite(t *testing.T, isCheckTx bool) *AnteTestSuite {
 	suite.encCfg.Amino.RegisterConcrete(&testdata.TestMsg{}, "testdata.TestMsg", nil)
 	testdata.RegisterInterfaces(suite.encCfg.InterfaceRegistry)
 	suite.accountKeeper = authkeeper.NewAccountKeeper(
-		suite.encCfg.Codec, authKey, types.ProtoBaseAccount, maccPerms, sdk.Bech32MainPrefix, types.NewModuleAddress("gov").String(),
+		suite.encCfg.Codec, authKey, authtypes.ProtoBaseAccount, maccPerms, sdk.Bech32MainPrefix, authtypes.NewModuleAddress("gov").String(),
 	)
 	suite.feeabsKeeper = feeabskeeper.NewKeeper(suite.encCfg.Codec, key, subspace, suite.stakingKeeper, suite.accountKeeper, nil, transferkeeper.Keeper{}, suite.channelKeeper, suite.portKeeper, suite.scopedKeeper)
 	suite.clientCtx = client.Context{}.
@@ -102,8 +103,8 @@ func SetupTestSuite(t *testing.T, isCheckTx bool) *AnteTestSuite {
 
 // TestCase represents a test case used in test tables.
 type TestCase struct {
-	desc     string
-	malleate func(*AnteTestSuite) TestCaseArgs
+	_        string
+	_        func(*AnteTestSuite) TestCaseArgs
 	simulate bool
 	expPass  bool
 	expErr   error
@@ -164,13 +165,17 @@ func (suite *AnteTestSuite) RunTestCase(t *testing.T, tc TestCase, args TestCase
 		}
 	}
 }
+
 func (suite *AnteTestSuite) CreateTestAccounts(numAccs int) []TestAccount {
 	var accounts []TestAccount
 
 	for i := 0; i < numAccs; i++ {
 		priv, _, addr := testdata.KeyTestPubAddr()
 		acc := suite.accountKeeper.NewAccountWithAddress(suite.ctx, addr)
-		acc.SetAccountNumber(uint64(i))
+		err := acc.SetAccountNumber(uint64(i))
+		if err != nil {
+			panic(err)
+		}
 		suite.accountKeeper.SetAccount(suite.ctx, acc)
 		accounts = append(accounts, TestAccount{acc, priv})
 	}
