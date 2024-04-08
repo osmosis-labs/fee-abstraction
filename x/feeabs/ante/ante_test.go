@@ -9,9 +9,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/ante"
 	"github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
-	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 func TestMempoolDecorator(t *testing.T) {
@@ -163,7 +163,7 @@ func TestDeductFeeDecorator(t *testing.T) {
 			"not enough native fee in balance, should fail",
 			func(suite *AnteTestSuite) {
 				suite.feeabsKeeper.SetTwapRate(suite.ctx, "ibcfee", sdk.NewDec(1))
-				// suite.bankKeeper.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), gomock.Any(), feeabstypes.ModuleName, feeAmount).Return(sdkerrors.ErrInsufficientFee).MinTimes(1)
+				// suite.bankKeeper.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), gomock.Any(), types.ModuleName, feeAmount).Return(sdkerrors.ErrInsufficientFee).MinTimes(1)
 				suite.bankKeeper.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), gomock.Any(), authtypes.FeeCollectorName, feeAmount).Return(sdkerrors.ErrInsufficientFee).MinTimes(1)
 			},
 			true,
@@ -186,7 +186,7 @@ func TestDeductFeeDecorator(t *testing.T) {
 				suite.feeabsKeeper.SetTwapRate(suite.ctx, "ibcfee", sdk.NewDec(1))
 				suite.txBuilder.SetFeeAmount(ibcFeeAmount)
 				suite.stakingKeeper.EXPECT().BondDenom(gomock.Any()).Return("native").MinTimes(1)
-				suite.bankKeeper.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), gomock.Any(), feeabstypes.ModuleName, ibcFeeAmount).Return(sdkerrors.ErrInsufficientFunds).MinTimes(1)
+				suite.bankKeeper.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), gomock.Any(), types.ModuleName, ibcFeeAmount).Return(sdkerrors.ErrInsufficientFunds).MinTimes(1)
 			},
 			true,
 			sdkerrors.ErrInsufficientFunds,
@@ -199,7 +199,7 @@ func TestDeductFeeDecorator(t *testing.T) {
 				suite.feeabsKeeper.SetTwapRate(suite.ctx, "ibcfee", sdk.NewDec(1))
 				suite.txBuilder.SetFeeAmount(ibcFeeAmount)
 				suite.stakingKeeper.EXPECT().BondDenom(gomock.Any()).Return("native").MinTimes(1)
-				suite.bankKeeper.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), gomock.Any(), feeabstypes.ModuleName, ibcFeeAmount).Return(nil).MinTimes(1)
+				suite.bankKeeper.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), gomock.Any(), types.ModuleName, ibcFeeAmount).Return(nil).MinTimes(1)
 				suite.bankKeeper.EXPECT().SendCoinsFromAccountToModule(gomock.Any(), gomock.Any(), authtypes.FeeCollectorName, feeAmount).Return(nil).MinTimes(1)
 			},
 			false,
