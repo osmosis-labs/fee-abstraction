@@ -54,13 +54,17 @@ type AnteTestSuite struct {
 func SetupTestSuite(t *testing.T, isCheckTx bool) *AnteTestSuite {
 	t.Helper()
 	suite := &AnteTestSuite{}
-	uberCtrl := ubermock.NewController(t)
-	suite.bankKeeper = feeabstestutil.NewMockBankKeeper(uberCtrl)
-	suite.stakingKeeper = feeabstestutil.NewMockStakingKeeper(uberCtrl)
-	suite.feeGrantKeeper = feeabstestutil.NewMockFeegrantKeeper(uberCtrl)
-	suite.channelKeeper = feeabstestutil.NewMockChannelKeeper(uberCtrl)
-	suite.portKeeper = feeabstestutil.NewMockPortKeeper(uberCtrl)
-	suite.scopedKeeper = feeabstestutil.NewMockScopedKeeper(uberCtrl)
+	ctrl := ubermock.NewController(t)
+
+	// Setup mock keepers
+	suite.bankKeeper = feeabstestutil.NewMockBankKeeper(ctrl)
+	suite.stakingKeeper = feeabstestutil.NewMockStakingKeeper(ctrl)
+	suite.feeGrantKeeper = feeabstestutil.NewMockFeegrantKeeper(ctrl)
+	suite.channelKeeper = feeabstestutil.NewMockChannelKeeper(ctrl)
+	suite.portKeeper = feeabstestutil.NewMockPortKeeper(ctrl)
+	suite.scopedKeeper = feeabstestutil.NewMockScopedKeeper(ctrl)
+
+	// setup necessary params for Account Keeper
 	key := sdk.NewKVStoreKey(feeabstypes.StoreKey)
 	authKey := sdk.NewKVStoreKey(authtypes.StoreKey)
 	subspace := paramtypes.NewSubspace(nil, nil, nil, nil, "feeabs")
@@ -75,27 +79,28 @@ func SetupTestSuite(t *testing.T, isCheckTx bool) *AnteTestSuite {
 		"feeabs":                 nil,
 	}
 
+	// setup context for Account Keeper
 	testCtx := testutil.DefaultContextWithDB(t, key, sdk.NewTransientStoreKey("transient_test"))
 	testCtx.CMS.MountStoreWithDB(authKey, storetypes.StoreTypeIAVL, testCtx.DB)
 	testCtx.CMS.MountStoreWithDB(sdk.NewTransientStoreKey("transient_test2"), storetypes.StoreTypeTransient, testCtx.DB)
 	err := testCtx.CMS.LoadLatestVersion()
 	require.NoError(t, err)
-
 	suite.ctx = testCtx.Ctx.WithIsCheckTx(isCheckTx).WithBlockHeight(1) // app.BaseApp.NewContext(isCheckTx, tmproto.Header{}).WithBlockHeight(1)
-	suite.encCfg = moduletestutil.MakeTestEncodingConfig(auth.AppModuleBasic{})
 
-	// We're using TestMsg encoding in some tests, so register it here.
+	suite.encCfg = moduletestutil.MakeTestEncodingConfig(auth.AppModuleBasic{})
 	suite.encCfg.Amino.RegisterConcrete(&testdata.TestMsg{}, "testdata.TestMsg", nil)
 	testdata.RegisterInterfaces(suite.encCfg.InterfaceRegistry)
 	suite.accountKeeper = authkeeper.NewAccountKeeper(
 		suite.encCfg.Codec, authKey, authtypes.ProtoBaseAccount, maccPerms, sdk.Bech32MainPrefix, authtypes.NewModuleAddress("gov").String(),
 	)
+
+	// Setup feeabs keeper
 	suite.feeabsKeeper = feeabskeeper.NewKeeper(suite.encCfg.Codec, key, subspace, suite.stakingKeeper, suite.accountKeeper, nil, transferkeeper.Keeper{}, suite.channelKeeper, suite.portKeeper, suite.scopedKeeper)
 	suite.clientCtx = client.Context{}.
 		WithTxConfig(suite.encCfg.TxConfig)
-
 	require.NoError(t, err)
 
+	// setup txBuilder
 	suite.txBuilder = suite.clientCtx.TxConfig.NewTxBuilder()
 
 	return suite

@@ -114,12 +114,11 @@ func TestMempoolDecorator(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			suite := SetupTestSuite(t, false)
+			suite := SetupTestSuite(t, true)
 			// Setup test context
 			tc.malleate(suite)
 			suite.txBuilder.SetGasLimit(gasLimit)
 			suite.txBuilder.SetFeeAmount(tc.feeAmount)
-			suite.ctx = suite.ctx.WithIsCheckTx(true)
 			suite.ctx = suite.ctx.WithMinGasPrices(tc.minGasPrice)
 
 			// Construct tx and run through mempool decorator
