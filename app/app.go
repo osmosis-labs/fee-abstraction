@@ -26,10 +26,15 @@ import (
 	"github.com/cosmos/ibc-go/v8/modules/apps/transfer"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
-	ibc "github.com/cosmos/ibc-go/v8/modules/core" //nolint:staticcheck
+	ibc "github.com/cosmos/ibc-go/v8/modules/core"
+	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types" //nolint:staticcheck
+	ibcconnectiontypes "github.com/cosmos/ibc-go/v8/modules/core/03-connection/types"
 	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
+	solomachine "github.com/cosmos/ibc-go/v8/modules/light-clients/06-solomachine"
+	ibctm "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
+
 	"github.com/gorilla/mux"
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
@@ -280,10 +285,11 @@ func NewFeeApp(
 	keys := storetypes.NewKVStoreKeys(
 		authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
-		govtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey, upgradetypes.StoreKey,
-		evidencetypes.StoreKey, ibctransfertypes.StoreKey, feeabstypes.StoreKey,
-		capabilitytypes.StoreKey, feegrant.StoreKey, authzkeeper.StoreKey, packetforwardtypes.StoreKey,
-		icahosttypes.StoreKey, icacontrollertypes.StoreKey, consensusparamtypes.StoreKey, crisistypes.StoreKey,
+		govtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey,
+		upgradetypes.StoreKey, evidencetypes.StoreKey, ibctransfertypes.StoreKey,
+		feeabstypes.StoreKey, capabilitytypes.StoreKey, feegrant.StoreKey,
+		authzkeeper.StoreKey, packetforwardtypes.StoreKey, icahosttypes.StoreKey,
+		icacontrollertypes.StoreKey, consensusparamtypes.StoreKey, crisistypes.StoreKey,
 	)
 	tkeys := storetypes.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := storetypes.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -440,7 +446,7 @@ func NewFeeApp(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
-	// PFMRouterKeeper must be created before TransferKeeper
+	// PacketForwardKeeper must be created before TransferKeeper
 	app.PacketForwardKeeper = packetforwardkeeper.NewKeeper(
 		appCodec,
 		app.keys[packetforwardtypes.StoreKey],
@@ -592,12 +598,13 @@ func NewFeeApp(
 		params.NewAppModule(app.ParamsKeeper),
 
 		// IBC modules
+		solomachine.NewAppModule(),
+		ibctm.NewAppModule(),
 		ibc.NewAppModule(app.IBCKeeper),
 		packetforward.NewAppModule(app.PacketForwardKeeper, app.GetSubspace(packetforwardtypes.ModuleName)),
 		transfer.NewAppModule(app.TransferKeeper),
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
 		feeabsmodule.NewAppModule(appCodec, app.FeeabsKeeper),
-		packetforward.NewAppModule(app.PacketForwardKeeper, app.GetSubspace(packetforwardtypes.ModuleName)),
 	)
 
 	// BasicModuleManager defines the module BasicManager is in charge of setting up basic,
@@ -619,6 +626,7 @@ func NewFeeApp(
 	// there is nothing left over in the validator fee pool, so as to keep the
 	// CanWithdrawInvariant invariant.
 	// NOTE: staking module is required if HistoricalEntries param > 0
+	// NOTE: capability module's beginblocker must come before any modules using capabilities (e.g. IBC)
 	app.mm.SetOrderBeginBlockers(
 		upgradetypes.ModuleName,
 		capabilitytypes.ModuleName,
@@ -636,11 +644,11 @@ func NewFeeApp(
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
+		packetforwardtypes.ModuleName,
 		ibctransfertypes.ModuleName,
 		ibcexported.ModuleName,
 		feeabstypes.ModuleName,
 		icatypes.ModuleName,
-		packetforwardtypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
@@ -917,14 +925,18 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(minttypes.ModuleName)
 	paramsKeeper.Subspace(distrtypes.ModuleName)
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
-	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(paramstypes.ConsensusParamsKeyTable())
+	paramsKeeper.Subspace(govtypes.ModuleName)
 	paramsKeeper.Subspace(crisistypes.ModuleName)
-	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
-	paramsKeeper.Subspace(ibcexported.ModuleName)
+
+	// register the IBC key tables for legacy param subspaces
+	keyTable := ibcclienttypes.ParamKeyTable()
+	keyTable.RegisterParamSet(&ibcconnectiontypes.Params{})
+	paramsKeeper.Subspace(ibcexported.ModuleName).WithKeyTable(keyTable)
+	paramsKeeper.Subspace(ibctransfertypes.ModuleName).WithKeyTable(ibctransfertypes.ParamKeyTable())
+	paramsKeeper.Subspace(icacontrollertypes.SubModuleName).WithKeyTable(icacontrollertypes.ParamKeyTable())
+	paramsKeeper.Subspace(icahosttypes.SubModuleName).WithKeyTable(icahosttypes.ParamKeyTable())
 	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
-	paramsKeeper.Subspace(icahosttypes.SubModuleName)
-	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
-	paramsKeeper.Subspace(feeabstypes.ModuleName)
+	paramsKeeper.Subspace(feeabstypes.ModuleName).WithKeyTable(feeabstypes.ParamKeyTable())
 
 	return paramsKeeper
 }

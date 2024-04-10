@@ -67,7 +67,7 @@ var (
 		ChainID:             "feeabs-2",
 		Images:              []ibc.DockerImage{feeabsImage},
 		Bin:                 "feeappd",
-		Bech32Prefix:        "cosmos",
+		Bech32Prefix:        "feeabs",
 		Denom:               "stake",
 		CoinType:            "118",
 		GasPrices:           "0.00stake",
