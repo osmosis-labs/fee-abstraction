@@ -1,9 +1,9 @@
-NAME = e2e
-FILE = starship.yaml
+HELM_NAME = e2e
+HELM_FILE = config/local-config.yaml
 
 HELM_REPO = starship
 HELM_CHART = devnet
-HELM_VERSION = v0.1.47-rc0
+HELM_VERSION = v0.1.38
 
 ###############################################################################
 ###                              All commands                               ###
@@ -18,6 +18,11 @@ stop: stop-forward delete
 .PHONY: clean
 clean: stop clean-kind
 
+.PHONY: test
+test:
+	go test -v ./...
+
+
 ###############################################################################
 ###                          Dependency check                               ###
 ###############################################################################
@@ -31,16 +36,31 @@ setup-deps:
 ###############################################################################
 
 # run command with `$ make install FILE=configs/osmo-juno-cosmos.yaml`
+..PHONY: setup-helm
+setup-helm:
+	helm repo add $(HELM_REPO) https://cosmology-tech.github.io/starship/
+	helm repo update
+	helm search repo $(HELM_REPO)/$(HELM_CHART) --version $(HELM_VERSION)
+
 .PHONY: install
 install:
-	bash $(CURDIR)/scripts/install.sh --config $(FILE) --name $(NAME) --version $(HELM_VERSION)
+	@echo "Installing the helm chart. This is going to take a while....."
+	@echo "You can check the status with \"kubectl get pods\", run in another terminal please"
+	helm install  $(HELM_NAME) $(HELM_REPO)/$(HELM_CHART) --version $(HELM_VERSION) -f $(HELM_FILE)
+	@echo "Run \"kubectl get pods\" to check the status of the cluster"
 
-.PHONY: install-base
-install-base:
-	bash $(CURDIR)/scripts/install.sh --config $(FILE) --name $(NAME) --version $(HELM_VERSION) --chart $(CURDIR)/../../charts/devnet
+.PHONY: upgrade
+upgrade:
+	helm upgrade --debug -f $(HELM_FILE) $(HELM_NAME) $(HELM_REPO)/$(HELM_CHART) --version $(HELM_VERSION)
 
+.PHONY: debug
+debug:
+	helm install --dry-run --debug -f $(HELM_FILE) $(HELM_NAME) $(HELM_REPO)/$(HELM_CHART)
+
+.PHONY: delete
 delete:
-	-helm delete $(NAME)
+	-helm delete $(HELM_NAME)
+
 
 ###############################################################################
 ###                                 Port forward                            ###
@@ -49,7 +69,7 @@ delete:
 # run command with `$ make port-forward FILE=configs/osmo-juno-cosmos.yaml`
 .PHONY: port-forward
 port-forward:
-	bash $(CURDIR)/scripts/port-forward.sh --config=$(FILE)
+	bash $(CURDIR)/scripts/port-forward.sh --config=$(HELM_FILE)
 
 .PHONY: stop-forward
 stop-forward:
@@ -67,3 +87,5 @@ setup-kind:
 .PHONY: clean-kind
 clean-kind:
 	kind delete cluster --name $(KIND_CLUSTER)
+
+

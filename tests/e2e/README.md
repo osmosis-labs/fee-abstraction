@@ -1,8 +1,7 @@
 ### E2E tests
 
 ```bash
-make setup
-make setup-deps
+make setup-kind
 make install
 
 ```
