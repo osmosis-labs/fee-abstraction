@@ -53,6 +53,9 @@ COPY --from=builder /feeapp/bin/feeappd /usr/bin/feeappd
 ENV HOME /.feeappd
 WORKDIR $HOME
 
+ENV PACKAGES curl make bash jq sed
+RUN apk add --no-cache $PACKAGES
+
 # rest server
 EXPOSE 1317
 # tendermint p2p
