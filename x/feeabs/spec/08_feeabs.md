@@ -14,5 +14,5 @@ SECURITY:
 2. Query Twap price
 * Query twap price can be done by either submitting a message, or periodically
 * If failed to query TWAP, exponential backoff will kick in. The query retry will happen after [1, 2, 4, 8, 16] epochs.
-* If exponential backoff reachs 4, the connection will be considered OUTDATED.
+* If exponential backoff reaches 4, the connection will be considered OUTDATED.
 * If success, the connection will be considered UPDATED, reset exponential backoff
