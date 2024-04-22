@@ -6,6 +6,8 @@ import (
 
 	proto "github.com/cosmos/gogoproto/proto"
 
+	storetypes "cosmossdk.io/store/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
@@ -68,7 +70,7 @@ func (k Keeper) SetEpochInfo(ctx sdk.Context, epoch types.EpochInfo) {
 func (k Keeper) IterateEpochInfo(ctx sdk.Context, fn func(index int64, epochInfo types.EpochInfo) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.KeyPrefixEpoch)
+	iterator := storetypes.KVStorePrefixIterator(store, types.KeyPrefixEpoch)
 	defer iterator.Close()
 
 	i := int64(0)

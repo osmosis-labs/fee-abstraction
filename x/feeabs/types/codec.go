@@ -9,17 +9,7 @@ import (
 	v1beta1types "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 )
 
-var (
-	amino = codec.NewLegacyAmino()
-
-	// AminoCdc references the global x/relationships module codec. Note, the codec should
-	// ONLY be used in certain instances of tests and for JSON encoding as Amino is
-	// still used for that purpose.
-	//
-	// The actual codec used for serialization should be provided to x/relationships and
-	// defined at the application level.
-	AminoCdc = codec.NewAminoCodec(amino)
-)
+var amino = codec.NewLegacyAmino()
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgSendQueryIbcDenomTWAP{}, "feeabs/SendQueryIbcDenomTWAP", nil)

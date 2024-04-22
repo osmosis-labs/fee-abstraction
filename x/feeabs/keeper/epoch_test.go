@@ -8,7 +8,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	apphelpers "github.com/osmosis-labs/fee-abstraction/v8/app/helpers"
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
+
+	app "github.com/osmosis-labs/fee-abstraction/v8/app"
 	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
@@ -34,8 +36,9 @@ func createEpoch(t *testing.T, keeper *feeabskeeper.Keeper, ctx sdk.Context) typ
 }
 
 func TestGetEpochInfo(t *testing.T) {
-	app := apphelpers.Setup(t, false, 1)
-	ctx := apphelpers.NewContextForApp(*app)
+	app := app.Setup(t)
+	ctx := app.NewContextLegacy(true, cmtproto.Header{Height: 1})
+
 	expected := createEpoch(t, &app.FeeabsKeeper, ctx)
 	got, found := app.FeeabsKeeper.GetEpochInfo(ctx, expected.Identifier)
 	require.True(t, found)
@@ -45,8 +48,9 @@ func TestGetEpochInfo(t *testing.T) {
 }
 
 func TestHasEpochInfo(t *testing.T) {
-	app := apphelpers.Setup(t, false, 1)
-	ctx := apphelpers.NewContextForApp(*app)
+	app := app.Setup(t)
+	ctx := app.NewContextLegacy(true, cmtproto.Header{Height: 1})
+
 	expected := createEpoch(t, &app.FeeabsKeeper, ctx)
 	found := app.FeeabsKeeper.HasEpochInfo(ctx, expected.Identifier)
 	require.True(t, found)
