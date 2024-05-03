@@ -2,14 +2,14 @@ syntax = "proto3";
 package feeabstraction.feeabs.v1beta1;
 
 import "gogoproto/gogo.proto";
-import "feeabstraction/feeabs/v1beta1/params.proto";
-import "feeabstraction/feeabs/v1beta1/epoch.proto";
+import "cosmos/msg/v1/msg.proto";
 import "cosmos/base/v1beta1/coin.proto";
-import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types";
 
 service Msg {
+  option (cosmos.msg.v1.service) = true;
+
   rpc SendQueryIbcDenomTWAP(MsgSendQueryIbcDenomTWAP)
       returns (MsgSendQueryIbcDenomTWAPResponse);
   rpc SwapCrossChain(MsgSwapCrossChain) returns (MsgSwapCrossChainResponse);

@@ -2,17 +2,17 @@ syntax = "proto3";
 package feeabstraction.feeabs.v1beta1;
 
 import "gogoproto/gogo.proto";
-import "google/protobuf/timestamp.proto";
-import "google/api/annotations.proto";
 
 option go_package = "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types";
 
+// HostChainFeeAbsStatus
 enum HostChainFeeAbsStatus {
   UPDATED = 0;
   OUTDATED = 1;
   FROZEN = 2;
 }
 
+// HostChainFeeAbsConfig
 message HostChainFeeAbsConfig {
   // ibc token is allowed to be used as fee token
   string ibc_denom = 1 [ (gogoproto.moretags) = "yaml:\"allowed_token\"" ];
@@ -24,6 +24,7 @@ message HostChainFeeAbsConfig {
   HostChainFeeAbsStatus status = 4;
 }
 
+// AddHostZoneProposal
 message AddHostZoneProposal {
   option (gogoproto.goproto_getters) = false;
   // the title of the proposal
@@ -34,6 +35,7 @@ message AddHostZoneProposal {
   HostChainFeeAbsConfig host_chain_config = 3;
 }
 
+// DeleteHostZoneProposal
 message DeleteHostZoneProposal {
   option (gogoproto.goproto_getters) = false;
   // the title of the proposal
@@ -44,6 +46,7 @@ message DeleteHostZoneProposal {
   string ibc_denom = 3;
 }
 
+// SetHostZoneProposal
 message SetHostZoneProposal {
   option (gogoproto.goproto_getters) = false;
   // the title of the proposal
