@@ -2,8 +2,6 @@ syntax = "proto3";
 package feeabstraction.feeabs.v1beta1;
 
 import "gogoproto/gogo.proto";
-import "google/api/annotations.proto";
-import "cosmos/base/query/v1beta1/pagination.proto";
 import "feeabstraction/feeabs/v1beta1/params.proto";
 import "feeabstraction/feeabs/v1beta1/epoch.proto";
 

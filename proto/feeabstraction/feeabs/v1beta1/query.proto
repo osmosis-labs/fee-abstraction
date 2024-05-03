@@ -3,8 +3,6 @@ package feeabstraction.feeabs.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "feeabstraction/feeabs/v1beta1/params.proto";
-import "feeabstraction/feeabs/v1beta1/osmosisibc.proto";
 import "feeabstraction/feeabs/v1beta1/proposal.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
@@ -24,12 +22,14 @@ service Query {
     option (google.api.http).get = "/fee-abstraction/feeabs/v1/module-balances";
   }
 
+  // HostChainConfig
   rpc HostChainConfig(QueryHostChainConfigRequest)
       returns (QueryHostChainConfigResponse) {
     option (google.api.http).get =
         "/fee-abstraction/feeabs/v1/host-chain-config/{ibc_denom}";
   }
 
+  // AllHostChainConfig
   rpc AllHostChainConfig(AllQueryHostChainConfigRequest)
       returns (AllQueryHostChainConfigResponse) {
     option (google.api.http).get =
@@ -37,8 +37,10 @@ service Query {
   }
 }
 
+// QueryHostChainConfigRequest
 message QueryHostChainConfigRequest { string ibc_denom = 1; }
 
+// QueryHostChainConfigResponse
 message QueryHostChainConfigResponse {
   HostChainFeeAbsConfig host_chain_config = 1 [
     (gogoproto.moretags) = "yaml:\"host_chain_config\"",
@@ -50,6 +52,7 @@ message QueryHostChainConfigResponse {
 // RPC method.
 message QueryOsmosisArithmeticTwapRequest { string ibc_denom = 1; }
 
+// QueryOsmosisArithmeticTwapResponse
 message QueryOsmosisArithmeticTwapResponse {
   string arithmetic_twap = 1 [
     (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
@@ -62,6 +65,7 @@ message QueryOsmosisArithmeticTwapResponse {
 // method.
 message QueryFeeabsModuleBalacesRequest {}
 
+// QueryFeeabsModuleBalacesResponse
 message QueryFeeabsModuleBalacesResponse {
   repeated cosmos.base.v1beta1.Coin balances = 1 [
     (gogoproto.nullable) = false,
@@ -71,8 +75,10 @@ message QueryFeeabsModuleBalacesResponse {
   string address = 2;
 }
 
+// AllQueryHostChainConfigRequest
 message AllQueryHostChainConfigRequest {}
 
+// AllQueryHostChainConfigResponse
 message AllQueryHostChainConfigResponse {
   repeated HostChainFeeAbsConfig all_host_chain_config = 1 [
     (gogoproto.moretags) = "yaml:\"all_host_chain_config\"",

@@ -3,11 +3,11 @@ package feeabstraction.feeabs.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
-import "google/api/annotations.proto";
 import "tendermint/abci/types.proto";
 
 option go_package = "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types";
 
+// QueryArithmeticTwapToNowRequest
 message QueryArithmeticTwapToNowRequest {
   uint64 pool_id = 1;
   string base_asset = 2;
@@ -19,6 +19,7 @@ message QueryArithmeticTwapToNowRequest {
   ];
 }
 
+// QueryArithmeticTwapToNowResponse
 message QueryArithmeticTwapToNowResponse {
   string arithmetic_twap = 1 [
     (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
@@ -27,6 +28,7 @@ message QueryArithmeticTwapToNowResponse {
   ];
 }
 
+// InterchainQueryRequest
 message InterchainQueryRequest {
   bytes data = 1;
   string path = 2;
@@ -43,6 +45,7 @@ message InterchainQueryPacketData {
 // non-deterministic fields left empty (e.g. Codespace, Log, Info and ...).
 message InterchainQueryPacketAck { bytes data = 1; }
 
+// InterchainQueryRequestPacket
 message InterchainQueryRequestPacket {
   repeated InterchainQueryRequest requests = 1 [ (gogoproto.nullable) = false ];
 }

@@ -28,6 +28,7 @@ var _ = time.Kitchen
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// EpochInfo defines information of a epoch
 type EpochInfo struct {
 	// identifier is a unique reference to this particular timer.
 	Identifier string `protobuf:"bytes,1,opt,name=identifier,proto3" json:"identifier,omitempty"`
@@ -153,6 +154,7 @@ func (m *EpochInfo) GetCurrentEpochStartHeight() int64 {
 	return 0
 }
 
+// ExponentialBackoff defines backoff epoch
 type ExponentialBackoff struct {
 	Jump        int64 `protobuf:"varint,1,opt,name=jump,proto3" json:"jump,omitempty"`
 	FutureEpoch int64 `protobuf:"varint,2,opt,name=future_epoch,json=futureEpoch,proto3" json:"future_epoch,omitempty"`

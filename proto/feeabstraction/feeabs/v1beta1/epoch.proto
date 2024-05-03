@@ -7,6 +7,7 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types";
 
+// EpochInfo defines information of a epoch
 message EpochInfo {
   // identifier is a unique reference to this particular timer.
   string identifier = 1;
@@ -64,6 +65,7 @@ message EpochInfo {
   int64 current_epoch_start_height = 8;
 }
 
+// ExponentialBackoff defines backoff epoch
 message ExponentialBackoff {
   int64 jump = 1;
   int64 future_epoch = 2;
