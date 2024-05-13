@@ -133,6 +133,9 @@ ictest-feeabs:
 ictest-query-osmosis-twap:
 	cd tests/interchaintest && go test -timeout=25m -race -v -run TestQueryOsmosisTwap .
 
+ictest-ibc-custom:
+	cd tests/interchaintest && go test -timeout=25m -race -v -run TestFeeabsGaiaIBCTransferWithIBCFee .
+
 # ictest-feeabs-ibc-transfer:
 # 		cd tests/interchaintest && go test -timeout=25m -race -v -run  TestIBCTransferWithFeeAbs .
 

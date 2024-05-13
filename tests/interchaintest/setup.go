@@ -80,7 +80,7 @@ var (
 	pathFeeabsGaia      = "feeabs-gaia"
 	pathFeeabsOsmosis   = "feeabs-osmosis"
 	pathOsmosisGaia     = "osmosis-gaia"
-	genesisWalletAmount = math.NewInt(10_000_000)
+	genesisWalletAmount = math.NewInt(100_000_000_000)
 	amountToSend        = math.NewInt(1_000_000_000)
 )
 
@@ -233,8 +233,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 		_ = ic.Close()
 	})
 
-	const userFunds = int64(10_000_000_000)
-	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), userFunds, feeabs, gaia, osmosis)
+	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), genesisWalletAmount.Int64(), feeabs, gaia, osmosis)
 
 	// rly feeabs-osmo
 	// Generate new path
