@@ -16,7 +16,7 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v7/testutil"
 	"github.com/stretchr/testify/require"
 
-	feeabsCli "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/feeabs"
+	feeabsCli "github.com/osmosis-labs/fee-abstraction/v7/tests/interchaintest/feeabs"
 )
 
 func TestFeeAbs(t *testing.T) {

@@ -8,7 +8,7 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/stretchr/testify/require"
 
-	feeabsCli "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/feeabs"
+	feeabsCli "github.com/osmosis-labs/fee-abstraction/v7/tests/interchaintest/feeabs"
 )
 
 func TestHostZoneProposal(t *testing.T) {
