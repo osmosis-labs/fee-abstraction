@@ -123,6 +123,27 @@ func GetDockerImageInfo() (repo, version string) {
 	return repo, branchVersion
 }
 
+func modifyGenesisWhitelistTwapQueryOsmosis() func(ibc.ChainConfig, []byte) ([]byte, error) {
+	return func(chainConfig ibc.ChainConfig, genbz []byte) ([]byte, error) {
+		g := make(map[string]interface{})
+		if err := json.Unmarshal(genbz, &g); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal genesis file: %w", err)
+		}
+		// "interchainquery":{"host_port":"icqhost","params":{"allow_queries":[],"host_enabled":true}}
+		whitelist := "/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow"
+		//    failed to start chains: failed to start chain osmosis-3: failed to set whitelist in genesis json: index out of range: 0 (path element idx: 4)
+		if err := dyno.Append(g, whitelist, "app_state", "interchainquery", "params", "allow_queries"); err != nil {
+			return nil, fmt.Errorf("failed to set whitelist in genesis json: %w", err)
+		}
+		fmt.Println("Genesis file updated", g)
+		out, err := json.Marshal(g)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal genesis bytes to json: %w", err)
+		}
+		return out, nil
+	}
+}
+
 func modifyGenesisShortProposals(votingPeriod string, maxDepositPeriod string, queryEpochTime string) func(ibc.ChainConfig, []byte) ([]byte, error) {
 	return func(chainConfig ibc.ChainConfig, genbz []byte) ([]byte, error) {
 		g := make(map[string]interface{})
@@ -186,6 +207,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 			ChainConfig: ibc.ChainConfig{
 				GasPrices:      "0.005uosmo",
 				EncodingConfig: osmosisEncoding(),
+				ModifyGenesis:  modifyGenesisWhitelistTwapQueryOsmosis(),
 			},
 			NumValidators: &numVals,
 			NumFullNodes:  &numFullNodes,

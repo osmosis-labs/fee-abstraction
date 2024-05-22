@@ -7,7 +7,6 @@ import (
 	"os"
 	"path"
 	"testing"
-	"time"
 
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
@@ -155,7 +154,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	height, err := feeabs.Height(ctx)
 	require.NoError(t, err)
 
-	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, paramTx.ProposalID, cosmos.ProposalStatusPassed)
+	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+20, paramTx.ProposalID, cosmos.ProposalStatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
 	_, err = feeabsCli.AddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName(), "./proposal/add_host_zone.json")
@@ -173,16 +172,13 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	allHost, err := feeabsCli.QueryAllHostZoneConfig(feeabs, ctx)
 	require.NoError(t, err)
 	fmt.Printf("QueryAllHostZoneConfig %+v", allHost)
-	err = testutil.WaitForBlocks(ctx, 15, feeabs)
+	err = testutil.WaitForBlocks(ctx, 30, feeabs)
 	require.NoError(t, err)
-	time.Sleep(180 * time.Second)
 	twapOsmosis, err := feeabsCli.QueryOsmosisArithmeticTwap(feeabs, ctx, stakeOnOsmosis)
 	require.NoError(t, err)
 	fmt.Println(twapOsmosis)
 
 	twap, err := feeabsCli.QueryOsmosisArithmeticTwapOsmosis(osmosis, ctx, "1", stakeOnOsmosis)
-	fmt.Println(err)
 	fmt.Println(twap)
-
 	require.NoError(t, err)
 }
