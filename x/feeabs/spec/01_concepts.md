@@ -13,4 +13,4 @@ Fee-abs implementation:
 
 - Fee-abs module imported to the customer chain.
 
-The implememtation also uses Osmosis swap router and async-icq module which are already deployed on Osmosis testnet.
+The implementation also uses Osmosis swap router and async-icq module which are already deployed on Osmosis testnet.

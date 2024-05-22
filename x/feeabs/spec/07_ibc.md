@@ -56,7 +56,7 @@ This message is expected to fail if:
 - `Receiver` is empty.
 - `TimeoutHeight` and `TimeoutTimestamp` are both zero.
 
-Feeabs module will send an ibc transfer message with a sepecific data in `Memo` field. This `Memo` field data will be used in Ibc transfer middleware on counterparty chain to swap the amount of ibc token to native token on Osmosis.
+Feeabs module will send an ibc transfer message with specific data in `Memo` field. This `Memo` field data will be used in Ibc transfer middleware on counterparty chain to swap the amount of ibc token to native token on Osmosis.
 
 # Host Chain
 
@@ -64,7 +64,7 @@ Host chain is the swap service provider that fee abstraction uses to swap a toke
 
 Fee Abstraction connection to host chain should always be kept alive unless specified FROZEN, as this is crucial to the normal function of fee abstraction.
 
-A host chain config for fee abstraction will contains:
+A host chain config for fee abstraction will contain:
 
 ```proto
 enum HostChainFeeAbsStatus {
