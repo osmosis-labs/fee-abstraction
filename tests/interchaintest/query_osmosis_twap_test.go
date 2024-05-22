@@ -66,13 +66,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddress, msg)
 	require.NoError(t, err)
 
-	// Create pool Osmosis(uatom)/Osmosis(stake) on Osmosis
-	// denomTrace := transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisGaia.PortID, channOsmosisGaia.ChannelID, gaia.Config().Denom))
-	// uatomOnOsmosis := denomTrace.IBCDenom()
-	// osmosisUserBalance, err := osmosis.GetBalance(ctx, sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), uatomOnOsmosis)
-	// require.NoError(t, err)
-	// require.Equal(t, amountToSend, osmosisUserBalance)
-
+	// Create pool Osmosis(stake)/uosmo on Osmosis
 	denomTrace := transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisFeeabs.PortID, channOsmosisFeeabs.ChannelID, feeabs.Config().Denom))
 	stakeOnOsmosis := denomTrace.IBCDenom()
 	osmosisUserBalance, err := osmosis.GetBalance(ctx, sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), stakeOnOsmosis)
@@ -103,23 +97,8 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	res := QuerySmartMsgResponse{}
 	err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, &res)
 	require.NoError(t, err)
-	// // propose_pfm for gaia
-	// _, err = feeabsCli.SetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "gaia"}}`, uatomOnOsmosis)
-	// require.NoError(t, err)
-	// err = testutil.WaitForBlocks(ctx, 15, feeabs, gaia, osmosis)
-	// require.NoError(t, err)
-	// queryMsg = QuerySmartMsg{
-	// 	Packet: HasPacketForwarding{
-	// 		Chain: "gaia",
-	// 	},
-	// }
-	// res = QuerySmartMsgResponse{}
-	// err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, &res)
-	// require.NoError(t, err)
 
-	// denomTrace = transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channFeeabsGaia.PortID, channFeeabsGaia.ChannelID, gaia.Config().Denom))
-	// uatomOnFeeabs := denomTrace.IBCDenom()
-
+	// propose to change feeabs parameters accordingly to the ibcdenom
 	curDir, _ := os.Getwd()
 	paramChangePath := path.Join(curDir, "proposal", "proposal.json")
 
@@ -169,11 +148,15 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+20, "2", cosmos.ProposalStatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 
+	// ensure that the host zone is added
 	allHost, err := feeabsCli.QueryAllHostZoneConfig(feeabs, ctx)
 	require.NoError(t, err)
 	fmt.Printf("QueryAllHostZoneConfig %+v", allHost)
-	err = testutil.WaitForBlocks(ctx, 30, feeabs)
+
+	// try to query both via osmosis client and by interchainquery
+	err = testutil.WaitForBlocks(ctx, 15, feeabs)
 	require.NoError(t, err)
+
 	twapOsmosis, err := feeabsCli.QueryOsmosisArithmeticTwap(feeabs, ctx, stakeOnOsmosis)
 	require.NoError(t, err)
 	fmt.Println(twapOsmosis)
