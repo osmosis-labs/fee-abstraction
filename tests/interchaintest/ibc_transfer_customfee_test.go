@@ -157,10 +157,6 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	_, err = feeabsCli.QueryAllHostZoneConfig(feeabs, ctx)
 	require.NoError(t, err)
 
-	twap, err := feeabsCli.QueryOsmosisArithmeticTwap(feeabs, ctx, uatomOnOsmosis)
-	require.NoError(t, err)
-	fmt.Println(twap)
-
 	// Wait a few blocks for relayer to start and for user accounts to be created
 	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia)
 	require.NoError(t, err)
@@ -170,29 +166,6 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 
 	feeabsUserAddr := sdktypes.MustBech32ifyAddressBytes(feeabs.Config().Bech32Prefix, feeabsUser.Address())
 	gaiaUserAddr := sdktypes.MustBech32ifyAddressBytes(gaia.Config().Bech32Prefix, gaiaUser.Address())
-
-	// transferTx, err := feeabs.SendIBCTransfer(ctx, channel.ChannelID, feeabsUserAddr, transfer, ibc.TransferOptions{})
-	// require.NoError(t, err)
-
-	// feeabsHeight, err := feeabs.Height(ctx)
-	// require.NoError(t, err)
-
-	// // Poll for the ack to know the transfer was successful
-	// _, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+10, transferTx.Packet)
-	// require.NoError(t, err)
-
-	// // Get the IBC denom for stake on Gaia
-	// feeabsTokenDenom := transfertypes.GetPrefixedDenom(channel.Counterparty.PortID, channel.Counterparty.ChannelID, feeabs.Config().Denom)
-	// feeabsIBCDenom := transfertypes.ParseDenomTrace(feeabsTokenDenom).IBCDenom()
-
-	// // Assert that the funds are no longer present in user acc on feeabs and are in the user acc on Gaia
-	// feeabsUpdateBal, err := feeabs.GetBalance(ctx, feeabsUserAddr, feeabs.Config().Denom)
-	// require.NoError(t, err)
-	// require.Equal(t, feeabsOrigBal.Sub(transferAmount), feeabsUpdateBal)
-
-	// gaiaUpdateBal, err := gaia.GetBalance(ctx, gaiaUserAddr, feeabsIBCDenom)
-	// require.NoError(t, err)
-	// require.Equal(t, transferAmount, gaiaUpdateBal)
 
 	// Compose an IBC transfer and send from Gaia -> Feeabs
 
@@ -209,7 +182,7 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	gaiaInitialBal, err := gaia.GetBalance(ctx, gaiaUserAddr, gaia.Config().Denom)
 	require.NoError(t, err)
 
-	transferTx, err := gaia.SendIBCTransfer(ctx, channFeeabsGaia.ChannelID, gaiaUser.KeyName(), transfer, ibc.TransferOptions{})
+	transferTx, err := gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName(), transfer, ibc.TransferOptions{})
 	require.NoError(t, err)
 
 	gaiaHeight, err := gaia.Height(ctx)

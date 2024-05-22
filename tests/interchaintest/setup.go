@@ -131,7 +131,6 @@ func modifyGenesisWhitelistTwapQueryOsmosis() func(ibc.ChainConfig, []byte) ([]b
 		}
 		// "interchainquery":{"host_port":"icqhost","params":{"allow_queries":[],"host_enabled":true}}
 		whitelist := "/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow"
-		//    failed to start chains: failed to start chain osmosis-3: failed to set whitelist in genesis json: index out of range: 0 (path element idx: 4)
 		if err := dyno.Append(g, whitelist, "app_state", "interchainquery", "params", "allow_queries"); err != nil {
 			return nil, fmt.Errorf("failed to set whitelist in genesis json: %w", err)
 		}
