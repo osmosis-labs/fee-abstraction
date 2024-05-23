@@ -72,7 +72,7 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v3
 
-      - run: make ictest-custom
+      - run: make ictest-ibc-custom
         env:
           BRANCH_CI: 'latest'
 
