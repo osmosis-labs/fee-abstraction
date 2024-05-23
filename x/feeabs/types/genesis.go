@@ -19,7 +19,7 @@ func DefaultGenesis() *GenesisState {
 func (gs GenesisState) Validate() error {
 	err := gs.Params.Validate()
 	if err != nil {
-		return fmt.Errorf("invalid params %s", err)
+		return fmt.Errorf("invalid params %w", err)
 	}
 
 	// Validate epochs genesis
