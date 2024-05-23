@@ -118,7 +118,7 @@ ictest-basic:
 
 # Executes IBC tests via interchaintest
 ictest-ibc:
-	cd tests/interchaintest && go test -timeout=25m -race -v -run  '^TestFeeabsGaiaIBCTransfer$$'' .
+	cd tests/interchaintest && go test -timeout=25m -race -v -run  '^TestFeeabsGaiaIBCTransfer$$' .
 
 # Executes IBC tests via interchaintest
 ictest-packet-forward:
