@@ -138,6 +138,7 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 
 	gaiaTokenDenom := transfertypes.GetPrefixedDenom(channFeeabsGaia.PortID, channFeeabsGaia.ChannelID, gaia.Config().Denom)
 	gaiaIBCDenom := transfertypes.ParseDenomTrace(gaiaTokenDenom).IBCDenom()
+	fmt.Println("gaiaIBCDenom", gaiaIBCDenom)
 
 	transferAmount := math.NewInt(1_000)
 	transfer := ibc.WalletAmount{
@@ -176,18 +177,18 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	ibcFee := sdk.NewCoin(gaiaIBCDenom, sdk.NewInt(1000))
 	transfer = ibc.WalletAmount{
 		Address: gaiaUserAddr,
-		Denom:   gaia.Config().Denom,
+		Denom:   feeabs.Config().Denom,
 		Amount:  transferAmount,
 	}
 
-	_, err = SendIBCTransferWithCustomFee(feeabs, ctx, feeabsUser.KeyName(), channFeeabsGaia.ChannelID, transfer, sdk.Coins{ibcFee})
+	customTransferTx, err := SendIBCTransferWithCustomFee(feeabs, ctx, feeabsUser.KeyName(), channFeeabsGaia.ChannelID, transfer, sdk.Coins{ibcFee})
 	require.NoError(t, err)
 
 	feeabsHeight, err := feeabs.Height(ctx)
 	require.NoError(t, err)
 
 	// Poll for the ack to know the transfer was successful
-	_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+20, transferTx.Packet)
+	_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+20, customTransferTx.Packet)
 	require.NoError(t, err)
 
 	// Get the IBC denom for stake on Gaia

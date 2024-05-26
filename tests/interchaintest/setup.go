@@ -70,8 +70,8 @@ var (
 		Bech32Prefix:        "feeabs",
 		Denom:               "stake",
 		CoinType:            "118",
-		GasPrices:           "0.00stake",
-		GasAdjustment:       1.1,
+		GasPrices:           "0.005stake",
+		GasAdjustment:       1.5,
 		TrustingPeriod:      "112h",
 		NoHostMount:         false,
 		ModifyGenesis:       modifyGenesisShortProposals(votingPeriod, maxDepositPeriod, queryEpochTime),
@@ -182,7 +182,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 
 	// Create chain factory with Feeabs and Gaia
 	numVals := 1
-	numFullNodes := 1
+	numFullNodes := 0
 
 	cf := interchaintest.NewBuiltinChainFactory(zaptest.NewLogger(t), []*interchaintest.ChainSpec{
 		{
