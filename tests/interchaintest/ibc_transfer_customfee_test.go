@@ -3,21 +3,19 @@ package interchaintest
 import (
 	"context"
 	"fmt"
-	"os"
-	"path"
+	"strconv"
 	"testing"
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
+	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 	feeabsCli "github.com/osmosis-labs/fee-abstraction/v7/tests/interchaintest/feeabs"
+	"github.com/osmosis-labs/fee-abstraction/v7/tests/interchaintest/tendermint"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v7/ibc"
 	"github.com/strangelove-ventures/interchaintest/v7/testutil"
 	"github.com/stretchr/testify/require"
-
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 // TestFeeabsGaiaIBCTransfer spins up a Feeabs and Gaia network, initializes an IBC connection between them,
@@ -33,7 +31,7 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 
 	feeabsUser, _, osmosisUser := users[0], users[1], users[2]
 
-	channFeeabsOsmosis, channOsmosisFeeabs, channFeeabsGaia, channGaiaFeeabs, channOsmosisGaia, channGaiaOsmosis := channels[0], channels[1], channels[2], channels[3], channels[4], channels[5]
+	channFeeabsOsmosis, channOsmosisFeeabs, channFeeabsGaia, channGaiaFeeabs, channOsmosisGaia, channGaiaOsmosis, channFeeabsOsmosisICQ := channels[0], channels[1], channels[2], channels[3], channels[4], channels[5], channels[6]
 
 	// Setup contract on Osmosis
 	// Store code crosschain Registry
@@ -84,8 +82,8 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	require.Equal(t, amountToSend, osmosisUserBalance)
 
 	poolID, err := feeabsCli.CreatePool(osmosis, ctx, osmosisUser.KeyName(), cosmos.OsmosisPoolParams{
-		Weights:        fmt.Sprintf("5%s,5%s", osmosis.Config().Denom, stakeOnOsmosis),
-		InitialDeposit: fmt.Sprintf("95000000%s,950000000%s", osmosis.Config().Denom, stakeOnOsmosis),
+		Weights:        fmt.Sprintf("5%s,5%s", stakeOnOsmosis, osmosis.Config().Denom),
+		InitialDeposit: fmt.Sprintf("95000000%s,950000000%s", stakeOnOsmosis, osmosis.Config().Denom),
 		SwapFee:        "0.01",
 		ExitFee:        "0",
 		FutureGovernor: "",
@@ -121,39 +119,8 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, &res)
 	require.NoError(t, err)
 
-	denomTrace = transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channFeeabsGaia.PortID, channFeeabsGaia.ChannelID, gaia.Config().Denom))
-	// uatomOnFeeabs := denomTrace.IBCDenom()
-
-	current_directory, _ := os.Getwd()
-	param_change_path := path.Join(current_directory, "proposal", "proposal.json")
-
-	changeParamProposal, err := paramsutils.ParseParamChangeProposalJSON(feeabs.Config().EncodingConfig.Amino, param_change_path)
-	require.NoError(t, err)
-
-	paramTx, err := feeabsCli.ParamChangeProposal(feeabs, ctx, feeabsUser.KeyName(), &changeParamProposal)
-	require.NoError(t, err, "error submitting param change proposal tx")
-
-	err = feeabs.VoteOnProposalAllValidators(ctx, paramTx.ProposalID, cosmos.ProposalVoteYes)
-	require.NoError(t, err, "failed to submit votes")
-
-	height, err := feeabs.Height(ctx)
-	require.NoError(t, err)
-
-	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, paramTx.ProposalID, cosmos.ProposalStatusPassed)
-	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
-
-	_, err = feeabsCli.AddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName(), "./proposal/add_host_zone.json")
-	require.NoError(t, err)
-
-	err = feeabs.VoteOnProposalAllValidators(ctx, "2", cosmos.ProposalVoteYes)
-	require.NoError(t, err, "failed to submit votes")
-
-	height, err = feeabs.Height(ctx)
-	require.NoError(t, err)
-
-	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, "2", cosmos.ProposalStatusPassed)
-	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
-
+	ParamChangeProposal(t, ctx, feeabs, feeabsUser, &channFeeabsOsmosis, &channFeeabsOsmosisICQ, stakeOnOsmosis)
+	AddHostZoneProposal(t, ctx, feeabs, feeabsUser)
 	_, err = feeabsCli.QueryAllHostZoneConfig(feeabs, ctx)
 	require.NoError(t, err)
 
@@ -169,16 +136,19 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 
 	// Compose an IBC transfer and send from Gaia -> Feeabs
 
-	gaiaTokenDenom := transfertypes.GetPrefixedDenom(channFeeabsGaia.ChannelID, channFeeabsGaia.PortID, gaia.Config().Denom)
+	gaiaTokenDenom := transfertypes.GetPrefixedDenom(channFeeabsGaia.PortID, channFeeabsGaia.ChannelID, gaia.Config().Denom)
 	gaiaIBCDenom := transfertypes.ParseDenomTrace(gaiaTokenDenom).IBCDenom()
 
 	transferAmount := math.NewInt(1_000)
 	transfer := ibc.WalletAmount{
-		Address: gaiaUserAddr,
+		Address: feeabsUserAddr,
 		Denom:   gaia.Config().Denom,
 		Amount:  transferAmount,
 	}
 
+	// Compose an IBC transfer and send from Gaia -> Feeabs
+	feeabsInitialBal, err := feeabs.GetBalance(ctx, feeabsUserAddr, gaiaIBCDenom)
+	require.NoError(t, err)
 	gaiaInitialBal, err := gaia.GetBalance(ctx, gaiaUserAddr, gaia.Config().Denom)
 	require.NoError(t, err)
 
@@ -195,11 +165,11 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	// Assert that the ATOM funds are no longer present in user acc on Gaia and are in the user acc on Feeabs
 	feeabsUpdateBal, err := feeabs.GetBalance(ctx, feeabsUserAddr, gaiaIBCDenom)
 	require.NoError(t, err)
-	require.Equal(t, transferAmount, feeabsUpdateBal)
+	require.Equal(t, feeabsInitialBal.Add(transferAmount), feeabsUpdateBal)
 
 	gaiaUpdateBal, err := gaia.GetBalance(ctx, gaiaUserAddr, gaia.Config().Denom)
 	require.NoError(t, err)
-	require.LessOrEqual(t, gaiaInitialBal.Sub(transferAmount), gaiaUpdateBal)
+	require.LessOrEqual(t, gaiaInitialBal.Sub(transferAmount).Int64(), gaiaUpdateBal.Int64())
 
 	// Compose an IBC transfer and send from Feeabs -> Gaia
 	transferAmount = math.NewInt(1_000)
@@ -217,7 +187,7 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	require.NoError(t, err)
 
 	// Poll for the ack to know the transfer was successful
-	_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+10, transferTx.Packet)
+	_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+20, transferTx.Packet)
 	require.NoError(t, err)
 
 	// Get the IBC denom for stake on Gaia
@@ -231,7 +201,7 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	require.Equal(t, transferAmount, stakeOnGaiaBalance)
 }
 
-func SendIBCTransferWithCustomFee(c *cosmos.CosmosChain, ctx context.Context, keyName string, channelID string, amount ibc.WalletAmount, fees sdk.Coins) (string, error) {
+func SendIBCTransferWithCustomFee(c *cosmos.CosmosChain, ctx context.Context, keyName string, channelID string, amount ibc.WalletAmount, fees sdk.Coins) (ibc.Tx, error) {
 
 	tn := c.Validators[0]
 	if len(c.FullNodes) > 0 {
@@ -241,5 +211,55 @@ func SendIBCTransferWithCustomFee(c *cosmos.CosmosChain, ctx context.Context, ke
 		"ibc-transfer", "transfer", "transfer", channelID,
 		amount.Address, fmt.Sprintf("%s%s", amount.Amount.String(), amount.Denom),
 	}
-	return tn.ExecTx(ctx, keyName, command...)
+	var tx ibc.Tx
+	txHash, err := tn.ExecTx(ctx, keyName, command...)
+
+	if err != nil {
+		return tx, fmt.Errorf("send ibc transfer: %w", err)
+	}
+	txResp, err := c.GetTransaction(txHash)
+	if err != nil {
+		return tx, fmt.Errorf("failed to get transaction %s: %w", txHash, err)
+	}
+	if txResp.Code != 0 {
+		return tx, fmt.Errorf("error in transaction (code: %d): %s", txResp.Code, txResp.RawLog)
+	}
+	tx.Height = uint64(txResp.Height)
+	tx.TxHash = txHash
+	// In cosmos, user is charged for entire gas requested, not the actual gas used.
+	tx.GasSpent = txResp.GasWanted
+
+	const evType = "send_packet"
+	events := txResp.Events
+
+	var (
+		seq, _           = tendermint.AttributeValue(events, evType, "packet_sequence")
+		srcPort, _       = tendermint.AttributeValue(events, evType, "packet_src_port")
+		srcChan, _       = tendermint.AttributeValue(events, evType, "packet_src_channel")
+		dstPort, _       = tendermint.AttributeValue(events, evType, "packet_dst_port")
+		dstChan, _       = tendermint.AttributeValue(events, evType, "packet_dst_channel")
+		timeoutHeight, _ = tendermint.AttributeValue(events, evType, "packet_timeout_height")
+		timeoutTs, _     = tendermint.AttributeValue(events, evType, "packet_timeout_timestamp")
+		data, _          = tendermint.AttributeValue(events, evType, "packet_data")
+	)
+	tx.Packet.SourcePort = srcPort
+	tx.Packet.SourceChannel = srcChan
+	tx.Packet.DestPort = dstPort
+	tx.Packet.DestChannel = dstChan
+	tx.Packet.TimeoutHeight = timeoutHeight
+	tx.Packet.Data = []byte(data)
+
+	seqNum, err := strconv.Atoi(seq)
+	if err != nil {
+		return tx, fmt.Errorf("invalid packet sequence from events %s: %w", seq, err)
+	}
+	tx.Packet.Sequence = uint64(seqNum)
+
+	timeoutNano, err := strconv.ParseUint(timeoutTs, 10, 64)
+	if err != nil {
+		return tx, fmt.Errorf("invalid packet timestamp timeout %s: %w", timeoutTs, err)
+	}
+	tx.Packet.TimeoutTimestamp = ibc.Nanoseconds(timeoutNano)
+
+	return tx, nil
 }
