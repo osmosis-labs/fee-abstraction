@@ -30,7 +30,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 
 	feeabsUser, _, osmosisUser := users[0], users[1], users[2]
 
-	channFeeabsOsmosis, channOsmosisFeeabs, channFeeabsGaia, channGaiaFeeabs, channOsmosisGaia, channGaiaOsmosis, channFeeabsOsmosisICQ, _ := channels[0], channels[1], channels[2], channels[3], channels[4], channels[5], channels[6], channels[7]
+	channFeeabsOsmosis, channOsmosisFeeabs, channFeeabsGaia, channGaiaFeeabs, channOsmosisGaia, channGaiaOsmosis, channFeeabsOsmosisICQ := channels[0], channels[1], channels[2], channels[3], channels[4], channels[5], channels[6]
 
 	// Setup contract on Osmosis
 	// Store code crosschain Registry
@@ -100,19 +100,21 @@ func TestQueryOsmosisTwap(t *testing.T) {
 
 	ParamChangeProposal(t, ctx, feeabs, feeabsUser, &channFeeabsOsmosis, &channFeeabsOsmosisICQ, stakeOnOsmosis)
 	AddHostZoneProposal(t, ctx, feeabs, feeabsUser)
+
 	// ensure that the host zone is added
 	allHost, err := feeabsCli.QueryAllHostZoneConfig(feeabs, ctx)
 	require.NoError(t, err)
 	fmt.Printf("QueryAllHostZoneConfig %+v", allHost)
-
-	// try to query both via osmosis client and by interchainquery
 	err = testutil.WaitForBlocks(ctx, 15, feeabs)
 	require.NoError(t, err)
 
-	twapOsmosis, err := feeabsCli.QueryOsmosisArithmeticTwap(feeabs, ctx, stakeOnOsmosis)
+	// query the twap of uosmo/stake, stored in feeabs module
+	osmoOnFeeabs := GetOsmoOnFeeabs(channFeeabsOsmosis, osmosis.Config().Denom)
+	twapOsmosis, err := feeabsCli.QueryOsmosisArithmeticTwap(feeabs, ctx, osmoOnFeeabs)
 	require.NoError(t, err)
 	fmt.Println(twapOsmosis)
 
+	// query the twap of uosmo/stake
 	twap, err := feeabsCli.QueryOsmosisArithmeticTwapOsmosis(osmosis, ctx, "1", stakeOnOsmosis)
 	fmt.Println(twap)
 	require.NoError(t, err)
