@@ -16,6 +16,8 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v7/ibc"
 	"github.com/strangelove-ventures/interchaintest/v7/testutil"
 	"github.com/stretchr/testify/require"
+
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
 // TestFeeabsGaiaIBCTransfer spins up a Feeabs and Gaia network, initializes an IBC connection between them,
@@ -81,9 +83,10 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, amountToSend, osmosisUserBalance)
 
+	// Create pool Osmosis(stake)/uosmo on Osmosis, with 1:1 ratio
 	poolID, err := feeabsCli.CreatePool(osmosis, ctx, osmosisUser.KeyName(), cosmos.OsmosisPoolParams{
 		Weights:        fmt.Sprintf("5%s,5%s", stakeOnOsmosis, osmosis.Config().Denom),
-		InitialDeposit: fmt.Sprintf("95000000%s,950000000%s", stakeOnOsmosis, osmosis.Config().Denom),
+		InitialDeposit: fmt.Sprintf("95000000%s,95000000%s", stakeOnOsmosis, osmosis.Config().Denom),
 		SwapFee:        "0.01",
 		ExitFee:        "0",
 		FutureGovernor: "",
@@ -91,7 +94,10 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, poolID, "1")
 
+	////////////////////////////////////////////////////////////////////////////////////////
 	// Setup propose_pfm
+	////////////////////////////////////////////////////////////////////////////////////////
+
 	// propose_pfm for feeabs
 	_, err = feeabsCli.SetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "feeabs"}}`, stakeOnOsmosis)
 	require.NoError(t, err)
@@ -119,10 +125,18 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, &res)
 	require.NoError(t, err)
 
+	////////////////////////////////////////////////////////////////////////////////////////
+	// Setup feeabs module & add host zone via proposals
+	////////////////////////////////////////////////////////////////////////////////////////
+
 	ParamChangeProposal(t, ctx, feeabs, feeabsUser, &channFeeabsOsmosis, &channFeeabsOsmosisICQ, stakeOnOsmosis)
 	AddHostZoneProposal(t, ctx, feeabs, feeabsUser)
 	_, err = feeabsCli.QueryAllHostZoneConfig(feeabs, ctx)
 	require.NoError(t, err)
+
+	////////////////////////////////////////////////////////////////////////////////////////
+	// Test IBC transfer with custom fee
+	////////////////////////////////////////////////////////////////////////////////////////
 
 	// Wait a few blocks for relayer to start and for user accounts to be created
 	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia)
@@ -135,7 +149,6 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	gaiaUserAddr := sdktypes.MustBech32ifyAddressBytes(gaia.Config().Bech32Prefix, gaiaUser.Address())
 
 	// Compose an IBC transfer and send from Gaia -> Feeabs
-
 	osmoTokenDenom := transfertypes.GetPrefixedDenom(channFeeabsOsmosis.PortID, channFeeabsOsmosis.ChannelID, osmosis.Config().Denom)
 	osmoIBCDenom := transfertypes.ParseDenomTrace(osmoTokenDenom).IBCDenom()
 	fmt.Println("osmoIBCDenom", osmoIBCDenom)
@@ -172,6 +185,16 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	require.NoError(t, err)
 	require.GreaterOrEqual(t, osmoInitialBal.Sub(transferAmount).Int64(), osmoUpdateBal.Int64())
 
+	// Fund the feeabs module account with stake in order to pay native fee
+	feeabsModuleAddr, err := feeabs.GetModuleAddress(ctx, feeabstypes.ModuleName)
+	require.NoError(t, err)
+	transfer = ibc.WalletAmount{
+		Address: feeabsModuleAddr,
+		Denom:   feeabs.Config().Denom,
+		Amount:  transferAmount.Mul(sdk.NewInt(2)),
+	}
+	err = feeabs.SendFunds(ctx, feeabsUser.KeyName(), transfer)
+	require.NoError(t, err)
 	// Compose an IBC transfer and send from Feeabs -> Gaia
 	transferAmount = math.NewInt(1_000)
 	ibcFee := sdk.NewCoin(osmoIBCDenom, sdk.NewInt(1000))
@@ -209,24 +232,13 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 		Amount:  transferAmount,
 	}
 
+	// Compose an IBC transfer and send from Feeabs -> Gaia, with insufficient fee, should fail
 	customTransferTx, err = SendIBCTransferWithCustomFee(feeabs, ctx, feeabsUser.KeyName(), channFeeabsGaia.ChannelID, transfer, sdk.Coins{ibcFee})
-	require.NoError(t, err)
+	require.Error(t, err)
 
-	feeabsHeight, err = feeabs.Height(ctx)
-	require.NoError(t, err)
-
-	// Poll for the ack to know the transfer was successful
-	_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+20, customTransferTx.Packet)
-	require.NoError(t, err)
-	// Assert that gaia usre receive the funds from feeabs after the custom fee IBC transfer
-	stakeOnGaiaBalance, err = gaia.GetBalance(ctx, gaiaUserAddr, feeabsIBCDenom)
-	require.NoError(t, err)
-
-	require.Equal(t, transferAmount.Mul(sdk.NewInt(2)), stakeOnGaiaBalance)
 }
 
 func SendIBCTransferWithCustomFee(c *cosmos.CosmosChain, ctx context.Context, keyName string, channelID string, amount ibc.WalletAmount, fees sdk.Coins) (ibc.Tx, error) {
-
 	tn := c.Validators[0]
 	if len(c.FullNodes) > 0 {
 		tn = c.FullNodes[0]

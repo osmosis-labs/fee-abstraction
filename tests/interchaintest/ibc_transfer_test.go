@@ -155,7 +155,7 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	require.NoError(t, err)
 
 	// The feeabs account should have the original balance minus the transfer amount and the fee
-	require.GreaterOrEqual(t, feeabsOrigBal.Sub(transferAmount), feeabsUpdateBal)
+	require.GreaterOrEqual(t, feeabsOrigBal.Sub(transferAmount).Int64(), feeabsUpdateBal.Int64())
 
 	gaiaUpdateBal, err := gaia.GetBalance(ctx, gaiaUserAddr, feeabsIBCDenom)
 	require.NoError(t, err)
@@ -181,9 +181,9 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	// Assert that the funds are now back on feeabs and not on Gaia
 	feeabsBalAfterGettingBackToken, err := feeabs.GetBalance(ctx, feeabsUserAddr, feeabs.Config().Denom)
 	require.NoError(t, err)
-	require.Equal(t, feeabsUpdateBal.Add(transferAmount), feeabsBalAfterGettingBackToken)
+	require.Equal(t, feeabsUpdateBal.Add(transferAmount).Int64(), feeabsBalAfterGettingBackToken.Int64())
 
 	gaiaUpdateBal, err = gaia.GetBalance(ctx, gaiaUserAddr, feeabsIBCDenom)
 	require.NoError(t, err)
-	require.Equal(t, math.ZeroInt(), gaiaUpdateBal)
+	require.Equal(t, math.ZeroInt().Int64(), gaiaUpdateBal.Int64())
 }
