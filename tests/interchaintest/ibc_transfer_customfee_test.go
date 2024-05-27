@@ -136,45 +136,45 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 
 	// Compose an IBC transfer and send from Gaia -> Feeabs
 
-	gaiaTokenDenom := transfertypes.GetPrefixedDenom(channFeeabsGaia.PortID, channFeeabsGaia.ChannelID, gaia.Config().Denom)
-	gaiaIBCDenom := transfertypes.ParseDenomTrace(gaiaTokenDenom).IBCDenom()
-	fmt.Println("gaiaIBCDenom", gaiaIBCDenom)
+	osmoTokenDenom := transfertypes.GetPrefixedDenom(channFeeabsOsmosis.PortID, channFeeabsOsmosis.ChannelID, osmosis.Config().Denom)
+	osmoIBCDenom := transfertypes.ParseDenomTrace(osmoTokenDenom).IBCDenom()
+	fmt.Println("osmoIBCDenom", osmoIBCDenom)
 
 	transferAmount := math.NewInt(1_000)
 	transfer := ibc.WalletAmount{
 		Address: feeabsUserAddr,
-		Denom:   gaia.Config().Denom,
+		Denom:   osmosis.Config().Denom,
 		Amount:  transferAmount,
 	}
 
-	// Compose an IBC transfer and send from Gaia -> Feeabs
-	feeabsInitialBal, err := feeabs.GetBalance(ctx, feeabsUserAddr, gaiaIBCDenom)
+	// Compose an IBC transfer and send from Osmo -> Feeabs
+	feeabsInitialBal, err := feeabs.GetBalance(ctx, feeabsUserAddr, osmoIBCDenom)
 	require.NoError(t, err)
-	gaiaInitialBal, err := gaia.GetBalance(ctx, gaiaUserAddr, gaia.Config().Denom)
-	require.NoError(t, err)
-
-	transferTx, err := gaia.SendIBCTransfer(ctx, channGaiaFeeabs.ChannelID, gaiaUser.KeyName(), transfer, ibc.TransferOptions{})
+	osmoInitialBal, err := osmosis.GetBalance(ctx, osmosisUser.FormattedAddress(), osmosis.Config().Denom)
 	require.NoError(t, err)
 
-	gaiaHeight, err := gaia.Height(ctx)
+	transferTx, err := osmosis.SendIBCTransfer(ctx, channOsmosisFeeabs.ChannelID, osmosisUser.KeyName(), transfer, ibc.TransferOptions{})
+	require.NoError(t, err)
+
+	osmosisHeight, err := osmosis.Height(ctx)
 	require.NoError(t, err)
 
 	// Poll for the ack to know the transfer was successful
-	_, err = testutil.PollForAck(ctx, gaia, gaiaHeight, gaiaHeight+10, transferTx.Packet)
+	_, err = testutil.PollForAck(ctx, osmosis, osmosisHeight, osmosisHeight+10, transferTx.Packet)
 	require.NoError(t, err)
 
-	// Assert that the ATOM funds are no longer present in user acc on Gaia and are in the user acc on Feeabs
-	feeabsUpdateBal, err := feeabs.GetBalance(ctx, feeabsUserAddr, gaiaIBCDenom)
+	// Assert that the OSMO funds are deducted in user acc on Gaia and are in the user acc on Feeabs
+	feeabsUpdateBal, err := feeabs.GetBalance(ctx, feeabsUserAddr, osmoIBCDenom)
 	require.NoError(t, err)
 	require.Equal(t, feeabsInitialBal.Add(transferAmount), feeabsUpdateBal)
 
-	gaiaUpdateBal, err := gaia.GetBalance(ctx, gaiaUserAddr, gaia.Config().Denom)
+	osmoUpdateBal, err := osmosis.GetBalance(ctx, osmosisUser.FormattedAddress(), osmosis.Config().Denom)
 	require.NoError(t, err)
-	require.LessOrEqual(t, gaiaInitialBal.Sub(transferAmount).Int64(), gaiaUpdateBal.Int64())
+	require.GreaterOrEqual(t, osmoInitialBal.Sub(transferAmount).Int64(), osmoUpdateBal.Int64())
 
 	// Compose an IBC transfer and send from Feeabs -> Gaia
 	transferAmount = math.NewInt(1_000)
-	ibcFee := sdk.NewCoin(gaiaIBCDenom, sdk.NewInt(1000))
+	ibcFee := sdk.NewCoin(osmoIBCDenom, sdk.NewInt(1000))
 	transfer = ibc.WalletAmount{
 		Address: gaiaUserAddr,
 		Denom:   feeabs.Config().Denom,
@@ -200,6 +200,29 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, transferAmount, stakeOnGaiaBalance)
+
+	// Compose an IBC transfer and send from Feeabs -> Gaia, with insufficient fee, should fail
+	ibcFee = sdk.NewCoin(osmoIBCDenom, sdk.NewInt(1))
+	transfer = ibc.WalletAmount{
+		Address: gaiaUserAddr,
+		Denom:   feeabs.Config().Denom,
+		Amount:  transferAmount,
+	}
+
+	customTransferTx, err = SendIBCTransferWithCustomFee(feeabs, ctx, feeabsUser.KeyName(), channFeeabsGaia.ChannelID, transfer, sdk.Coins{ibcFee})
+	require.NoError(t, err)
+
+	feeabsHeight, err = feeabs.Height(ctx)
+	require.NoError(t, err)
+
+	// Poll for the ack to know the transfer was successful
+	_, err = testutil.PollForAck(ctx, feeabs, feeabsHeight, feeabsHeight+20, customTransferTx.Packet)
+	require.NoError(t, err)
+	// Assert that gaia usre receive the funds from feeabs after the custom fee IBC transfer
+	stakeOnGaiaBalance, err = gaia.GetBalance(ctx, gaiaUserAddr, feeabsIBCDenom)
+	require.NoError(t, err)
+
+	require.Equal(t, transferAmount.Mul(sdk.NewInt(2)), stakeOnGaiaBalance)
 }
 
 func SendIBCTransferWithCustomFee(c *cosmos.CosmosChain, ctx context.Context, keyName string, channelID string, amount ibc.WalletAmount, fees sdk.Coins) (ibc.Tx, error) {
@@ -210,7 +233,7 @@ func SendIBCTransferWithCustomFee(c *cosmos.CosmosChain, ctx context.Context, ke
 	}
 	command := []string{
 		"ibc-transfer", "transfer", "transfer", channelID,
-		amount.Address, fmt.Sprintf("%s%s", amount.Amount.String(), amount.Denom),
+		amount.Address, fmt.Sprintf("%s%s", amount.Amount.String(), amount.Denom), "--fees", fees.String(),
 	}
 	var tx ibc.Tx
 	txHash, err := tn.ExecTx(ctx, keyName, command...)

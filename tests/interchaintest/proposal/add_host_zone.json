@@ -2,7 +2,7 @@
   "title": "Add Fee Abbtraction Host Zone Proposal",
   "description": "Add Fee Abbtraction Host Zone",
   "host_chain_fee_abs_config": {
-    "ibc_denom": "ibc/3C3D7B3BE4ECC85A0E5B52A3AEC3B7DFC2AA9CA47C37821E57020D6807043BE9",
+    "ibc_denom": "ibc/0471F1C4E7AFD3F07702BEF6DC365268D64570F7C1FDC98EA6098DD6DE59817B",
     "osmosis_pool_token_denom_in": "uosmo",
     "pool_id": "1",
     "status": 0,

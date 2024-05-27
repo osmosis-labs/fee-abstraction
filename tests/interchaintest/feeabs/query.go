@@ -41,6 +41,7 @@ func QueryAllHostZoneConfig(c *cosmos.CosmosChain, ctx context.Context) (*AllQue
 	if err != nil {
 		return &AllQueryHostChainConfigResponse{}, err
 	}
+	fmt.Println(hostZoneConfig)
 
 	return &hostZoneConfig, nil
 }
