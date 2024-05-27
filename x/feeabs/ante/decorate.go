@@ -283,10 +283,13 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 
 				nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, feeCoinsNonZeroDenom, hostChainConfig)
 				if err != nil {
-					return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees")
+					return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "unable to calculate native fees from ibc fees: %s", err)
 				}
+				fmt.Println("nativeCoinsFees", nativeCoinsFees)
 				feeCoinsNonZeroDenom = nativeCoinsFees
 			}
+		} else {
+			return ctx, sdkerrors.Wrapf(errorstypes.ErrNotSupported, "should have only one fee denom in feeCoinsNonZeroDenom, got %s", feeCoinsNonZeroDenom.String())
 		}
 
 		// After replace the feeCoinsNonZeroDenom, feeCoinsNonZeroDenom must be in denom subset of nonZeroCoinFeesReq
@@ -306,7 +309,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		}
 
 		if feeCoinsLen == 0 {
-			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, feeRequired)
+			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "no fee provided, required: %s", feeRequired)
 		}
 		// After all the checks, the tx is confirmed:
 		// feeCoins denoms subset off feeRequired (or replaced with fee-abstraction)
