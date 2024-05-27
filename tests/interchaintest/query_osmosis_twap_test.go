@@ -178,3 +178,9 @@ func GetStakeOnOsmosis(channOsmosisFeeabs ibc.ChannelOutput, feeabsDenom string)
 	stakeOnOsmosis := denomTrace.IBCDenom()
 	return stakeOnOsmosis
 }
+
+func GetOsmoOnFeeabs(channFeeabsOsmosis ibc.ChannelOutput, osmosisDenom string) string {
+	denomTrace := transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channFeeabsOsmosis.PortID, channFeeabsOsmosis.ChannelID, osmosisDenom))
+	osmoOnFeeabs := denomTrace.IBCDenom()
+	return osmoOnFeeabs
+}
