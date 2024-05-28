@@ -288,8 +288,8 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 				fmt.Println("nativeCoinsFees", nativeCoinsFees)
 				feeCoinsNonZeroDenom = nativeCoinsFees
 			}
-		} else {
-			return ctx, sdkerrors.Wrapf(errorstypes.ErrNotSupported, "should have only one fee denom in feeCoinsNonZeroDenom, got %s", feeCoinsNonZeroDenom.String())
+		} else if feeCoinsNonZeroDenom.Len() > 1 {
+			return ctx, sdkerrors.Wrapf(errorstypes.ErrNotSupported, "should have only one fee denom in feeCoinsNonZeroDenom, got %d", feeCoinsNonZeroDenom.Len())
 		}
 
 		// After replace the feeCoinsNonZeroDenom, feeCoinsNonZeroDenom must be in denom subset of nonZeroCoinFeesReq
