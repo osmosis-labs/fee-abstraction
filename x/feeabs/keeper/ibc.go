@@ -114,6 +114,7 @@ func (k Keeper) SendInterchainQuery(
 
 func (k Keeper) OnAcknowledgementPacket(ctx sdk.Context, ack channeltypes.Acknowledgement, icqReqs []abci.RequestQuery) error {
 	switch resp := ack.Response.(type) {
+
 	case *channeltypes.Acknowledgement_Result:
 		var ackData types.InterchainQueryPacketAck
 		if err := types.ModuleCdc.UnmarshalJSON(resp.Result, &ackData); err != nil {
@@ -282,6 +283,7 @@ func (k Keeper) HandleOsmosisIbcQuery(ctx sdk.Context) (int, error) {
 	// fee abstraction will not send query to a frozen host zone
 	// however, it will continue to send query to other host zone if UPDATED, or OUTDATED
 	// this logic iterate through registered host zones and collect requests before sending it
+	k.Logger(ctx).Info("start iterate host zone")
 	k.IterateHostZone(ctx, func(hostZoneConfig types.HostChainFeeAbsConfig) (stop bool) {
 		if k.IbcQueryHostZoneFilter(ctx, hostZoneConfig, queryTwapEpochInfo) {
 			return false
@@ -371,6 +373,7 @@ func (k Keeper) ExecuteAllHostChainSwap(ctx sdk.Context) {
 
 func (k Keeper) IbcQueryHostZoneFilter(ctx sdk.Context, hostZoneConfig types.HostChainFeeAbsConfig, queryTwapEpochInfo types.EpochInfo) bool {
 	if hostZoneConfig.Status == types.HostChainFeeAbsStatus_FROZEN {
+		k.Logger(ctx).Info(fmt.Sprintf("Host zone %s is frozen", hostZoneConfig.IbcDenom))
 		return true
 	}
 
@@ -384,6 +387,7 @@ func (k Keeper) IbcQueryHostZoneFilter(ctx sdk.Context, hostZoneConfig types.Hos
 	}
 
 	if queryTwapEpochInfo.CurrentEpoch < exponential.FutureEpoch {
+		k.Logger(ctx).Info(fmt.Sprintf("Host zone %s is not ready to query", hostZoneConfig.IbcDenom))
 		return true
 	}
 

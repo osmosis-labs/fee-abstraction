@@ -22,6 +22,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
 
+	balancertypes "github.com/osmosis-labs/fee-abstraction/v7/tests/interchaintest/osmosis/gamm/pool-models/balancer"
+	gammtypes "github.com/osmosis-labs/fee-abstraction/v7/tests/interchaintest/osmosis/gamm/types"
 	feeabstype "github.com/osmosis-labs/fee-abstraction/v7/x/feeabs/types"
 )
 
@@ -68,8 +70,8 @@ var (
 		Bech32Prefix:        "feeabs",
 		Denom:               "stake",
 		CoinType:            "118",
-		GasPrices:           "0.00stake",
-		GasAdjustment:       1.1,
+		GasPrices:           "0.005stake",
+		GasAdjustment:       1.5,
 		TrustingPeriod:      "112h",
 		NoHostMount:         false,
 		ModifyGenesis:       modifyGenesisShortProposals(votingPeriod, maxDepositPeriod, queryEpochTime),
@@ -80,7 +82,7 @@ var (
 	pathFeeabsGaia      = "feeabs-gaia"
 	pathFeeabsOsmosis   = "feeabs-osmosis"
 	pathOsmosisGaia     = "osmosis-gaia"
-	genesisWalletAmount = math.NewInt(10_000_000)
+	genesisWalletAmount = math.NewInt(100_000_000_000)
 	amountToSend        = math.NewInt(1_000_000_000)
 )
 
@@ -98,8 +100,8 @@ func feeabsEncoding() *moduletestutil.TestEncodingConfig {
 func osmosisEncoding() *moduletestutil.TestEncodingConfig {
 	cfg := wasm.WasmEncoding()
 
-	// gammtypes.RegisterInterfaces(cfg.InterfaceRegistry)
-	// balancertypes.RegisterInterfaces(cfg.InterfaceRegistry)
+	gammtypes.RegisterInterfaces(cfg.InterfaceRegistry)
+	balancertypes.RegisterInterfaces(cfg.InterfaceRegistry)
 
 	return cfg
 }
@@ -121,6 +123,26 @@ func GetDockerImageInfo() (repo, version string) {
 	return repo, branchVersion
 }
 
+func modifyGenesisWhitelistTwapQueryOsmosis() func(ibc.ChainConfig, []byte) ([]byte, error) {
+	return func(chainConfig ibc.ChainConfig, genbz []byte) ([]byte, error) {
+		g := make(map[string]interface{})
+		if err := json.Unmarshal(genbz, &g); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal genesis file: %w", err)
+		}
+		// "interchainquery":{"host_port":"icqhost","params":{"allow_queries":[],"host_enabled":true}}
+		whitelist := "/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow"
+		if err := dyno.Append(g, whitelist, "app_state", "interchainquery", "params", "allow_queries"); err != nil {
+			return nil, fmt.Errorf("failed to set whitelist in genesis json: %w", err)
+		}
+		fmt.Println("Genesis file updated", g)
+		out, err := json.Marshal(g)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal genesis bytes to json: %w", err)
+		}
+		return out, nil
+	}
+}
+
 func modifyGenesisShortProposals(votingPeriod string, maxDepositPeriod string, queryEpochTime string) func(ibc.ChainConfig, []byte) ([]byte, error) {
 	return func(chainConfig ibc.ChainConfig, genbz []byte) ([]byte, error) {
 		g := make(map[string]interface{})
@@ -139,6 +161,10 @@ func modifyGenesisShortProposals(votingPeriod string, maxDepositPeriod string, q
 		if err := dyno.Set(g, queryEpochTime, "app_state", "feeabs", "epochs", 0, "duration"); err != nil {
 			return nil, fmt.Errorf("failed to set query epoch time in genesis json: %w", err)
 		}
+		if err := dyno.Set(g, queryEpochTime, "app_state", "feeabs", "epochs", 1, "duration"); err != nil {
+			return nil, fmt.Errorf("failed to set query epoch time in genesis json: %w", err)
+		}
+		fmt.Println("Genesis file updated", g)
 		out, err := json.Marshal(g)
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal genesis bytes to json: %w", err)
@@ -156,7 +182,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 
 	// Create chain factory with Feeabs and Gaia
 	numVals := 1
-	numFullNodes := 1
+	numFullNodes := 0
 
 	cf := interchaintest.NewBuiltinChainFactory(zaptest.NewLogger(t), []*interchaintest.ChainSpec{
 		{
@@ -180,6 +206,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 			ChainConfig: ibc.ChainConfig{
 				GasPrices:      "0.005uosmo",
 				EncodingConfig: osmosisEncoding(),
+				ModifyGenesis:  modifyGenesisWhitelistTwapQueryOsmosis(),
 			},
 			NumValidators: &numVals,
 			NumFullNodes:  &numFullNodes,
@@ -222,10 +249,10 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 		})
 
 	require.NoError(t, ic.Build(ctx, eRep, interchaintest.InterchainBuildOptions{
-		TestName:          t.Name(),
-		Client:            client,
-		NetworkID:         network,
-		BlockDatabaseFile: interchaintest.DefaultBlockDatabaseFilepath(),
+		TestName:  t.Name(),
+		Client:    client,
+		NetworkID: network,
+		// BlockDatabaseFile: interchaintest.DefaultBlockDatabaseFilepath(),
 
 		SkipPathCreation: true,
 	}))
@@ -233,8 +260,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 		_ = ic.Close()
 	})
 
-	const userFunds = int64(10_000_000_000)
-	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), userFunds, feeabs, gaia, osmosis)
+	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), genesisWalletAmount.Int64(), feeabs, gaia, osmosis)
 
 	// rly feeabs-osmo
 	// Generate new path
@@ -255,10 +281,10 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	require.NoError(t, err)
 	// Create channel
 	err = r.CreateChannel(ctx, eRep, pathFeeabsOsmosis, ibc.CreateChannelOptions{
-		SourcePortName: "transfer",
-		DestPortName:   "transfer",
+		SourcePortName: "feeabs",
+		DestPortName:   "icqhost",
 		Order:          ibc.Unordered,
-		Version:        "ics20-1",
+		Version:        "icq-1",
 	})
 	require.NoError(t, err)
 
@@ -274,10 +300,36 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	require.Len(t, channsFeeabs, 1)
 	require.Len(t, channsOsmosis, 1)
 
-	channFeeabsOsmosis := channsFeeabs[0]
-	require.NotEmpty(t, channFeeabsOsmosis.ChannelID)
-	channOsmosisFeeabs := channsOsmosis[0]
-	require.NotEmpty(t, channOsmosisFeeabs.ChannelID)
+	chanFeeabsOsmosisFeeapp := channsFeeabs[0]
+	channOsmosisFeeabsICQ := channsOsmosis[0]
+	err = r.CreateChannel(ctx, eRep, pathFeeabsOsmosis, ibc.CreateChannelOptions{
+		SourcePortName: "transfer",
+		DestPortName:   "transfer",
+		Order:          ibc.Unordered,
+		Version:        "ics20-1",
+	})
+	require.NoError(t, err)
+
+	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia)
+	require.NoError(t, err)
+	channFeeabsIncludeTransfer, err := r.GetChannels(ctx, eRep, feeabs.Config().ChainID)
+	require.NoError(t, err)
+	channOsmosisIncludeTransfer, err := r.GetChannels(ctx, eRep, osmosis.Config().ChainID)
+	require.NoError(t, err)
+	var channFeeabsOsmosisTransfer ibc.ChannelOutput
+	var channOsmosisFeeabsTransfer ibc.ChannelOutput
+	for _, chann := range channFeeabsIncludeTransfer {
+		if chann.ChannelID != chanFeeabsOsmosisFeeapp.ChannelID {
+			channFeeabsOsmosisTransfer = chann
+		}
+	}
+	require.NotEmpty(t, channFeeabsOsmosisTransfer)
+	for _, chann := range channOsmosisIncludeTransfer {
+		if chann.ChannelID != channOsmosisFeeabsICQ.ChannelID {
+			channOsmosisFeeabsTransfer = chann
+		}
+	}
+
 	// rly feeabs-gaia
 	// Generate new path
 	err = r.GeneratePath(ctx, eRep, feeabs.Config().ChainID, gaia.Config().ChainID, pathFeeabsGaia)
@@ -314,12 +366,12 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	channsGaia, err := r.GetChannels(ctx, eRep, gaia.Config().ChainID)
 	require.NoError(t, err)
 
-	require.Len(t, channsFeeabs, 2)
+	require.Len(t, channsFeeabs, 3)
 	require.Len(t, channsGaia, 1)
 
 	var channFeeabsGaia ibc.ChannelOutput
 	for _, chann := range channsFeeabs {
-		if chann.ChannelID != channFeeabsOsmosis.ChannelID {
+		if chann.ChannelID != channFeeabsOsmosisTransfer.ChannelID && chann.ChannelID != chanFeeabsOsmosisFeeapp.ChannelID {
 			channFeeabsGaia = chann
 		}
 	}
@@ -361,14 +413,14 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	channsGaia, err = r.GetChannels(ctx, eRep, gaia.Config().ChainID)
 	require.NoError(t, err)
 
-	require.Len(t, channsOsmosis, 2)
+	require.Len(t, channsOsmosis, 3)
 	require.Len(t, channsGaia, 2)
 
 	var channOsmosisGaia ibc.ChannelOutput
 	var channGaiaOsmosis ibc.ChannelOutput
 
 	for _, chann := range channsOsmosis {
-		if chann.ChannelID != channOsmosisFeeabs.ChannelID {
+		if chann.ChannelID != channOsmosisFeeabsTransfer.ChannelID && chann.ChannelID != channOsmosisFeeabsICQ.ChannelID {
 			channOsmosisGaia = chann
 		}
 	}
@@ -382,8 +434,10 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	require.NotEmpty(t, channGaiaOsmosis)
 
 	fmt.Println("-----------------------------------")
-	fmt.Printf("channFeeabsOsmosis: %s - %s\n", channFeeabsOsmosis.ChannelID, channFeeabsOsmosis.Counterparty.ChannelID)
-	fmt.Printf("channOsmosisFeeabs: %s - %s\n", channOsmosisFeeabs.ChannelID, channOsmosisFeeabs.Counterparty.ChannelID)
+	fmt.Printf("channFeeabsOsmosisTransfer: %s - %s\n", channFeeabsOsmosisTransfer.ChannelID, channFeeabsOsmosisTransfer.Counterparty.ChannelID)
+	fmt.Printf("channOsmosisFeeabsTransfer: %s - %s\n", channOsmosisFeeabsTransfer.ChannelID, channOsmosisFeeabsTransfer.Counterparty.ChannelID)
+	fmt.Printf("channFeeabsOsmosisfeeabs: %s - %s\n", chanFeeabsOsmosisFeeapp.ChannelID, chanFeeabsOsmosisFeeapp.Counterparty.ChannelID)
+	fmt.Printf("channOsmosisFeeabsIcq: %s - %s\n", channOsmosisFeeabsICQ.ChannelID, channOsmosisFeeabsICQ.Counterparty.ChannelID)
 	fmt.Printf("channFeeabsGaia: %s - %s\n", channFeeabsGaia.ChannelID, channFeeabsGaia.Counterparty.ChannelID)
 	fmt.Printf("channGaiaFeeabs: %s - %s\n", channGaiaFeeabs.ChannelID, channGaiaFeeabs.Counterparty.ChannelID)
 	fmt.Printf("channOsmosisGaia: %s - %s\n", channOsmosisGaia.ChannelID, channOsmosisGaia.Counterparty.ChannelID)
@@ -402,7 +456,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 			}
 		},
 	)
-	chanels = append(chanels, channFeeabsOsmosis, channOsmosisFeeabs, channFeeabsGaia, channGaiaFeeabs, channOsmosisGaia, channGaiaOsmosis)
+	chanels = append(chanels, channFeeabsOsmosisTransfer, channOsmosisFeeabsTransfer, channFeeabsGaia, channGaiaFeeabs, channOsmosisGaia, channGaiaOsmosis, chanFeeabsOsmosisFeeapp, channOsmosisFeeabsICQ)
 	feeabsUser, gaiaUser, osmosisUser := users[0], users[1], users[2]
 
 	// Send Gaia uatom to Osmosis
@@ -434,7 +488,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 		Amount:  amountToSend,
 	}
 
-	tx, err = feeabs.SendIBCTransfer(ctx, channFeeabsOsmosis.ChannelID, feeabsUser.KeyName(), transfer, ibc.TransferOptions{})
+	tx, err = feeabs.SendIBCTransfer(ctx, channFeeabsOsmosisTransfer.ChannelID, feeabsUser.KeyName(), transfer, ibc.TransferOptions{})
 	require.NoError(t, err)
 	require.NoError(t, tx.Validate())
 

@@ -195,6 +195,7 @@ func ParamChangeProposal(c *cosmos.CosmosChain, ctx context.Context, keyName str
 		"param-change",
 		proposalPath,
 		"--gas", "auto",
+		"--gas-adjustment", "1.5",
 	}
 
 	txHash, err := tn.ExecTx(ctx, keyName, command...)
