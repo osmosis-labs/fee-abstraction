@@ -119,9 +119,9 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 		return ctx, sdkerrors.Wrap(feeabstypes.ErrHostZoneFrozen, "cannot deduct fee as host zone is frozen")
 	}
 
-	if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_OUTDATED {
-		return ctx, sdkerrors.Wrap(feeabstypes.ErrHostZoneOutdated, "cannot deduct fee as host zone is outdated")
-	}
+	// if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_OUTDATED {
+	// 	return ctx, sdkerrors.Wrap(feeabstypes.ErrHostZoneOutdated, "cannot deduct fee as host zone is outdated")
+	// }
 
 	fee := feeTx.GetFee()
 	feePayer := feeTx.FeePayer()
@@ -278,15 +278,17 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 					return ctx, sdkerrors.Wrapf(feeabstypes.ErrHostZoneFrozen, "cannot deduct fee as host zone is frozen")
 				}
 
-				if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_OUTDATED {
-					return ctx, sdkerrors.Wrapf(feeabstypes.ErrHostZoneOutdated, "cannot deduct fee as host zone is outdated")
-				}
+				// if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_OUTDATED {
+				// 	return ctx, sdkerrors.Wrapf(feeabstypes.ErrHostZoneOutdated, "cannot deduct fee as host zone is outdated")
+				// }
 
 				nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, feeCoinsNonZeroDenom, hostChainConfig)
 				if err != nil {
-					return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees")
+					return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "unable to calculate native fees from ibc fees: %s", err)
 				}
 				feeCoinsNonZeroDenom = nativeCoinsFees
+			} else if feeCoinsNonZeroDenom.Len() > 1 {
+				return ctx, sdkerrors.Wrapf(errorstypes.ErrNotSupported, "should have only one fee denom in feeCoinsNonZeroDenom, got %d", feeCoinsNonZeroDenom.Len())
 			}
 		}
 
@@ -307,8 +309,9 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		}
 
 		if feeCoinsLen == 0 {
-			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, feeRequired)
+			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "no fee provided, required: %s", feeRequired)
 		}
+
 		// After all the checks, the tx is confirmed:
 		// feeCoins denoms subset off feeRequired (or replaced with fee-abstraction)
 		// Not bypass
