@@ -28,10 +28,16 @@ type KeeperTestSuite struct {
 }
 
 const (
-	SourcePort      = "feeabs"
-	SourceChannel   = "channel-0"
-	IBCDenom        = "ibc/1"
-	OsmosisIBCDenom = "ibc/2"
+	SourcePort                       = "feeabs"
+	SourceChannel                    = "channel-0"
+	IBCDenom                         = "ibc/1"
+	OsmosisIBCDenom                  = "ibc/2"
+	TestOsmosisQueryTwapPath         = "/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow"
+	TestNativeIbcedInOsmosis         = "ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878"
+	TestChainName                    = "feeappd-t1"
+	TestIbcTransferChannel           = "channel-0"
+	TestIbcQueryIcqChannel           = "channel-3"
+	TestOsmosisCrosschainSwapAddress = "osmo1abc123"
 )
 
 var valTokens = sdk.TokensFromConsensusPower(42, sdk.DefaultPowerReduction)
@@ -52,4 +58,25 @@ func (s *KeeperTestSuite) SetupTest() {
 
 func TestKeeperTestSuite(t *testing.T) {
 	suite.Run(t, new(KeeperTestSuite))
+}
+
+func (suite *KeeperTestSuite) TestSetParams() {
+	params := types.Params{
+		OsmosisQueryTwapPath: TestOsmosisQueryTwapPath,
+		ChainName:            TestChainName,
+		NativeIbcedInOsmosis: TestNativeIbcedInOsmosis,
+		IbcTransferChannel:   TestIbcTransferChannel,
+		IbcQueryIcqChannel:   TestIbcQueryIcqChannel,
+	}
+
+	suite.feeAbsKeeper.SetParams(suite.ctx, params)
+
+	suite.Run("stored params are as expected", func() {
+		actual := suite.feeAbsKeeper.GetParams(suite.ctx)
+		suite.Equal(actual.OsmosisQueryTwapPath, TestOsmosisQueryTwapPath)
+		suite.Equal(actual.ChainName, TestChainName)
+		suite.Equal(actual.NativeIbcedInOsmosis, TestNativeIbcedInOsmosis)
+		suite.Equal(actual.IbcTransferChannel, TestIbcTransferChannel)
+		suite.Equal(actual.IbcQueryIcqChannel, TestIbcQueryIcqChannel)
+	})
 }

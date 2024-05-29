@@ -88,7 +88,6 @@ func (k Keeper) FundFeeAbsModuleAccount(
 
 func (k msgServer) UpdateParams(ctx context.Context, req *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
 	sdkContext := sdk.UnwrapSDKContext(ctx)
-	ctx = sdk.UnwrapSDKContext(ctx)
 	if k.GetAuthority() != req.Authority {
 		return nil, errorsmod.Wrapf(types.ErrInvalidSigner, "invalid authority; expected %s, got %s", k.GetAuthority(), req.Authority)
 	}
