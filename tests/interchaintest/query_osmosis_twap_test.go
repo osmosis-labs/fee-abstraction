@@ -157,16 +157,6 @@ func ParamChangeProposal(t *testing.T, ctx context.Context, feeabs *cosmos.Cosmo
 
 }
 
-<<<<<<< HEAD
-}
-
-=======
->>>>>>> de87fe4 (fix and add custom fee test)
-// "ibc_denom": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
-//
-//	"osmosis_pool_token_denom_in": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
-//	"pool_id": "1",
-//	"status": 0
 func AddHostZoneProposal(t *testing.T, ctx context.Context, feeabs *cosmos.CosmosChain, feeabsUser ibc.Wallet) {
 	t.Helper()
 

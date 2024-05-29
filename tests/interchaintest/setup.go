@@ -529,6 +529,7 @@ func SetupOsmosisContracts(t *testing.T,
 	osmosis *cosmos.CosmosChain,
 	user ibc.Wallet,
 ) ([]string, error) {
+	t.Helper()
 	registryWasm := "./bytecode/crosschain_registry.wasm"
 	swaprouterWasm := "./bytecode/swaprouter.wasm"
 	xcsV2Wasm := "./bytecode/crosschain_swaps.wasm"

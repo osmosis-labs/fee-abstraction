@@ -25,9 +25,10 @@ import (
 )
 
 var (
-	_ module.AppModuleBasic = AppModule{}
-	_ module.AppModuleBasic = AppModuleBasic{}
-	_ appmodule.AppModule   = AppModule{}
+	_ module.AppModuleBasic     = AppModule{}
+	_ module.AppModuleBasic     = AppModuleBasic{}
+	_ appmodule.AppModule       = AppModule{}
+	_ appmodule.HasBeginBlocker = AppModule{}
 )
 
 // ----------------------------------------------------------------------------
@@ -151,3 +152,12 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 
 // ConsensusVersion return module consensus version
 func (AppModule) ConsensusVersion() uint64 { return 1 }
+
+// HasBeginBlocker return true if module has begin blocker
+func (AppModule) HasBeginBlocker() bool { return true }
+
+func (am AppModule) BeginBlock(ctx context.Context) error {
+	sdkContext := sdk.UnwrapSDKContext(ctx)
+	am.keeper.BeginBlock(sdkContext)
+	return nil
+}

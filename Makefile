@@ -119,7 +119,7 @@ ictest-basic:
 
 # Executes IBC tests via interchaintest
 ictest-ibc:
-	cd tests/interchaintest && go test -timeout=25m -race -v -run TestFeeabsGaiaIBCTransfer .
+	cd tests/interchaintest && go test -timeout=25m -race -v -run  '^TestFeeabsGaiaIBCTransfer$$' .
 
 # Executes IBC tests via interchaintest
 ictest-packet-forward:
@@ -128,11 +128,11 @@ ictest-packet-forward:
 ictest-host-zone-proposal:
 	cd tests/interchaintest && go test -timeout=25m -race -v -run TestHostZoneProposal .
 
-ictest-feeabs:
-	cd tests/interchaintest && go test -timeout=25m -race -v -run '^TestFeeAbs$$' .
-
 ictest-query-osmosis-twap:
 	cd tests/interchaintest && go test -timeout=25m -race -v -run TestQueryOsmosisTwap .
+
+ictest-ibc-custom:
+	cd tests/interchaintest && go test -timeout=25m -race -v -run TestFeeabsGaiaIBCTransferWithIBCFee .
 
 # ictest-feeabs-ibc-transfer:
 # 		cd tests/interchaintest && go test -timeout=25m -race -v -run  TestIBCTransferWithFeeAbs .

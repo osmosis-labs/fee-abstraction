@@ -11,7 +11,7 @@ import (
 )
 
 // BeginBlocker of epochs module.
-func (k Keeper) BeginBlocker(ctx sdk.Context) {
+func (k Keeper) BeginBlock(ctx sdk.Context) {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyBeginBlocker)
 	k.IterateEpochInfo(ctx, func(index int64, epochInfo types.EpochInfo) (stop bool) {
 		logger := k.Logger(ctx)
@@ -27,6 +27,7 @@ func (k Keeper) BeginBlocker(ctx sdk.Context) {
 		shouldEpochStart := (ctx.BlockTime().After(epochEndTime)) || shouldInitialEpochStart
 
 		if !shouldEpochStart {
+			logger.Info(fmt.Sprintf("Epoch with identifier %s has not ended yet", epochInfo.Identifier))
 			return false
 		}
 		epochInfo.CurrentEpochStartHeight = ctx.BlockHeight()
