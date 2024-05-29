@@ -60,7 +60,7 @@ func TestKeeperTestSuite(t *testing.T) {
 	suite.Run(t, new(KeeperTestSuite))
 }
 
-func (suite *KeeperTestSuite) TestSetParams() {
+func (s *KeeperTestSuite) TestSetParams() {
 	params := types.Params{
 		OsmosisQueryTwapPath: TestOsmosisQueryTwapPath,
 		ChainName:            TestChainName,
@@ -69,14 +69,14 @@ func (suite *KeeperTestSuite) TestSetParams() {
 		IbcQueryIcqChannel:   TestIbcQueryIcqChannel,
 	}
 
-	suite.feeAbsKeeper.SetParams(suite.ctx, params)
+	s.feeAbsKeeper.SetParams(s.ctx, params)
 
-	suite.Run("stored params are as expected", func() {
-		actual := suite.feeAbsKeeper.GetParams(suite.ctx)
-		suite.Equal(actual.OsmosisQueryTwapPath, TestOsmosisQueryTwapPath)
-		suite.Equal(actual.ChainName, TestChainName)
-		suite.Equal(actual.NativeIbcedInOsmosis, TestNativeIbcedInOsmosis)
-		suite.Equal(actual.IbcTransferChannel, TestIbcTransferChannel)
-		suite.Equal(actual.IbcQueryIcqChannel, TestIbcQueryIcqChannel)
+	s.Run("stored params are as expected", func() {
+		actual := s.feeAbsKeeper.GetParams(s.ctx)
+		s.Equal(actual.OsmosisQueryTwapPath, TestOsmosisQueryTwapPath)
+		s.Equal(actual.ChainName, TestChainName)
+		s.Equal(actual.NativeIbcedInOsmosis, TestNativeIbcedInOsmosis)
+		s.Equal(actual.IbcTransferChannel, TestIbcTransferChannel)
+		s.Equal(actual.IbcQueryIcqChannel, TestIbcQueryIcqChannel)
 	})
 }

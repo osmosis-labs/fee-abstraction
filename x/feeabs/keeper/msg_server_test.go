@@ -1,14 +1,10 @@
 package keeper_test
 
 import (
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	feeabstypes "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
-var govAcc = authtypes.NewEmptyModuleAccount(govtypes.ModuleName, authtypes.Minter)
-
-func (suite *KeeperTestSuite) TestMsgUpdateParams() {
+func (s *KeeperTestSuite) TestMsgUpdateParams() {
 	// default params
 	params := feeabstypes.DefaultParams()
 
@@ -30,7 +26,7 @@ func (suite *KeeperTestSuite) TestMsgUpdateParams() {
 		{
 			name: "all good",
 			input: &feeabstypes.MsgUpdateParams{
-				Authority: suite.feeAbsKeeper.GetAuthority(),
+				Authority: s.feeAbsKeeper.GetAuthority(),
 				Params:    params,
 			},
 			expErr: false,
@@ -39,14 +35,14 @@ func (suite *KeeperTestSuite) TestMsgUpdateParams() {
 
 	for _, tc := range testCases {
 		tc := tc
-		suite.Run(tc.name, func() {
-			_, err := suite.msgServer.UpdateParams(suite.ctx, tc.input)
+		s.Run(tc.name, func() {
+			_, err := s.msgServer.UpdateParams(s.ctx, tc.input)
 
 			if tc.expErr {
-				suite.Require().Error(err)
-				suite.Require().Contains(err.Error(), tc.expErrMsg)
+				s.Require().Error(err)
+				s.Require().Contains(err.Error(), tc.expErrMsg)
 			} else {
-				suite.Require().NoError(err)
+				s.Require().NoError(err)
 			}
 		})
 	}
