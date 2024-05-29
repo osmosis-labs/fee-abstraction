@@ -154,6 +154,7 @@ func ParamChangeProposal(t *testing.T, ctx context.Context, feeabs *cosmos.Cosmo
 
 	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+20, propID, v1beta1.StatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
+}
 
 }
 
