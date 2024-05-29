@@ -5,14 +5,13 @@ import (
 	"fmt"
 	"testing"
 
+	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 	"github.com/stretchr/testify/require"
 
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
-
-	feeabsCli "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/feeabs"
+	feeabsCli "github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/feeabs"
 )
 
 func TestPacketForwardMiddleware(t *testing.T) {

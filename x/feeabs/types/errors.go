@@ -13,4 +13,6 @@ var (
 	ErrUnsupportedDenom             = sdkerrors.Register(ModuleName, 6, "unsupported denom")
 	ErrHostZoneFrozen               = sdkerrors.Register(ModuleName, 7, "host zone is frozen")
 	ErrHostZoneOutdated             = sdkerrors.Register(ModuleName, 8, "host zone is outdated")
+
+	ErrInvalidSigner = sdkerrors.Register(ModuleName, 9, "invalid signer")
 )
