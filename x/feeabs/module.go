@@ -158,6 +158,5 @@ func (AppModule) HasBeginBlocker() bool { return true }
 
 func (am AppModule) BeginBlock(ctx context.Context) error {
 	sdkContext := sdk.UnwrapSDKContext(ctx)
-	am.keeper.BeginBlock(sdkContext)
-	return nil
+	return am.keeper.BeginBlock(sdkContext)
 }
