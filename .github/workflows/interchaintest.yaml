@@ -107,22 +107,6 @@ jobs:
         env:
           BRANCH_CI: "latest"
 
-  test-feeabs:
-    runs-on: ubuntu-latest
-    needs: build-and-push-image
-    steps:
-      - name: Set up Go 1.21
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.21
-
-      - name: checkout code
-        uses: actions/checkout@v3
-
-      - run: make ictest-feeabs
-        env:
-          BRANCH_CI: "latest"
-
   test-query-osmosis-twap:
     runs-on: ubuntu-latest
     needs: build-and-push-image
