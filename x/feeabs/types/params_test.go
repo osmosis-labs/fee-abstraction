@@ -15,7 +15,7 @@ func Test_ParamString(t *testing.T) {
 		{
 			name:     "default true",
 			params:   DefaultParams(),
-			expected: "osmosis_query_twap_path:\"/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow\" chain_name:\"feeappd-t1\" ",
+			expected: "native_ibced_in_osmosis:\"ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878\" osmosis_query_twap_path:\"/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow\" chain_name:\"feeappd-t1\" ",
 		},
 		{
 			name: "all filled",
