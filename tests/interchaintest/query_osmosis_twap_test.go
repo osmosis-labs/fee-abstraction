@@ -154,10 +154,14 @@ func ParamChangeProposal(t *testing.T, ctx context.Context, feeabs *cosmos.Cosmo
 
 	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+20, propID, v1beta1.StatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
-}
 
 }
 
+<<<<<<< HEAD
+}
+
+=======
+>>>>>>> de87fe4 (fix and add custom fee test)
 // "ibc_denom": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
 //
 //	"osmosis_pool_token_denom_in": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
