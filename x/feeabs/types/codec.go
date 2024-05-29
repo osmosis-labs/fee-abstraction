@@ -25,6 +25,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgSendQueryIbcDenomTWAP{},
 		&MsgSwapCrossChain{},
 		&MsgFundFeeAbsModuleAccount{},
+		&MsgUpdateParams{},
 	)
 
 	registry.RegisterImplementations(

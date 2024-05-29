@@ -35,6 +35,8 @@ type Keeper struct {
 	portKeeper    *portkeeper.Keeper
 	channelKeeper channelkeeper.Keeper
 	scopedKeeper  capabilitykeeper.ScopedKeeper
+
+	authority string
 }
 
 func NewKeeper(
@@ -48,6 +50,7 @@ func NewKeeper(
 	channelKeeper channelkeeper.Keeper,
 	portKeeper *portkeeper.Keeper,
 	scopedKeeper capabilitykeeper.ScopedKeeper,
+	authority string,
 ) Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -65,6 +68,7 @@ func NewKeeper(
 		channelKeeper:  channelKeeper,
 		scopedKeeper:   scopedKeeper,
 		portKeeper:     portKeeper,
+		authority:      authority,
 	}
 }
 
@@ -148,4 +152,9 @@ func (k Keeper) GetCapability(ctx sdk.Context, name string) *capabilitytypes.Cap
 		return nil
 	}
 	return capability
+}
+
+// GetAuthority returns the x/bank module's authority.
+func (k Keeper) GetAuthority() string {
+	return k.authority
 }

@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	errorsmod "cosmossdk.io/errors"
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
@@ -83,4 +84,20 @@ func (k Keeper) FundFeeAbsModuleAccount(
 	}
 
 	return &types.MsgFundFeeAbsModuleAccountResponse{}, nil
+}
+
+func (k msgServer) UpdateParams(ctx context.Context, req *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
+	sdkContext := sdk.UnwrapSDKContext(ctx)
+	ctx = sdk.UnwrapSDKContext(ctx)
+	if k.GetAuthority() != req.Authority {
+		return nil, errorsmod.Wrapf(types.ErrInvalidSigner, "invalid authority; expected %s, got %s", k.GetAuthority(), req.Authority)
+	}
+
+	if err := req.Params.Validate(); err != nil {
+		return nil, err
+	}
+
+	k.SetParams(sdkContext, req.Params)
+
+	return &types.MsgUpdateParamsResponse{}, nil
 }

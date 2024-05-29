@@ -62,3 +62,13 @@ func validateString(i interface{}) error {
 
 	return nil
 }
+
+func DefaultParams() Params {
+	return Params{
+		OsmosisQueryTwapPath: DefaultOsmosisQueryTwapPath,
+		ChainName:            DefaultChainName,
+		IbcTransferChannel:   "",
+		IbcQueryIcqChannel:   "",
+		NativeIbcedInOsmosis: "",
+	}
+}
