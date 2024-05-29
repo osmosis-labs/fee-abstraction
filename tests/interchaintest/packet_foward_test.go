@@ -12,7 +12,7 @@ import (
 
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
 
-	feeabsCli "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/feeabs"
+	feeabsCli "github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/feeabs"
 )
 
 func TestPacketForwardMiddleware(t *testing.T) {

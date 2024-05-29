@@ -3,6 +3,8 @@ package feeabs
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"time"
 
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 
@@ -59,9 +61,28 @@ func QueryModuleAccountBalances(c *cosmos.CosmosChain, ctx context.Context) (*fe
 	return &response, nil
 }
 
+// QueryOsmosisArithmeticTwap queries the arithmetic twap of ibc denom stored in fee abstraction module
 func QueryOsmosisArithmeticTwap(c *cosmos.CosmosChain, ctx context.Context, ibcDenom string) (*feeabstypes.QueryOsmosisArithmeticTwapResponse, error) {
 	node := getFullNode(c)
 	cmd := []string{"feeabs", "osmo-arithmetic-twap", ibcDenom}
+	stdout, _, err := node.ExecQuery(ctx, cmd...)
+	if err != nil {
+		return &feeabstypes.QueryOsmosisArithmeticTwapResponse{}, err
+	}
+
+	var response feeabstypes.QueryOsmosisArithmeticTwapResponse
+	if err = json.Unmarshal(stdout, &response); err != nil {
+		return &feeabstypes.QueryOsmosisArithmeticTwapResponse{}, err
+	}
+	return &response, nil
+}
+
+// QueryOsmosisArithmeticTwapOsmosis queries the arithmetic twap of a pool on osmosis chain
+func QueryOsmosisArithmeticTwapOsmosis(c *cosmos.CosmosChain, ctx context.Context, poolID, ibcDenom string) (*feeabstypes.QueryOsmosisArithmeticTwapResponse, error) {
+	node := getFullNode(c)
+	currentEpoch := time.Now().Unix()
+
+	cmd := []string{"twap", "arithmetic", poolID, ibcDenom, fmt.Sprintf("%d", currentEpoch-20), fmt.Sprintf("%d", currentEpoch-10)}
 	stdout, _, err := node.ExecQuery(ctx, cmd...)
 	if err != nil {
 		return &feeabstypes.QueryOsmosisArithmeticTwapResponse{}, err

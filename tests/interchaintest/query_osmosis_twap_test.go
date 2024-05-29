@@ -3,21 +3,18 @@ package interchaintest
 import (
 	"context"
 	"fmt"
-	"os"
-	"path"
 	"strconv"
 	"testing"
 
+	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
+	feeabsCli "github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/feeabs"
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v8/ibc"
 	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 	"github.com/stretchr/testify/require"
-
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
-	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
-
-	feeabsCli "github.com/osmosis-labs/fee-abstraction/tests/interchaintest/feeabs"
 )
 
 func TestQueryOsmosisTwap(t *testing.T) {
@@ -31,7 +28,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 
 	feeabsUser, _, osmosisUser := users[0], users[1], users[2]
 
-	channFeeabsOsmosis, channOsmosisFeeabs, channFeeabsGaia, channGaiaFeeabs, channOsmosisGaia, channGaiaOsmosis := channels[0], channels[1], channels[2], channels[3], channels[4], channels[5]
+	channFeeabsOsmosis, channOsmosisFeeabs, channFeeabsGaia, channGaiaFeeabs, channOsmosisGaia, channGaiaOsmosis, channFeeabsOsmosisICQ := channels[0], channels[1], channels[2], channels[3], channels[4], channels[5], channels[6]
 
 	// Setup contract on Osmosis
 	// Store code crosschain Registry
@@ -68,22 +65,15 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	_, err = osmosis.ExecuteContract(ctx, osmosisUser.KeyName(), registryContractAddress, msg)
 	require.NoError(t, err)
 
-	// Create pool Osmosis(uatom)/Osmosis(stake) on Osmosis
-	denomTrace := transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisGaia.PortID, channOsmosisGaia.ChannelID, gaia.Config().Denom))
-	uatomOnOsmosis := denomTrace.IBCDenom()
-	osmosisUserBalance, err := osmosis.GetBalance(ctx, sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), uatomOnOsmosis)
-	require.NoError(t, err)
-	require.Equal(t, amountToSend, osmosisUserBalance)
-
-	denomTrace = transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisFeeabs.PortID, channOsmosisFeeabs.ChannelID, feeabs.Config().Denom))
-	stakeOnOsmosis := denomTrace.IBCDenom()
-	osmosisUserBalance, err = osmosis.GetBalance(ctx, sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), stakeOnOsmosis)
+	// Create pool Osmosis(stake)/uosmo on Osmosis
+	stakeOnOsmosis := GetStakeOnOsmosis(channOsmosisFeeabs, feeabs.Config().Denom)
+	osmosisUserBalance, err := osmosis.GetBalance(ctx, sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), stakeOnOsmosis)
 	require.NoError(t, err)
 	require.Equal(t, amountToSend, osmosisUserBalance)
 
 	poolID, err := feeabsCli.CreatePool(osmosis, ctx, osmosisUser.KeyName(), cosmos.OsmosisPoolParams{
-		Weights:        fmt.Sprintf("5%s,5%s", stakeOnOsmosis, uatomOnOsmosis),
-		InitialDeposit: fmt.Sprintf("95000000%s,950000000%s", stakeOnOsmosis, uatomOnOsmosis),
+		Weights:        fmt.Sprintf("5%s,5%s", stakeOnOsmosis, osmosis.Config().Denom),
+		InitialDeposit: fmt.Sprintf("95000000%s,950000000%s", stakeOnOsmosis, osmosis.Config().Denom),
 		SwapFee:        "0.01",
 		ExitFee:        "0",
 		FutureGovernor: "",
@@ -105,30 +95,53 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	res := QuerySmartMsgResponse{}
 	err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, &res)
 	require.NoError(t, err)
-	// propose_pfm for gaia
-	_, err = feeabsCli.SetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "gaia"}}`, uatomOnOsmosis)
+
+	ParamChangeProposal(t, ctx, feeabs, feeabsUser, &channFeeabsOsmosis, &channFeeabsOsmosisICQ, stakeOnOsmosis)
+	AddHostZoneProposal(t, ctx, feeabs, feeabsUser)
+
+	// ensure that the host zone is added
+	allHost, err := feeabsCli.QueryAllHostZoneConfig(feeabs, ctx)
 	require.NoError(t, err)
-	err = testutil.WaitForBlocks(ctx, 15, feeabs, gaia, osmosis)
+	fmt.Printf("QueryAllHostZoneConfig %+v", allHost)
+	err = testutil.WaitForBlocks(ctx, 15, feeabs)
 	require.NoError(t, err)
-	queryMsg = QuerySmartMsg{
-		Packet: HasPacketForwarding{
-			Chain: "gaia",
+
+	// query the twap of uosmo/stake, stored in feeabs module
+	osmoOnFeeabs := GetOsmoOnFeeabs(channFeeabsOsmosis, osmosis.Config().Denom)
+	twapOsmosis, err := feeabsCli.QueryOsmosisArithmeticTwap(feeabs, ctx, osmoOnFeeabs)
+	require.NoError(t, err)
+	fmt.Println(twapOsmosis)
+
+	// query the twap of uosmo/stake
+	twap, err := feeabsCli.QueryOsmosisArithmeticTwapOsmosis(osmosis, ctx, "1", stakeOnOsmosis)
+	fmt.Println(twap)
+	require.NoError(t, err)
+}
+
+func ParamChangeProposal(t *testing.T, ctx context.Context, feeabs *cosmos.CosmosChain, feeabsUser ibc.Wallet, channFeeabsOsmosis, channFeeabsOsmosisFeeabs *ibc.ChannelOutput, stakeOnOsmosis string) {
+	t.Helper()
+	govAddr, err := feeabs.AuthQueryModuleAddress(ctx, "gov")
+	feeabs.QueryParam(ctx, "osmosis.twap.v1beta1.Query", "ArithmeticTwapToNow")
+	require.NoError(t, err)
+	require.NotEmpty(t, govAddr)
+	updateParamMsg := feeabstypes.MsgUpdateParams{
+		Params: feeabstypes.Params{
+			OsmosisQueryTwapPath:         "/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow",
+			IbcTransferChannel:           channFeeabsOsmosis.ChannelID,
+			IbcQueryIcqChannel:           channFeeabsOsmosisFeeabs.ChannelID,
+			NativeIbcedInOsmosis:         stakeOnOsmosis,
+			OsmosisCrosschainSwapAddress: "osmo17p9rzwnnfxcjp32un9ug7yhhzgtkhvl9jfksztgw5uh69wac2pgs5yczr8",
+			ChainName:                    feeabs.Config().ChainID,
 		},
+		Authority: govAddr,
 	}
-	res = QuerySmartMsgResponse{}
-	err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, &res)
-	require.NoError(t, err)
 
-	denomTrace = transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channFeeabsGaia.PortID, channFeeabsGaia.ChannelID, gaia.Config().Denom))
-	uatomOnFeeabs := denomTrace.IBCDenom()
+	title := "Test Proposal"
+	prop, err := feeabs.BuildProposal([]cosmos.ProtoMessage{&updateParamMsg}, title, title+" Summary", "none", "5000000000"+feeabs.Config().Denom, govAddr, false)
+	fmt.Printf("prop %+v", prop)
 
-	current_directory, _ := os.Getwd()
-	param_change_path := path.Join(current_directory, "proposal", "proposal.json")
-
-	changeParamProposal, err := paramsutils.ParseParamChangeProposalJSON(feeabs.Config().EncodingConfig.Amino, param_change_path)
-	require.NoError(t, err)
-
-	paramTx, err := feeabsCli.ParamChangeProposal(feeabs, ctx, feeabsUser.KeyName(), &changeParamProposal)
+	require.NoError(t, err, "error building param change proposal")
+	paramTx, err := feeabs.SubmitProposal(ctx, feeabsUser.KeyName(), prop)
 	require.NoError(t, err, "error submitting param change proposal tx")
 
 	err = feeabs.VoteOnProposalAllValidators(ctx, paramTx.ProposalID, cosmos.ProposalVoteYes)
@@ -137,29 +150,36 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	height, err := feeabs.Height(ctx)
 	require.NoError(t, err)
 
-	proposalID, err := strconv.ParseUint(paramTx.ProposalID, 10, 64)
-	require.NoError(t, err)
+	propID, err := strconv.ParseUint(paramTx.ProposalID, 10, 64)
+	require.NoError(t, err, "parse proposal id failed")
 
-	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, proposalID, govv1beta1.StatusPassed)
+	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+20, propID, v1beta1.StatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
+}
 
-	_, err = feeabsCli.AddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName(), "./proposal/add_host_zone.json")
+func AddHostZoneProposal(t *testing.T, ctx context.Context, feeabs *cosmos.CosmosChain, feeabsUser ibc.Wallet) {
+	t.Helper()
+	_, err := feeabsCli.AddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName(), "./proposal/add_host_zone.json")
 	require.NoError(t, err)
 
 	err = feeabs.VoteOnProposalAllValidators(ctx, "2", cosmos.ProposalVoteYes)
 	require.NoError(t, err, "failed to submit votes")
 
-	height, err = feeabs.Height(ctx)
+	height, err := feeabs.Height(ctx)
 	require.NoError(t, err)
 
-	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+10, 2, govv1beta1.StatusPassed)
+	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+20, 2, v1beta1.StatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
+}
 
-	_, err = feeabsCli.QueryAllHostZoneConfig(feeabs, ctx)
-	require.NoError(t, err)
+func GetStakeOnOsmosis(channOsmosisFeeabs ibc.ChannelOutput, feeabsDenom string) string {
+	denomTrace := transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisFeeabs.PortID, channOsmosisFeeabs.ChannelID, feeabsDenom))
+	stakeOnOsmosis := denomTrace.IBCDenom()
+	return stakeOnOsmosis
+}
 
-	twap, err := feeabsCli.QueryOsmosisArithmeticTwap(feeabs, ctx, uatomOnFeeabs)
-	fmt.Println(err)
-	fmt.Println(twap)
-	// require.NoError(t, err)
+func GetOsmoOnFeeabs(channFeeabsOsmosis ibc.ChannelOutput, osmosisDenom string) string {
+	denomTrace := transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channFeeabsOsmosis.PortID, channFeeabsOsmosis.ChannelID, osmosisDenom))
+	osmoOnFeeabs := denomTrace.IBCDenom()
+	return osmoOnFeeabs
 }

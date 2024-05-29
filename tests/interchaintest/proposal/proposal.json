@@ -1,32 +1,21 @@
 {
-    "title": "Enable Fee Abtraction",
-    "description": "Change params for enable fee abstraction",
-    "changes": [
-      {
-        "subspace": "feeabs",
-        "key": "NativeIbcedInOsmosis",
-        "value": "ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878"
-      },
-      {
-        "subspace": "feeabs",
-        "key": "ChainName",
-        "value": "feeabs"
-      },
-      {
-        "subspace": "feeabs",
-        "key": "IbcTransferChannel",
-        "value": "channel-0"
-      },
-      {
-        "subspace": "feeabs",
-        "key": "IbcQueryIcqChannel",
-        "value": "channel-1"
-      },
-      {
-        "subspace": "feeabs",
-        "key": "OsmosisCrosschainSwapAddress",
-        "value": "osmo17p9rzwnnfxcjp32un9ug7yhhzgtkhvl9jfksztgw5uh69wac2pgs5yczr8"
+  "messages": [
+    {
+      "@type": "/feeabstraction.feeabs.v1beta1.MsgUpdateParams",
+      "authority": "feeabs10d07y265gmmuvt4z0w9aw880jnsr700jwe9ssh",
+      "params": {
+        "native_ibced_in_osmosis": "ibc/C053D637CCA2A2BA030E2C5EE1B28A16F71CCB0E45E8BE52766DC1B241B77878",
+        "osmosis_query_twap_path": "/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow",
+        "chain_name": "feeabs",
+        "ibc_transfer_channel": "channel-0",
+        "ibc_query_icq_channel": "channel-1",
+        "osmosis_crosschain_swap_address": "osmo17p9rzwnnfxcjp32un9ug7yhhzgtkhvl9jfksztgw5uh69wac2pgs5yczr8"
       }
-    ],
-    "deposit": "5000000000stake"
-  }
+    }
+  ],
+  "metadata": "ipfs://CID",
+  "deposit": "5000000000stake",
+  "title": "update feeabs proposal",
+  "summary": "Update Fee Abstraction params",
+  "expedited": false
+}
