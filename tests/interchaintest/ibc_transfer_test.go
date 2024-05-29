@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"testing"
 
+	"cosmossdk.io/math"
+	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	"github.com/strangelove-ventures/interchaintest/v8"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
@@ -14,10 +16,6 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
-
-	"cosmossdk.io/math"
-
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
 )
 
 // TestFeeabsGaiaIBCTransfer spins up a Feeabs and Gaia network, initializes an IBC connection between them,
@@ -155,7 +153,9 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	// Assert that the funds are no longer present in user acc on feeabs and are in the user acc on Gaia
 	feeabsUpdateBal, err := feeabs.GetBalance(ctx, feeabsUserAddr, feeabs.Config().Denom)
 	require.NoError(t, err)
-	require.Equal(t, feeabsOrigBal.Sub(transferAmount), feeabsUpdateBal)
+
+	// The feeabs account should have the original balance minus the transfer amount and the fee
+	require.GreaterOrEqual(t, feeabsOrigBal.Sub(transferAmount).Int64(), feeabsUpdateBal.Int64())
 
 	gaiaUpdateBal, err := gaia.GetBalance(ctx, gaiaUserAddr, feeabsIBCDenom)
 	require.NoError(t, err)
@@ -179,11 +179,11 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	require.NoError(t, err)
 
 	// Assert that the funds are now back on feeabs and not on Gaia
-	feeabsUpdateBal, err = feeabs.GetBalance(ctx, feeabsUserAddr, feeabs.Config().Denom)
+	feeabsBalAfterGettingBackToken, err := feeabs.GetBalance(ctx, feeabsUserAddr, feeabs.Config().Denom)
 	require.NoError(t, err)
-	require.Equal(t, feeabsOrigBal, feeabsUpdateBal)
+	require.Equal(t, feeabsUpdateBal.Add(transferAmount).Int64(), feeabsBalAfterGettingBackToken.Int64())
 
 	gaiaUpdateBal, err = gaia.GetBalance(ctx, gaiaUserAddr, feeabsIBCDenom)
 	require.NoError(t, err)
-	require.Equal(t, math.ZeroInt(), gaiaUpdateBal)
+	require.Equal(t, math.ZeroInt().Int64(), gaiaUpdateBal.Int64())
 }

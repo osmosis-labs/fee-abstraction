@@ -121,7 +121,6 @@ func TestQueryOsmosisTwap(t *testing.T) {
 func ParamChangeProposal(t *testing.T, ctx context.Context, feeabs *cosmos.CosmosChain, feeabsUser ibc.Wallet, channFeeabsOsmosis, channFeeabsOsmosisFeeabs *ibc.ChannelOutput, stakeOnOsmosis string) {
 	t.Helper()
 	govAddr, err := feeabs.AuthQueryModuleAddress(ctx, "gov")
-	feeabs.QueryParam(ctx, "osmosis.twap.v1beta1.Query", "ArithmeticTwapToNow")
 	require.NoError(t, err)
 	require.NotEmpty(t, govAddr)
 	updateParamMsg := feeabstypes.MsgUpdateParams{
@@ -155,20 +154,48 @@ func ParamChangeProposal(t *testing.T, ctx context.Context, feeabs *cosmos.Cosmo
 
 	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+20, propID, v1beta1.StatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
+
 }
 
+// "ibc_denom": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+//
+//	"osmosis_pool_token_denom_in": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+//	"pool_id": "1",
+//	"status": 0
 func AddHostZoneProposal(t *testing.T, ctx context.Context, feeabs *cosmos.CosmosChain, feeabsUser ibc.Wallet) {
 	t.Helper()
-	_, err := feeabsCli.AddHostZoneProposal(feeabs, ctx, feeabsUser.KeyName(), "./proposal/add_host_zone.json")
+
+	govAddr, err := feeabs.AuthQueryModuleAddress(ctx, "gov")
+	require.NoError(t, err)
+	require.NotEmpty(t, govAddr)
+
+	addHostZoneMsg := feeabstypes.MsgAddHostZone{
+		HostChainConfig: &feeabstypes.HostChainFeeAbsConfig{
+			IbcDenom:                "ibc/0471F1C4E7AFD3F07702BEF6DC365268D64570F7C1FDC98EA6098DD6DE59817B",
+			OsmosisPoolTokenDenomIn: "uosmo",
+			PoolId:                  1,
+			Status:                  0,
+		},
+		Authority: govAddr,
+	}
+	title := "Test Proposal"
+	prop, err := feeabs.BuildProposal([]cosmos.ProtoMessage{&addHostZoneMsg}, title, title+" Summary", "none", "5000000000"+feeabs.Config().Denom, govAddr, false)
+	fmt.Printf("prop %+v", prop)
 	require.NoError(t, err)
 
-	err = feeabs.VoteOnProposalAllValidators(ctx, "2", cosmos.ProposalVoteYes)
+	proposalTx, err := feeabs.SubmitProposal(ctx, feeabsUser.KeyName(), prop)
+	require.NoError(t, err, "error submitting param change proposal tx")
+
+	proposalID, err := strconv.ParseUint(proposalTx.ProposalID, 10, 64)
+	require.NoError(t, err, "parse proposal id failed")
+
+	err = feeabs.VoteOnProposalAllValidators(ctx, proposalTx.ProposalID, cosmos.ProposalVoteYes)
 	require.NoError(t, err, "failed to submit votes")
 
 	height, err := feeabs.Height(ctx)
 	require.NoError(t, err)
 
-	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+20, 2, v1beta1.StatusPassed)
+	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+20, proposalID, v1beta1.StatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
 }
 
