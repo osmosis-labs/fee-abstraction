@@ -9,6 +9,12 @@ KEYALGO="secp256k1"
 KEYRING="test"
 LOGL="info"
 
+COMMISSION_RATE=0.01
+COMMISSION_MAX_RATE=0.02
+
+rm -rf $HOME/.feeappd
+
+
 feeappd config keyring-backend $KEYRING
 feeappd config chain-id $CHAINID
 
@@ -20,21 +26,19 @@ from_scratch () {
   make install
 
   # remove existing daemon.
-  rm -rf ~/.feeappd/*
 
   # juno1efd63aw40lxf3n4mhf7dzhjkr453axurv2zdzk
-  echo "decorate bright ozone fork gallery riot bus exhaust worth way bone indoor calm squirrel merry zero scheme cotton until shop any excess stage laundry" | feeappd keys add $KEY --keyring-backend $KEYRING --algo $KEYALGO --recover
+  echo "decorate bright ozone fork gallery riot bus exhaust worth way bone indoor calm squirrel merry zero scheme cotton until shop any excess stage laundry" | feeappd keys add $KEY --keyring-backend $KEYRING --algo $KEYALGO --recover --home $HOME/.feeappd
   # juno1hj5fveer5cjtn4wd6wstzugjfdxzl0xps73ftl
-  echo "wealth flavor believe regret funny network recall kiss grape useless pepper cram hint member few certain unveil rather brick bargain curious require crowd raise" | feeappd keys add feeacc --keyring-backend $KEYRING --algo $KEYALGO --recover
+  echo "wealth flavor believe regret funny network recall kiss grape useless pepper cram hint member few certain unveil rather brick bargain curious require crowd raise" | feeappd keys add feeacc --keyring-backend $KEYRING --algo $KEYALGO --recover --home $HOME/.feeappd
 
-  feeappd init $MONIKER --chain-id $CHAINID
+  feeappd init $MONIKER --chain-id $CHAINID --home $HOME/.feeappd
 
   # Function updates the config based on a jq argument as a string
   update_test_genesis () {
     # update_test_genesis '.consensus_params["block"]["max_gas"]="100000000"'
-    cat $HOME/.feeappd/config/genesis.json | jq "$1" > $HOME/.feeappd/config/tmp_genesis.json && mv $HOME/.feeappd/config/tmp_genesis.json $HOME/.feeappd/config/genesis.json
+    cat $HOME/.feeappd/config/genesis.json | jq "feeappd" > $HOME/.feeappd/config/tmp_genesis.json && mv $HOME/.feeappd/config/tmp_genesis.json $HOME/.feeappd/config/genesis.json
   }
-
   # Set gas limit in genesis
   update_test_genesis '.consensus_params["block"]["max_gas"]="100000000"'
   update_test_genesis '.app_state["gov"]["params"]["voting_period"]="45s"'
@@ -52,16 +56,16 @@ from_scratch () {
   update_test_genesis '.app_state["feeshare"]["params"]["allowed_denoms"]=["stake"]'
 
   # Allocate genesis accounts
-  feeappd add-genesis-account $KEY 10000000000000000000stake,100000000000000utest --keyring-backend $KEYRING
-  feeappd add-genesis-account feeacc 10000000000000000000stake,100000000000000utest --keyring-backend $KEYRING
+  feeappd genesis add-genesis-account $KEY 10000000000000000000stake,100000000000000utest --keyring-backend $KEYRING --home $HOME/.feeappd
+  feeappd genesis add-genesis-account feeacc 10000000000000000000stake,100000000000000utest --keyring-backend $KEYRING --home $HOME/.feeappd
 
-  feeappd gentx $KEY 1000000000000000000stake --keyring-backend $KEYRING --chain-id $CHAINID
+  feeappd genesis gentx $KEY "1000000000000000000stake" --commission-rate=$COMMISSION_RATE --commission-max-rate=$COMMISSION_MAX_RATE  --keyring-backend $KEYRING --chain-id $CHAINID --home $HOME/.feeappd
 
   # Collect genesis tx
-  feeappd collect-gentxs
+  feeappd genesis collect-gentxs --home $HOME/.feeappd
 
   # Run this to ensure junorything worked and that the genesis file is setup correctly
-  feeappd validate-genesis
+  feeappd genesis validate-genesis --home $HOME/.feeappd
 }
 
 
@@ -73,10 +77,10 @@ fi
 echo "Starting node..."
 
 # Opens the RPC endpoint to outside connections
-sed -i '/laddr = "tcp:\/\/127.0.0.1:26657"/c\laddr = "tcp:\/\/0.0.0.0:26657"' ~/.feeappd/config/config.toml
-sed -i 's/cors_allowed_origins = \[\]/cors_allowed_origins = \["\*"\]/g' ~/.feeappd/config/config.toml
-sed -i 's/enable = false/enable = true/g' ~/.feeappd/config/app.toml
-sed -i '/address = "tcp:\/\/localhost:1317"/c\address = "tcp:\/\/localhost:1318"' ~/.feeappd/config/app.toml
+sed -i '' 's|laddr = "tcp://127.0.0.1:26657"|laddr = "tcp://0.0.0.0:26657"|' $HOME/.feeappd/config/config.toml
+sed -i '' 's|cors_allowed_origins = \[\]|cors_allowed_origins = ["*"]|g' $HOME/.feeappd/config/config.toml
+sed -i '' 's|enable = false|enable = true|g' $HOME/.feeappd/config/app.toml
+sed -i '' 's|address = "tcp://localhost:1317"|address = "tcp://localhost:1318"|' $HOME/.feeappd/config/app.toml
 
-feeappd config node tcp://0.0.0.0:2241
-feeappd start --pruning=nothing  --minimum-gas-prices=0stake --p2p.laddr tcp://0.0.0.0:2240 --rpc.laddr tcp://0.0.0.0:2241 --grpc.address 0.0.0.0:2242 --grpc-web.address 0.0.0.0:2243
+# feeappd config node tcp://0.0.0.0:2241
+feeappd start --pruning=nothing  --minimum-gas-prices=0stake --p2p.laddr tcp://0.0.0.0:2240 --rpc.laddr tcp://0.0.0.0:2241 --grpc.address 0.0.0.0:2242 --home $HOME/.feeappd
