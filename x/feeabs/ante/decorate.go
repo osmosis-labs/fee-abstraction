@@ -319,8 +319,8 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		// Not contain zeroCoinFeesDenomReq's denoms
 		//
 		// check if the feeCoins has coins' amount higher/equal to nonZeroCoinFeesReq
-		if !feeCoins.IsAnyGTE(nonZeroCoinFeesReq) {
-			err := sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, feeRequired)
+		if !feeCoinsNonZeroDenom.IsAnyGTE(nonZeroCoinFeesReq) {
+			err := sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoinsNonZeroDenom, nonZeroCoinFeesReq)
 			if byPassExceedMaxGasUsage {
 				err = sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "Insufficient fees; bypass-min-fee-msg-types with gas consumption exceeds the maximum allowed gas value.")
 			}
