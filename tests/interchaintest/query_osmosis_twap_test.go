@@ -143,7 +143,10 @@ func ParamChangeProposal(t *testing.T, ctx context.Context, feeabs *cosmos.Cosmo
 	paramTx, err := feeabs.SubmitProposal(ctx, feeabsUser.KeyName(), prop)
 	require.NoError(t, err, "error submitting param change proposal tx")
 
-	err = feeabs.VoteOnProposalAllValidators(ctx, paramTx.ProposalID, cosmos.ProposalVoteYes)
+	proposalID, err := strconv.ParseUint(paramTx.ProposalID, 10, 64)
+	require.NoError(t, err, "parse proposal id failed")
+
+	err = feeabs.VoteOnProposalAllValidators(ctx, proposalID, cosmos.ProposalVoteYes)
 	require.NoError(t, err, "failed to submit votes")
 
 	height, err := feeabs.Height(ctx)
@@ -184,7 +187,7 @@ func AddHostZoneProposal(t *testing.T, ctx context.Context, feeabs *cosmos.Cosmo
 	proposalID, err := strconv.ParseUint(proposalTx.ProposalID, 10, 64)
 	require.NoError(t, err, "parse proposal id failed")
 
-	err = feeabs.VoteOnProposalAllValidators(ctx, proposalTx.ProposalID, cosmos.ProposalVoteYes)
+	err = feeabs.VoteOnProposalAllValidators(ctx, proposalID, cosmos.ProposalVoteYes)
 	require.NoError(t, err, "failed to submit votes")
 
 	height, err := feeabs.Height(ctx)

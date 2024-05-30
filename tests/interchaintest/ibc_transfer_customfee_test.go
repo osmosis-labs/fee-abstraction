@@ -9,7 +9,6 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	feeabsCli "github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/feeabs"
 	"github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/tendermint"
@@ -27,6 +26,7 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping in short mode")
 	}
+	t.Parallel()
 	// Set up chains, users and channels
 	ctx := context.Background()
 	chains, users, channels := SetupChain(t, ctx)
@@ -102,7 +102,7 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	// propose_pfm for feeabs
 	_, err = feeabsCli.SetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "feeabs"}}`, stakeOnOsmosis)
 	require.NoError(t, err)
-	err = testutil.WaitForBlocks(ctx, 15, feeabs, gaia, osmosis)
+	err = testutil.WaitForBlocks(ctx, 10, feeabs, gaia, osmosis)
 	require.NoError(t, err)
 	queryMsg := QuerySmartMsg{
 		Packet: HasPacketForwarding{
@@ -208,7 +208,6 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 		Amount:  transferAmount,
 	}
 
-	fmt.Println("Module accounts on Feeabs", GetModuleAccounts(feeabs))
 	customTransferTx, err := SendIBCTransferWithCustomFee(feeabs, ctx, feeabsUser.KeyName(), channFeeabsGaia.ChannelID, transfer, sdk.Coins{ibcFee})
 	require.NoError(t, err)
 
@@ -242,19 +241,9 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	require.Error(t, err)
 
 }
-func GetModuleAccounts(c *cosmos.CosmosChain) []authtypes.ModuleAccount {
-	acc, err := c.AuthQueryModuleAccounts(context.Background())
-	if err != nil {
-		panic(err)
-	}
-	return acc
-}
-
 func SendIBCTransferWithCustomFee(c *cosmos.CosmosChain, ctx context.Context, keyName string, channelID string, amount ibc.WalletAmount, fees sdk.Coins) (ibc.Tx, error) {
 	tn := c.Validators[0]
-	if len(c.FullNodes) > 0 {
-		tn = c.FullNodes[0]
-	}
+
 	command := []string{
 		"ibc-transfer", "transfer", "transfer", channelID,
 		amount.Address, fmt.Sprintf("%s%s", amount.Amount.String(), amount.Denom), "--fees", fees.String(),

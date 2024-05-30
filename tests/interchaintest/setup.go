@@ -182,7 +182,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 
 	// Create chain factory with Feeabs and Gaia
 	numVals := 1
-	numFullNodes := 0
+	numFullNodes := 1
 
 	cf := interchaintest.NewBuiltinChainFactory(zaptest.NewLogger(t), []*interchaintest.ChainSpec{
 		{
@@ -513,7 +513,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 
 	_, err = testutil.PollForAck(ctx, gaia, gaiaHeight, gaiaHeight+30, tx.Packet)
 	require.NoError(t, err)
-	err = testutil.WaitForBlocks(ctx, 1, feeabs, gaia, osmosis)
+	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia, osmosis)
 	require.NoError(t, err)
 
 	return chains, users, chanels

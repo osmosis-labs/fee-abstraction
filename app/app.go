@@ -129,6 +129,11 @@ import (
 
 const appName = "FeeApp"
 
+var (
+	_ runtime.AppI            = (*FeeApp)(nil)
+	_ servertypes.Application = (*FeeApp)(nil)
+)
+
 // We pull these out so we can set them with LDFLAGS in the Makefile
 var (
 	NodeDir      = ".feeapp"
