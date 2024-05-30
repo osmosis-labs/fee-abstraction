@@ -9,6 +9,7 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	feeabsCli "github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/feeabs"
 	"github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/tendermint"
@@ -186,8 +187,10 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	require.GreaterOrEqual(t, osmoInitialBal.Sub(transferAmount).Int64(), osmoUpdateBal.Int64())
 
 	// Fund the feeabs module account with stake in order to pay native fee
-	feeabsModuleAddr, err := feeabs.GetModuleAddress(ctx, feeabstypes.ModuleName)
+	feeabsModuleAddr, err := feeabs.AuthQueryModuleAddress(ctx, feeabstypes.ModuleName)
+	fmt.Println("feeabsModuleAddr", feeabsModuleAddr)
 	require.NoError(t, err)
+	require.NotNil(t, feeabsModuleAddr)
 	transfer = ibc.WalletAmount{
 		Address: feeabsModuleAddr,
 		Denom:   feeabs.Config().Denom,
@@ -195,6 +198,7 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	}
 	err = feeabs.SendFunds(ctx, feeabsUser.KeyName(), transfer)
 	require.NoError(t, err)
+
 	// Compose an IBC transfer and send from Feeabs -> Gaia
 	transferAmount = math.NewInt(1_000)
 	ibcFee := sdk.NewCoin(osmoIBCDenom, math.NewInt(1000))
@@ -204,6 +208,7 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 		Amount:  transferAmount,
 	}
 
+	fmt.Println("Module accounts on Feeabs", GetModuleAccounts(feeabs))
 	customTransferTx, err := SendIBCTransferWithCustomFee(feeabs, ctx, feeabsUser.KeyName(), channFeeabsGaia.ChannelID, transfer, sdk.Coins{ibcFee})
 	require.NoError(t, err)
 
@@ -236,6 +241,13 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	customTransferTx, err = SendIBCTransferWithCustomFee(feeabs, ctx, feeabsUser.KeyName(), channFeeabsGaia.ChannelID, transfer, sdk.Coins{ibcFee})
 	require.Error(t, err)
 
+}
+func GetModuleAccounts(c *cosmos.CosmosChain) []authtypes.ModuleAccount {
+	acc, err := c.AuthQueryModuleAccounts(context.Background())
+	if err != nil {
+		panic(err)
+	}
+	return acc
 }
 
 func SendIBCTransferWithCustomFee(c *cosmos.CosmosChain, ctx context.Context, keyName string, channelID string, amount ibc.WalletAmount, fees sdk.Coins) (ibc.Tx, error) {
