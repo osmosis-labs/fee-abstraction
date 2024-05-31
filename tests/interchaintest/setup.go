@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"cosmossdk.io/math"
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/icza/dyno"
 	"github.com/strangelove-ventures/interchaintest/v8"
@@ -44,16 +44,17 @@ const (
 	votingPeriod     = "10s"
 	maxDepositPeriod = "10s"
 	queryEpochTime   = "10s"
-)
 
-var (
-	FFeeabsMainRepo     = "osmolabs/fee-abstraction"
+	// Chain and relayer version info
+	FeeabsMainRepo      = "osmolabs/fee-abstraction"
 	FeeabsICTestRepo    = "osmolabs/fee-abstraction-ictest"
 	IBCRelayerImage     = "ghcr.io/cosmos/relayer"
 	IBCRelayerVersion   = "latest"
 	GaiaImageVersion    = "v14.1.0"
 	OsmosisImageVersion = "v22.0.1"
+)
 
+var (
 	repo, version = GetDockerImageInfo()
 
 	feeabsImage = ibc.DockerImage{
@@ -135,7 +136,6 @@ func modifyGenesisWhitelistTwapQueryOsmosis() func(ibc.ChainConfig, []byte) ([]b
 		if err := dyno.Append(g, whitelist, "app_state", "interchainquery", "params", "allow_queries"); err != nil {
 			return nil, fmt.Errorf("failed to set whitelist in genesis json: %w", err)
 		}
-		fmt.Println("Genesis file updated", g)
 		out, err := json.Marshal(g)
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal genesis bytes to json: %w", err)
@@ -144,7 +144,11 @@ func modifyGenesisWhitelistTwapQueryOsmosis() func(ibc.ChainConfig, []byte) ([]b
 	}
 }
 
-func modifyGenesisShortProposals(votingPeriod string, maxDepositPeriod string, queryEpochTime string) func(ibc.ChainConfig, []byte) ([]byte, error) {
+func modifyGenesisShortProposals(
+	votingPeriod string,
+	maxDepositPeriod string,
+	queryEpochTime string,
+) func(ibc.ChainConfig, []byte) ([]byte, error) {
 	return func(chainConfig ibc.ChainConfig, genbz []byte) ([]byte, error) {
 		g := make(map[string]interface{})
 		if err := json.Unmarshal(genbz, &g); err != nil {
@@ -165,7 +169,6 @@ func modifyGenesisShortProposals(votingPeriod string, maxDepositPeriod string, q
 		if err := dyno.Set(g, queryEpochTime, "app_state", "feeabs", "epochs", 1, "duration"); err != nil {
 			return nil, fmt.Errorf("failed to set query epoch time in genesis json: %w", err)
 		}
-		fmt.Println("Genesis file updated", g)
 		out, err := json.Marshal(g)
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal genesis bytes to json: %w", err)
@@ -463,7 +466,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	// Send Gaia uatom to Osmosis
 	gaiaHeight, err := gaia.Height(ctx)
 	require.NoError(t, err)
-	dstAddress := sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
+	dstAddress := sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
 	transfer := ibc.WalletAmount{
 		Address: dstAddress,
 		Denom:   gaia.Config().Denom,
@@ -482,7 +485,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	// Send Feeabs stake to Osmosis
 	feeabsHeight, err := feeabs.Height(ctx)
 	require.NoError(t, err)
-	dstAddress = sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
+	dstAddress = sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
 	transfer = ibc.WalletAmount{
 		Address: dstAddress,
 		Denom:   feeabs.Config().Denom,
@@ -501,7 +504,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	// Send Gaia uatom to Feeabs
 	gaiaHeight, err = gaia.Height(ctx)
 	require.NoError(t, err)
-	dstAddress = sdktypes.MustBech32ifyAddressBytes(feeabs.Config().Bech32Prefix, feeabsUser.Address())
+	dstAddress = sdk.MustBech32ifyAddressBytes(feeabs.Config().Bech32Prefix, feeabsUser.Address())
 	transfer = ibc.WalletAmount{
 		Address: dstAddress,
 		Denom:   gaia.Config().Denom,
@@ -558,7 +561,7 @@ func SetupOsmosisContracts(t *testing.T,
 
 	// Instantiate contracts
 	// 1. Crosschain Registry Contract
-	owner := sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, user.Address())
+	owner := sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, user.Address())
 	initMsg := fmt.Sprintf("{\"owner\":\"%s\"}", owner)
 
 	registryContractAddr, err := osmosis.InstantiateContract(ctx, user.KeyName(), registryCodeId, initMsg, true)

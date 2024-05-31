@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"cosmossdk.io/math"
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	"github.com/strangelove-ventures/interchaintest/v8"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
@@ -113,8 +113,8 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	// Get our Bech32 encoded user addresses
 	feeabsUser, gaiaUser := users[0], users[1]
 
-	feeabsUserAddr := sdktypes.MustBech32ifyAddressBytes(feeabs.Config().Bech32Prefix, feeabsUser.Address())
-	gaiaUserAddr := sdktypes.MustBech32ifyAddressBytes(gaia.Config().Bech32Prefix, gaiaUser.Address())
+	feeabsUserAddr := sdk.MustBech32ifyAddressBytes(feeabs.Config().Bech32Prefix, feeabsUser.Address())
+	gaiaUserAddr := sdk.MustBech32ifyAddressBytes(gaia.Config().Bech32Prefix, gaiaUser.Address())
 
 	// Get original account balances
 	feeabsOrigBal, err := feeabs.GetBalance(ctx, feeabsUserAddr, feeabs.Config().Denom)
@@ -126,11 +126,10 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	require.Equal(t, genesisWalletAmount, gaiaOrigBal)
 
 	// Compose an IBC transfer and send from feeabs -> Gaia
-	transferAmount := math.NewInt(1_000)
 	transfer := ibc.WalletAmount{
 		Address: gaiaUserAddr,
 		Denom:   feeabs.Config().Denom,
-		Amount:  transferAmount,
+		Amount:  amountToSend,
 	}
 
 	channel, err := ibc.GetTransferChannel(ctx, r, eRep, feeabs.Config().ChainID, gaia.Config().ChainID)
@@ -155,17 +154,17 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	require.NoError(t, err)
 
 	// The feeabs account should have the original balance minus the transfer amount and the fee
-	require.GreaterOrEqual(t, feeabsOrigBal.Sub(transferAmount).Int64(), feeabsUpdateBal.Int64())
+	require.GreaterOrEqual(t, feeabsOrigBal.Sub(amountToSend).Int64(), feeabsUpdateBal.Int64())
 
 	gaiaUpdateBal, err := gaia.GetBalance(ctx, gaiaUserAddr, feeabsIBCDenom)
 	require.NoError(t, err)
-	require.Equal(t, transferAmount, gaiaUpdateBal)
+	require.Equal(t, amountToSend, gaiaUpdateBal)
 
 	// Compose an IBC transfer and send from Gaia -> Feeabs
 	transfer = ibc.WalletAmount{
 		Address: feeabsUserAddr,
 		Denom:   feeabsIBCDenom,
-		Amount:  transferAmount,
+		Amount:  amountToSend,
 	}
 
 	transferTx, err = gaia.SendIBCTransfer(ctx, channel.Counterparty.ChannelID, gaiaUserAddr, transfer, ibc.TransferOptions{})
@@ -181,7 +180,7 @@ func TestFeeabsGaiaIBCTransfer(t *testing.T) {
 	// Assert that the funds are now back on feeabs and not on Gaia
 	feeabsBalAfterGettingBackToken, err := feeabs.GetBalance(ctx, feeabsUserAddr, feeabs.Config().Denom)
 	require.NoError(t, err)
-	require.Equal(t, feeabsUpdateBal.Add(transferAmount).Int64(), feeabsBalAfterGettingBackToken.Int64())
+	require.Equal(t, feeabsUpdateBal.Add(amountToSend).Int64(), feeabsBalAfterGettingBackToken.Int64())
 
 	gaiaUpdateBal, err = gaia.GetBalance(ctx, gaiaUserAddr, feeabsIBCDenom)
 	require.NoError(t, err)

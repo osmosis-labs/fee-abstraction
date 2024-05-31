@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"testing"
 
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
@@ -37,7 +37,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	require.NoError(t, err)
 	_ = crossChainRegistryContractID
 	// // Instatiate
-	owner := sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
+	owner := sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
 	initMsg := fmt.Sprintf("{\"owner\":\"%s\"}", owner)
 	registryContractAddress, err := osmosis.InstantiateContract(ctx, osmosisUser.KeyName(), crossChainRegistryContractID, initMsg, true)
 	require.NoError(t, err)
@@ -68,13 +68,14 @@ func TestQueryOsmosisTwap(t *testing.T) {
 
 	// Create pool Osmosis(stake)/uosmo on Osmosis
 	stakeOnOsmosis := GetStakeOnOsmosis(channOsmosisFeeabs, feeabs.Config().Denom)
-	osmosisUserBalance, err := osmosis.GetBalance(ctx, sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), stakeOnOsmosis)
+	osmosisUserBalance, err := osmosis.GetBalance(ctx, sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), stakeOnOsmosis)
 	require.NoError(t, err)
 	require.Equal(t, amountToSend, osmosisUserBalance)
 
+	initAmount := amountToSend.Uint64() / 2
 	poolID, err := feeabsCli.CreatePool(osmosis, ctx, osmosisUser.KeyName(), cosmos.OsmosisPoolParams{
 		Weights:        fmt.Sprintf("5%s,5%s", stakeOnOsmosis, osmosis.Config().Denom),
-		InitialDeposit: fmt.Sprintf("95000000%s,950000000%s", stakeOnOsmosis, osmosis.Config().Denom),
+		InitialDeposit: fmt.Sprintf("%d%s,%d%s", initAmount, stakeOnOsmosis, initAmount, osmosis.Config().Denom),
 		SwapFee:        "0.01",
 		ExitFee:        "0",
 		FutureGovernor: "",
