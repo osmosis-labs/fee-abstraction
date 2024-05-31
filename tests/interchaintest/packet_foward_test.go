@@ -18,6 +18,9 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping in short mode")
 	}
+
+	t.Parallel()
+
 	// Set up chains, users and channels
 	ctx := context.Background()
 	chains, users, channels := SetupChain(t, ctx)

@@ -4,8 +4,10 @@ import (
 	"context"
 	"testing"
 
+	"github.com/strangelove-ventures/interchaintest/v8"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap/zaptest"
 
 	feeabsCli "github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/feeabs"
 )
@@ -14,18 +16,45 @@ func TestHostZoneProposal(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping in short mode")
 	}
+
+	t.Parallel()
+
+	numVals := 1
+	numFullNodes := 1
+
+	cf := interchaintest.NewBuiltinChainFactory(zaptest.NewLogger(t), []*interchaintest.ChainSpec{
+		{
+			Name:          "feeabs",
+			ChainConfig:   feeabsConfig,
+			NumValidators: &numVals,
+			NumFullNodes:  &numFullNodes,
+		},
+	})
+
+	chains, err := cf.Chains(t.Name())
+	require.NoError(t, err)
+
 	ctx := context.Background()
+	feeabs := chains[0].(*cosmos.CosmosChain)
+	ic := interchaintest.NewInterchain().AddChain(feeabs)
+	client, network := interchaintest.DockerSetup(t)
 
-	chains, users, channels := SetupChain(t, ctx)
-	feeabs, _, osmosis := chains[0].(*cosmos.CosmosChain), chains[1].(*cosmos.CosmosChain), chains[2].(*cosmos.CosmosChain)
-	channFeeabsOsmosis, _, channFeeabsOsmosisICQ := channels[0], channels[1], channels[6]
+	require.NoError(t, ic.Build(ctx, nil, interchaintest.InterchainBuildOptions{
+		TestName:         t.Name(),
+		Client:           client,
+		NetworkID:        network,
+		SkipPathCreation: true,
+	}))
+	t.Cleanup(func() {
+		_ = ic.Close()
+	})
 
-	feeabsUser, _, _ := users[0], users[1], users[2]
-	osmoOnFeeabs := GetOsmoOnFeeabs(channFeeabsOsmosis, osmosis.Config().Denom)
+	users := interchaintest.GetAndFundTestUsers(t, ctx, t.Name(), genesisWalletAmount, feeabs)
+	feeabsUser := users[0]
 
-	ParamChangeProposal(t, ctx, feeabs, feeabsUser, &channFeeabsOsmosis, &channFeeabsOsmosisICQ, osmoOnFeeabs)
+	ParamChangeProposal(t, ctx, feeabs, feeabsUser, "channel-0", "channel-1", fakeIBCDenom)
 	AddHostZoneProposal(t, ctx, feeabs, feeabsUser)
 
-	_, err := feeabsCli.QueryHostZoneConfigWithDenom(feeabs, ctx, osmoOnFeeabs)
+	_, err = feeabsCli.QueryHostZoneConfigWithDenom(feeabs, ctx, fakeIBCDenom)
 	require.NoError(t, err)
 }

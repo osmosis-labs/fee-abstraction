@@ -16,6 +16,8 @@ func TestStartFeeabs(t *testing.T) {
 		t.Skip()
 	}
 
+	t.Parallel()
+
 	numVals := 1
 	numFullNodes := 1
 
