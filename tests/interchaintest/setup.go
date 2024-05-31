@@ -85,7 +85,7 @@ var (
 	pathFeeabsOsmosis   = "feeabs-osmosis"
 	pathOsmosisGaia     = "osmosis-gaia"
 	genesisWalletAmount = math.NewInt(100_000_000_000)
-	amountToSend        = math.NewInt(1_000_000)
+	amountToSend        = math.NewInt(1_000_000_000)
 )
 
 // feeabsEncoding registers the feeabs specific module codecs so that the associated types and msgs
@@ -136,7 +136,6 @@ func modifyGenesisWhitelistTwapQueryOsmosis() func(ibc.ChainConfig, []byte) ([]b
 		if err := dyno.Append(g, whitelist, "app_state", "interchainquery", "params", "allow_queries"); err != nil {
 			return nil, fmt.Errorf("failed to set whitelist in genesis json: %w", err)
 		}
-		fmt.Println("Genesis file updated", g)
 		out, err := json.Marshal(g)
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal genesis bytes to json: %w", err)
@@ -170,7 +169,6 @@ func modifyGenesisShortProposals(
 		if err := dyno.Set(g, queryEpochTime, "app_state", "feeabs", "epochs", 1, "duration"); err != nil {
 			return nil, fmt.Errorf("failed to set query epoch time in genesis json: %w", err)
 		}
-		fmt.Println("Genesis file updated", g)
 		out, err := json.Marshal(g)
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal genesis bytes to json: %w", err)

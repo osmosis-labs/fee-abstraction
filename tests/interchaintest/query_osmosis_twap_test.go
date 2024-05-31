@@ -72,9 +72,10 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, amountToSend, osmosisUserBalance)
 
+	initAmount := amountToSend.Uint64() / 2
 	poolID, err := feeabsCli.CreatePool(osmosis, ctx, osmosisUser.KeyName(), cosmos.OsmosisPoolParams{
 		Weights:        fmt.Sprintf("5%s,5%s", stakeOnOsmosis, osmosis.Config().Denom),
-		InitialDeposit: fmt.Sprintf("95000000%s,950000000%s", stakeOnOsmosis, osmosis.Config().Denom),
+		InitialDeposit: fmt.Sprintf("%d%s,%d%s", initAmount, stakeOnOsmosis, initAmount, osmosis.Config().Denom),
 		SwapFee:        "0.01",
 		ExitFee:        "0",
 		FutureGovernor: "",
