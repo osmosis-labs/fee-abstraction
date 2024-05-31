@@ -16,6 +16,9 @@ func TestHostZoneProposal(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping in short mode")
 	}
+
+	t.Parallel()
+
 	numVals := 1
 	numFullNodes := 1
 
