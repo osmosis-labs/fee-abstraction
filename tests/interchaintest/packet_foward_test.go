@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v8/testutil"
@@ -33,7 +33,7 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	require.NoError(t, err)
 	_ = crossChainRegistryContractID
 	// // Instatiate
-	owner := sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
+	owner := sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
 	initMsg := fmt.Sprintf("{\"owner\":\"%s\"}", owner)
 	registryContractAddress, err := osmosis.InstantiateContract(ctx, osmosisUser.KeyName(), crossChainRegistryContractID, initMsg, true)
 	require.NoError(t, err)
@@ -65,13 +65,13 @@ func TestPacketForwardMiddleware(t *testing.T) {
 	// Create pool Osmosis(uatom)/Osmosis(stake) on Osmosis
 	denomTrace := transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisGaia.PortID, channOsmosisGaia.ChannelID, gaia.Config().Denom))
 	uatomOnOsmosis := denomTrace.IBCDenom()
-	osmosisUserBalance, err := osmosis.GetBalance(ctx, sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), uatomOnOsmosis)
+	osmosisUserBalance, err := osmosis.GetBalance(ctx, sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), uatomOnOsmosis)
 	require.NoError(t, err)
 	require.Equal(t, amountToSend, osmosisUserBalance)
 
 	denomTrace = transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisFeeabs.PortID, channOsmosisFeeabs.ChannelID, feeabs.Config().Denom))
 	stakeOnOsmosis := denomTrace.IBCDenom()
-	osmosisUserBalance, err = osmosis.GetBalance(ctx, sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), stakeOnOsmosis)
+	osmosisUserBalance, err = osmosis.GetBalance(ctx, sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), stakeOnOsmosis)
 	require.NoError(t, err)
 	require.Equal(t, amountToSend, osmosisUserBalance)
 

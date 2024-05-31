@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"cosmossdk.io/math"
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	moduletestutil "github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/icza/dyno"
 	"github.com/strangelove-ventures/interchaintest/v8"
@@ -44,16 +44,17 @@ const (
 	votingPeriod     = "10s"
 	maxDepositPeriod = "10s"
 	queryEpochTime   = "10s"
-)
 
-var (
-	FFeeabsMainRepo     = "osmolabs/fee-abstraction"
+	// Chain and relayer version info
+	FeeabsMainRepo      = "osmolabs/fee-abstraction"
 	FeeabsICTestRepo    = "osmolabs/fee-abstraction-ictest"
 	IBCRelayerImage     = "ghcr.io/cosmos/relayer"
 	IBCRelayerVersion   = "latest"
 	GaiaImageVersion    = "v14.1.0"
 	OsmosisImageVersion = "v22.0.1"
+)
 
+var (
 	repo, version = GetDockerImageInfo()
 
 	feeabsImage = ibc.DockerImage{
@@ -84,7 +85,7 @@ var (
 	pathFeeabsOsmosis   = "feeabs-osmosis"
 	pathOsmosisGaia     = "osmosis-gaia"
 	genesisWalletAmount = math.NewInt(100_000_000_000)
-	amountToSend        = math.NewInt(1_000_000_000)
+	amountToSend        = math.NewInt(1_000_000)
 )
 
 // feeabsEncoding registers the feeabs specific module codecs so that the associated types and msgs
@@ -144,7 +145,11 @@ func modifyGenesisWhitelistTwapQueryOsmosis() func(ibc.ChainConfig, []byte) ([]b
 	}
 }
 
-func modifyGenesisShortProposals(votingPeriod string, maxDepositPeriod string, queryEpochTime string) func(ibc.ChainConfig, []byte) ([]byte, error) {
+func modifyGenesisShortProposals(
+	votingPeriod string,
+	maxDepositPeriod string,
+	queryEpochTime string,
+) func(ibc.ChainConfig, []byte) ([]byte, error) {
 	return func(chainConfig ibc.ChainConfig, genbz []byte) ([]byte, error) {
 		g := make(map[string]interface{})
 		if err := json.Unmarshal(genbz, &g); err != nil {
@@ -463,7 +468,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	// Send Gaia uatom to Osmosis
 	gaiaHeight, err := gaia.Height(ctx)
 	require.NoError(t, err)
-	dstAddress := sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
+	dstAddress := sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
 	transfer := ibc.WalletAmount{
 		Address: dstAddress,
 		Denom:   gaia.Config().Denom,
@@ -482,7 +487,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	// Send Feeabs stake to Osmosis
 	feeabsHeight, err := feeabs.Height(ctx)
 	require.NoError(t, err)
-	dstAddress = sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
+	dstAddress = sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
 	transfer = ibc.WalletAmount{
 		Address: dstAddress,
 		Denom:   feeabs.Config().Denom,
@@ -501,7 +506,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 	// Send Gaia uatom to Feeabs
 	gaiaHeight, err = gaia.Height(ctx)
 	require.NoError(t, err)
-	dstAddress = sdktypes.MustBech32ifyAddressBytes(feeabs.Config().Bech32Prefix, feeabsUser.Address())
+	dstAddress = sdk.MustBech32ifyAddressBytes(feeabs.Config().Bech32Prefix, feeabsUser.Address())
 	transfer = ibc.WalletAmount{
 		Address: dstAddress,
 		Denom:   gaia.Config().Denom,
@@ -558,7 +563,7 @@ func SetupOsmosisContracts(t *testing.T,
 
 	// Instantiate contracts
 	// 1. Crosschain Registry Contract
-	owner := sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, user.Address())
+	owner := sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, user.Address())
 	initMsg := fmt.Sprintf("{\"owner\":\"%s\"}", owner)
 
 	registryContractAddr, err := osmosis.InstantiateContract(ctx, user.KeyName(), registryCodeId, initMsg, true)
