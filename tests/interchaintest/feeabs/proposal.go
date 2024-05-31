@@ -43,13 +43,12 @@ func getTransaction(ctx client.Context, txHash string) (*types.TxResponse, error
 }
 
 func CrossChainSwap(c *cosmos.CosmosChain, ctx context.Context, keyName string, ibcDenom string) (tx ibc.Tx, _ error) {
-	tn := getFullNode(c)
+	tn := c.GetNode()
 
 	txHash, err := tn.ExecTx(ctx, keyName,
 		"feeabs", "swap", ibcDenom,
 		"--gas", "auto",
 	)
-
 	if err != nil {
 		return tx, fmt.Errorf("executing transaction failed: %w", err)
 	}
@@ -103,7 +102,7 @@ func CrossChainSwap(c *cosmos.CosmosChain, ctx context.Context, keyName string, 
 }
 
 func AddHostZoneProposal(c *cosmos.CosmosChain, ctx context.Context, keyName string, fileLocation string) (string, error) {
-	tn := getFullNode(c)
+	tn := c.GetNode()
 	dat, err := os.ReadFile(fileLocation)
 	if err != nil {
 		return "", fmt.Errorf("failed to read file: %w", err)
@@ -127,7 +126,7 @@ func AddHostZoneProposal(c *cosmos.CosmosChain, ctx context.Context, keyName str
 }
 
 func DeleteHostZoneProposal(c *cosmos.CosmosChain, ctx context.Context, keyName string, fileLocation string) (string, error) {
-	tn := getFullNode(c)
+	tn := c.GetNode()
 	dat, err := os.ReadFile(fileLocation)
 	if err != nil {
 		return "", fmt.Errorf("failed to read file: %w", err)
@@ -151,7 +150,7 @@ func DeleteHostZoneProposal(c *cosmos.CosmosChain, ctx context.Context, keyName 
 }
 
 func SetHostZoneProposal(c *cosmos.CosmosChain, ctx context.Context, keyName string, fileLocation string) (string, error) {
-	tn := getFullNode(c)
+	tn := c.GetNode()
 	dat, err := os.ReadFile(fileLocation)
 	if err != nil {
 		return "", fmt.Errorf("failed to read file: %w", err)
@@ -175,7 +174,7 @@ func SetHostZoneProposal(c *cosmos.CosmosChain, ctx context.Context, keyName str
 }
 
 func ParamChangeProposal(c *cosmos.CosmosChain, ctx context.Context, keyName string, prop *paramsutils.ParamChangeProposalJSON) (tx cosmos.TxProposal, _ error) {
-	tn := getFullNode(c)
+	tn := c.GetNode()
 	content, err := json.Marshal(prop)
 	if err != nil {
 		return tx, err
@@ -206,7 +205,8 @@ func ParamChangeProposal(c *cosmos.CosmosChain, ctx context.Context, keyName str
 }
 
 func txProposal(c *cosmos.CosmosChain, txHash string) (tx cosmos.TxProposal, _ error) {
-	fn := getFullNode(c)
+	fn := c.GetNode()
+
 	txResp, err := getTransaction(fn.CliContext(), txHash)
 	if err != nil {
 		return tx, fmt.Errorf("failed to get transaction %s: %w", txHash, err)

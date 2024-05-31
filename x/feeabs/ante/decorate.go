@@ -2,10 +2,11 @@ package ante
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 
 	sdkerrors "cosmossdk.io/errors"
-	sdkmath "cosmossdk.io/math"
+	math "cosmossdk.io/math"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
@@ -161,7 +162,8 @@ func (fadfd FeeAbstractionDeductFeeDecorate) abstractionDeductFeeHandler(ctx sdk
 
 	// deduct the fees
 	if !feeTx.GetFee().IsZero() {
-		err = fadfd.bankKeeper.SendCoinsFromAccountToModule(ctx, feeAbstractionPayer, feeabstypes.ModuleName, fee)
+		fmt.Println("abc", fadfd.feeabsKeeper.GetFeeAbsModuleAddress().String())
+		err = fadfd.bankKeeper.SendCoinsFromAccountToModule(ctx, sdk.AccAddress(feeAbstractionPayer), feeabstypes.ModuleName, fee)
 		if err != nil {
 			return ctx, err
 		}
@@ -286,15 +288,16 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 				if err != nil {
 					return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "unable to calculate native fees from ibc fees: %s", err)
 				}
+				fmt.Println("nativeCoinsFees", nativeCoinsFees)
 				feeCoinsNonZeroDenom = nativeCoinsFees
-			} else if feeCoinsNonZeroDenom.Len() > 1 {
-				return ctx, sdkerrors.Wrapf(errorstypes.ErrNotSupported, "should have only one fee denom in feeCoinsNonZeroDenom, got %d", feeCoinsNonZeroDenom.Len())
 			}
+		} else if feeCoinsNonZeroDenom.Len() > 1 {
+			return ctx, sdkerrors.Wrapf(errorstypes.ErrNotSupported, "should have only one fee denom in feeCoinsNonZeroDenom, got %d", feeCoinsNonZeroDenom.Len())
 		}
 
 		// After replace the feeCoinsNonZeroDenom, feeCoinsNonZeroDenom must be in denom subset of nonZeroCoinFeesReq
 		if !feeCoinsNonZeroDenom.DenomsSubsetOf(nonZeroCoinFeesReq) {
-			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "fee is not a subset of required fees; got %s, required: %s", feeCoins.String(), feeRequired.String())
+			return ctx, sdkerrors.Wrapf(errorstypes.ErrInvalidCoins, "fee is not a subset of required fees; got %s, required: %s", feeCoinsNonZeroDenom.String(), feeRequired.String())
 		}
 
 		// if the msg does not satisfy bypass condition and the feeCoins denoms are subset of fezeRequired,
@@ -311,7 +314,6 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		if feeCoinsLen == 0 {
 			return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "no fee provided, required: %s", feeRequired)
 		}
-
 		// After all the checks, the tx is confirmed:
 		// feeCoins denoms subset off feeRequired (or replaced with fee-abstraction)
 		// Not bypass
@@ -319,8 +321,8 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		// Not contain zeroCoinFeesDenomReq's denoms
 		//
 		// check if the feeCoins has coins' amount higher/equal to nonZeroCoinFeesReq
-		if !feeCoins.IsAnyGTE(nonZeroCoinFeesReq) {
-			err := sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoins, feeRequired)
+		if !feeCoinsNonZeroDenom.IsAnyGTE(nonZeroCoinFeesReq) {
+			err := sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "insufficient fees; got: %s required: %s", feeCoinsNonZeroDenom, nonZeroCoinFeesReq)
 			if byPassExceedMaxGasUsage {
 				err = sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "Insufficient fees; bypass-min-fee-msg-types with gas consumption exceeds the maximum allowed gas value.")
 			}
@@ -336,8 +338,11 @@ func (famfd FeeAbstrationMempoolFeeDecorator) DefaultZeroFee(ctx sdk.Context) ([
 	if err != nil {
 		return nil, err
 	}
+	if bondDenom == "" {
+		return nil, errors.New("empty staking bond denomination")
+	}
 
-	return []sdk.DecCoin{sdk.NewDecCoinFromDec(bondDenom, sdkmath.LegacyNewDec(0))}, nil
+	return []sdk.DecCoin{sdk.NewDecCoinFromDec(bondDenom, math.LegacyNewDec(0))}, nil
 }
 
 // GetTxFeeRequired returns the required fees for the given FeeTx.
@@ -359,7 +364,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) GetTxFeeRequired(ctx sdk.Context, 
 	requiredFees := make(sdk.Coins, len(minGasPrices))
 	// Determine the required fees by multiplying each required minimum gas
 	// price by the gas limit, where fee = ceil(minGasPrice * gasLimit).
-	glDec := sdkmath.LegacyNewDec(gasLimit)
+	glDec := math.LegacyNewDec(gasLimit)
 	for i, gp := range minGasPrices {
 		fee := gp.Amount.Mul(glDec)
 		requiredFees[i] = sdk.NewCoin(gp.Denom, fee.Ceil().RoundInt())

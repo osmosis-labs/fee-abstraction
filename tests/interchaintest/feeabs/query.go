@@ -12,7 +12,7 @@ import (
 )
 
 func QueryHostZoneConfigWithDenom(c *cosmos.CosmosChain, ctx context.Context, denom string) (*HostChainFeeAbsConfigResponse, error) {
-	tn := getFullNode(c)
+	tn := c.GetNode()
 	cmd := []string{"feeabs", "host-chain-config", denom}
 	stdout, _, err := tn.ExecQuery(ctx, cmd...)
 	if err != nil {
@@ -29,7 +29,7 @@ func QueryHostZoneConfigWithDenom(c *cosmos.CosmosChain, ctx context.Context, de
 }
 
 func QueryAllHostZoneConfig(c *cosmos.CosmosChain, ctx context.Context) (*AllQueryHostChainConfigResponse, error) {
-	tn := getFullNode(c)
+	tn := c.GetNode()
 	cmd := []string{"feeabs", "all-host-chain-config"}
 	stdout, _, err := tn.ExecQuery(ctx, cmd...)
 	if err != nil {
@@ -46,7 +46,7 @@ func QueryAllHostZoneConfig(c *cosmos.CosmosChain, ctx context.Context) (*AllQue
 }
 
 func QueryModuleAccountBalances(c *cosmos.CosmosChain, ctx context.Context) (*feeabstypes.QueryFeeabsModuleBalacesResponse, error) {
-	tn := getFullNode(c)
+	tn := c.GetNode()
 	cmd := []string{"feeabs", "module-balances"}
 	stdout, _, err := tn.ExecQuery(ctx, cmd...)
 	if err != nil {
@@ -63,7 +63,7 @@ func QueryModuleAccountBalances(c *cosmos.CosmosChain, ctx context.Context) (*fe
 
 // QueryOsmosisArithmeticTwap queries the arithmetic twap of ibc denom stored in fee abstraction module
 func QueryOsmosisArithmeticTwap(c *cosmos.CosmosChain, ctx context.Context, ibcDenom string) (*feeabstypes.QueryOsmosisArithmeticTwapResponse, error) {
-	node := getFullNode(c)
+	node := c.GetNode()
 	cmd := []string{"feeabs", "osmo-arithmetic-twap", ibcDenom}
 	stdout, _, err := node.ExecQuery(ctx, cmd...)
 	if err != nil {
@@ -79,7 +79,7 @@ func QueryOsmosisArithmeticTwap(c *cosmos.CosmosChain, ctx context.Context, ibcD
 
 // QueryOsmosisArithmeticTwapOsmosis queries the arithmetic twap of a pool on osmosis chain
 func QueryOsmosisArithmeticTwapOsmosis(c *cosmos.CosmosChain, ctx context.Context, poolID, ibcDenom string) (*feeabstypes.QueryOsmosisArithmeticTwapResponse, error) {
-	node := getFullNode(c)
+	node := c.GetNode()
 	currentEpoch := time.Now().Unix()
 
 	cmd := []string{"twap", "arithmetic", poolID, ibcDenom, fmt.Sprintf("%d", currentEpoch-20), fmt.Sprintf("%d", currentEpoch-10)}

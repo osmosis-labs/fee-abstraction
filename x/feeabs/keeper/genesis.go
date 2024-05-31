@@ -1,6 +1,9 @@
 package keeper
 
 import (
+	"context"
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
@@ -29,6 +32,20 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
 			panic(err)
 		}
 	}
+	// check if the module account exists
+	moduleAcc := k.GetFeeabsAccount(ctx)
+	if moduleAcc == nil {
+		panic(fmt.Sprintf("%s module account has not been set", types.ModuleName))
+	}
+
+	balances := k.bk.GetAllBalances(ctx, moduleAcc.GetAddress())
+	if balances.IsZero() {
+		k.ak.SetModuleAccount(ctx, moduleAcc)
+	}
+}
+
+func (k Keeper) GetFeeabsAccount(ctx context.Context) sdk.ModuleAccountI {
+	return k.ak.GetModuleAccount(ctx, types.ModuleName)
 }
 
 // ExportGenesis returns the x/incentives module's exported genesis.

@@ -17,17 +17,17 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	abci "github.com/cometbft/cometbft/abci/types"
-
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/client/cli"
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper"
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
 var (
-	_ module.AppModuleBasic = AppModule{}
-	_ module.AppModuleBasic = AppModuleBasic{}
-	_ appmodule.AppModule   = AppModule{}
+	_ module.AppModuleBasic = (*AppModule)(nil)
+	_ module.HasGenesis     = (*AppModule)(nil)
+
+	_ appmodule.AppModule       = (*AppModule)(nil)
+	_ appmodule.HasBeginBlocker = (*AppModule)(nil)
 )
 
 // ----------------------------------------------------------------------------
@@ -135,12 +135,10 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 }
 
 // InitGenesis initial genesis state for feeabs module
-func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) []abci.ValidatorUpdate {
+func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) {
 	var genesisState types.GenesisState
 	cdc.MustUnmarshalJSON(data, &genesisState)
 	am.keeper.InitGenesis(ctx, genesisState)
-
-	return []abci.ValidatorUpdate{}
 }
 
 // ExportGenesis export feeabs state as raw message for feeabs module
@@ -151,3 +149,11 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 
 // ConsensusVersion return module consensus version
 func (AppModule) ConsensusVersion() uint64 { return 1 }
+
+// HasBeginBlocker return true if module has begin blocker
+func (AppModule) HasBeginBlocker() bool { return true }
+
+func (am AppModule) BeginBlock(ctx context.Context) error {
+	sdkContext := sdk.UnwrapSDKContext(ctx)
+	return am.keeper.BeginBlock(sdkContext)
+}

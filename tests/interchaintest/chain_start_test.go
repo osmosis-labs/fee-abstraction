@@ -2,13 +2,11 @@ package interchaintest
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
-	"github.com/strangelove-ventures/interchaintest/v8"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
-	"github.com/strangelove-ventures/interchaintest/v8/testreporter"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/zap/zaptest"
 )
 
 // TestStartFeeabs is a basic test to assert that spinning up a Feeabs network with 1 validator works properly.
@@ -17,50 +15,11 @@ func TestStartFeeabs(t *testing.T) {
 		t.Skip()
 	}
 
-	t.Parallel()
-
+	// Set up chains, users and channels
 	ctx := context.Background()
-
-	// Create chain factory with Feeabs
-	numVals := 1
-	numFullNodes := 1
-
-	cf := interchaintest.NewBuiltinChainFactory(zaptest.NewLogger(t), []*interchaintest.ChainSpec{
-		{
-			Name:          "feeabs",
-			ChainConfig:   feeabsConfig,
-			NumValidators: &numVals,
-			NumFullNodes:  &numFullNodes,
-		},
-	})
-
-	// Get chains from the chain factory
-	chains, err := cf.Chains(t.Name())
+	chains, _, _ := SetupChain(t, ctx)
+	feeabs, _, _ := chains[0].(*cosmos.CosmosChain), chains[1].(*cosmos.CosmosChain), chains[2].(*cosmos.CosmosChain)
+	a, err := feeabs.AuthQueryModuleAccounts(ctx)
 	require.NoError(t, err)
-
-	feeabs := chains[0].(*cosmos.CosmosChain)
-
-	// Relayer Factory
-	client, network := interchaintest.DockerSetup(t)
-
-	// Create a new Interchain object which describes the chains, relayers, and IBC connections we want to use
-	ic := interchaintest.NewInterchain().AddChain(feeabs)
-
-	rep := testreporter.NewNopReporter()
-	eRep := rep.RelayerExecReporter(t)
-
-	err = ic.Build(ctx, eRep, interchaintest.InterchainBuildOptions{
-		TestName:         t.Name(),
-		Client:           client,
-		NetworkID:        network,
-		SkipPathCreation: true,
-
-		// This can be used to write to the block database which will index all block data e.g. txs, msgs, events, etc.
-		// BlockDatabaseFile: interchaintest.DefaultBlockDatabaseFilepath(),
-	})
-	require.NoError(t, err)
-
-	t.Cleanup(func() {
-		_ = ic.Close()
-	})
+	fmt.Println("module accounts", a)
 }

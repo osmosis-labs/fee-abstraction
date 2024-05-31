@@ -52,18 +52,18 @@ func (k Keeper) AddEpochInfo(ctx sdk.Context, epoch types.EpochInfo) error {
 		epoch.StartTime = ctx.BlockTime()
 	}
 	epoch.CurrentEpochStartHeight = ctx.BlockHeight()
-	k.SetEpochInfo(ctx, epoch)
-	return nil
+	return k.SetEpochInfo(ctx, epoch)
 }
 
 // SetEpochInfo set epoch info.
-func (k Keeper) SetEpochInfo(ctx sdk.Context, epoch types.EpochInfo) {
+func (k Keeper) SetEpochInfo(ctx sdk.Context, epoch types.EpochInfo) error {
 	store := ctx.KVStore(k.storeKey)
 	value, err := proto.Marshal(&epoch)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	store.Set(append(types.KeyPrefixEpoch, []byte(epoch.Identifier)...), value)
+	return nil
 }
 
 // IterateEpochInfo iterate through epochs.

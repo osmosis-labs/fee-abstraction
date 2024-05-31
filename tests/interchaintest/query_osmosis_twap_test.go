@@ -9,12 +9,13 @@ import (
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
-	feeabsCli "github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/feeabs"
-	feeabstypes "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v8/ibc"
 	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 	"github.com/stretchr/testify/require"
+
+	feeabsCli "github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/feeabs"
+	feeabstypes "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
 func TestQueryOsmosisTwap(t *testing.T) {
@@ -143,7 +144,10 @@ func ParamChangeProposal(t *testing.T, ctx context.Context, feeabs *cosmos.Cosmo
 	paramTx, err := feeabs.SubmitProposal(ctx, feeabsUser.KeyName(), prop)
 	require.NoError(t, err, "error submitting param change proposal tx")
 
-	err = feeabs.VoteOnProposalAllValidators(ctx, paramTx.ProposalID, cosmos.ProposalVoteYes)
+	proposalID, err := strconv.ParseUint(paramTx.ProposalID, 10, 64)
+	require.NoError(t, err, "parse proposal id failed")
+
+	err = feeabs.VoteOnProposalAllValidators(ctx, proposalID, cosmos.ProposalVoteYes)
 	require.NoError(t, err, "failed to submit votes")
 
 	height, err := feeabs.Height(ctx)
@@ -154,14 +158,8 @@ func ParamChangeProposal(t *testing.T, ctx context.Context, feeabs *cosmos.Cosmo
 
 	_, err = cosmos.PollForProposalStatus(ctx, feeabs, height, height+20, propID, v1beta1.StatusPassed)
 	require.NoError(t, err, "proposal status did not change to passed in expected number of blocks")
-
 }
 
-// "ibc_denom": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
-//
-//	"osmosis_pool_token_denom_in": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
-//	"pool_id": "1",
-//	"status": 0
 func AddHostZoneProposal(t *testing.T, ctx context.Context, feeabs *cosmos.CosmosChain, feeabsUser ibc.Wallet) {
 	t.Helper()
 
@@ -189,7 +187,7 @@ func AddHostZoneProposal(t *testing.T, ctx context.Context, feeabs *cosmos.Cosmo
 	proposalID, err := strconv.ParseUint(proposalTx.ProposalID, 10, 64)
 	require.NoError(t, err, "parse proposal id failed")
 
-	err = feeabs.VoteOnProposalAllValidators(ctx, proposalTx.ProposalID, cosmos.ProposalVoteYes)
+	err = feeabs.VoteOnProposalAllValidators(ctx, proposalID, cosmos.ProposalVoteYes)
 	require.NoError(t, err, "failed to submit votes")
 
 	height, err := feeabs.Height(ctx)

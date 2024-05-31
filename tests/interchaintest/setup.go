@@ -22,9 +22,10 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
 
-	feeabstype "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 	balancertypes "github.com/osmosis-labs/osmosis/v25/x/gamm/pool-models/balancer"
 	gammtypes "github.com/osmosis-labs/osmosis/v25/x/gamm/types"
+
+	feeabstype "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
 type HasPacketForwarding struct {
@@ -182,7 +183,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 
 	// Create chain factory with Feeabs and Gaia
 	numVals := 1
-	numFullNodes := 0
+	numFullNodes := 1
 
 	cf := interchaintest.NewBuiltinChainFactory(zaptest.NewLogger(t), []*interchaintest.ChainSpec{
 		{
@@ -513,7 +514,7 @@ func SetupChain(t *testing.T, ctx context.Context) ([]ibc.Chain, []ibc.Wallet, [
 
 	_, err = testutil.PollForAck(ctx, gaia, gaiaHeight, gaiaHeight+30, tx.Packet)
 	require.NoError(t, err)
-	err = testutil.WaitForBlocks(ctx, 1, feeabs, gaia, osmosis)
+	err = testutil.WaitForBlocks(ctx, 5, feeabs, gaia, osmosis)
 	require.NoError(t, err)
 
 	return chains, users, chanels
@@ -529,6 +530,7 @@ func SetupOsmosisContracts(t *testing.T,
 	osmosis *cosmos.CosmosChain,
 	user ibc.Wallet,
 ) ([]string, error) {
+	t.Helper()
 	registryWasm := "./bytecode/crosschain_registry.wasm"
 	swaprouterWasm := "./bytecode/swaprouter.wasm"
 	xcsV2Wasm := "./bytecode/crosschain_swaps.wasm"

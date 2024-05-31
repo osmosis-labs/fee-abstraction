@@ -11,7 +11,7 @@ import (
 )
 
 func CreatePool(c *cosmos.CosmosChain, ctx context.Context, keyName string, params cosmos.OsmosisPoolParams) (string, error) {
-	tn := getFullNode(c)
+	tn := c.GetNode()
 	poolbz, err := json.Marshal(params)
 	if err != nil {
 		return "", err
@@ -50,7 +50,7 @@ func CreatePool(c *cosmos.CosmosChain, ctx context.Context, keyName string, para
 func SetupProposePFM(c *cosmos.CosmosChain, ctx context.Context, keyName string, contractAddress string, message string, ibcdenom string) (txHash string, err error) {
 	oneCoin := strconv.FormatInt(1, 10)
 	amount := oneCoin + ibcdenom
-	tn := getFullNode(c)
+	tn := c.GetNode()
 	return tn.ExecTx(ctx, keyName,
 		"wasm", "execute", contractAddress, message, "--amount", amount, "--gas", "1000000",
 	)

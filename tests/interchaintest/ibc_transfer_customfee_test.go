@@ -10,12 +10,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
-	feeabsCli "github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/feeabs"
-	"github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/tendermint"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v8/ibc"
 	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 	"github.com/stretchr/testify/require"
+
+	feeabsCli "github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/feeabs"
+	"github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/tendermint"
 
 	feeabstypes "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
@@ -26,6 +27,7 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping in short mode")
 	}
+	t.Parallel()
 	// Set up chains, users and channels
 	ctx := context.Background()
 	chains, users, channels := SetupChain(t, ctx)
@@ -101,7 +103,7 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	// propose_pfm for feeabs
 	_, err = feeabsCli.SetupProposePFM(osmosis, ctx, osmosisUser.KeyName(), registryContractAddress, `{"propose_pfm":{"chain": "feeabs"}}`, stakeOnOsmosis)
 	require.NoError(t, err)
-	err = testutil.WaitForBlocks(ctx, 15, feeabs, gaia, osmosis)
+	err = testutil.WaitForBlocks(ctx, 10, feeabs, gaia, osmosis)
 	require.NoError(t, err)
 	queryMsg := QuerySmartMsg{
 		Packet: HasPacketForwarding{
@@ -186,8 +188,10 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	require.GreaterOrEqual(t, osmoInitialBal.Sub(transferAmount).Int64(), osmoUpdateBal.Int64())
 
 	// Fund the feeabs module account with stake in order to pay native fee
-	feeabsModuleAddr, err := feeabs.GetModuleAddress(ctx, feeabstypes.ModuleName)
+	feeabsModuleAddr, err := feeabs.AuthQueryModuleAddress(ctx, feeabstypes.ModuleName)
+	fmt.Println("feeabsModuleAddr", feeabsModuleAddr)
 	require.NoError(t, err)
+	require.NotNil(t, feeabsModuleAddr)
 	transfer = ibc.WalletAmount{
 		Address: feeabsModuleAddr,
 		Denom:   feeabs.Config().Denom,
@@ -195,6 +199,7 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	}
 	err = feeabs.SendFunds(ctx, feeabsUser.KeyName(), transfer)
 	require.NoError(t, err)
+
 	// Compose an IBC transfer and send from Feeabs -> Gaia
 	transferAmount = math.NewInt(1_000)
 	ibcFee := sdk.NewCoin(osmoIBCDenom, math.NewInt(1000))
@@ -235,21 +240,17 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	// Compose an IBC transfer and send from Feeabs -> Gaia, with insufficient fee, should fail
 	customTransferTx, err = SendIBCTransferWithCustomFee(feeabs, ctx, feeabsUser.KeyName(), channFeeabsGaia.ChannelID, transfer, sdk.Coins{ibcFee})
 	require.Error(t, err)
-
 }
 
 func SendIBCTransferWithCustomFee(c *cosmos.CosmosChain, ctx context.Context, keyName string, channelID string, amount ibc.WalletAmount, fees sdk.Coins) (ibc.Tx, error) {
 	tn := c.Validators[0]
-	if len(c.FullNodes) > 0 {
-		tn = c.FullNodes[0]
-	}
+
 	command := []string{
 		"ibc-transfer", "transfer", "transfer", channelID,
 		amount.Address, fmt.Sprintf("%s%s", amount.Amount.String(), amount.Denom), "--fees", fees.String(),
 	}
 	var tx ibc.Tx
 	txHash, err := tn.ExecTx(ctx, keyName, command...)
-
 	if err != nil {
 		return tx, fmt.Errorf("send ibc transfer: %w", err)
 	}

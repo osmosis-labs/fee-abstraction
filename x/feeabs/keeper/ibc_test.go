@@ -68,11 +68,12 @@ func (s *KeeperTestSuite) TestFailedTwapAck() {
 	err := s.feeAbsKeeper.SetHostZoneConfig(s.ctx, hostZoneConfig)
 	require.NoError(s.T(), err)
 
-	s.feeAbsKeeper.SetEpochInfo(s.ctx, types.EpochInfo{
+	err = s.feeAbsKeeper.SetEpochInfo(s.ctx, types.EpochInfo{
 		Identifier:   types.DefaultQueryEpochIdentifier,
 		Duration:     types.DefaultQueryPeriod,
 		CurrentEpoch: 1,
 	})
+	require.NoError(s.T(), err)
 	res, exist := s.feeAbsKeeper.GetEpochInfo(s.ctx, types.DefaultQueryEpochIdentifier)
 	require.True(s.T(), exist)
 	require.Equal(s.T(), int64(1), res.CurrentEpoch)
@@ -85,11 +86,12 @@ func (s *KeeperTestSuite) TestFailedTwapAck() {
 	require.Equal(s.T(), int64(3), exp.FutureEpoch)
 
 	// test query twap after failed, filter should be true, thus not allowing twap query
-	s.feeAbsKeeper.SetEpochInfo(s.ctx, types.EpochInfo{
+	err = s.feeAbsKeeper.SetEpochInfo(s.ctx, types.EpochInfo{
 		Identifier:   types.DefaultQueryEpochIdentifier,
 		Duration:     types.DefaultQueryPeriod,
 		CurrentEpoch: 2,
 	})
+	require.NoError(s.T(), err)
 	reqs, err := s.feeAbsKeeper.HandleOsmosisIbcQuery(s.ctx)
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), reqs, 0)
@@ -100,8 +102,8 @@ func (s *KeeperTestSuite) TestFailedTwapAck() {
 		Duration:     types.DefaultQueryPeriod,
 		CurrentEpoch: 3,
 	}
-	s.feeAbsKeeper.SetEpochInfo(s.ctx, epochInfo)
-
+	err = s.feeAbsKeeper.SetEpochInfo(s.ctx, epochInfo)
+	require.NoError(s.T(), err)
 	filter := s.feeAbsKeeper.IbcQueryHostZoneFilter(s.ctx, hostZoneConfig, epochInfo)
 	require.False(s.T(), filter)
 }
@@ -126,11 +128,12 @@ func (s *KeeperTestSuite) TestOutdatedStatus() {
 	err := s.feeAbsKeeper.SetHostZoneConfig(s.ctx, hostZoneConfig)
 	require.NoError(s.T(), err)
 
-	s.feeAbsKeeper.SetEpochInfo(s.ctx, types.EpochInfo{
+	err = s.feeAbsKeeper.SetEpochInfo(s.ctx, types.EpochInfo{
 		Identifier:   types.DefaultQueryEpochIdentifier,
 		Duration:     types.DefaultQueryPeriod,
 		CurrentEpoch: 1,
 	})
+	require.NoError(s.T(), err)
 	res, exist := s.feeAbsKeeper.GetEpochInfo(s.ctx, types.DefaultQueryEpochIdentifier)
 	require.True(s.T(), exist)
 	require.Equal(s.T(), int64(1), res.CurrentEpoch)
@@ -148,8 +151,8 @@ func (s *KeeperTestSuite) TestOutdatedStatus() {
 		Duration:     types.DefaultQueryPeriod,
 		CurrentEpoch: 3,
 	}
-	s.feeAbsKeeper.SetEpochInfo(s.ctx, epochInfo)
-
+	err = s.feeAbsKeeper.SetEpochInfo(s.ctx, epochInfo)
+	require.NoError(s.T(), err)
 	filter := s.feeAbsKeeper.IbcQueryHostZoneFilter(s.ctx, hostZoneConfig, epochInfo)
 	require.False(s.T(), filter)
 
@@ -165,7 +168,8 @@ func (s *KeeperTestSuite) TestOutdatedStatus() {
 		Duration:     types.DefaultQueryPeriod,
 		CurrentEpoch: 7,
 	}
-	s.feeAbsKeeper.SetEpochInfo(s.ctx, epochInfo)
+	err = s.feeAbsKeeper.SetEpochInfo(s.ctx, epochInfo)
+	require.NoError(s.T(), err)
 	filter = s.feeAbsKeeper.IbcQueryHostZoneFilter(s.ctx, hostZoneConfig, epochInfo)
 	require.False(s.T(), filter)
 
