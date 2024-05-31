@@ -86,6 +86,7 @@ var (
 	pathOsmosisGaia     = "osmosis-gaia"
 	genesisWalletAmount = math.NewInt(100_000_000_000)
 	amountToSend        = math.NewInt(1_000_000_000)
+	fakeIBCDenom        = "ibc/0471F1C4E7AFD3F07702BEF6DC365268D64570F7C1FDC98EA6098DD6DE59817B"
 )
 
 // feeabsEncoding registers the feeabs specific module codecs so that the associated types and msgs

@@ -131,7 +131,7 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	// Setup feeabs module & add host zone via proposals
 	////////////////////////////////////////////////////////////////////////////////////////
 
-	ParamChangeProposal(t, ctx, feeabs, feeabsUser, &channFeeabsOsmosis, &channFeeabsOsmosisICQ, stakeOnOsmosis)
+	ParamChangeProposal(t, ctx, feeabs, feeabsUser, channFeeabsOsmosis.ChannelID, channFeeabsOsmosisICQ.ChannelID, stakeOnOsmosis)
 	AddHostZoneProposal(t, ctx, feeabs, feeabsUser)
 	_, err = feeabsCli.QueryAllHostZoneConfig(feeabs, ctx)
 	require.NoError(t, err)
