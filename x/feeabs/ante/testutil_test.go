@@ -3,7 +3,15 @@ package ante_test
 import (
 	"testing"
 
+	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
+	transferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
+	channelkeeper "github.com/cosmos/ibc-go/v8/modules/core/04-channel/keeper"
+	portkeeper "github.com/cosmos/ibc-go/v8/modules/core/05-port/keeper"
+	"github.com/stretchr/testify/require"
+	ubermock "go.uber.org/mock/gomock"
+
 	storetypes "cosmossdk.io/store/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/runtime"
@@ -17,20 +25,15 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
-	transferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
-	channelkeeper "github.com/cosmos/ibc-go/v8/modules/core/04-channel/keeper"
-	portkeeper "github.com/cosmos/ibc-go/v8/modules/core/05-port/keeper"
+
 	feeabskeeper "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/keeper"
 	feeabstestutil "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/testutil"
 	feeabstypes "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
-	"github.com/stretchr/testify/require"
-	ubermock "go.uber.org/mock/gomock"
 )
 
 // TestAccount represents an account used in the tests in x/auth/ante.
 type TestAccount struct {
-	acc  authtypes.AccountI
+	acc  sdk.AccountI
 	priv cryptotypes.PrivKey
 }
 

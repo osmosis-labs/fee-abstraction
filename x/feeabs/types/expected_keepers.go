@@ -1,28 +1,27 @@
 package types
 
 import (
-	context "context"
+	"context"
 
-	clienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
+	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
 	connectiontypes "github.com/cosmos/ibc-go/v8/modules/core/03-connection/types"
 	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
 )
 
 // AccountKeeper defines the expected account keeper used for simulations (noalias)
 type AccountKeeper interface {
-	GetAccount(ctx context.Context, addr sdk.AccAddress) authtypes.AccountI
+	GetAccount(ctx context.Context, addr sdk.AccAddress) sdk.AccountI
 	GetModuleAddress(moduleName string) sdk.AccAddress
-	GetModuleAccount(ctx context.Context, moduleName string) authtypes.ModuleAccountI
-	IterateAccounts(ctx context.Context, process func(authtypes.AccountI) (stop bool))
-	SetModuleAccount(context.Context, authtypes.ModuleAccountI)
+	GetModuleAccount(ctx context.Context, moduleName string) sdk.ModuleAccountI
+	IterateAccounts(ctx context.Context, process func(sdk.AccountI) (stop bool))
+	SetModuleAccount(context.Context, sdk.ModuleAccountI)
 	GetParams(ctx context.Context) authtypes.Params
-	SetAccount(ctx context.Context, acc authtypes.AccountI)
-	NewAccountWithAddress(ctx context.Context, addr sdk.AccAddress) authtypes.AccountI
+	SetAccount(ctx context.Context, acc sdk.AccountI)
+	NewAccountWithAddress(ctx context.Context, addr sdk.AccAddress) sdk.AccountI
 }
 
 // BankKeeper defines the expected interface needed to retrieve account balances.
@@ -72,7 +71,5 @@ type ScopedKeeper interface {
 type ChannelKeeper interface {
 	GetChannel(ctx context.Context, srcPort, srcChan string) (channel channeltypes.Channel, found bool)
 	GetNextSequenceSend(ctx context.Context, portID, channelID string) (uint64, bool)
-	SendPacket(ctx context.Context, channelCap *capabilitytypes.Capability, sourcePort string, sourceChannel string,
-		timeoutHeight clienttypes.Height, timeoutTimestamp uint64, data []byte) (uint64, error)
 	ChanCloseInit(ctx context.Context, portID, channelID string, chanCap *capabilitytypes.Capability) error
 }

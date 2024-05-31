@@ -10,12 +10,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
-	feeabsCli "github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/feeabs"
-	"github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/tendermint"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v8/ibc"
 	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 	"github.com/stretchr/testify/require"
+
+	feeabsCli "github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/feeabs"
+	"github.com/osmosis-labs/fee-abstraction/v8/tests/interchaintest/tendermint"
 
 	feeabstypes "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
@@ -239,8 +240,8 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	// Compose an IBC transfer and send from Feeabs -> Gaia, with insufficient fee, should fail
 	customTransferTx, err = SendIBCTransferWithCustomFee(feeabs, ctx, feeabsUser.KeyName(), channFeeabsGaia.ChannelID, transfer, sdk.Coins{ibcFee})
 	require.Error(t, err)
-
 }
+
 func SendIBCTransferWithCustomFee(c *cosmos.CosmosChain, ctx context.Context, keyName string, channelID string, amount ibc.WalletAmount, fees sdk.Coins) (ibc.Tx, error) {
 	tn := c.Validators[0]
 
@@ -250,7 +251,6 @@ func SendIBCTransferWithCustomFee(c *cosmos.CosmosChain, ctx context.Context, ke
 	}
 	var tx ibc.Tx
 	txHash, err := tn.ExecTx(ctx, keyName, command...)
-
 	if err != nil {
 		return tx, fmt.Errorf("send ibc transfer: %w", err)
 	}

@@ -22,9 +22,10 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"
 
-	feeabstype "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 	balancertypes "github.com/osmosis-labs/osmosis/v25/x/gamm/pool-models/balancer"
 	gammtypes "github.com/osmosis-labs/osmosis/v25/x/gamm/types"
+
+	feeabstype "github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
 )
 
 type HasPacketForwarding struct {
