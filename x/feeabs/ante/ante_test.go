@@ -94,25 +94,25 @@ func TestMempoolDecorator(t *testing.T) {
 			nil,
 		},
 		// TODO: Add support for multiple denom fees(--fees 50ibc,50native)
-		// {
-		// 	"half native fee, half ibc fee, should pass",
-		// 	sdk.NewCoins(sdk.NewInt64Coin("native", 500*int64(gasLimit)), sdk.NewInt64Coin("ibcfee", 500*int64(gasLimit))),
-		// 	sdk.NewDecCoinsFromCoins(sdk.NewCoins(sdk.NewInt64Coin("native", 1000))...),
-		// 	func(suite *AnteTestSuite) {
-		// 		err := suite.feeabsKeeper.SetHostZoneConfig(suite.ctx, types.HostChainFeeAbsConfig{
-		// 			IbcDenom:                "ibcfee",
-		// 			OsmosisPoolTokenDenomIn: "osmosis",
-		// 			PoolId:                  1,
-		// 			Status:                  types.HostChainFeeAbsStatus_UPDATED,
-		// 			MinSwapAmount:           0,
-		// 		})
-		// 		require.NoError(t, err)
-		// 		suite.feeabsKeeper.SetTwapRate(suite.ctx, "ibcfee", math.LegacyNewDec(1))
-		// 		suite.stakingKeeper.EXPECT().BondDenom(gomock.Any()).Return("native").MinTimes(1)
-		// 	},
-		// 	false,
-		// 	nil,
-		// },
+		{
+			"half native fee, half ibc fee, should pass",
+			sdk.NewCoins(sdk.NewInt64Coin("native", 500*int64(gasLimit)), sdk.NewInt64Coin("ibcfee", 500*int64(gasLimit))),
+			sdk.NewDecCoinsFromCoins(sdk.NewCoins(sdk.NewInt64Coin("native", 1000))...),
+			func(suite *AnteTestSuite) {
+				err := suite.feeabsKeeper.SetHostZoneConfig(suite.ctx, types.HostChainFeeAbsConfig{
+					IbcDenom:                "ibcfee",
+					OsmosisPoolTokenDenomIn: "osmosis",
+					PoolId:                  1,
+					Status:                  types.HostChainFeeAbsStatus_UPDATED,
+					// MinSwapAmount:           0,
+				})
+				require.NoError(t, err)
+				suite.feeabsKeeper.SetTwapRate(suite.ctx, "ibcfee", math.LegacyNewDec(1))
+				suite.stakingKeeper.EXPECT().BondDenom(gomock.Any()).Return("native", nil).MinTimes(1)
+			},
+			false,
+			nil,
+		},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
