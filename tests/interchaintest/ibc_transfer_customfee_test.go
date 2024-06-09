@@ -8,7 +8,6 @@ import (
 
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 	feeabsCli "github.com/osmosis-labs/fee-abstraction/v7/tests/interchaintest/feeabs"
 	"github.com/osmosis-labs/fee-abstraction/v7/tests/interchaintest/tendermint"
@@ -41,7 +40,7 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	require.NoError(t, err)
 	_ = crossChainRegistryContractID
 	// // Instatiate
-	owner := sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
+	owner := sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
 	initMsg := fmt.Sprintf("{\"owner\":\"%s\"}", owner)
 	registryContractAddress, err := osmosis.InstantiateContract(ctx, osmosisUser.KeyName(), crossChainRegistryContractID, initMsg, true)
 	require.NoError(t, err)
@@ -73,20 +72,21 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	// Create pool Osmosis(uatom)/Osmosis(stake) on Osmosis
 	denomTrace := transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisGaia.PortID, channOsmosisGaia.ChannelID, gaia.Config().Denom))
 	uatomOnOsmosis := denomTrace.IBCDenom()
-	osmosisUserBalance, err := osmosis.GetBalance(ctx, sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), uatomOnOsmosis)
+	osmosisUserBalance, err := osmosis.GetBalance(ctx, sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), uatomOnOsmosis)
 	require.NoError(t, err)
 	require.Equal(t, amountToSend, osmosisUserBalance)
 
 	denomTrace = transfertypes.ParseDenomTrace(transfertypes.GetPrefixedDenom(channOsmosisFeeabs.PortID, channOsmosisFeeabs.ChannelID, feeabs.Config().Denom))
 	stakeOnOsmosis := denomTrace.IBCDenom()
-	osmosisUserBalance, err = osmosis.GetBalance(ctx, sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), stakeOnOsmosis)
+	osmosisUserBalance, err = osmosis.GetBalance(ctx, sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), stakeOnOsmosis)
 	require.NoError(t, err)
 	require.Equal(t, amountToSend, osmosisUserBalance)
 
 	// Create pool Osmosis(stake)/uosmo on Osmosis, with 1:1 ratio
+	initAmount := amountToSend.Int64() / 10
 	poolID, err := feeabsCli.CreatePool(osmosis, ctx, osmosisUser.KeyName(), cosmos.OsmosisPoolParams{
 		Weights:        fmt.Sprintf("5%s,5%s", stakeOnOsmosis, osmosis.Config().Denom),
-		InitialDeposit: fmt.Sprintf("95000000%s,95000000%s", stakeOnOsmosis, osmosis.Config().Denom),
+		InitialDeposit: fmt.Sprintf("%d%s,%d%s", initAmount, stakeOnOsmosis, initAmount, osmosis.Config().Denom),
 		SwapFee:        "0.01",
 		ExitFee:        "0",
 		FutureGovernor: "",
@@ -129,7 +129,7 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	// Setup feeabs module & add host zone via proposals
 	////////////////////////////////////////////////////////////////////////////////////////
 
-	ParamChangeProposal(t, ctx, feeabs, feeabsUser, &channFeeabsOsmosis, &channFeeabsOsmosisICQ, stakeOnOsmosis)
+	ParamChangeProposal(t, ctx, feeabs, feeabsUser, channFeeabsOsmosis.ChannelID, channFeeabsOsmosisICQ.ChannelID, stakeOnOsmosis)
 	AddHostZoneProposal(t, ctx, feeabs, feeabsUser)
 	_, err = feeabsCli.QueryAllHostZoneConfig(feeabs, ctx)
 	require.NoError(t, err)
@@ -145,8 +145,8 @@ func TestFeeabsGaiaIBCTransferWithIBCFee(t *testing.T) {
 	// Get our Bech32 encoded user addresses
 	feeabsUser, gaiaUser := users[0], users[1]
 
-	feeabsUserAddr := sdktypes.MustBech32ifyAddressBytes(feeabs.Config().Bech32Prefix, feeabsUser.Address())
-	gaiaUserAddr := sdktypes.MustBech32ifyAddressBytes(gaia.Config().Bech32Prefix, gaiaUser.Address())
+	feeabsUserAddr := sdk.MustBech32ifyAddressBytes(feeabs.Config().Bech32Prefix, feeabsUser.Address())
+	gaiaUserAddr := sdk.MustBech32ifyAddressBytes(gaia.Config().Bech32Prefix, gaiaUser.Address())
 
 	// Compose an IBC transfer and send from Gaia -> Feeabs
 	osmoTokenDenom := transfertypes.GetPrefixedDenom(channFeeabsOsmosis.PortID, channFeeabsOsmosis.ChannelID, osmosis.Config().Denom)
