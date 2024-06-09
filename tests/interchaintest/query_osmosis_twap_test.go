@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"testing"
 
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
@@ -22,6 +22,9 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping in short mode")
 	}
+
+	t.Parallel()
+
 	// Set up chains, users and channels
 	ctx := context.Background()
 	chains, users, channels := SetupChain(t, ctx)
@@ -37,7 +40,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	require.NoError(t, err)
 	_ = crossChainRegistryContractID
 	// // Instatiate
-	owner := sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
+	owner := sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
 	initMsg := fmt.Sprintf("{\"owner\":\"%s\"}", owner)
 	registryContractAddress, err := osmosis.InstantiateContract(ctx, osmosisUser.KeyName(), crossChainRegistryContractID, initMsg, true)
 	require.NoError(t, err)
@@ -68,13 +71,14 @@ func TestQueryOsmosisTwap(t *testing.T) {
 
 	// Create pool Osmosis(stake)/uosmo on Osmosis
 	stakeOnOsmosis := GetStakeOnOsmosis(channOsmosisFeeabs, feeabs.Config().Denom)
-	osmosisUserBalance, err := osmosis.GetBalance(ctx, sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), stakeOnOsmosis)
+	osmosisUserBalance, err := osmosis.GetBalance(ctx, sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), stakeOnOsmosis)
 	require.NoError(t, err)
 	require.Equal(t, amountToSend, osmosisUserBalance)
 
+	initAmount := amountToSend.Uint64() / 2
 	poolID, err := feeabsCli.CreatePool(osmosis, ctx, osmosisUser.KeyName(), cosmos.OsmosisPoolParams{
 		Weights:        fmt.Sprintf("5%s,5%s", stakeOnOsmosis, osmosis.Config().Denom),
-		InitialDeposit: fmt.Sprintf("95000000%s,950000000%s", stakeOnOsmosis, osmosis.Config().Denom),
+		InitialDeposit: fmt.Sprintf("%d%s,%d%s", initAmount, stakeOnOsmosis, initAmount, osmosis.Config().Denom),
 		SwapFee:        "0.01",
 		ExitFee:        "0",
 		FutureGovernor: "",
@@ -97,7 +101,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, &res)
 	require.NoError(t, err)
 
-	ParamChangeProposal(t, ctx, feeabs, feeabsUser, &channFeeabsOsmosis, &channFeeabsOsmosisICQ, stakeOnOsmosis)
+	ParamChangeProposal(t, ctx, feeabs, feeabsUser, channFeeabsOsmosis.ChannelID, channFeeabsOsmosisICQ.ChannelID, stakeOnOsmosis)
 	AddHostZoneProposal(t, ctx, feeabs, feeabsUser)
 
 	// ensure that the host zone is added
@@ -119,7 +123,14 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func ParamChangeProposal(t *testing.T, ctx context.Context, feeabs *cosmos.CosmosChain, feeabsUser ibc.Wallet, channFeeabsOsmosis, channFeeabsOsmosisFeeabs *ibc.ChannelOutput, stakeOnOsmosis string) {
+func ParamChangeProposal(
+	t *testing.T,
+	ctx context.Context,
+	feeabs *cosmos.CosmosChain,
+	feeabsUser ibc.Wallet,
+	channFeeabsOsmosis, channFeeabsOsmosisFeeabs string,
+	stakeOnOsmosis string,
+) {
 	t.Helper()
 	govAddr, err := feeabs.AuthQueryModuleAddress(ctx, "gov")
 	require.NoError(t, err)
@@ -127,8 +138,8 @@ func ParamChangeProposal(t *testing.T, ctx context.Context, feeabs *cosmos.Cosmo
 	updateParamMsg := feeabstypes.MsgUpdateParams{
 		Params: feeabstypes.Params{
 			OsmosisQueryTwapPath:         "/osmosis.twap.v1beta1.Query/ArithmeticTwapToNow",
-			IbcTransferChannel:           channFeeabsOsmosis.ChannelID,
-			IbcQueryIcqChannel:           channFeeabsOsmosisFeeabs.ChannelID,
+			IbcTransferChannel:           channFeeabsOsmosis,
+			IbcQueryIcqChannel:           channFeeabsOsmosisFeeabs,
 			NativeIbcedInOsmosis:         stakeOnOsmosis,
 			OsmosisCrosschainSwapAddress: "osmo17p9rzwnnfxcjp32un9ug7yhhzgtkhvl9jfksztgw5uh69wac2pgs5yczr8",
 			ChainName:                    feeabs.Config().ChainID,
@@ -169,7 +180,7 @@ func AddHostZoneProposal(t *testing.T, ctx context.Context, feeabs *cosmos.Cosmo
 
 	addHostZoneMsg := feeabstypes.MsgAddHostZone{
 		HostChainConfig: &feeabstypes.HostChainFeeAbsConfig{
-			IbcDenom:                "ibc/0471F1C4E7AFD3F07702BEF6DC365268D64570F7C1FDC98EA6098DD6DE59817B",
+			IbcDenom:                fakeIBCDenom,
 			OsmosisPoolTokenDenomIn: "uosmo",
 			PoolId:                  1,
 			Status:                  0,

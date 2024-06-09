@@ -1,6 +1,6 @@
 module github.com/osmosis-labs/fee-abstraction/v8
 
-go 1.21
+go 1.22.3
 
 require (
 	cosmossdk.io/client/v2 v2.0.0-beta.1
@@ -354,3 +354,5 @@ replace (
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 
 )
+
+retract v8.0.0
