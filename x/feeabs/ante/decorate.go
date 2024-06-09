@@ -271,28 +271,32 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 		// Check if feeDenom is defined in feeabs
 		// If so, replace the amount of feeDenom in feeCoins with the
 		// corresponding amount of native denom that allow to pay fee
-		// TODO: Support more fee token in feeRequired for fee-abstraction
-		if feeCoinsNonZeroDenom.Len() == 1 {
-			feeDenom := feeCoinsNonZeroDenom.GetDenomByIndex(0)
-			hostChainConfig, found := famfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
-			if found {
-				if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_FROZEN {
-					return ctx, sdkerrors.Wrapf(feeabstypes.ErrHostZoneFrozen, "cannot deduct fee as host zone is frozen")
-				}
+		// Support more fee tokens in feeRequired for fee-abstraction
+		if feeCoinsNonZeroDenom.Len() > 0 {
+			nativeCoinsFees := sdk.NewCoins()
+			for _, feeCoin := range feeCoinsNonZeroDenom {
+				feeDenom := feeCoin.Denom
+				hostChainConfig, found := famfd.feeabsKeeper.GetHostZoneConfig(ctx, feeDenom)
+				if found {
+					if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_FROZEN {
+						return ctx, sdkerrors.Wrapf(feeabstypes.ErrHostZoneFrozen, "cannot deduct fee as host zone is frozen")
+					}
 
-				// if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_OUTDATED {
-				// 	return ctx, sdkerrors.Wrapf(feeabstypes.ErrHostZoneOutdated, "cannot deduct fee as host zone is outdated")
-				// }
+					// if hostChainConfig.Status == feeabstypes.HostChainFeeAbsStatus_OUTDATED {
+					//     return ctx, sdkerrors.Wrapf(feeabstypes.ErrHostZoneOutdated, "cannot deduct fee as host zone is outdated")
+					// }
 
-				nativeCoinsFees, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, feeCoinsNonZeroDenom, hostChainConfig)
-				if err != nil {
-					return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "unable to calculate native fees from ibc fees: %s", err)
+					nativeCoinFee, err := famfd.feeabsKeeper.CalculateNativeFromIBCCoins(ctx, sdk.NewCoins(feeCoin), hostChainConfig)
+					if err != nil {
+						return ctx, sdkerrors.Wrapf(errorstypes.ErrInsufficientFee, "unable to calculate native fee from ibc fee: %s", err)
+					}
+					nativeCoinsFees = nativeCoinsFees.Add(nativeCoinFee...)
+				} else {
+					nativeCoinsFees = nativeCoinsFees.Add(feeCoin)
 				}
-				fmt.Println("nativeCoinsFees", nativeCoinsFees)
-				feeCoinsNonZeroDenom = nativeCoinsFees
 			}
-		} else if feeCoinsNonZeroDenom.Len() > 1 {
-			return ctx, sdkerrors.Wrapf(errorstypes.ErrNotSupported, "should have only one fee denom in feeCoinsNonZeroDenom, got %d", feeCoinsNonZeroDenom.Len())
+			fmt.Println("nativeCoinsFees", nativeCoinsFees)
+			feeCoinsNonZeroDenom = nativeCoinsFees
 		}
 
 		// After replace the feeCoinsNonZeroDenom, feeCoinsNonZeroDenom must be in denom subset of nonZeroCoinFeesReq
