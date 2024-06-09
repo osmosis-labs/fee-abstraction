@@ -8,7 +8,7 @@ import (
 	"path"
 	"testing"
 
-	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramsutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
 	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
@@ -38,7 +38,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	require.NoError(t, err)
 	_ = crossChainRegistryContractID
 	// // Instatiate
-	owner := sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
+	owner := sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address())
 	initMsg := fmt.Sprintf("{\"owner\":\"%s\"}", owner)
 	registryContractAddress, err := osmosis.InstantiateContract(ctx, osmosisUser.KeyName(), crossChainRegistryContractID, initMsg, true)
 	require.NoError(t, err)
@@ -69,13 +69,14 @@ func TestQueryOsmosisTwap(t *testing.T) {
 
 	// Create pool Osmosis(stake)/uosmo on Osmosis
 	stakeOnOsmosis := GetStakeOnOsmosis(channOsmosisFeeabs, feeabs.Config().Denom)
-	osmosisUserBalance, err := osmosis.GetBalance(ctx, sdktypes.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), stakeOnOsmosis)
+	osmosisUserBalance, err := osmosis.GetBalance(ctx, sdk.MustBech32ifyAddressBytes(osmosis.Config().Bech32Prefix, osmosisUser.Address()), stakeOnOsmosis)
 	require.NoError(t, err)
 	require.Equal(t, amountToSend, osmosisUserBalance)
 
+	initAmount := amountToSend.Int64() / 10
 	poolID, err := feeabsCli.CreatePool(osmosis, ctx, osmosisUser.KeyName(), cosmos.OsmosisPoolParams{
 		Weights:        fmt.Sprintf("5%s,5%s", stakeOnOsmosis, osmosis.Config().Denom),
-		InitialDeposit: fmt.Sprintf("95000000%s,950000000%s", stakeOnOsmosis, osmosis.Config().Denom),
+		InitialDeposit: fmt.Sprintf("%d%s,%d%s", initAmount, stakeOnOsmosis, initAmount, osmosis.Config().Denom),
 		SwapFee:        "0.01",
 		ExitFee:        "0",
 		FutureGovernor: "",
@@ -98,7 +99,7 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	err = osmosis.QueryContract(ctx, registryContractAddress, queryMsg, &res)
 	require.NoError(t, err)
 
-	ParamChangeProposal(t, ctx, feeabs, feeabsUser, &channFeeabsOsmosis, &channFeeabsOsmosisICQ, stakeOnOsmosis)
+	ParamChangeProposal(t, ctx, feeabs, feeabsUser, channFeeabsOsmosis.ChannelID, channFeeabsOsmosisICQ.ChannelID, stakeOnOsmosis)
 	AddHostZoneProposal(t, ctx, feeabs, feeabsUser)
 
 	// ensure that the host zone is added
@@ -120,7 +121,14 @@ func TestQueryOsmosisTwap(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func ParamChangeProposal(t *testing.T, ctx context.Context, feeabs *cosmos.CosmosChain, feeabsUser ibc.Wallet, channFeeabsOsmosis, channFeeabsOsmosisFeeabs *ibc.ChannelOutput, stakeOnOsmosis string) {
+func ParamChangeProposal(
+	t *testing.T,
+	ctx context.Context,
+	feeabs *cosmos.CosmosChain,
+	feeabsUser ibc.Wallet,
+	channFeeabsOsmosis, channFeeabsOsmosisFeeabs string,
+	stakeOnOsmosis string,
+) {
 	t.Helper()
 	// propose to change feeabs parameters accordingly to the ibcdenom
 	curDir, _ := os.Getwd()
@@ -133,12 +141,12 @@ func ParamChangeProposal(t *testing.T, ctx context.Context, feeabs *cosmos.Cosmo
 	for i := range changeParamProposal.Changes {
 		change := &changeParamProposal.Changes[i]
 		if change.Subspace == "feeabs" && change.Key == "IbcTransferChannel" {
-			fmt.Println("ibc transfer channel changed", channFeeabsOsmosis.ChannelID)
-			change.Value = json.RawMessage(fmt.Sprintf("\"%s\"", channFeeabsOsmosis.ChannelID))
+			fmt.Println("ibc transfer channel changed", channFeeabsOsmosis)
+			change.Value = json.RawMessage(fmt.Sprintf("\"%s\"", channFeeabsOsmosis))
 		}
 		if change.Subspace == "feeabs" && change.Key == "IbcQueryIcqChannel" {
-			fmt.Println("ibc query icq channel changed", channFeeabsOsmosisFeeabs.ChannelID)
-			change.Value = json.RawMessage(fmt.Sprintf("\"%s\"", channFeeabsOsmosisFeeabs.ChannelID))
+			fmt.Println("ibc query icq channel changed", channFeeabsOsmosisFeeabs)
+			change.Value = json.RawMessage(fmt.Sprintf("\"%s\"", channFeeabsOsmosisFeeabs))
 		}
 		if change.Subspace == "feeabs" && change.Key == "NativeIbcedInOsmosis" {
 			fmt.Println("NativeIbcedInOsmosis changed", stakeOnOsmosis)
