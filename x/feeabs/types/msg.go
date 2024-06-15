@@ -15,7 +15,7 @@ func (m MsgSendQueryIbcDenomTWAP) Type() string { return sdk.MsgTypeURL(&m) }
 
 // GetSigners returns the expected signers for a MsgMintAndAllocateExp .
 func (m MsgSendQueryIbcDenomTWAP) GetSigners() []sdk.AccAddress {
-	daoAccount, err := sdk.AccAddressFromBech32(m.FromAddress)
+	daoAccount, err := sdk.AccAddressFromBech32(m.Sender)
 	if err != nil {
 		panic(err)
 	}
@@ -29,16 +29,16 @@ func (m MsgSendQueryIbcDenomTWAP) GetSignBytes() []byte {
 
 // ValidateBasic does a sanity check on the provided data.
 func (m MsgSendQueryIbcDenomTWAP) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(m.FromAddress)
+	_, err := sdk.AccAddressFromBech32(m.Sender)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func NewMsgSendQueryIbcDenomTWAP(fromAddr sdk.AccAddress) *MsgSendQueryIbcDenomTWAP {
+func NewMsgSendQueryIbcDenomTWAP(sender sdk.AccAddress) *MsgSendQueryIbcDenomTWAP {
 	return &MsgSendQueryIbcDenomTWAP{
-		FromAddress: fromAddr.String(),
+		Sender: sender.String(),
 	}
 }
 
@@ -52,7 +52,7 @@ func (m MsgSwapCrossChain) Type() string { return sdk.MsgTypeURL(&m) }
 
 // GetSigners returns the expected signers for a MsgMintAndAllocateExp .
 func (m MsgSwapCrossChain) GetSigners() []sdk.AccAddress {
-	daoAccount, err := sdk.AccAddressFromBech32(m.FromAddress)
+	daoAccount, err := sdk.AccAddressFromBech32(m.Sender)
 	if err != nil {
 		panic(err)
 	}
@@ -66,16 +66,16 @@ func (m MsgSwapCrossChain) GetSignBytes() []byte {
 
 // ValidateBasic does a sanity check on the provided data.
 func (m MsgSwapCrossChain) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(m.FromAddress)
+	_, err := sdk.AccAddressFromBech32(m.Sender)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func NewMsgSwapCrossChain(fromAddr sdk.AccAddress, ibcDenom string) *MsgSwapCrossChain {
+func NewMsgSwapCrossChain(sender sdk.AccAddress, ibcDenom string) *MsgSwapCrossChain {
 	return &MsgSwapCrossChain{
-		FromAddress: fromAddr.String(),
+		Sender: sender.String(),
 		IbcDenom:    ibcDenom,
 	}
 }
@@ -90,7 +90,7 @@ func (m MsgFundFeeAbsModuleAccount) Type() string { return sdk.MsgTypeURL(&m) }
 
 // GetSigners returns the expected signers for a MsgMintAndAllocateExp .
 func (m MsgFundFeeAbsModuleAccount) GetSigners() []sdk.AccAddress {
-	daoAccount, err := sdk.AccAddressFromBech32(m.FromAddress)
+	daoAccount, err := sdk.AccAddressFromBech32(m.Sender)
 	if err != nil {
 		panic(err)
 	}
@@ -104,16 +104,16 @@ func (m MsgFundFeeAbsModuleAccount) GetSignBytes() []byte {
 
 // ValidateBasic does a sanity check on the provided data.
 func (m MsgFundFeeAbsModuleAccount) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(m.FromAddress)
+	_, err := sdk.AccAddressFromBech32(m.Sender)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func NewMsgFundFeeAbsModuleAccount(fromAddr sdk.AccAddress, amount sdk.Coins) *MsgFundFeeAbsModuleAccount {
+func NewMsgFundFeeAbsModuleAccount(sender sdk.AccAddress, amount sdk.Coins) *MsgFundFeeAbsModuleAccount {
 	return &MsgFundFeeAbsModuleAccount{
-		FromAddress: fromAddr.String(),
+		Sender: sender.String(),
 		Amount:      amount,
 	}
 }

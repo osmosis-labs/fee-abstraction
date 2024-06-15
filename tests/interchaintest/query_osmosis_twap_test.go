@@ -179,7 +179,7 @@ func AddHostZoneProposal(t *testing.T, ctx context.Context, feeabs *cosmos.Cosmo
 	require.NotEmpty(t, govAddr)
 
 	addHostZoneMsg := feeabstypes.MsgAddHostZone{
-		HostChainConfig: &feeabstypes.HostChainFeeAbsConfig{
+		HostChainConfig: feeabstypes.HostChainFeeAbsConfig{
 			IbcDenom:                fakeIBCDenom,
 			OsmosisPoolTokenDenomIn: "uosmo",
 			PoolId:                  1,

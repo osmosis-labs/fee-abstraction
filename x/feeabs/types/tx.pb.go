@@ -33,9 +33,11 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// MsgFundFeeAbsModuleAccount
 type MsgFundFeeAbsModuleAccount struct {
-	FromAddress string                                   `protobuf:"bytes,1,opt,name=from_address,json=fromAddress,proto3" json:"from_address,omitempty"`
-	Amount      github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,2,rep,name=amount,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"amount" yaml:"amount"`
+	// sender is the that actor that signed the messages
+	Sender string                                   `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
+	Amount github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,2,rep,name=amount,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"amount" yaml:"amount"`
 }
 
 func (m *MsgFundFeeAbsModuleAccount) Reset()         { *m = MsgFundFeeAbsModuleAccount{} }
@@ -71,9 +73,9 @@ func (m *MsgFundFeeAbsModuleAccount) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgFundFeeAbsModuleAccount proto.InternalMessageInfo
 
-func (m *MsgFundFeeAbsModuleAccount) GetFromAddress() string {
+func (m *MsgFundFeeAbsModuleAccount) GetSender() string {
 	if m != nil {
-		return m.FromAddress
+		return m.Sender
 	}
 	return ""
 }
@@ -85,6 +87,7 @@ func (m *MsgFundFeeAbsModuleAccount) GetAmount() github_com_cosmos_cosmos_sdk_ty
 	return nil
 }
 
+// MsgFundFeeAbsModuleAccountResponse
 type MsgFundFeeAbsModuleAccountResponse struct {
 }
 
@@ -121,8 +124,10 @@ func (m *MsgFundFeeAbsModuleAccountResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgFundFeeAbsModuleAccountResponse proto.InternalMessageInfo
 
+// MsgSendQueryIbcDenomTWAP
 type MsgSendQueryIbcDenomTWAP struct {
-	FromAddress string `protobuf:"bytes,1,opt,name=from_address,json=fromAddress,proto3" json:"from_address,omitempty"`
+	// Sender is the that actor that signed the messages
+	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
 }
 
 func (m *MsgSendQueryIbcDenomTWAP) Reset()         { *m = MsgSendQueryIbcDenomTWAP{} }
@@ -158,13 +163,14 @@ func (m *MsgSendQueryIbcDenomTWAP) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgSendQueryIbcDenomTWAP proto.InternalMessageInfo
 
-func (m *MsgSendQueryIbcDenomTWAP) GetFromAddress() string {
+func (m *MsgSendQueryIbcDenomTWAP) GetSender() string {
 	if m != nil {
-		return m.FromAddress
+		return m.Sender
 	}
 	return ""
 }
 
+// MsgSendQueryIbcDenomTWAPResponse
 type MsgSendQueryIbcDenomTWAPResponse struct {
 }
 
@@ -201,9 +207,11 @@ func (m *MsgSendQueryIbcDenomTWAPResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgSendQueryIbcDenomTWAPResponse proto.InternalMessageInfo
 
+// MsgSwapCrossChain
 type MsgSwapCrossChain struct {
-	FromAddress string `protobuf:"bytes,1,opt,name=from_address,json=fromAddress,proto3" json:"from_address,omitempty"`
-	IbcDenom    string `protobuf:"bytes,2,opt,name=ibc_denom,json=ibcDenom,proto3" json:"ibc_denom,omitempty"`
+	// Sender is the that actor that signed the messages
+	Sender   string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
+	IbcDenom string `protobuf:"bytes,2,opt,name=ibc_denom,json=ibcDenom,proto3" json:"ibc_denom,omitempty"`
 }
 
 func (m *MsgSwapCrossChain) Reset()         { *m = MsgSwapCrossChain{} }
@@ -239,9 +247,9 @@ func (m *MsgSwapCrossChain) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgSwapCrossChain proto.InternalMessageInfo
 
-func (m *MsgSwapCrossChain) GetFromAddress() string {
+func (m *MsgSwapCrossChain) GetSender() string {
 	if m != nil {
-		return m.FromAddress
+		return m.Sender
 	}
 	return ""
 }
@@ -253,6 +261,7 @@ func (m *MsgSwapCrossChain) GetIbcDenom() string {
 	return ""
 }
 
+// MsgSwapCrossChainResponse
 type MsgSwapCrossChainResponse struct {
 }
 
@@ -291,9 +300,9 @@ var xxx_messageInfo_MsgSwapCrossChainResponse proto.InternalMessageInfo
 
 // MsgUpdateParams is the Msg/UpdateParams request type.
 type MsgUpdateParams struct {
-	// authority is the address that controls the module (defaults to x/gov unless overwritten).
+	// authority is the address of the governance account.
 	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
-	// params defines the x/bank parameters to update.
+	// params defines the x/feeabs parameters to update.
 	//
 	// NOTE: All parameters must be supplied.
 	Params Params `protobuf:"bytes,2,opt,name=params,proto3" json:"params"`
@@ -384,11 +393,12 @@ func (m *MsgUpdateParamsResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgUpdateParamsResponse proto.InternalMessageInfo
 
+// MsgAddHostZone is the Msg/AddHostZone request type.
 type MsgAddHostZone struct {
-	// authority is the address that controls the module (defaults to x/gov unless overwritten).
+	// authority is the address of the governance account.
 	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
 	// the host chain config
-	HostChainConfig *HostChainFeeAbsConfig `protobuf:"bytes,2,opt,name=host_chain_config,json=hostChainConfig,proto3" json:"host_chain_config,omitempty"`
+	HostChainConfig HostChainFeeAbsConfig `protobuf:"bytes,2,opt,name=host_chain_config,json=hostChainConfig,proto3" json:"host_chain_config"`
 }
 
 func (m *MsgAddHostZone) Reset()         { *m = MsgAddHostZone{} }
@@ -431,13 +441,14 @@ func (m *MsgAddHostZone) GetAuthority() string {
 	return ""
 }
 
-func (m *MsgAddHostZone) GetHostChainConfig() *HostChainFeeAbsConfig {
+func (m *MsgAddHostZone) GetHostChainConfig() HostChainFeeAbsConfig {
 	if m != nil {
 		return m.HostChainConfig
 	}
-	return nil
+	return HostChainFeeAbsConfig{}
 }
 
+// MsgAddHostZoneResponse
 type MsgAddHostZoneResponse struct {
 }
 
@@ -474,18 +485,110 @@ func (m *MsgAddHostZoneResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgAddHostZoneResponse proto.InternalMessageInfo
 
-type MsgRemoveHostZone struct {
-	// authority is the address that controls the module (defaults to x/gov unless overwritten).
+// MsgUpdateHostZone is the Msg/UpdateHostZone request type.
+type MsgUpdateHostZone struct {
+	// authority is the address of the governance account.
 	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
 	// the host chain config
-	IbcDenom string `protobuf:"bytes,2,opt,name=ibc_denom,json=ibcDenom,proto3" json:"ibc_denom,omitempty"`
+	HostChainConfig HostChainFeeAbsConfig `protobuf:"bytes,2,opt,name=host_chain_config,json=hostChainConfig,proto3" json:"host_chain_config"`
+}
+
+func (m *MsgUpdateHostZone) Reset()         { *m = MsgUpdateHostZone{} }
+func (m *MsgUpdateHostZone) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateHostZone) ProtoMessage()    {}
+func (*MsgUpdateHostZone) Descriptor() ([]byte, []int) {
+	return fileDescriptor_bc180c3e894b3e83, []int{10}
+}
+func (m *MsgUpdateHostZone) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUpdateHostZone) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUpdateHostZone.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUpdateHostZone) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateHostZone.Merge(m, src)
+}
+func (m *MsgUpdateHostZone) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUpdateHostZone) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateHostZone.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUpdateHostZone proto.InternalMessageInfo
+
+func (m *MsgUpdateHostZone) GetAuthority() string {
+	if m != nil {
+		return m.Authority
+	}
+	return ""
+}
+
+func (m *MsgUpdateHostZone) GetHostChainConfig() HostChainFeeAbsConfig {
+	if m != nil {
+		return m.HostChainConfig
+	}
+	return HostChainFeeAbsConfig{}
+}
+
+// MsgUpdateHostZoneResponse
+type MsgUpdateHostZoneResponse struct {
+}
+
+func (m *MsgUpdateHostZoneResponse) Reset()         { *m = MsgUpdateHostZoneResponse{} }
+func (m *MsgUpdateHostZoneResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateHostZoneResponse) ProtoMessage()    {}
+func (*MsgUpdateHostZoneResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_bc180c3e894b3e83, []int{11}
+}
+func (m *MsgUpdateHostZoneResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUpdateHostZoneResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUpdateHostZoneResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUpdateHostZoneResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateHostZoneResponse.Merge(m, src)
+}
+func (m *MsgUpdateHostZoneResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUpdateHostZoneResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateHostZoneResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUpdateHostZoneResponse proto.InternalMessageInfo
+
+// MsgRemoveHostZone is the Msg/RemoveHostZone request type.
+type MsgRemoveHostZone struct {
+	// authority is the address of the governance account.
+	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
+	IbcDenom  string `protobuf:"bytes,2,opt,name=ibc_denom,json=ibcDenom,proto3" json:"ibc_denom,omitempty"`
 }
 
 func (m *MsgRemoveHostZone) Reset()         { *m = MsgRemoveHostZone{} }
 func (m *MsgRemoveHostZone) String() string { return proto.CompactTextString(m) }
 func (*MsgRemoveHostZone) ProtoMessage()    {}
 func (*MsgRemoveHostZone) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bc180c3e894b3e83, []int{10}
+	return fileDescriptor_bc180c3e894b3e83, []int{12}
 }
 func (m *MsgRemoveHostZone) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -528,6 +631,7 @@ func (m *MsgRemoveHostZone) GetIbcDenom() string {
 	return ""
 }
 
+// MsgRemoveHostZoneResponse
 type MsgRemoveHostZoneResponse struct {
 }
 
@@ -535,7 +639,7 @@ func (m *MsgRemoveHostZoneResponse) Reset()         { *m = MsgRemoveHostZoneResp
 func (m *MsgRemoveHostZoneResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgRemoveHostZoneResponse) ProtoMessage()    {}
 func (*MsgRemoveHostZoneResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bc180c3e894b3e83, []int{11}
+	return fileDescriptor_bc180c3e894b3e83, []int{13}
 }
 func (m *MsgRemoveHostZoneResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -564,96 +668,6 @@ func (m *MsgRemoveHostZoneResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRemoveHostZoneResponse proto.InternalMessageInfo
 
-type MsgUpdateHostZone struct {
-	// authority is the address that controls the module (defaults to x/gov unless overwritten).
-	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
-	// the host chain config
-	HostChainConfig *HostChainFeeAbsConfig `protobuf:"bytes,2,opt,name=host_chain_config,json=hostChainConfig,proto3" json:"host_chain_config,omitempty"`
-}
-
-func (m *MsgUpdateHostZone) Reset()         { *m = MsgUpdateHostZone{} }
-func (m *MsgUpdateHostZone) String() string { return proto.CompactTextString(m) }
-func (*MsgUpdateHostZone) ProtoMessage()    {}
-func (*MsgUpdateHostZone) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bc180c3e894b3e83, []int{12}
-}
-func (m *MsgUpdateHostZone) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgUpdateHostZone) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgUpdateHostZone.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgUpdateHostZone) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgUpdateHostZone.Merge(m, src)
-}
-func (m *MsgUpdateHostZone) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgUpdateHostZone) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgUpdateHostZone.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgUpdateHostZone proto.InternalMessageInfo
-
-func (m *MsgUpdateHostZone) GetAuthority() string {
-	if m != nil {
-		return m.Authority
-	}
-	return ""
-}
-
-func (m *MsgUpdateHostZone) GetHostChainConfig() *HostChainFeeAbsConfig {
-	if m != nil {
-		return m.HostChainConfig
-	}
-	return nil
-}
-
-type MsgUpdateHostZoneResponse struct {
-}
-
-func (m *MsgUpdateHostZoneResponse) Reset()         { *m = MsgUpdateHostZoneResponse{} }
-func (m *MsgUpdateHostZoneResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgUpdateHostZoneResponse) ProtoMessage()    {}
-func (*MsgUpdateHostZoneResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bc180c3e894b3e83, []int{13}
-}
-func (m *MsgUpdateHostZoneResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgUpdateHostZoneResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgUpdateHostZoneResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgUpdateHostZoneResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgUpdateHostZoneResponse.Merge(m, src)
-}
-func (m *MsgUpdateHostZoneResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgUpdateHostZoneResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgUpdateHostZoneResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgUpdateHostZoneResponse proto.InternalMessageInfo
-
 func init() {
 	proto.RegisterType((*MsgFundFeeAbsModuleAccount)(nil), "feeabstraction.feeabs.v1beta1.MsgFundFeeAbsModuleAccount")
 	proto.RegisterType((*MsgFundFeeAbsModuleAccountResponse)(nil), "feeabstraction.feeabs.v1beta1.MsgFundFeeAbsModuleAccountResponse")
@@ -665,10 +679,10 @@ func init() {
 	proto.RegisterType((*MsgUpdateParamsResponse)(nil), "feeabstraction.feeabs.v1beta1.MsgUpdateParamsResponse")
 	proto.RegisterType((*MsgAddHostZone)(nil), "feeabstraction.feeabs.v1beta1.MsgAddHostZone")
 	proto.RegisterType((*MsgAddHostZoneResponse)(nil), "feeabstraction.feeabs.v1beta1.MsgAddHostZoneResponse")
-	proto.RegisterType((*MsgRemoveHostZone)(nil), "feeabstraction.feeabs.v1beta1.MsgRemoveHostZone")
-	proto.RegisterType((*MsgRemoveHostZoneResponse)(nil), "feeabstraction.feeabs.v1beta1.MsgRemoveHostZoneResponse")
 	proto.RegisterType((*MsgUpdateHostZone)(nil), "feeabstraction.feeabs.v1beta1.MsgUpdateHostZone")
 	proto.RegisterType((*MsgUpdateHostZoneResponse)(nil), "feeabstraction.feeabs.v1beta1.MsgUpdateHostZoneResponse")
+	proto.RegisterType((*MsgRemoveHostZone)(nil), "feeabstraction.feeabs.v1beta1.MsgRemoveHostZone")
+	proto.RegisterType((*MsgRemoveHostZoneResponse)(nil), "feeabstraction.feeabs.v1beta1.MsgRemoveHostZoneResponse")
 }
 
 func init() {
@@ -676,60 +690,57 @@ func init() {
 }
 
 var fileDescriptor_bc180c3e894b3e83 = []byte{
-	// 835 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x56, 0xcf, 0x4f, 0xdb, 0x48,
-	0x14, 0x8e, 0x41, 0xcb, 0x6e, 0x26, 0x2c, 0x08, 0x8b, 0x5d, 0x12, 0xa3, 0x0d, 0xc1, 0xfb, 0x43,
-	0x28, 0xda, 0xd8, 0xfc, 0x5a, 0x16, 0x22, 0xad, 0x56, 0x49, 0x56, 0x88, 0x3d, 0x44, 0x62, 0x93,
-	0x5d, 0xad, 0xc4, 0x25, 0x1d, 0xdb, 0x13, 0xc7, 0x22, 0xf6, 0x44, 0x1e, 0x27, 0x4d, 0xa4, 0xaa,
-	0xaa, 0x7a, 0xec, 0xa9, 0x3d, 0xf5, 0xda, 0x63, 0xdb, 0x13, 0x87, 0xf6, 0x7f, 0xa0, 0x37, 0xd4,
-	0x53, 0x4f, 0x50, 0x81, 0x2a, 0xee, 0xfd, 0x0b, 0x2a, 0x7b, 0x26, 0xc6, 0x0e, 0x09, 0x49, 0xe8,
-	0xa9, 0x97, 0x38, 0x7e, 0xf3, 0xbd, 0xf7, 0xbd, 0xef, 0xcd, 0x9b, 0xe7, 0x01, 0xbf, 0x54, 0x11,
-	0x82, 0x0a, 0x71, 0x6c, 0xa8, 0x3a, 0x06, 0xb6, 0x64, 0xfa, 0x2a, 0xb7, 0xd6, 0x14, 0xe4, 0xc0,
-	0x35, 0xd9, 0x69, 0x4b, 0x0d, 0x1b, 0x3b, 0x98, 0xff, 0x21, 0x8c, 0x93, 0xe8, 0xab, 0xc4, 0x70,
-	0xc2, 0xbc, 0x8e, 0x75, 0xec, 0x21, 0x65, 0xf7, 0x1f, 0x75, 0x12, 0x16, 0x54, 0x4c, 0x4c, 0x4c,
-	0x64, 0x93, 0xe8, 0x72, 0x6b, 0xcd, 0x7d, 0xb0, 0x85, 0x24, 0x5b, 0x50, 0x20, 0x41, 0x3e, 0x97,
-	0x8a, 0x0d, 0x8b, 0xad, 0x27, 0xe8, 0x7a, 0x85, 0x46, 0xa4, 0x2f, 0x6c, 0x29, 0x7d, 0x73, 0xc2,
-	0x0d, 0x68, 0x43, 0xb3, 0x8b, 0xfd, 0x75, 0x08, 0xd6, 0xc6, 0x0d, 0x4c, 0x60, 0x9d, 0xa1, 0xe7,
-	0xa0, 0x69, 0x58, 0x58, 0xf6, 0x7e, 0xa9, 0x49, 0x7c, 0xcd, 0x01, 0xa1, 0x48, 0xf4, 0xdd, 0xa6,
-	0xa5, 0xed, 0x22, 0x94, 0x53, 0x48, 0x11, 0x6b, 0xcd, 0x3a, 0xca, 0xa9, 0x2a, 0x6e, 0x5a, 0x0e,
-	0xbf, 0x0c, 0xa6, 0xab, 0x36, 0x36, 0x2b, 0x50, 0xd3, 0x6c, 0x44, 0x48, 0x9c, 0x4b, 0x71, 0x2b,
-	0xd1, 0x52, 0xcc, 0xb5, 0xe5, 0xa8, 0x89, 0x77, 0xc0, 0x14, 0x34, 0x5d, 0x70, 0x7c, 0x22, 0x35,
-	0xb9, 0x12, 0x5b, 0x4f, 0x48, 0x4c, 0x8d, 0x2b, 0xbd, 0x5b, 0x3e, 0xa9, 0x80, 0x0d, 0x2b, 0x9f,
-	0x3b, 0x3e, 0x5d, 0x8a, 0x7c, 0x3c, 0x5d, 0xfa, 0xb6, 0x03, 0xcd, 0x7a, 0x56, 0xa4, 0x6e, 0xe2,
-	0xcb, 0xb3, 0xa5, 0x15, 0xdd, 0x70, 0x6a, 0x4d, 0x45, 0x52, 0xb1, 0xc9, 0x6a, 0xc1, 0x1e, 0x19,
-	0xa2, 0x1d, 0xca, 0x4e, 0xa7, 0x81, 0x88, 0x17, 0x81, 0x94, 0x18, 0x97, 0xf8, 0x13, 0x10, 0x07,
-	0xa7, 0x5d, 0x42, 0xa4, 0x81, 0x2d, 0x82, 0xc4, 0x3f, 0x40, 0xbc, 0x48, 0xf4, 0x32, 0xb2, 0xb4,
-	0x7f, 0x9a, 0xc8, 0xee, 0xfc, 0xad, 0xa8, 0x7f, 0x21, 0x0b, 0x9b, 0xff, 0xfe, 0x9f, 0xdb, 0x1f,
-	0x41, 0x9a, 0x28, 0x82, 0xd4, 0x20, 0x77, 0x9f, 0xa2, 0x0c, 0xe6, 0x5c, 0xcc, 0x5d, 0xd8, 0x28,
-	0xd8, 0x98, 0x90, 0x42, 0x0d, 0x1a, 0xd6, 0x28, 0x65, 0x5b, 0x04, 0x51, 0x43, 0x51, 0x2b, 0x9a,
-	0x1b, 0x30, 0x3e, 0xe1, 0xad, 0x7f, 0x63, 0x30, 0x02, 0x71, 0x11, 0x24, 0xae, 0x05, 0xf5, 0x19,
-	0xdf, 0x70, 0x60, 0xb6, 0x48, 0xf4, 0xff, 0x1a, 0x1a, 0x74, 0xd0, 0xbe, 0xd7, 0x0d, 0xfc, 0x16,
-	0x88, 0xc2, 0xa6, 0x53, 0xc3, 0xb6, 0xe1, 0x74, 0x28, 0x5b, 0x3e, 0xfe, 0xf6, 0x55, 0x66, 0x9e,
-	0x6d, 0x05, 0x23, 0x2d, 0x3b, 0xb6, 0x61, 0xe9, 0xa5, 0x2b, 0x28, 0xbf, 0x07, 0xa6, 0x68, 0x3f,
-	0x79, 0x29, 0xc4, 0xd6, 0x7f, 0x96, 0x6e, 0x3c, 0x05, 0x12, 0xa5, 0xcb, 0x47, 0xdd, 0x8d, 0x7c,
-	0x7e, 0x79, 0x94, 0xe6, 0x4a, 0xcc, 0x3f, 0xbb, 0xf9, 0xf0, 0xf2, 0x28, 0x7d, 0x15, 0xf9, 0xd1,
-	0xe5, 0x51, 0x7a, 0x39, 0xb0, 0x87, 0x6d, 0x59, 0x81, 0xd6, 0xa1, 0xdc, 0x93, 0xb7, 0x98, 0x00,
-	0x0b, 0x3d, 0x26, 0x5f, 0xe6, 0x19, 0x07, 0x66, 0x8a, 0x44, 0xcf, 0x69, 0xda, 0x1e, 0x26, 0xce,
-	0x01, 0xb6, 0xd0, 0xad, 0x55, 0xde, 0x01, 0x73, 0x35, 0x4c, 0x9c, 0x8a, 0xea, 0xd6, 0xb1, 0xa2,
-	0x62, 0xab, 0x6a, 0xe8, 0x4c, 0xf0, 0xe6, 0x10, 0xc1, 0x2e, 0xb7, 0x57, 0x7e, 0xda, 0x66, 0x05,
-	0xcf, 0xb7, 0x34, 0x5b, 0xeb, 0x9a, 0xa9, 0x21, 0xbb, 0x71, 0x5d, 0x7d, 0xaa, 0xaf, 0xfa, 0x80,
-	0x1c, 0x31, 0x0e, 0xbe, 0x0f, 0x5b, 0x7c, 0xed, 0xcf, 0x38, 0xaf, 0xab, 0x4a, 0xc8, 0xc4, 0x2d,
-	0xf4, 0xd9, 0xf2, 0x6f, 0x6a, 0xb5, 0xec, 0xd6, 0xf5, 0xcc, 0x7f, 0xec, 0x9b, 0x79, 0x38, 0x19,
-	0xd6, 0xa2, 0x61, 0xa3, 0x9f, 0xff, 0x07, 0x9a, 0x3f, 0xdd, 0xd7, 0x2f, 0x60, 0xfb, 0x46, 0x2e,
-	0x42, 0x58, 0x11, 0x2b, 0x42, 0xd8, 0xd8, 0x2d, 0xc2, 0xfa, 0x8b, 0xaf, 0xc1, 0x64, 0x91, 0xe8,
-	0xfc, 0x13, 0x0e, 0x7c, 0xd7, 0x7f, 0x04, 0xfd, 0x3e, 0x24, 0xfb, 0x41, 0xc3, 0x47, 0xf8, 0xf3,
-	0x96, 0x8e, 0xdd, 0xdc, 0xf8, 0x7b, 0x60, 0xa6, 0x67, 0x64, 0xad, 0x8e, 0x10, 0x32, 0xe4, 0x21,
-	0x6c, 0x8f, 0xeb, 0xe1, 0xb3, 0x3f, 0xe5, 0xc0, 0xc2, 0xa0, 0x2f, 0xce, 0xce, 0xf0, 0xa8, 0x03,
-	0x5c, 0x85, 0xdc, 0xad, 0x5d, 0xfd, 0xcc, 0xda, 0x60, 0x3a, 0x34, 0x57, 0xa5, 0xe1, 0x21, 0x83,
-	0x78, 0x61, 0x6b, 0x3c, 0xbc, 0x7f, 0x60, 0x22, 0x7c, 0x13, 0xc4, 0x82, 0xa3, 0x2e, 0x33, 0x3c,
-	0x50, 0x00, 0x2e, 0xfc, 0x36, 0x16, 0x3c, 0x40, 0x7b, 0x1f, 0xcc, 0xf4, 0x4c, 0x99, 0x11, 0x1a,
-	0x21, 0xec, 0x31, 0x4a, 0x23, 0x0c, 0x98, 0x13, 0x1e, 0x7f, 0xcf, 0x94, 0x58, 0x1d, 0xb5, 0x84,
-	0xe3, 0xf0, 0xf7, 0x3f, 0xa2, 0x62, 0x44, 0xf8, 0xea, 0x81, 0xfb, 0x15, 0xcb, 0x97, 0x8f, 0xcf,
-	0x93, 0xdc, 0xc9, 0x79, 0x92, 0x7b, 0x7f, 0x9e, 0xe4, 0x1e, 0x5f, 0x24, 0x23, 0x27, 0x17, 0xc9,
-	0xc8, 0xbb, 0x8b, 0x64, 0xe4, 0x60, 0x27, 0x70, 0x35, 0xf1, 0x26, 0x82, 0x41, 0x32, 0x75, 0xf7,
-	0x8e, 0x55, 0x45, 0x28, 0x13, 0xbc, 0x7a, 0xb5, 0xb6, 0xe5, 0x76, 0xf7, 0xfe, 0xe5, 0xdd, 0x58,
-	0x94, 0x29, 0xef, 0x8a, 0xb5, 0xf1, 0x29, 0x00, 0x00, 0xff, 0xff, 0x39, 0x2a, 0x26, 0x7a, 0x82,
-	0x0a, 0x00, 0x00,
+	// 793 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x56, 0x4f, 0x4f, 0x13, 0x4d,
+	0x1c, 0xee, 0x42, 0xde, 0xbe, 0x6f, 0xa7, 0xef, 0x5b, 0xc2, 0x86, 0x57, 0xda, 0x25, 0x16, 0xb2,
+	0x51, 0x43, 0x88, 0xdd, 0x05, 0x54, 0x04, 0x2e, 0xa6, 0xad, 0x21, 0x78, 0x68, 0x82, 0x45, 0x63,
+	0xe4, 0xd2, 0xec, 0x9f, 0x61, 0xbb, 0xa1, 0x3b, 0xd3, 0xec, 0x4c, 0x6b, 0x9b, 0x18, 0x63, 0xfc,
+	0x04, 0x7a, 0xf2, 0x03, 0x78, 0x51, 0x4f, 0x1c, 0xfc, 0x0a, 0x26, 0x1c, 0xd1, 0x93, 0x27, 0x34,
+	0x70, 0xe0, 0xee, 0x27, 0x30, 0xbb, 0x33, 0x5d, 0xba, 0x85, 0xb2, 0x6d, 0x3d, 0x79, 0x61, 0x77,
+	0x99, 0xe7, 0xf9, 0x3d, 0xcf, 0x33, 0xf9, 0xcd, 0xaf, 0x03, 0x6e, 0xec, 0x42, 0xa8, 0xe9, 0x84,
+	0xba, 0x9a, 0x41, 0x6d, 0x8c, 0x54, 0xf6, 0xa9, 0x36, 0x97, 0x74, 0x48, 0xb5, 0x25, 0x95, 0xb6,
+	0x94, 0xba, 0x8b, 0x29, 0x16, 0xaf, 0x86, 0x71, 0x0a, 0xfb, 0x54, 0x38, 0x4e, 0x9a, 0xd4, 0x1c,
+	0x1b, 0x61, 0xd5, 0xff, 0xcb, 0x18, 0xd2, 0x94, 0x85, 0x2d, 0xec, 0xbf, 0xaa, 0xde, 0x1b, 0xff,
+	0xef, 0xb4, 0x81, 0x89, 0x83, 0x89, 0xea, 0x10, 0x4b, 0x6d, 0x2e, 0x79, 0x0f, 0xbe, 0x90, 0xe5,
+	0x0b, 0xba, 0x46, 0x60, 0x20, 0x6f, 0x60, 0x1b, 0xf1, 0xf5, 0x0c, 0x5b, 0xaf, 0xb0, 0x8a, 0xec,
+	0x83, 0x2f, 0x2d, 0x5c, 0x9e, 0xa1, 0xae, 0xb9, 0x9a, 0xd3, 0xc1, 0xde, 0x8c, 0xc0, 0xba, 0xb8,
+	0x8e, 0x89, 0x56, 0x63, 0x68, 0xf9, 0x8b, 0x00, 0xa4, 0x12, 0xb1, 0x36, 0x1a, 0xc8, 0xdc, 0x80,
+	0x30, 0xaf, 0x93, 0x12, 0x36, 0x1b, 0x35, 0x98, 0x37, 0x0c, 0xdc, 0x40, 0x54, 0x5c, 0x04, 0x71,
+	0x02, 0x91, 0x09, 0xdd, 0xb4, 0x30, 0x27, 0xcc, 0x27, 0x0a, 0xe9, 0xaf, 0x9f, 0x72, 0x53, 0xdc,
+	0x5a, 0xde, 0x34, 0x5d, 0x48, 0xc8, 0x36, 0x75, 0x6d, 0x64, 0x95, 0x39, 0x4e, 0xa4, 0x20, 0xae,
+	0x39, 0x1e, 0x37, 0x3d, 0x36, 0x37, 0x3e, 0x9f, 0x5c, 0xce, 0x28, 0x1c, 0xee, 0xc5, 0xee, 0xec,
+	0xa6, 0x52, 0xc4, 0x36, 0x2a, 0xe4, 0x0f, 0x8e, 0x66, 0x63, 0x3f, 0x8f, 0x66, 0xff, 0x6b, 0x6b,
+	0x4e, 0x6d, 0x5d, 0x66, 0x34, 0xf9, 0xe3, 0xf7, 0xd9, 0x79, 0xcb, 0xa6, 0xd5, 0x86, 0xae, 0x18,
+	0xd8, 0xe1, 0xfb, 0xc0, 0x1f, 0x39, 0x62, 0xee, 0xa9, 0xb4, 0x5d, 0x87, 0xc4, 0xaf, 0x40, 0xca,
+	0x5c, 0x6b, 0x3d, 0xf9, 0xea, 0x74, 0x7f, 0x81, 0x5b, 0x90, 0xaf, 0x01, 0xb9, 0x7f, 0xa4, 0x32,
+	0x24, 0x75, 0x8c, 0x08, 0x94, 0x9f, 0x82, 0x74, 0x89, 0x58, 0xdb, 0x10, 0x99, 0x0f, 0x1b, 0xd0,
+	0x6d, 0x3f, 0xd0, 0x8d, 0xfb, 0x10, 0x61, 0xe7, 0xd1, 0x93, 0xfc, 0xd6, 0xf0, 0xb1, 0xc3, 0x06,
+	0x64, 0x30, 0xd7, 0xaf, 0x74, 0x20, 0x8f, 0xc1, 0xa4, 0x87, 0x79, 0xa6, 0xd5, 0x8b, 0x2e, 0x26,
+	0xa4, 0x58, 0xd5, 0x6c, 0x34, 0xc2, 0x76, 0xcf, 0x80, 0x84, 0xad, 0x1b, 0x15, 0xd3, 0xab, 0x9f,
+	0x1e, 0xf3, 0x48, 0xe5, 0x7f, 0x6c, 0xae, 0x17, 0x36, 0x35, 0x03, 0x32, 0xe7, 0x04, 0x03, 0x37,
+	0xef, 0x04, 0x30, 0x51, 0x22, 0xd6, 0xe3, 0xba, 0xa9, 0x51, 0xb8, 0xe5, 0xb7, 0x93, 0xb8, 0x02,
+	0x12, 0x5a, 0x83, 0x56, 0xb1, 0x6b, 0xd3, 0x76, 0xa4, 0x9f, 0x33, 0xa8, 0xb8, 0x09, 0xe2, 0xac,
+	0x21, 0x7d, 0x3f, 0xc9, 0xe5, 0xeb, 0xca, 0xa5, 0x27, 0x4b, 0x61, 0x72, 0x85, 0x84, 0xd7, 0x0d,
+	0xef, 0x4f, 0xf7, 0x17, 0x84, 0x32, 0xe7, 0xaf, 0xa7, 0x3c, 0xff, 0x67, 0x95, 0xe5, 0x0c, 0x98,
+	0xee, 0x31, 0x19, 0x04, 0xf8, 0x2c, 0x80, 0x54, 0x89, 0x58, 0x79, 0xd3, 0xdc, 0xc4, 0x84, 0xee,
+	0x60, 0x04, 0x47, 0xf6, 0xbf, 0x07, 0x26, 0xab, 0x98, 0xd0, 0x8a, 0xe1, 0xed, 0x50, 0xc5, 0xc0,
+	0x68, 0xd7, 0xb6, 0x78, 0x94, 0xdb, 0x11, 0x51, 0x3c, 0x6d, 0x7f, 0x63, 0x59, 0xe3, 0x15, 0x7d,
+	0x6e, 0x77, 0xb2, 0x89, 0x6a, 0x07, 0xc1, 0xd6, 0xce, 0x45, 0x4c, 0x83, 0x2b, 0xe1, 0x18, 0x41,
+	0xc2, 0x03, 0xc1, 0xef, 0x18, 0x96, 0xfe, 0xcf, 0x0e, 0xc9, 0x5a, 0x31, 0x9c, 0x24, 0xc8, 0xd9,
+	0xf2, 0x63, 0x96, 0xa1, 0x83, 0x9b, 0xbf, 0x1f, 0xf3, 0xd2, 0xe3, 0x71, 0xb1, 0xad, 0xb0, 0x72,
+	0xc7, 0xd6, 0xf2, 0x87, 0xbf, 0xc1, 0x78, 0x89, 0x58, 0xe2, 0x1b, 0x01, 0xfc, 0x7f, 0xf1, 0xd0,
+	0xb8, 0x1b, 0xb1, 0x6f, 0xfd, 0x46, 0x82, 0x74, 0x6f, 0x44, 0x62, 0xc7, 0x9b, 0xf8, 0x1c, 0xa4,
+	0x7a, 0x07, 0xc9, 0x00, 0x25, 0x43, 0x0c, 0x69, 0x75, 0x58, 0x46, 0xa0, 0xfe, 0x56, 0x00, 0xd3,
+	0xfd, 0x7e, 0x3f, 0xd6, 0xa2, 0xab, 0xf6, 0xa1, 0x4a, 0xf9, 0x91, 0xa9, 0x81, 0xb3, 0x16, 0xf8,
+	0x37, 0x34, 0xd1, 0x94, 0xe8, 0x92, 0xdd, 0x78, 0x69, 0x65, 0x38, 0x7c, 0xd0, 0xc2, 0x31, 0xb1,
+	0x01, 0x92, 0xdd, 0xa3, 0x28, 0x17, 0x5d, 0xa8, 0x0b, 0x2e, 0xdd, 0x19, 0x0a, 0xde, 0x25, 0xfb,
+	0x02, 0xa4, 0x7a, 0xe6, 0xc3, 0xe2, 0xa0, 0x11, 0x02, 0xf1, 0xd5, 0x61, 0x19, 0x61, 0xfd, 0x9e,
+	0x83, 0x3b, 0x80, 0x7e, 0x98, 0x31, 0x88, 0xfe, 0xc5, 0x47, 0x54, 0x8e, 0x49, 0x7f, 0xbd, 0xf4,
+	0x06, 0x50, 0x61, 0xfb, 0xe0, 0x38, 0x2b, 0x1c, 0x1e, 0x67, 0x85, 0x1f, 0xc7, 0x59, 0xe1, 0xf5,
+	0x49, 0x36, 0x76, 0x78, 0x92, 0x8d, 0x7d, 0x3b, 0xc9, 0xc6, 0x76, 0xd6, 0xba, 0x6e, 0x16, 0xfe,
+	0xe8, 0xb0, 0x49, 0xae, 0xe6, 0x5d, 0x8f, 0x76, 0x21, 0xcc, 0x75, 0xdf, 0x9a, 0x9a, 0xab, 0x6a,
+	0xab, 0x73, 0x75, 0xf2, 0x2f, 0x1c, 0x7a, 0xdc, 0xbf, 0x30, 0xdd, 0xfa, 0x15, 0x00, 0x00, 0xff,
+	0xff, 0x8f, 0x3e, 0xa7, 0xdf, 0x50, 0x0a, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -744,13 +755,18 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
+	// SendQueryIbcDenomTWAP sends a twap query to osmosis
 	SendQueryIbcDenomTWAP(ctx context.Context, in *MsgSendQueryIbcDenomTWAP, opts ...grpc.CallOption) (*MsgSendQueryIbcDenomTWAPResponse, error)
+	// SwapCrossChain submits a swap cross chain request.
 	SwapCrossChain(ctx context.Context, in *MsgSwapCrossChain, opts ...grpc.CallOption) (*MsgSwapCrossChainResponse, error)
+	// FundFeeAbsModuleAccount funds to feeabs module account.
 	FundFeeAbsModuleAccount(ctx context.Context, in *MsgFundFeeAbsModuleAccount, opts ...grpc.CallOption) (*MsgFundFeeAbsModuleAccountResponse, error)
+	// UpdateParams defines a governance operation for updating the x/feeabs
+	// module parameters. The authority is defined in the keeper.
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 	AddHostZone(ctx context.Context, in *MsgAddHostZone, opts ...grpc.CallOption) (*MsgAddHostZoneResponse, error)
-	RemoveHostZone(ctx context.Context, in *MsgRemoveHostZone, opts ...grpc.CallOption) (*MsgRemoveHostZoneResponse, error)
 	UpdateHostZone(ctx context.Context, in *MsgUpdateHostZone, opts ...grpc.CallOption) (*MsgUpdateHostZoneResponse, error)
+	RemoveHostZone(ctx context.Context, in *MsgRemoveHostZone, opts ...grpc.CallOption) (*MsgRemoveHostZoneResponse, error)
 }
 
 type msgClient struct {
@@ -806,15 +822,6 @@ func (c *msgClient) AddHostZone(ctx context.Context, in *MsgAddHostZone, opts ..
 	return out, nil
 }
 
-func (c *msgClient) RemoveHostZone(ctx context.Context, in *MsgRemoveHostZone, opts ...grpc.CallOption) (*MsgRemoveHostZoneResponse, error) {
-	out := new(MsgRemoveHostZoneResponse)
-	err := c.cc.Invoke(ctx, "/feeabstraction.feeabs.v1beta1.Msg/RemoveHostZone", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *msgClient) UpdateHostZone(ctx context.Context, in *MsgUpdateHostZone, opts ...grpc.CallOption) (*MsgUpdateHostZoneResponse, error) {
 	out := new(MsgUpdateHostZoneResponse)
 	err := c.cc.Invoke(ctx, "/feeabstraction.feeabs.v1beta1.Msg/UpdateHostZone", in, out, opts...)
@@ -824,15 +831,29 @@ func (c *msgClient) UpdateHostZone(ctx context.Context, in *MsgUpdateHostZone, o
 	return out, nil
 }
 
+func (c *msgClient) RemoveHostZone(ctx context.Context, in *MsgRemoveHostZone, opts ...grpc.CallOption) (*MsgRemoveHostZoneResponse, error) {
+	out := new(MsgRemoveHostZoneResponse)
+	err := c.cc.Invoke(ctx, "/feeabstraction.feeabs.v1beta1.Msg/RemoveHostZone", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
+	// SendQueryIbcDenomTWAP sends a twap query to osmosis
 	SendQueryIbcDenomTWAP(context.Context, *MsgSendQueryIbcDenomTWAP) (*MsgSendQueryIbcDenomTWAPResponse, error)
+	// SwapCrossChain submits a swap cross chain request.
 	SwapCrossChain(context.Context, *MsgSwapCrossChain) (*MsgSwapCrossChainResponse, error)
+	// FundFeeAbsModuleAccount funds to feeabs module account.
 	FundFeeAbsModuleAccount(context.Context, *MsgFundFeeAbsModuleAccount) (*MsgFundFeeAbsModuleAccountResponse, error)
+	// UpdateParams defines a governance operation for updating the x/feeabs
+	// module parameters. The authority is defined in the keeper.
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
 	AddHostZone(context.Context, *MsgAddHostZone) (*MsgAddHostZoneResponse, error)
-	RemoveHostZone(context.Context, *MsgRemoveHostZone) (*MsgRemoveHostZoneResponse, error)
 	UpdateHostZone(context.Context, *MsgUpdateHostZone) (*MsgUpdateHostZoneResponse, error)
+	RemoveHostZone(context.Context, *MsgRemoveHostZone) (*MsgRemoveHostZoneResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -854,11 +875,11 @@ func (*UnimplementedMsgServer) UpdateParams(ctx context.Context, req *MsgUpdateP
 func (*UnimplementedMsgServer) AddHostZone(ctx context.Context, req *MsgAddHostZone) (*MsgAddHostZoneResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddHostZone not implemented")
 }
-func (*UnimplementedMsgServer) RemoveHostZone(ctx context.Context, req *MsgRemoveHostZone) (*MsgRemoveHostZoneResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RemoveHostZone not implemented")
-}
 func (*UnimplementedMsgServer) UpdateHostZone(ctx context.Context, req *MsgUpdateHostZone) (*MsgUpdateHostZoneResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateHostZone not implemented")
+}
+func (*UnimplementedMsgServer) RemoveHostZone(ctx context.Context, req *MsgRemoveHostZone) (*MsgRemoveHostZoneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveHostZone not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -955,24 +976,6 @@ func _Msg_AddHostZone_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_RemoveHostZone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgRemoveHostZone)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).RemoveHostZone(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/feeabstraction.feeabs.v1beta1.Msg/RemoveHostZone",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).RemoveHostZone(ctx, req.(*MsgRemoveHostZone))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Msg_UpdateHostZone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgUpdateHostZone)
 	if err := dec(in); err != nil {
@@ -987,6 +990,24 @@ func _Msg_UpdateHostZone_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).UpdateHostZone(ctx, req.(*MsgUpdateHostZone))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RemoveHostZone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRemoveHostZone)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RemoveHostZone(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/feeabstraction.feeabs.v1beta1.Msg/RemoveHostZone",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RemoveHostZone(ctx, req.(*MsgRemoveHostZone))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1016,12 +1037,12 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_AddHostZone_Handler,
 		},
 		{
-			MethodName: "RemoveHostZone",
-			Handler:    _Msg_RemoveHostZone_Handler,
-		},
-		{
 			MethodName: "UpdateHostZone",
 			Handler:    _Msg_UpdateHostZone_Handler,
+		},
+		{
+			MethodName: "RemoveHostZone",
+			Handler:    _Msg_RemoveHostZone_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1062,10 +1083,10 @@ func (m *MsgFundFeeAbsModuleAccount) MarshalToSizedBuffer(dAtA []byte) (int, err
 			dAtA[i] = 0x12
 		}
 	}
-	if len(m.FromAddress) > 0 {
-		i -= len(m.FromAddress)
-		copy(dAtA[i:], m.FromAddress)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.FromAddress)))
+	if len(m.Sender) > 0 {
+		i -= len(m.Sender)
+		copy(dAtA[i:], m.Sender)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Sender)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -1115,10 +1136,10 @@ func (m *MsgSendQueryIbcDenomTWAP) MarshalToSizedBuffer(dAtA []byte) (int, error
 	_ = i
 	var l int
 	_ = l
-	if len(m.FromAddress) > 0 {
-		i -= len(m.FromAddress)
-		copy(dAtA[i:], m.FromAddress)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.FromAddress)))
+	if len(m.Sender) > 0 {
+		i -= len(m.Sender)
+		copy(dAtA[i:], m.Sender)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Sender)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -1175,10 +1196,10 @@ func (m *MsgSwapCrossChain) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x12
 	}
-	if len(m.FromAddress) > 0 {
-		i -= len(m.FromAddress)
-		copy(dAtA[i:], m.FromAddress)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.FromAddress)))
+	if len(m.Sender) > 0 {
+		i -= len(m.Sender)
+		copy(dAtA[i:], m.Sender)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Sender)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -1291,18 +1312,16 @@ func (m *MsgAddHostZone) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.HostChainConfig != nil {
-		{
-			size, err := m.HostChainConfig.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintTx(dAtA, i, uint64(size))
+	{
+		size, err := m.HostChainConfig.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
 		}
-		i--
-		dAtA[i] = 0x12
+		i -= size
+		i = encodeVarintTx(dAtA, i, uint64(size))
 	}
+	i--
+	dAtA[i] = 0x12
 	if len(m.Authority) > 0 {
 		i -= len(m.Authority)
 		copy(dAtA[i:], m.Authority)
@@ -1329,6 +1348,69 @@ func (m *MsgAddHostZoneResponse) MarshalTo(dAtA []byte) (int, error) {
 }
 
 func (m *MsgAddHostZoneResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUpdateHostZone) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUpdateHostZone) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUpdateHostZone) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.HostChainConfig.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintTx(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x12
+	if len(m.Authority) > 0 {
+		i -= len(m.Authority)
+		copy(dAtA[i:], m.Authority)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Authority)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUpdateHostZoneResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUpdateHostZoneResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUpdateHostZoneResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1396,71 +1478,6 @@ func (m *MsgRemoveHostZoneResponse) MarshalToSizedBuffer(dAtA []byte) (int, erro
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgUpdateHostZone) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgUpdateHostZone) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgUpdateHostZone) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.HostChainConfig != nil {
-		{
-			size, err := m.HostChainConfig.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintTx(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Authority) > 0 {
-		i -= len(m.Authority)
-		copy(dAtA[i:], m.Authority)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Authority)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgUpdateHostZoneResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgUpdateHostZoneResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgUpdateHostZoneResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -1478,7 +1495,7 @@ func (m *MsgFundFeeAbsModuleAccount) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.FromAddress)
+	l = len(m.Sender)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
@@ -1506,7 +1523,7 @@ func (m *MsgSendQueryIbcDenomTWAP) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.FromAddress)
+	l = len(m.Sender)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
@@ -1528,7 +1545,7 @@ func (m *MsgSwapCrossChain) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.FromAddress)
+	l = len(m.Sender)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
@@ -1582,14 +1599,36 @@ func (m *MsgAddHostZone) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
-	if m.HostChainConfig != nil {
-		l = m.HostChainConfig.Size()
-		n += 1 + l + sovTx(uint64(l))
-	}
+	l = m.HostChainConfig.Size()
+	n += 1 + l + sovTx(uint64(l))
 	return n
 }
 
 func (m *MsgAddHostZoneResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgUpdateHostZone) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Authority)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = m.HostChainConfig.Size()
+	n += 1 + l + sovTx(uint64(l))
+	return n
+}
+
+func (m *MsgUpdateHostZoneResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1616,32 +1655,6 @@ func (m *MsgRemoveHostZone) Size() (n int) {
 }
 
 func (m *MsgRemoveHostZoneResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *MsgUpdateHostZone) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Authority)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	if m.HostChainConfig != nil {
-		l = m.HostChainConfig.Size()
-		n += 1 + l + sovTx(uint64(l))
-	}
-	return n
-}
-
-func (m *MsgUpdateHostZoneResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1687,7 +1700,7 @@ func (m *MsgFundFeeAbsModuleAccount) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FromAddress", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1715,7 +1728,7 @@ func (m *MsgFundFeeAbsModuleAccount) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FromAddress = string(dAtA[iNdEx:postIndex])
+			m.Sender = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -1853,7 +1866,7 @@ func (m *MsgSendQueryIbcDenomTWAP) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FromAddress", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1881,7 +1894,7 @@ func (m *MsgSendQueryIbcDenomTWAP) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FromAddress = string(dAtA[iNdEx:postIndex])
+			m.Sender = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1985,7 +1998,7 @@ func (m *MsgSwapCrossChain) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FromAddress", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -2013,7 +2026,7 @@ func (m *MsgSwapCrossChain) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FromAddress = string(dAtA[iNdEx:postIndex])
+			m.Sender = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -2373,9 +2386,6 @@ func (m *MsgAddHostZone) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.HostChainConfig == nil {
-				m.HostChainConfig = &HostChainFeeAbsConfig{}
-			}
 			if err := m.HostChainConfig.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -2428,6 +2438,171 @@ func (m *MsgAddHostZoneResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgAddHostZoneResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUpdateHostZone) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUpdateHostZone: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUpdateHostZone: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Authority", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Authority = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field HostChainConfig", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.HostChainConfig.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUpdateHostZoneResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUpdateHostZoneResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUpdateHostZoneResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -2592,174 +2767,6 @@ func (m *MsgRemoveHostZoneResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgRemoveHostZoneResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgUpdateHostZone) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgUpdateHostZone: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgUpdateHostZone: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Authority", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Authority = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field HostChainConfig", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.HostChainConfig == nil {
-				m.HostChainConfig = &HostChainFeeAbsConfig{}
-			}
-			if err := m.HostChainConfig.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgUpdateHostZoneResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgUpdateHostZoneResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgUpdateHostZoneResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
