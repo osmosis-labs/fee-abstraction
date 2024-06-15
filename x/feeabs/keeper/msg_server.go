@@ -26,7 +26,7 @@ var _ types.MsgServer = msgServer{}
 
 func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQueryIbcDenomTWAP) (*types.MsgSendQueryIbcDenomTWAPResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
+	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (k Keeper) SendQueryIbcDenomTWAP(goCtx context.Context, msg *types.MsgSendQ
 func (k Keeper) SwapCrossChain(goCtx context.Context, msg *types.MsgSwapCrossChain) (*types.MsgSwapCrossChainResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	_, err := sdk.AccAddressFromBech32(msg.FromAddress)
+	_, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func (k Keeper) FundFeeAbsModuleAccount(
 	// Unwrap context
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	// Check sender address
-	sender, err := sdk.AccAddressFromBech32(msg.FromAddress)
+	sender, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +111,7 @@ func (k msgServer) AddHostZone(ctx context.Context, req *types.MsgAddHostZone) (
 		return nil, errors.Wrapf(types.ErrDuplicateHostZoneConfig, "duplicate host ibc denom")
 	}
 
-	if err := k.SetHostZoneConfig(sdkContext, *req.HostChainConfig); err != nil {
+	if err := k.SetHostZoneConfig(sdkContext, req.HostChainConfig); err != nil {
 		return nil, err
 	}
 
@@ -137,7 +137,7 @@ func (k msgServer) UpdateHostZone(ctx context.Context, req *types.MsgUpdateHostZ
 		return nil, errors.Wrapf(types.ErrHostZoneConfigNotFound, "host zone config not found")
 	}
 
-	if err := k.SetHostZoneConfig(sdkContext, *req.HostChainConfig); err != nil {
+	if err := k.SetHostZoneConfig(sdkContext, req.HostChainConfig); err != nil {
 		return nil, err
 	}
 
