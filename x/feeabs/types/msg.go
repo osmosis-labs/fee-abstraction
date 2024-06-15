@@ -75,8 +75,8 @@ func (m MsgSwapCrossChain) ValidateBasic() error {
 
 func NewMsgSwapCrossChain(sender sdk.AccAddress, ibcDenom string) *MsgSwapCrossChain {
 	return &MsgSwapCrossChain{
-		Sender: sender.String(),
-		IbcDenom:    ibcDenom,
+		Sender:   sender.String(),
+		IbcDenom: ibcDenom,
 	}
 }
 
@@ -114,6 +114,6 @@ func (m MsgFundFeeAbsModuleAccount) ValidateBasic() error {
 func NewMsgFundFeeAbsModuleAccount(sender sdk.AccAddress, amount sdk.Coins) *MsgFundFeeAbsModuleAccount {
 	return &MsgFundFeeAbsModuleAccount{
 		Sender: sender.String(),
-		Amount:      amount,
+		Amount: amount,
 	}
 }
