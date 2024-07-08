@@ -3,9 +3,10 @@ package ante_test
 import (
 	"testing"
 
-	"cosmossdk.io/math"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
+
+	"cosmossdk.io/math"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
