@@ -3,18 +3,14 @@ package keeper
 import (
 	"fmt"
 
-	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
 	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
-	channelkeeper "github.com/cosmos/ibc-go/v8/modules/core/04-channel/keeper"
-	portkeeper "github.com/cosmos/ibc-go/v8/modules/core/05-port/keeper"
 
 	"cosmossdk.io/log"
 	storetypes "cosmossdk.io/store/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/osmosis-labs/fee-abstraction/v8/x/feeabs/types"
@@ -24,15 +20,15 @@ type Keeper struct {
 	cdc            codec.BinaryCodec
 	storeKey       storetypes.StoreKey
 	sk             types.StakingKeeper
-	ak             authkeeper.AccountKeeper
+	ak             types.AccountKeeper
 	bk             types.BankKeeper
 	transferKeeper ibctransferkeeper.Keeper
 	paramSpace     paramtypes.Subspace
 
 	// ibc keeper
-	portKeeper    *portkeeper.Keeper
-	channelKeeper channelkeeper.Keeper
-	scopedKeeper  capabilitykeeper.ScopedKeeper
+	portKeeper    types.PortKeeper
+	channelKeeper types.ChannelKeeper
+	scopedKeeper  types.ScopedKeeper
 
 	authority string
 }
@@ -42,12 +38,12 @@ func NewKeeper(
 	storeKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
 	sk types.StakingKeeper,
-	ak authkeeper.AccountKeeper,
+	ak types.AccountKeeper,
 	bk types.BankKeeper,
 	transferKeeper ibctransferkeeper.Keeper,
-	channelKeeper channelkeeper.Keeper,
-	portKeeper *portkeeper.Keeper,
-	scopedKeeper capabilitykeeper.ScopedKeeper,
+	channelKeeper types.ChannelKeeper,
+	portKeeper types.PortKeeper,
+	scopedKeeper types.ScopedKeeper,
 	authority string,
 ) Keeper {
 	// set KeyTable if it has not already been set
