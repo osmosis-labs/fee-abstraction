@@ -5,9 +5,9 @@ go 1.22.3
 require (
 	cosmossdk.io/math v1.3.0
 	github.com/avast/retry-go/v4 v4.5.1
-	github.com/cometbft/cometbft v0.38.8
-	github.com/cosmos/cosmos-sdk v0.50.6
-	github.com/cosmos/ibc-go/v8 v8.2.1
+	github.com/cometbft/cometbft v0.38.9
+	github.com/cosmos/cosmos-sdk v0.50.7
+	github.com/cosmos/ibc-go/v8 v8.3.2
 	github.com/icza/dyno v0.0.0-20220812133438-f0b6f8a18845
 	github.com/osmosis-labs/fee-abstraction/v8 v8.0.0-20240320155239-bb99fef4f806
 	github.com/osmosis-labs/osmosis/v25 v25.0.0-20240528204424-d2c4a9666dc0
@@ -22,7 +22,7 @@ require (
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	cloud.google.com/go/iam v1.1.6 // indirect
 	cloud.google.com/go/storage v1.38.0 // indirect
-	cosmossdk.io/api v0.7.4 // indirect
+	cosmossdk.io/api v0.7.5 // indirect
 	cosmossdk.io/collections v0.4.0 // indirect
 	cosmossdk.io/core v0.12.0 // indirect
 	cosmossdk.io/depinject v1.0.0-alpha.4 // indirect
