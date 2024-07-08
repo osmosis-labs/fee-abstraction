@@ -5,9 +5,9 @@ go 1.22.3
 require (
 	cosmossdk.io/math v1.3.0
 	github.com/avast/retry-go/v4 v4.5.1
-	github.com/cometbft/cometbft v0.38.7
+	github.com/cometbft/cometbft v0.38.9
 	github.com/cosmos/cosmos-sdk v0.50.6
-	github.com/cosmos/ibc-go/v8 v8.2.1
+	github.com/cosmos/ibc-go/v8 v8.3.0
 	github.com/icza/dyno v0.0.0-20220812133438-f0b6f8a18845
 	github.com/osmosis-labs/fee-abstraction/v8 v8.0.0-20240320155239-bb99fef4f806
 	github.com/osmosis-labs/osmosis/v25 v25.0.0-20240528204424-d2c4a9666dc0
