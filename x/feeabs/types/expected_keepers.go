@@ -4,6 +4,7 @@ import (
 	"context"
 
 	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
+	clienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
 	connectiontypes "github.com/cosmos/ibc-go/v8/modules/core/03-connection/types"
 	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
@@ -57,19 +58,27 @@ type ConnectionKeeper interface {
 
 // PortKeeper defines the expected IBC port keeper.
 type PortKeeper interface {
-	BindPort(ctx context.Context, portID string) *capabilitytypes.Capability
+	BindPort(ctx sdk.Context, portID string) *capabilitytypes.Capability
 }
 
 // ScopedKeeper defines the expected scoped keeper.
 type ScopedKeeper interface {
-	AuthenticateCapability(ctx context.Context, capability *capabilitytypes.Capability, name string) bool
-	ClaimCapability(ctx context.Context, capability *capabilitytypes.Capability, name string) error
-	GetCapability(ctx context.Context, name string) (*capabilitytypes.Capability, bool)
+	AuthenticateCapability(ctx sdk.Context, cap *capabilitytypes.Capability, name string) bool
+	ClaimCapability(ctx sdk.Context, capability *capabilitytypes.Capability, name string) error
+	GetCapability(ctx sdk.Context, name string) (*capabilitytypes.Capability, bool)
 }
 
 // ChannelKeeper defines the expected IBC channel keeper.
 type ChannelKeeper interface {
-	GetChannel(ctx context.Context, srcPort, srcChan string) (channel channeltypes.Channel, found bool)
-	GetNextSequenceSend(ctx context.Context, portID, channelID string) (uint64, bool)
-	ChanCloseInit(ctx context.Context, portID, channelID string, chanCap *capabilitytypes.Capability) error
+	GetChannel(ctx sdk.Context, srcPort, srcChan string) (channel channeltypes.Channel, found bool)
+	GetNextSequenceSend(ctx sdk.Context, portID, channelID string) (uint64, bool)
+	SendPacket(
+		ctx sdk.Context,
+		chanCap *capabilitytypes.Capability,
+		sourcePort string,
+		sourceChannel string,
+		timeoutHeight clienttypes.Height,
+		timeoutTimestamp uint64,
+		data []byte,
+	) (sequence uint64, err error)
 }
