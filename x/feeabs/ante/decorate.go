@@ -195,23 +195,23 @@ func DeductFees(bankKeeper types.BankKeeper, ctx sdk.Context, accAddress sdk.Acc
 	return nil
 }
 
-// FeeAbstrationMempoolFeeDecorator will check if the transaction's fee is at least as large
+// FeeAbstractionMempoolFeeDecorator will check if the transaction's fee is at least as large
 // as the local validator's minimum gasFee (defined in validator config).
 // If fee is too low, decorator returns error and tx is rejected from mempool.
 // Note this only applies when ctx.CheckTx = true
 // If fee is high enough or not CheckTx, then call next AnteHandler
 // CONTRACT: Tx must implement FeeTx to use MempoolFeeDecorator
-type FeeAbstrationMempoolFeeDecorator struct {
+type FeeAbstractionMempoolFeeDecorator struct {
 	feeabsKeeper feeabskeeper.Keeper
 }
 
-func NewFeeAbstrationMempoolFeeDecorator(feeabsKeeper feeabskeeper.Keeper) FeeAbstrationMempoolFeeDecorator {
-	return FeeAbstrationMempoolFeeDecorator{
+func NewFeeAbstractionMempoolFeeDecorator(feeabsKeeper feeabskeeper.Keeper) FeeAbstractionMempoolFeeDecorator {
+	return FeeAbstractionMempoolFeeDecorator{
 		feeabsKeeper: feeabsKeeper,
 	}
 }
 
-func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
+func (famfd FeeAbstractionMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
 	feeTx, ok := tx.(sdk.FeeTx)
 	if !ok {
 		return ctx, sdkerrors.Wrap(errorstypes.ErrTxDecode, "Tx must be a FeeTx")
@@ -337,7 +337,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) AnteHandle(ctx sdk.Context, tx sdk
 	return next(ctx, tx, simulate)
 }
 
-func (famfd FeeAbstrationMempoolFeeDecorator) DefaultZeroFee(ctx sdk.Context) ([]sdk.DecCoin, error) {
+func (famfd FeeAbstractionMempoolFeeDecorator) DefaultZeroFee(ctx sdk.Context) ([]sdk.DecCoin, error) {
 	bondDenom, err := famfd.feeabsKeeper.GetDefaultBondDenom(ctx)
 	if err != nil {
 		return nil, err
@@ -350,7 +350,7 @@ func (famfd FeeAbstrationMempoolFeeDecorator) DefaultZeroFee(ctx sdk.Context) ([
 }
 
 // GetTxFeeRequired returns the required fees for the given FeeTx.
-func (famfd FeeAbstrationMempoolFeeDecorator) GetTxFeeRequired(ctx sdk.Context, gasLimit int64) (sdk.Coins, error) {
+func (famfd FeeAbstractionMempoolFeeDecorator) GetTxFeeRequired(ctx sdk.Context, gasLimit int64) (sdk.Coins, error) {
 	var (
 		minGasPrices sdk.DecCoins
 		err          error

@@ -152,7 +152,7 @@ func TestMempoolDecorator(t *testing.T) {
 
 			// Construct tx and run through mempool decorator
 			tx := suite.txBuilder.GetTx()
-			mempoolDecorator := ante.NewFeeAbstrationMempoolFeeDecorator(suite.feeabsKeeper)
+			mempoolDecorator := ante.NewFeeAbstractionMempoolFeeDecorator(suite.feeabsKeeper)
 			antehandler := sdk.ChainAnteDecorators(mempoolDecorator)
 
 			// Run the ante handler

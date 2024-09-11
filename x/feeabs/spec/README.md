@@ -1,6 +1,6 @@
 ## Abstract
 
-When making a transactions, usually users need to pay fees in native token, but `Feeabs` module enable users on any Cosmos chain which implements this module with IBC connections to pay fee using ibc token. When users use an ibc denom as fees, the ``FeeAbstrationMempoolFeeDecorator`` ante handler will check whether the chain support the transactions to be paid by that ibc denom. It will calculate the amount of ibc tokens equivalent to native token when users make a normal transaction based on Osmosis ``twap`` between ibc denom and native denom.
+When making a transactions, usually users need to pay fees in native token, but `Feeabs` module enable users on any Cosmos chain which implements this module with IBC connections to pay fee using ibc token. When users use an ibc denom as fees, the ``FeeAbstractionMempoolFeeDecorator`` ante handler will check whether the chain support the transactions to be paid by that ibc denom. It will calculate the amount of ibc tokens equivalent to native token when users make a normal transaction based on Osmosis ``twap`` between ibc denom and native denom.
 
 After that, the ``FeeAbstractionDeductFeeDecorate`` ante handler swaps ibc token for native token to pay for transaction fees. The accumulated ibc token will be swaped on Osmosis Dex every epoch.
 

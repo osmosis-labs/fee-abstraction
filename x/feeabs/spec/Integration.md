@@ -167,14 +167,14 @@ Projects that want to integrate the fee-abstraction module onto their Cosmos SDK
 
     To allow for this, we use modified versions of `MempoolFeeDecorator` and `DeductFeeDecorate`. In these ante handlers, IBC tokens are swapped to the native token before the next fee handler logic is executed.
 
-    If a blockchain uses the Fee Abstraction module, it is necessary to replace the `MempoolFeeDecorator` and `DeductFeeDecorate` with the `FeeAbstrationMempoolFeeDecorator` and `FeeAbstractionDeductFeeDecorate`, respectively. These can be found in `app/ante.go`, and should be implemented as below:
+    If a blockchain uses the Fee Abstraction module, it is necessary to replace the `MempoolFeeDecorator` and `DeductFeeDecorate` with the `FeeAbstractionMempoolFeeDecorator` and `FeeAbstractionDeductFeeDecorate`, respectively. These can be found in `app/ante.go`, and should be implemented as below:
     
     Example:
     ```
     anteDecorators := []sdk.AnteDecorator{
       ante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
       ante.NewRejectExtensionOptionsDecorator(),
-      feeabsante.NewFeeAbstrationMempoolFeeDecorator(options.FeeAbskeeper),
+      feeabsante.NewFeeAbstractionMempoolFeeDecorator(options.FeeAbskeeper),
       ante.NewValidateBasicDecorator(),
       ante.NewTxTimeoutHeightDecorator(),
       ante.NewValidateMemoDecorator(options.AccountKeeper),
